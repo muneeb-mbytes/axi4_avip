@@ -1,0 +1,59 @@
+QuestaSim vlog 10.6c Compiler 2017.07 Jul 25 2017
+Start time: 03:37:47 on Dec 29,2021
+vlog -sv "+acc" "+cover" "+fcover" -l axi4_compile.log -f ../axi4_compile.f 
+-- Compiling package axi4_globals_pkg
+-- Compiling package axi4_master_pkg
+** Note: (vlog-2286) ../../src/hvl_top/master/axi4_master_pkg.sv(13): Using implicit +incdir+/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package axi4_globals_pkg
+-- Compiling package axi4_slave_pkg
+-- Compiling package axi4_master_seq_pkg
+-- Importing package axi4_master_pkg
+-- Compiling package axi4_slave_seq_pkg
+-- Importing package axi4_slave_pkg
+-- Compiling package axi4_env_pkg
+-- Compiling package axi4_virtual_seq_pkg
+-- Importing package axi4_master_seq_pkg
+-- Importing package axi4_slave_seq_pkg
+-- Importing package axi4_env_pkg
+-- Compiling package axi4_test_pkg
+-- Importing package axi4_virtual_seq_pkg
+-- Compiling package axi4_if_sv_unit
+-- Importing package axi4_globals_pkg
+-- Compiling interface axi4_if
+-- Compiling package axi4_master_driver_bfm_sv_unit
+-- Importing package axi4_globals_pkg
+-- Compiling interface axi4_master_driver_bfm
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package axi4_master_pkg
+-- Compiling package axi4_master_monitor_bfm_sv_unit
+-- Importing package axi4_globals_pkg
+-- Compiling interface axi4_master_monitor_bfm
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package axi4_master_pkg
+-- Compiling module axi4_master_agent_bfm
+-- Compiling package axi4_slave_driver_bfm_sv_unit
+-- Importing package axi4_globals_pkg
+-- Compiling interface axi4_slave_driver_bfm
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package axi4_slave_pkg
+-- Compiling package axi4_slave_monitor_bfm_sv_unit
+-- Importing package axi4_globals_pkg
+-- Compiling interface axi4_slave_monitor_bfm
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package axi4_slave_pkg
+-- Compiling module axi4_slave_agent_bfm
+-- Compiling module hdl_top
+-- Compiling module hvl_top
+-- Importing package axi4_test_pkg
+-- Importing package axi4_master_pkg
+-- Importing package axi4_env_pkg
+-- Importing package axi4_master_seq_pkg
+-- Importing package axi4_slave_seq_pkg
+-- Importing package axi4_virtual_seq_pkg
+
+Top level modules:
+	hdl_top
+	hvl_top
+End time: 03:37:50 on Dec 29,2021, Elapsed time: 0:00:03
+Errors: 0, Warnings: 0
