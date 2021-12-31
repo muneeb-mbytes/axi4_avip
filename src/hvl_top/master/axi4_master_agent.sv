@@ -24,9 +24,10 @@ class axi4_master_agent extends uvm_agent;
   // Declaring a handle for axi4_master monitor proxy 
   axi4_master_monitor_proxy axi4_master_mon_proxy_h;
   
-  // MSHA: // Variable: axi4_master_coverage
-  // MSHA: // Decalring a handle for axi4_master_coverage
-   axi4_master_coverage axi4_master_cov_h;
+  // Variable: axi4_master_coverage
+  // Decalring a handle for axi4_master_coverage
+  axi4_master_coverage axi4_master_cov_h;
+
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -71,6 +72,14 @@ function void axi4_master_agent::build_phase(uvm_phase phase);
 
   axi4_master_mon_proxy_h=axi4_master_monitor_proxy::type_id::create("axi4_master_mon_proxy_h",this);
 
+  if(axi4_master_agent_cfg_h.has_coverage) begin
+   axi4_master_cov_h = axi4_master_coverage ::type_id::create("axi4_master_cov_h",this);
+  end
+
+  if(axi4_master_agent_cfg_h.has_coverage) begin
+    axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
+  end
+
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
@@ -85,9 +94,12 @@ function void axi4_master_agent::connect_phase(uvm_phase phase);
   if(axi4_master_agent_cfg_h.is_active == UVM_ACTIVE) begin
     axi4_master_drv_proxy_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
     axi4_master_seqr_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
+    axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
 
     //Connecting the ports
     axi4_master_drv_proxy_h.seq_item_port.connect(axi4_master_seqr_h.seq_item_export);
+
+    axi4_master_mon_proxy_h.axi4_master_analysis_port.connect(axi4_master_cov_h.axi4_master_analysis_export);
   end
   
   axi4_master_mon_proxy_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;

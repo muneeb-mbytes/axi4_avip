@@ -12,6 +12,14 @@ class axi4_master_agent_config extends uvm_object;
   // Variable: is_active
   // Used for creating the agent in either passive or active mode
   uvm_active_passive_enum is_active=UVM_ACTIVE;  
+
+  // Variable: no_of_masters
+  // Used for specifying the number of masters connected to this axi4_master over axi4 interface
+  int no_of_masters;
+
+  // Variable: no_of_slaves
+  // Used for specifying the number of slaves connected to this axi4_master over axi4 interface
+  int no_of_slaves;
   
   // Variable: has_coverage
   // Used for enabling the master agent coverage

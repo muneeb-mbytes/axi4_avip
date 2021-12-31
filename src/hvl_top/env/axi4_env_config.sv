@@ -17,13 +17,21 @@ class axi4_env_config extends uvm_object;
   // Enables the virtual sequencer. Default value is 1
   bit has_virtual_seqr = 1;
 
+  // Variable: no_of_slaves
+  // Number of slaves connected to the AXI interface
+  int no_of_slaves;
+  
+  // Variable: no_of_masters
+  // Number of masters connected to the AXI interface
+  int no_of_masters;
+
   // Variable: master_agent_cfg_h
   // Handle for axi4 master agent configuration
-  axi4_master_agent_config axi4_master_agent_cfg_h;
+  axi4_master_agent_config axi4_master_agent_cfg_h[];
 
   // Variable: slave_agent_cfg_h
   // axi4 slave agent configuration handles
-  axi4_slave_agent_config axi4_slave_agent_cfg_h;
+  axi4_slave_agent_config axi4_slave_agent_cfg_h[];
 
 //-------------------------------------------------------
 // Externally defined Tasks and Functions
@@ -52,6 +60,9 @@ function void axi4_env_config::do_print(uvm_printer printer);
   
   printer.print_field ("has_scoreboard",has_scoreboard,1, UVM_DEC);
   printer.print_field ("has_virtual_sqr",has_virtual_seqr,1, UVM_DEC);
+  printer.print_field ("no_of_masters",no_of_masters,$bits(no_of_masters), UVM_HEX);
+  printer.print_field ("no_of_slaves",no_of_slaves,$bits(no_of_slaves), UVM_HEX);
+
 
 endfunction : do_print
 

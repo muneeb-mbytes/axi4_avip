@@ -8,8 +8,12 @@
 class virtual_sequencer extends uvm_sequencer#(uvm_sequence_item);
   `uvm_component_utils(virtual_sequencer)
 
+  // Variable: master_seqr_h
+  // Declaring master sequencer handle
   axi4_master_sequencer axi4_master_seqr_h;
   
+  // Variable: slave_seqr_h
+  // Declaring slave sequencer handle
   axi4_slave_sequencer axi4_slave_seqr_h;
   
   //-------------------------------------------------------
@@ -45,6 +49,8 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 function void virtual_sequencer::build_phase(uvm_phase phase);
   super.build_phase(phase);
+  axi4_master_seqr_h = axi4_master_sequencer::type_id::create("axi4_master_seqr_h",this);
+  axi4_slave_seqr_h = axi4_slave_sequencer::type_id::create("axi4_slave_seqr_h",this);
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------

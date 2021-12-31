@@ -51,11 +51,7 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 function void axi4_base_test::build_phase(uvm_phase phase);
   super.build_phase(phase);
-
-  axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
-  axi4_env_cfg_h.axi4_master_agent_cfg_h = axi4_master_agent_config::type_id::create("axi4_master_agent_cfg_h");
-
-  axi4_env_cfg_h.axi4_slave_agent_cfg_h = axi4_slave_agent_config::type_id::create("axi4_slave_agent_cfg_h");
+  
   // Setup the environemnt cfg 
   setup_axi4_env_cfg();
 
@@ -64,24 +60,28 @@ function void axi4_base_test::build_phase(uvm_phase phase);
 
 endfunction : build_phase
 
+
 //--------------------------------------------------------------------------------------------
 // Function: setup_axi4_env_cfg
 // Setup the environment configuration with the required values
 // and store the handle into the config_db
 //--------------------------------------------------------------------------------------------
 function void axi4_base_test:: setup_axi4_env_cfg();
+  
+  axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
 
  // axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
  
   axi4_env_cfg_h.has_scoreboard = 1;
   axi4_env_cfg_h.has_virtual_seqr = 1;
+  axi4_env_cfg_h.no_of_masters = NO_OF_MASTERS;
+  axi4_env_cfg_h.no_of_slaves = NO_OF_SLAVES;
 
   // Setup the axi4_master agent cfg 
   setup_axi4_master_agent_cfg();
-  uvm_config_db #(axi4_master_agent_config)::set(this,"*axi4_master_agent*","axi4_master_agent_config",axi4_env_cfg_h.axi4_master_agent_cfg_h);
 
   setup_axi4_slave_agent_cfg();
-    uvm_config_db #(axi4_slave_agent_config)::set(this,"*axi4_slave_agent*","axi4_slave_agent_config", axi4_env_cfg_h.axi4_slave_agent_cfg_h);
+
   // set method for axi4_env_cfg
   uvm_config_db #(axi4_env_config)::set(this,"*","axi4_env_config",axi4_env_cfg_h);
 
@@ -93,8 +93,15 @@ endfunction: setup_axi4_env_cfg
 // and store the handle into the config_db
 //--------------------------------------------------------------------------------------------
 function void axi4_base_test::setup_axi4_master_agent_cfg();
-
-  axi4_env_cfg_h.axi4_master_agent_cfg_h.is_active   = uvm_active_passive_enum'(UVM_ACTIVE);
+  axi4_env_cfg_h.axi4_master_agent_cfg_h = new[axi4_env_cfg_h.no_of_masters];
+  foreach(axi4_env_cfg_h.axi4_master_agent_cfg_h[i])begin
+    axi4_env_cfg_h.axi4_master_agent_cfg_h[i] =
+    axi4_master_agent_config::type_id::create("axi4_master_agent_cfg_h");
+    axi4_env_cfg_h.axi4_master_agent_cfg_h[i].is_active   = uvm_active_passive_enum'(UVM_ACTIVE);
+    axi4_env_cfg_h.axi4_master_agent_cfg_h[i].has_coverage = 1; 
+    uvm_config_db
+    #(axi4_master_agent_config)::set(this,"*axi4_master_agent*","axi4_master_agent_config",axi4_env_cfg_h.axi4_master_agent_cfg_h[i]);
+  end
 endfunction: setup_axi4_master_agent_cfg
 
 //--------------------------------------------------------------------------------------------
@@ -103,8 +110,16 @@ endfunction: setup_axi4_master_agent_cfg
 // and store the handle into the config_db
 //--------------------------------------------------------------------------------------------
 function void axi4_base_test::setup_axi4_slave_agent_cfg();
-
-    axi4_env_cfg_h.axi4_slave_agent_cfg_h.is_active    = uvm_active_passive_enum'(UVM_ACTIVE);
+  axi4_env_cfg_h.axi4_slave_agent_cfg_h = new[axi4_env_cfg_h.no_of_slaves];
+  foreach(axi4_env_cfg_h.axi4_slave_agent_cfg_h[i])begin
+    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i] =
+    axi4_slave_agent_config::type_id::create("axi4_slave_agent_cfg_h");
+    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].is_active    = uvm_active_passive_enum'(UVM_ACTIVE);
+    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].has_coverage = 1; 
+    uvm_config_db
+    #(axi4_slave_agent_config)::set(this,"*axi4_slave_agent*","axi4_slave_agent_config",
+    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]);
+  end
 endfunction: setup_axi4_slave_agent_cfg
 
 //--------------------------------------------------------------------------------------------

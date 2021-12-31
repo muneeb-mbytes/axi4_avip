@@ -27,7 +27,7 @@ interface axi4_master_driver_bfm(input pclk, input aresetn);
   axi4_master_driver_proxy axi4_master_drv_proxy_h;
 
   initial begin
-    $display("AXI Master driver BFM");
+    `uvm_info("axi4 master driver bfm",$sformatf("AXI$ MASTER DRIVER BFM"),UVM_LOW);
   end
 
 endinterface : axi4_master_driver_bfm

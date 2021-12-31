@@ -38,7 +38,7 @@ module axi4_master_agent_bfm(axi4_if intf);
 
   
   initial begin
-    $display("AXI4 Master Agent BFM");
+     `uvm_info("axi4 master agent bfm",$sformatf("AXI4 MASTER AGENT BFM"),UVM_LOW);
   end
    
 endmodule : axi4_master_agent_bfm

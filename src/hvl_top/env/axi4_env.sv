@@ -9,14 +9,24 @@
 class axi4_env extends uvm_env;
   `uvm_component_utils(axi4_env)
   
+  //Variable : axi4_env_cfg_h
+  //Declaring handle for axi4_env_config_object
   axi4_env_config axi4_env_cfg_h;
-  
-  axi4_master_agent axi4_master_agent_h;
-  
-  axi4_slave_agent axi4_slave_agent_h;
 
+  //Variable : axi4_master_agent_h
+  //Declaring axi4 master agent handle 
+  axi4_master_agent axi4_master_agent_h[];
+ 
+  //Variable : axi4_slave_agent_h
+  //Declaring axi4 slave agent handle
+  axi4_slave_agent axi4_slave_agent_h[];
+
+  //Variable : axi4_virtual_seqr_h
+  //Declaring axi4 virtual seqr handle
   virtual_sequencer virtual_seqr_h;
 
+  //Variable : axi4__scoreboard_h
+  //Declaring axi4 scoreboard handle
   axi4_scoreboard axi4_scoreboard_h;
  
   //-------------------------------------------------------
@@ -51,10 +61,18 @@ function void axi4_env::build_phase(uvm_phase phase);
   super.build_phase(phase);
   
   if(!uvm_config_db #(axi4_env_config)::get(this,"","axi4_env_config",axi4_env_cfg_h)) begin
-   `uvm_fatal("FATAL_SA_AGENT_CONFIG", $sformatf("Couldn't get the slave_agent_config from config_db"))
+   `uvm_fatal("FATAL_ENV_AGENT_CONFIG", $sformatf("Couldn't get the env_agent_config from config_db"))
   end
-  axi4_master_agent_h=axi4_master_agent::type_id::create("axi4_master_agent_h",this);
-  axi4_slave_agent_h=axi4_slave_agent::type_id::create("axi4_slave_agent_h",this);
+
+  axi4_master_agent_h = new[axi4_env_cfg_h.no_of_masters];
+  foreach(axi4_master_agent_h[i]) begin
+    axi4_master_agent_h[i]=axi4_master_agent::type_id::create($sformatf("axi4_master_agent_h[%0d]",i),this);
+  end
+
+  axi4_slave_agent_h = new[axi4_env_cfg_h.no_of_slaves];
+  foreach(axi4_slave_agent_h[i]) begin
+    axi4_slave_agent_h[i]=axi4_slave_agent::type_id::create($sformatf("axi4_slave_agent_h[%0d]",i),this);
+  end
   
   if(axi4_env_cfg_h.has_virtual_seqr) begin
     virtual_seqr_h = virtual_sequencer::type_id::create("virtual_seqr_h",this);
@@ -77,9 +95,20 @@ function void axi4_env::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
 
   if(axi4_env_cfg_h.has_virtual_seqr) begin
-    virtual_seqr_h.axi4_master_seqr_h = axi4_master_agent_h.axi4_master_seqr_h;
-      virtual_seqr_h.axi4_slave_seqr_h = axi4_slave_agent_h.axi4_slave_seqr_h;
+    foreach(axi4_master_agent_h[i]) begin
+      virtual_seqr_h.axi4_master_seqr_h = axi4_master_agent_h[i].axi4_master_seqr_h;
     end
+    foreach(axi4_slave_agent_h[i]) begin
+      virtual_seqr_h.axi4_slave_seqr_h = axi4_slave_agent_h[i].axi4_slave_seqr_h;
+    end
+  end
+
+  foreach(axi4_slave_agent_h[i]) begin
+    axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_analysis_port.connect(axi4_scoreboard_h.axi4_master_analysis_fifo.analysis_export);
+  end
+  foreach(axi4_slave_agent_h[i]) begin
+    axi4_slave_agent_h[i].axi4_slave_mon_proxy_h.axi4_slave_analysis_port.connect(axi4_scoreboard_h.axi4_slave_analysis_fifo.analysis_export);
+  end
 endfunction : connect_phase
 
 `endif

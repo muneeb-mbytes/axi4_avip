@@ -18,6 +18,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   extern function new(string name = "axi4_master_tx");
   extern function void do_copy(uvm_object rhs);
+  extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
   extern function void do_print(uvm_printer printer);
 endclass : axi4_master_tx
 
@@ -40,6 +41,22 @@ function void axi4_master_tx::do_copy (uvm_object rhs);
 super.do_copy(rhs);
 endfunction : do_copy
 
+//--------------------------------------------------------------------------------------------
+//  Function: do_compare
+//  Compare method is implemented using handle rhs
+//
+//  Parameters:
+//  phase - uvm phase
+//--------------------------------------------------------------------------------------------
+function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
+  axi4_master_tx axi_master_tx_compare_obj;
+
+  if(!$cast(axi_master_tx_compare_obj,rhs)) begin
+    `uvm_fatal("FATAL_axi_MASTER_TX_DO_COMPARE_FAILED","cast of the rhs object failed")
+  return 0;
+  end
+
+endfunction:do_compare
 
 //--------------------------------------------------------------------------------------------
 // Function: do_print method

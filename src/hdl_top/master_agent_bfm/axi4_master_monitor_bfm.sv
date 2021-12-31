@@ -27,7 +27,7 @@ interface axi4_master_monitor_bfm(input pclk, input aresetn);
   axi4_master_monitor_proxy axi4_master_mon_proxy_h;
 
   initial begin
-    $display("AXI Master Monitor BFM");
+    `uvm_info("axi4 master monitor bfm",$sformatf("AXI4 MASTER MONITOR BFM"),UVM_LOW);
   end
 
 endinterface : axi4_master_monitor_bfm

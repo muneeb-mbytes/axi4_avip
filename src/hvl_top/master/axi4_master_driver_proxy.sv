@@ -8,7 +8,13 @@
 class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   `uvm_component_utils(axi4_master_driver_proxy)
 
+  // Variable: axi4_master_agent_cfg_h
+  // Declaring handle for axi4_master agent config class 
   axi4_master_agent_config axi4_master_agent_cfg_h;
+
+  //Variable : axi4_master_drv_bfm_h
+  //Declaring handle for axi4 driver bfm
+  virtual axi4_master_driver_bfm axi4_master_drv_bfm_h;
   
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -43,6 +49,9 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 function void axi4_master_driver_proxy::build_phase(uvm_phase phase);
   super.build_phase(phase);
+  if(!uvm_config_db #(virtual axi4_master_driver_bfm)::get(this,"","axi4_master_driver_bfm",axi4_master_drv_bfm_h)) begin
+    `uvm_fatal("FATAL_MDP_CANNOT_GET_AXI4_MASTER_DRIVER_BFM","cannot get() axi4_master_drv_bfm_h");
+  end
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
@@ -65,6 +74,7 @@ endfunction : connect_phase
 //--------------------------------------------------------------------------------------------
 function void axi4_master_driver_proxy::end_of_elaboration_phase(uvm_phase phase);
   super.end_of_elaboration_phase(phase);
+  axi4_master_drv_bfm_h.axi4_master_drv_proxy_h = this;
 endfunction  : end_of_elaboration_phase
 
 //--------------------------------------------------------------------------------------------

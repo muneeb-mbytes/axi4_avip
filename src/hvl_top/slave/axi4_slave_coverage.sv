@@ -8,6 +8,14 @@
 class axi4_slave_coverage extends uvm_subscriber#(axi4_slave_tx);
   `uvm_component_utils(axi4_slave_coverage)
 
+  // Variable: axi4_slave_agent_cfg_h;
+  // Handle for axi4_slave agent configuration
+  axi4_slave_agent_config axi4_slave_agent_cfg_h;
+
+  // Variable: axi4_slave_analysis_export
+  //declaring analysis port for coverage
+  uvm_analysis_port #(axi4_slave_tx)axi4_slave_analysis_export;
+
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -27,6 +35,7 @@ endclass : axi4_slave_coverage
 function axi4_slave_coverage::new(string name = "axi4_slave_coverage",
                                  uvm_component parent = null);
   super.new(name, parent);
+  axi4_slave_analysis_export = new("axi4_slave_analysis_export",this);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------

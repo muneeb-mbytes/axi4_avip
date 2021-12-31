@@ -86,13 +86,16 @@ function void axi4_slave_agent::connect_phase(uvm_phase phase);
   if(axi4_slave_agent_cfg_h.is_active == UVM_ACTIVE) begin
     axi4_slave_drv_proxy_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
     axi4_slave_seqr_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
+    axi4_slave_cov_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
     
     // Connecting the ports
     axi4_slave_drv_proxy_h.seq_item_port.connect(axi4_slave_seqr_h.seq_item_export);
+
+    // Connecting monitor_proxy port to coverage export
+    axi4_slave_mon_proxy_h.axi4_slave_analysis_port.connect(axi4_slave_cov_h.axi4_slave_analysis_export);
   end
 
   axi4_slave_mon_proxy_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
-
 
 endfunction: connect_phase
 
