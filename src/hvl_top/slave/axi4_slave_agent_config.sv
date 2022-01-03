@@ -15,7 +15,21 @@ class axi4_slave_agent_config extends uvm_object;
   // Variable: has_coverage
   // Used for enabling the master agent coverage
   bit has_coverage;
+ 
+
+  //Variable : max_address
+  //Used to store the maximum address value of this slave
+  bit [AXI_AW-1:0]max_address;
+
+  //Variable : min_address
+  //Used to store the minimum address value of this slave
+  bit [AXI_AW-1:0]min_address;
   
+  //Variable : slave_memory
+  //Declaration of slave_memory to store the data from master
+  bit [7:0]slave_memory[longint];
+  
+
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
