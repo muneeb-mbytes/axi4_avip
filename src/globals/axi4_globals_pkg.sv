@@ -34,6 +34,22 @@ package axi4_globals_pkg;
   parameter int NO_OF_SLAVES = 1;
 
 
+  //Parameter : SLAVE_MEMORY_SIZE
+  //Sets the memory size of the slave in KB
+  parameter int SLAVE_MEMORY_SIZE = 12;
+
+  //Parameter : SLAVE_MEMORY_GAP
+  //Sets the memory gap size of the slave
+  parameter int SLAVE_MEMORY_GAP = 4;
+
+  //Parameter : MEMORY_WIDTH
+  //Sets the width it can store in each loaction
+  parameter int MEMORY_WIDTH = 8;
+
+
+  //Parameter : SLAVE_AGENT_ACTIVE
+  //Used to set the slave agent either active or passive
+  parameter int SLAVE_AGENT_ACTIVE = 1;
 endpackage: axi4_globals_pkg
 
 `endif
