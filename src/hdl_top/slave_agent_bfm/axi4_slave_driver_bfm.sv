@@ -7,9 +7,8 @@
 //It connects with the HVL driver_proxy for driving the stimulus
 //--------------------------------------------------------------------------------------------
 import axi4_globals_pkg::*;
-interface axi4_slave_driver_bfm(input                         pclk          , 
+interface axi4_slave_driver_bfm(input                         aclk          , 
                                 input                         aresetn       ,
-                                input                         aclk          ,
                                 //Write_address_channel
                                 input           [AXI_IW-1: 0] axi_awid_i    ,
                                 input           [AXI_AW-1: 0] axi_awaddr_i  ,

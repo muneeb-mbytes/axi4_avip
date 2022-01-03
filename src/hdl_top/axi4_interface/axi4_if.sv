@@ -8,11 +8,11 @@ import axi4_globals_pkg::*;
 // Interface : axi4_if
 // Declaration of pin level signals for axi4 interface
 //--------------------------------------------------------------------------------------------
-interface axi4_if(input pclk, input aresetn);
+interface axi4_if(input aclk, input aresetn);
 
-  // Variable: aclk
-  // axi4 clock signal
-  bit aclk;
+ // // Variable: aclk
+ // // axi4 clock signal
+ // bit aclk;
 
   //Write_address_channel
   logic     [AXI_IW-1: 0] axi_awid      ;

@@ -7,7 +7,7 @@
 //It connects with the HVL driver_proxy for driving the stimulus
 //--------------------------------------------------------------------------------------------
 import axi4_globals_pkg::*;
-interface axi4_master_driver_bfm(input pclk, input aresetn); 
+interface axi4_master_driver_bfm(input aclk, input aresetn); 
   //-------------------------------------------------------
   // Importing UVM Package 
   //-------------------------------------------------------

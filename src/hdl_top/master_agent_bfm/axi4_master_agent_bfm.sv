@@ -16,7 +16,7 @@ module axi4_master_agent_bfm #(parameter int MASTER_ID = 0)(axi4_if intf);
   //-------------------------------------------------------
   // AXI4 Master Driver bfm instantiation
   //-------------------------------------------------------
-  axi4_master_driver_bfm axi4_master_drv_bfm_h (.pclk(intf.pclk), 
+  axi4_master_driver_bfm axi4_master_drv_bfm_h (.aclk(intf.aclk), 
                                                 .aresetn(intf.aresetn)
                                               );
    
@@ -24,7 +24,7 @@ module axi4_master_agent_bfm #(parameter int MASTER_ID = 0)(axi4_if intf);
   //-------------------------------------------------------
   // AXI4 Master monitor  bfm instantiation
   //-------------------------------------------------------
-  axi4_master_monitor_bfm axi4_master_mon_bfm_h (.pclk(intf.pclk),
+  axi4_master_monitor_bfm axi4_master_mon_bfm_h (.aclk(intf.aclk),
                                                  .aresetn(intf.aresetn)
                                                );
 
