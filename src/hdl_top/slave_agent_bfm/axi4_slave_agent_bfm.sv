@@ -5,7 +5,7 @@
 // Module:AXI4 Slave Agent BFM
 // This module is used as the configuration class for slave agent bfm and its components
 //--------------------------------------------------------------------------------------------
-module axi4_slave_agent_bfm(axi4_if intf);
+module axi4_slave_agent_bfm #(parameter int SLAVE_ID=0)(axi4_if intf);
 
   //-------------------------------------------------------
   // Package : Importing Uvm Pakckage and Test Package
@@ -16,8 +16,7 @@ module axi4_slave_agent_bfm(axi4_if intf);
   //-------------------------------------------------------
   // AXI4 Slave Driver bfm instantiation
   //-------------------------------------------------------
-  axi4_slave_driver_bfm axi4_slave_drv_bfm_h (.pclk           (intf.pclk)         , 
-                                              .aclk           (intf.pclk)         ,
+  axi4_slave_driver_bfm axi4_slave_drv_bfm_h (.aclk           (intf.aclk)         , 
                                               .aresetn        (intf.aresetn)      ,
                                               .axi_awid_i     (intf.axi_awid)     ,           
                                               .axi_awaddr_i   (intf.axi_awaddr)   ,  
@@ -70,7 +69,7 @@ module axi4_slave_agent_bfm(axi4_if intf);
   //-------------------------------------------------------
   // AXI4 Slave monitor  bfm instantiation
   //-------------------------------------------------------
-  axi4_slave_monitor_bfm axi4_slave_mon_bfm_h (.pclk(intf.pclk), 
+  axi4_slave_monitor_bfm axi4_slave_mon_bfm_h (.aclk(intf.aclk), 
                                        .aresetn(intf.aresetn)
                                      );
 
