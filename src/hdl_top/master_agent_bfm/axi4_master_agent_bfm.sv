@@ -5,7 +5,7 @@
 // Module:AXI4 Master Agent BFM
 // This module is used as the configuration class for master agent bfm and its components
 //--------------------------------------------------------------------------------------------
-module axi4_master_agent_bfm(axi4_if intf);
+module axi4_master_agent_bfm #(parameter int MASTER_ID = 0)(axi4_if intf);
 
   //-------------------------------------------------------
   // Package : Importing Uvm Pakckage and Test Package
@@ -17,16 +17,16 @@ module axi4_master_agent_bfm(axi4_if intf);
   // AXI4 Master Driver bfm instantiation
   //-------------------------------------------------------
   axi4_master_driver_bfm axi4_master_drv_bfm_h (.pclk(intf.pclk), 
-                                      .aresetn(intf.aresetn)
-                                    );
+                                                .aresetn(intf.aresetn)
+                                              );
    
 
   //-------------------------------------------------------
   // AXI4 Master monitor  bfm instantiation
   //-------------------------------------------------------
-  axi4_master_monitor_bfm axi4_master_mon_bfm_h (.pclk(intf.pclk), 
-                                       .aresetn(intf.aresetn)
-                                     );
+  axi4_master_monitor_bfm axi4_master_mon_bfm_h (.pclk(intf.pclk),
+                                                 .aresetn(intf.aresetn)
+                                               );
 
   //-------------------------------------------------------
   // Setting the virtual handle of BMFs into config_db

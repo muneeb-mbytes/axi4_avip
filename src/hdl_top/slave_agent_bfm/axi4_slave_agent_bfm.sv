@@ -5,7 +5,7 @@
 // Module:AXI4 Slave Agent BFM
 // This module is used as the configuration class for slave agent bfm and its components
 //--------------------------------------------------------------------------------------------
-module axi4_slave_agent_bfm(axi4_if intf);
+module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
 
   //-------------------------------------------------------
   // Package : Importing Uvm Pakckage and Test Package

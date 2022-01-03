@@ -62,9 +62,10 @@ endfunction : new
 function void axi4_master_agent::build_phase(uvm_phase phase);
   super.build_phase(phase);
   
-  if(!uvm_config_db #(axi4_master_agent_config)::get(this,"","axi4_master_agent_config",axi4_master_agent_cfg_h)) begin
-    `uvm_fatal("FATAL_MA_CANNOT_GET_MASTER_AGENT_CONFIG","cannot get axi4_master_agent_cfg_h from uvm_config_db");
-  end
+ // if(!uvm_config_db #(axi4_master_agent_config)::get(this,"","axi4_master_agent_config",axi4_master_agent_cfg_h)) begin
+ //   `uvm_fatal("FATAL_MA_CANNOT_GET_MASTER_AGENT_CONFIG","cannot get axi4_master_agent_cfg_h from uvm_config_db");
+ // end
+ //
   if(axi4_master_agent_cfg_h.is_active == UVM_ACTIVE) begin
     axi4_master_drv_proxy_h=axi4_master_driver_proxy::type_id::create("axi4_master_drv_proxy_h",this);
     axi4_master_seqr_h=axi4_master_sequencer::type_id::create("axi4_master_seqr_h",this);

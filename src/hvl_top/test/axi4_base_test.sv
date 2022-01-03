@@ -96,11 +96,12 @@ function void axi4_base_test::setup_axi4_master_agent_cfg();
   axi4_env_cfg_h.axi4_master_agent_cfg_h = new[axi4_env_cfg_h.no_of_masters];
   foreach(axi4_env_cfg_h.axi4_master_agent_cfg_h[i])begin
     axi4_env_cfg_h.axi4_master_agent_cfg_h[i] =
-    axi4_master_agent_config::type_id::create("axi4_master_agent_cfg_h");
+    axi4_master_agent_config::type_id::create($sformatf("axi4_master_agent_config[%0d]",i));
     axi4_env_cfg_h.axi4_master_agent_cfg_h[i].is_active   = uvm_active_passive_enum'(UVM_ACTIVE);
     axi4_env_cfg_h.axi4_master_agent_cfg_h[i].has_coverage = 1; 
     uvm_config_db
-    #(axi4_master_agent_config)::set(this,"*axi4_master_agent*","axi4_master_agent_config",axi4_env_cfg_h.axi4_master_agent_cfg_h[i]);
+    #(axi4_master_agent_config)::set(this,$sformatf("*env*"),$sformatf("axi4_master_agent_config[%0d]",i),axi4_env_cfg_h.axi4_master_agent_cfg_h[i]);
+    `uvm_info(get_type_name(),$sformatf("\nAXI4_MASTER_CONFIG[%0d]\n%s",i,axi4_env_cfg_h.axi4_master_agent_cfg_h[i].sprint()),UVM_LOW);
   end
 endfunction: setup_axi4_master_agent_cfg
 
@@ -113,12 +114,15 @@ function void axi4_base_test::setup_axi4_slave_agent_cfg();
   axi4_env_cfg_h.axi4_slave_agent_cfg_h = new[axi4_env_cfg_h.no_of_slaves];
   foreach(axi4_env_cfg_h.axi4_slave_agent_cfg_h[i])begin
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i] =
-    axi4_slave_agent_config::type_id::create("axi4_slave_agent_cfg_h");
+    axi4_slave_agent_config::type_id::create($sformatf("axi4_slave_agent_config[%0d]",i));
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].is_active    = uvm_active_passive_enum'(UVM_ACTIVE);
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].has_coverage = 1; 
     uvm_config_db
-    #(axi4_slave_agent_config)::set(this,"*axi4_slave_agent*","axi4_slave_agent_config",
-    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]);
+    #(axi4_slave_agent_config)::set(this,$sformatf("*env*"),$sformatf("axi4_slave_agent_config[%0d]",i),axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]);
+    //uvm_config_db
+    //#(axi4_slave_agent_config)::set(this,"*axi4_slave_agent*","axi4_slave_agent_config",
+    //axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]);
+    `uvm_info(get_type_name(),$sformatf("\nAXI4_SLAVE_CONFIG[%0d]\n%s",i,axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].sprint()),UVM_LOW);
   end
 endfunction: setup_axi4_slave_agent_cfg
 

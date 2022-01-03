@@ -28,6 +28,15 @@ class axi4_env extends uvm_env;
   //Variable : axi4__scoreboard_h
   //Declaring axi4 scoreboard handle
   axi4_scoreboard axi4_scoreboard_h;
+  
+  // Variable: axi4_master_agent_cfg_h;
+  // Handle for axi4_master agent configuration
+  axi4_master_agent_config axi4_master_agent_cfg_h[];
+
+  // Variable: axi4_slave_agent_cfg_h;
+  // Handle for axi4_slave agent configuration
+  axi4_slave_agent_config axi4_slave_agent_cfg_h[];
+
  
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -63,6 +72,21 @@ function void axi4_env::build_phase(uvm_phase phase);
   if(!uvm_config_db #(axi4_env_config)::get(this,"","axi4_env_config",axi4_env_cfg_h)) begin
    `uvm_fatal("FATAL_ENV_AGENT_CONFIG", $sformatf("Couldn't get the env_agent_config from config_db"))
   end
+  
+  axi4_master_agent_cfg_h = new[axi4_env_cfg_h.no_of_masters];
+  foreach(axi4_master_agent_cfg_h[i]) begin
+    if(!uvm_config_db
+      #(axi4_master_agent_config)::get(this,"",$sformatf("axi4_master_agent_config[%0d]",i),axi4_master_agent_cfg_h[i])) begin
+      `uvm_fatal("FATAL_MA_AGENT_CONFIG", $sformatf("Couldn't get the axi4_master_agent_config[%0d] from config_db",i))
+    end
+  end
+
+  axi4_slave_agent_cfg_h = new[axi4_env_cfg_h.no_of_slaves];
+  foreach(axi4_slave_agent_cfg_h[i]) begin
+    if(!uvm_config_db #(axi4_slave_agent_config)::get(this,"",$sformatf("axi4_slave_agent_config[%0d]",i),axi4_slave_agent_cfg_h[i])) begin
+      `uvm_fatal("FATAL_SA_AGENT_CONFIG", $sformatf("Couldn't get the axi4_slave_agent_config[%0d] from config_db",i))
+    end
+  end
 
   axi4_master_agent_h = new[axi4_env_cfg_h.no_of_masters];
   foreach(axi4_master_agent_h[i]) begin
@@ -79,8 +103,17 @@ function void axi4_env::build_phase(uvm_phase phase);
   end
 
   if(axi4_env_cfg_h.has_scoreboard) begin
-  axi4_scoreboard_h=axi4_scoreboard::type_id::create("axi4_scoreboard_h",this);
+    axi4_scoreboard_h=axi4_scoreboard::type_id::create("axi4_scoreboard_h",this);
   end
+  
+  foreach(axi4_master_agent_h[i]) begin
+    axi4_master_agent_h[i].axi4_master_agent_cfg_h = axi4_master_agent_cfg_h[i];
+  end
+  
+  foreach(axi4_slave_agent_h[i]) begin
+    axi4_slave_agent_h[i].axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h[i];
+  end
+  
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
@@ -103,7 +136,7 @@ function void axi4_env::connect_phase(uvm_phase phase);
     end
   end
 
-  foreach(axi4_slave_agent_h[i]) begin
+  foreach(axi4_master_agent_h[i]) begin
     axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_analysis_port.connect(axi4_scoreboard_h.axi4_master_analysis_fifo.analysis_export);
   end
   foreach(axi4_slave_agent_h[i]) begin

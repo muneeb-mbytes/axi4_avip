@@ -59,9 +59,10 @@ endfunction : new
 function void axi4_slave_agent::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
-  if(!uvm_config_db #(axi4_slave_agent_config)::get(this,"","axi4_slave_agent_config",axi4_slave_agent_cfg_h)) begin
-   `uvm_fatal("FATAL_SA_AGENT_CONFIG", $sformatf("Couldn't get the axi4_slave_agent_config from config_db"))
-  end
+ // if(!uvm_config_db #(axi4_slave_agent_config)::get(this,"","axi4_slave_agent_config",axi4_slave_agent_cfg_h)) begin
+ //  `uvm_fatal("FATAL_SA_AGENT_CONFIG", $sformatf("Couldn't get the axi4_slave_agent_config from config_db"))
+ // end
+ 
    if(axi4_slave_agent_cfg_h.is_active == UVM_ACTIVE) begin
      axi4_slave_drv_proxy_h = axi4_slave_driver_proxy::type_id::create("axi4_slave_drv_proxy_h",this);
      axi4_slave_seqr_h=axi4_slave_sequencer::type_id::create("axi4_slave_seqr_h",this);
