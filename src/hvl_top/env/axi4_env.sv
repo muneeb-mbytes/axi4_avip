@@ -75,9 +75,8 @@ function void axi4_env::build_phase(uvm_phase phase);
   
   axi4_master_agent_cfg_h = new[axi4_env_cfg_h.no_of_masters];
   foreach(axi4_master_agent_cfg_h[i]) begin
-    if(!uvm_config_db
-      #(axi4_master_agent_config)::get(this,"",$sformatf("axi4_master_agent_config[%0d]",i),axi4_master_agent_cfg_h[i])) begin
-      `uvm_fatal("FATAL_MA_AGENT_CONFIG", $sformatf("Couldn't get the axi4_master_agent_config[%0d] from config_db",i))
+    if(!uvm_config_db#(axi4_master_agent_config)::get(this,"",$sformatf("axi4_master_agent_config[%0d]",i),axi4_master_agent_cfg_h[i])) begin
+    `uvm_fatal("FATAL_MA_AGENT_CONFIG", $sformatf("Couldn't get the axi4_master_agent_config[%0d] from config_db",i))
     end
   end
 
