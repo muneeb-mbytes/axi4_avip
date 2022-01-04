@@ -324,11 +324,8 @@ package axi4_globals_pkg;
     bit [1:0]                 rresp; 
   } axi4_transfer_char_s;
   
-  //-------------------------------------------------------
-  // Struct : apb_cfg_char_s
-  //  This struct datatype consists of all configurations
-  //  which are used for seq item conversion
-  //-------------------------------------------------------
+  //Struct : apb_cfg_char_s
+  //This struct datatype consists of all configurations which are used for seq item conversion
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] min_address;
     bit [ADDRESS_WIDTH-1:0] max_address;
