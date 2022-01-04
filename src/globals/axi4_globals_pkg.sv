@@ -151,8 +151,8 @@ package axi4_globals_pkg;
   //Enum: endian_e
   //Used to declare enum type for the endians
   typedef enum bit {
-    BIG_ENDIAN    = 1'b0
-    LITTLE_ENDIAN = 1'b1,
+    BIG_ENDIAN    = 1'b0,
+    LITTLE_ENDIAN = 1'b1
   } endian_e;
 
   //Enum: awprot_e 
