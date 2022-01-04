@@ -1,5 +1,5 @@
-`ifndef AXI4_SLAVE_DRIVER_BFM_INCLUDED_
-`define AXI4_SLAVE_DRIVER_BFM_INCLUDED_
+`ifndef AXI4_SLAVE_DRIVER_BFMNCLUDED_
+`define AXI4_SLAVE_DRIVER_BFMNCLUDED_
 
 //--------------------------------------------------------------------------------------------
 //Interface : axi4_slave_driver_bfm
@@ -10,53 +10,52 @@ import axi4_globals_pkg::*;
 interface axi4_slave_driver_bfm(input                         aclk          , 
                                 input                         aresetn       ,
                                 //Write_address_channel
-                                input           [AXI_IW-1: 0] axi_awid_i    ,
-                                input           [AXI_AW-1: 0] axi_awaddr_i  ,
-                                input                [4-1: 0] axi_awlen_i   ,
-                                input                [3-1: 0] axi_awsize_i  ,
-                                input                [2-1: 0] axi_awburst_i ,
-                                input                [2-1: 0] axi_awlock_i  ,
-                                input                [4-1: 0] axi_awcache_i ,
-                                input                [3-1: 0] axi_awprot_i  ,
-                                input                         axi_awvalid_i ,
-                                output reg		                axi_awready_o ,
+                                input           [15:0] awid    ,
+                                input           [ADDRESS_WIDTH-1:0] awaddr  ,
+                                input                [3: 0] awlen   ,
+                                input                [2: 0] awsize  ,
+                                input                [1: 0] awburst ,
+                                input                [1: 0] awlock  ,
+                                input                [3: 0] awcache ,
+                                input                [2: 0] awprot  ,
+                                input                         awvalid ,
+                                output reg		                awready ,
                                 //Write_data_channel
-                                input           [AXI_IW-1: 0] axi_wid_i     ,
-                                input           [AXI_DW-1: 0] axi_wdata_i   ,
-                                input           [AXI_SW-1: 0] axi_wstrb_i   ,
-                                input                         axi_wlast_i   ,
-                                input                [4-1: 0] axi_wuser_i   ,
-                                input                         axi_wvalid_i  ,
-                                output reg	  	              axi_wready_o  ,
+                                input           [DATA_WIDTH-1: 0] wdata   ,
+                                input           [(DATA_WIDTH/8)-1: 0] wstrb   ,
+                                input                         wlast   ,
+                                input                [3: 0]   wuser   ,
+                                input                         wvalid  ,
+                                output reg	  	              wready  ,
                                 //Write Response Channel
-                                output reg      [AXI_IW-1: 0] axi_bid_o     ,
-                                output reg           [2-1: 0] axi_bresp_o   ,
-                                output reg           [4-1: 0] axi_buser_o   ,
-                                output reg                    axi_bvalid_o  ,
-                                input		                      axi_bready_i  ,
+                                output reg           [15:0]     bid ,
+                                output reg           [1:0] bresp   ,
+                                output reg           [3:0] buser   ,
+                                output reg                 bvalid  ,
+                                input		                      bready  ,
                                 //Read Address Channel
-                                input           [AXI_IW-1: 0] axi_arid_i    ,
-                                input           [AXI_AW-1: 0] axi_araddr_i  ,
-                                input                [8-1: 0] axi_arlen_i   ,
-                                input                [3-1: 0] axi_arsize_i  ,
-                                input                [2-1: 0] axi_arburst_i ,
-                                input                [2-1: 0] axi_arlock_i  ,
-                                input                [4-1: 0] axi_arcache_i ,
-                                input                [3-1: 0] axi_arprot_i  ,
-                                input                [4-1: 0] axi_arQOS_i   ,
-                                input                [4-1: 0] axi_arregion_i,
-                                input                [4-1: 0] axi_aruser_i  ,
-                                input                         axi_arvalid_i ,
-                                output reg		                axi_arready_o ,
+                                input           [15: 0]       arid    ,
+                                input           [ADDRESS_WIDTH-1: 0] araddr  ,
+                                input                [7:0] arlen   ,
+                                input                [2:0] arsize  ,
+                                input                [1:0] arburst ,
+                                input                [1:0] arlock  ,
+                                input                [3:0] arcache ,
+                                input                [2:0] arprot  ,
+                                input                [3:0] arQOS   ,
+                                input                [3:0] arregion,
+                                input                [3:0] aruser  ,
+                                input                         arvalid ,
+                                output reg		                arready ,
                                 //Read Data Channel
-                                output reg      [AXI_IW-1: 0] axi_rid_o     ,
-                                output reg      [AXI_DW-1: 0] axi_rdata_o   ,
-                                output reg      [AXI_SW-1: 0] axi_rstrb_o   ,
-                                output reg           [2-1: 0] axi_rresp_o   ,
-                                output reg                    axi_rlast_o   ,
-                                output reg           [4-1: 0] axi_ruser_o   ,
-                                output reg                    axi_rvalid_o  ,
-                                input		     	                axi_rready_i  
+                                output reg      [15:0] rid     ,
+                                output reg      [DATA_WIDTH-1: 0] rdata   ,
+                                output reg      [(DATA_WIDTH/8)-1: 0] rstrb   ,
+                                output reg           [1:0] rresp   ,
+                                output reg                    rlast   ,
+                                output reg           [3:0] ruser   ,
+                                output reg                    rvalid  ,
+                                input		     	                rready  
                               ); 
   //-------------------------------------------------------
   // Importing UVM Package 
@@ -84,69 +83,69 @@ interface axi4_slave_driver_bfm(input                         aclk          ,
 
   string name = "AXI4_SLAVE_DRIVER_BFM";
 
-  reg [	AXI_IW-1: 0]	mem_wid		  [MEM_ID];
-  reg [	AXI_AW-1: 0]	mem_waddr	  [MEM_ID];
-  reg [	8-1	: 0]	    mem_wlen	  [256];
-  reg [	3-1	: 0]	    mem_wsize	  [MEM_ID];
-  reg [ 2-1	: 0]	    mem_wburst  [MEM_ID];
-  reg [ 2-1	: 0]	    mem_wlock	  [MEM_ID];
-  reg [ 4-1	: 0]	    mem_wcache  [MEM_ID];
-  reg [ 3-1	: 0]	    mem_wprot	  [MEM_ID];
-  reg [ 4-1	: 0]	    mem_wQOS  	[MEM_ID];
-  reg [ 4-1	: 0]	    mem_wregion	[MEM_ID];
-  reg [ 4-1	: 0]	    mem_wuser	  [MEM_ID];
-
-  reg [	AXI_IW-1: 0]	mem_rid		  [MEM_ID];
-  reg [	AXI_AW-1: 0]	mem_raddr	  [MEM_ID];
-  reg [	8-1	: 0]	    mem_rlen	  [256];
-  reg [	3-1	: 0]	    mem_rsize	  [MEM_ID];
-  reg [ 2-1	: 0]	    mem_rburst  [MEM_ID];
-  reg [ 2-1	: 0]	    mem_rlock	  [MEM_ID];
-  reg [ 4-1	: 0]	    mem_rcache  [MEM_ID];
-  reg [ 3-1	: 0]	    mem_rprot	  [MEM_ID];
-  reg [ 4-1	: 0]	    mem_rQOS   	[MEM_ID];
-  reg [ 4-1	: 0]	    mem_rregion [MEM_ID];
-  reg [ 4-1	: 0]	    mem_ruser	  [MEM_ID];
-
-  task wait_for_system_reset();
-    @(posedge aclk);
-    if(!aresetn) begin
-      `uvm_info(name,$sformatf("SYSTEM RESET ACTIVATED"),UVM_NONE)
-    end
-    else begin
-      `uvm_info(name,$sformatf("SYSTEM RESET DI-ACTIVATED"),UVM_NONE)
-    end
-  endtask 
-  
-  
-  task axi_write_address_phase();
-    
-    @(posedge aclk)begin
-      if(!aresetn)begin
-      end
-      else begin
-        if(axi_awvalid_i)begin
-          mem_wid 	[i]	  <= axi_awid_i  	;	
-			    mem_waddr	[i] 	<= axi_awaddr_i	;	
-			    mem_wlen 	[i]	  <= axi_awlen_i	;	
-			    mem_wsize	[i] 	<= axi_awsize_i	;	
-			    mem_wburst[i] 	<= axi_awburst_i;	
-			    mem_wlock	[i] 	<= axi_awlock_i	;	
-			    mem_wcache[i] 	<= axi_awcache_i;	
-			    mem_wprot	[i] 	<= axi_awprot_i	;	
-			    i <= i+1;
-        end
-      end
-    end
-    assign axi_awready_o = axi_awvalid_i;
-  endtask
-
-  task axi_write_data_phase();
-
-    @(posedge aclk);
-
-    
-  endtask
+//  reg [	15: 0]	mem_wid		  [MEMD];
+//  reg [	ADDRESS_WIDTH-1: 0]	mem_waddr	  [MEMD];
+//  reg [	7:0]	    mem_wlen	  [256];
+//  reg [	2:0]	    mem_wsize	  [MEMD];
+//  reg [ 1	: 0]	    mem_wburst  [MEMD];
+//  reg [ 1	: 0]	    mem_wlock	  [MEMD];
+//  reg [ 3	: 0]	    mem_wcache  [MEMD];
+//  reg [ 2	: 0]	    mem_wprot	  [MEMD];
+//  reg [ 3	: 0]	    mem_wQOS  	[MEMD];
+//  reg [ 3	: 0]	    mem_wregion	[MEMD];
+//  reg [ 3	: 0]	    mem_wuser	  [MEMD];
+//
+//  reg [	15: 0]	mem_rid		  [MEMD];
+//  reg [	ADDRESS_WIDTH-1: 0]	mem_raddr	  [MEMD];
+//  reg [	7	: 0]	    mem_rlen	  [256];
+//  reg [	2	: 0]	    mem_rsize	  [MEMD];
+//  reg [ 1	: 0]	    mem_rburst  [MEMD];
+//  reg [ 1	: 0]	    mem_rlock	  [MEMD];
+//  reg [ 3	: 0]	    mem_rcache  [MEMD];
+//  reg [ 2	: 0]	    mem_rprot	  [MEMD];
+//  reg [ 3	: 0]	    mem_rQOS   	[MEMD];
+//  reg [ 3	: 0]	    mem_rregion [MEMD];
+//  reg [ 3	: 0]	    mem_ruser	  [MEMD];
+//
+//  task wait_for_system_reset();
+//    @(posedge aclk);
+//    if(!aresetn) begin
+//      `uvmnfo(name,$sformatf("SYSTEM RESET ACTIVATED"),UVM_NONE)
+//    end
+//    else begin
+//      `uvmnfo(name,$sformatf("SYSTEM RESET DI-ACTIVATED"),UVM_NONE)
+//    end
+//  endtask 
+//  
+//  
+//  task .write_address_phase();
+//    
+//    @(posedge aclk)begin
+//      if(!aresetn)begin
+//      end
+//      else begin
+//        if(.awvalid)begin
+//          mem_wid 	[i]	  <= .awid  	;	
+//			    mem_waddr	[i] 	<= .awaddr	;	
+//			    mem_wlen 	[i]	  <= .awlen	;	
+//			    mem_wsize	[i] 	<= .awsize	;	
+//			    mem_wburst[i] 	<= .awburst;	
+//			    mem_wlock	[i] 	<= .awlock	;	
+//			    mem_wcache[i] 	<= .awcache;	
+//			    mem_wprot	[i] 	<= .awprot	;	
+//			    i <= i+1;
+//        end
+//      end
+//    end
+//    assign .awready = .awvalid;
+//  endtask
+//
+//  task write_data_phase();
+//
+//    @(posedge aclk);
+//
+//    
+//  endtask
     
 
     

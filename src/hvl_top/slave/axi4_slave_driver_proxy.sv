@@ -66,7 +66,7 @@ endfunction  : end_of_elaboration_phase
 //--------------------------------------------------------------------------------------------
 task axi4_slave_driver_proxy::run_phase(uvm_phase phase);
 
-  axi4_slave_drv_bfm_h.wait_for_system_reset();
+  //axi4_slave_drv_bfm_h.wait_for_system_reset();
 
 endtask : run_phase 
 
