@@ -69,8 +69,8 @@ endfunction : build_phase
 function void axi4_base_test:: setup_axi4_env_cfg();
   
   axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
-
- // axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
+  
+  // axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
  
   axi4_env_cfg_h.has_scoreboard = 1;
   axi4_env_cfg_h.has_virtual_seqr = 1;
@@ -79,14 +79,13 @@ function void axi4_base_test:: setup_axi4_env_cfg();
 
   // Setup the axi4_master agent cfg 
   setup_axi4_master_agent_cfg();
+  
   //Setting the master agent configuration into config_db
   //uvm_config_db#(axi4_master_agent_config)::set(this,"*master_agent*","axi4_master_agent_config",axi4_env_cfg_h.axi4_master_agent_cfg_h);
   //Displaying the master agent configuration
   //`uvm_info(get_type_name(),$sformatf("\nAXI4_MASTER_AGENT_CONFIG\n%s",axi4_env_cfg_h.axi4_master_agent_cfg_h.sprint()),UVM_LOW);
 
-
   setup_axi4_slave_agent_cfg();
-
 
   // set method for axi4_env_cfg
   uvm_config_db #(axi4_env_config)::set(this,"*","axi4_env_config",axi4_env_cfg_h);
@@ -108,7 +107,8 @@ function void axi4_base_test::setup_axi4_master_agent_cfg();
     axi4_master_agent_config::type_id::create("axi4_master_agent_cfg_h");
     axi4_env_cfg_h.axi4_master_agent_cfg_h[i].is_active   = uvm_active_passive_enum'(UVM_ACTIVE);
     axi4_env_cfg_h.axi4_master_agent_cfg_h[i].has_coverage = 1; 
-    uvm_config_db#(axi4_master_agent_config)::set(this,"*axi4_master_agent*","axi4_master_agent_config",axi4_env_cfg_h.axi4_master_agent_cfg_h[i]);
+    uvm_config_db#(axi4_master_agent_config)::set(this,"*axi4_master_agent*","axi4_master_agent_config",
+                   axi4_env_cfg_h.axi4_master_agent_cfg_h[i]);
   end
 
 
@@ -124,7 +124,8 @@ function void axi4_base_test::setup_axi4_master_agent_cfg();
       axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_min_addr_range(i,local_max_address + SLAVE_MEMORY_GAP);
       local_min_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_min_addr_range_array[i];
       
-      axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_max_addr_range(i,local_max_address+ 2**(SLAVE_MEMORY_SIZE)-1 + SLAVE_MEMORY_GAP);
+      axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_max_addr_range(i,local_max_address+ 2**(SLAVE_MEMORY_SIZE)-1 + 
+                                                                      SLAVE_MEMORY_GAP);
       local_max_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_max_addr_range_array[i];
     end
   end
@@ -143,8 +144,10 @@ function void axi4_base_test::setup_axi4_slave_agent_cfg();
     axi4_slave_agent_config::type_id::create("axi4_slave_agent_cfg_h");
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].slave_id = i;
     //axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].slave_selected = 0;
-    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].min_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_min_addr_range_array[i];
-    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].max_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_max_addr_range_array[i];
+    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].min_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].
+                                                           master_min_addr_range_array[i];
+    axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].max_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].
+                                                           master_max_addr_range_array[i];
     if(SLAVE_AGENT_ACTIVE === 1) begin
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].is_active    = uvm_active_passive_enum'(UVM_ACTIVE);
     end
@@ -154,7 +157,8 @@ function void axi4_base_test::setup_axi4_slave_agent_cfg();
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].has_coverage = 1; 
     uvm_config_db #(axi4_slave_agent_config)::set(this,$sformatf("*axi4_slave_agent_h[%0d]*",i),
                                              "axi4_slave_agent_config", axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]);   
-   `uvm_info(get_type_name(),$sformatf("\nAXI4_SLAVE_CONFIG[%0d]\n%s",i,axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].sprint()),UVM_LOW);
+   `uvm_info(get_type_name(),$sformatf("\nAXI4_SLAVE_CONFIG[%0d]\n%s",i,axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].sprint()),
+            UVM_LOW);
   end
 endfunction: setup_axi4_slave_agent_cfg
 

@@ -20,8 +20,6 @@ class axi4_slave_agent_config extends uvm_object;
   //Gives the slave id
   int slave_id;
   
- 
-
   //Variable : max_address
   //Used to store the maximum address value of this slave
   bit [ADDRESS_WIDTH-1:0]max_address;
