@@ -37,6 +37,7 @@ class axi4_slave_agent_config extends uvm_object;
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new(string name = "axi4_slave_agent_config");
+  extern function void do_print(uvm_printer printer);
   extern virtual task slave_memory_task(bit [ADDRESS_WIDTH-1:0]slave_address, bit [DATA_WIDTH-1:0]data);
 endclass : axi4_slave_agent_config
 
@@ -60,6 +61,23 @@ endfunction : new
 task axi4_slave_agent_config::slave_memory_task(bit [ADDRESS_WIDTH-1 :0]slave_address, bit [DATA_WIDTH-1:0]data);
   slave_memory[slave_address] = data;
 endtask : slave_memory_task
+//--------------------------------------------------------------------------------------------
+// Function: do_print method
+// Print method can be added to display the data members values
+//
+// Parameters:
+//  printer - uvm_printer
+//--------------------------------------------------------------------------------------------
+function void axi4_slave_agent_config::do_print(uvm_printer printer);
+  super.do_print(printer);
+
+  printer.print_string ("is_active"    ,is_active.name());
+  printer.print_field ("slave_id"     ,slave_id,      $bits(slave_id),      UVM_DEC);
+  printer.print_field ("has_coverage" ,has_coverage,  $bits(has_coverage),  UVM_DEC);
+  printer.print_field ("max_address"  ,max_address,   $bits(max_address),   UVM_HEX);
+  printer.print_field ("min_address"  ,min_address,   $bits(max_address),   UVM_HEX);
+         
+endfunction : do_print
 
 
 `endif

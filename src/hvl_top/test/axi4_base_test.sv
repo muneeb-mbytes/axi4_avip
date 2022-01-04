@@ -89,7 +89,7 @@ function void axi4_base_test:: setup_axi4_env_cfg();
 
   // set method for axi4_env_cfg
   uvm_config_db #(axi4_env_config)::set(this,"*","axi4_env_config",axi4_env_cfg_h);
- // `uvm_info(get_type_name(),$sformatf("\nAXI4_ENV_CONFIG\n%s",axi4_env_cfg_h.sprint()),UVM_LOW);
+  `uvm_info(get_type_name(),$sformatf("\nAXI4_ENV_CONFIG\n%s",axi4_env_cfg_h.sprint()),UVM_LOW);
 
 endfunction: setup_axi4_env_cfg
 
@@ -129,6 +129,7 @@ function void axi4_base_test::setup_axi4_master_agent_cfg();
                                                                       SLAVE_MEMORY_GAP);
       local_max_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_max_addr_range_array[i];
     end
+   `uvm_info(get_type_name(),$sformatf("\nAXI4_MASTER_CONFIG[%0d]\n%s",i,axi4_env_cfg_h.axi4_master_agent_cfg_h[i].sprint()),UVM_LOW);
   end
 
 endfunction: setup_axi4_master_agent_cfg
@@ -159,6 +160,7 @@ function void axi4_base_test::setup_axi4_slave_agent_cfg();
     
     uvm_config_db #(axi4_slave_agent_config)::set(this,"*env*",$sformatf("axi4_slave_agent_config[%0d]",i), axi4_env_cfg_h.axi4_slave_agent_cfg_h[i]);   
    `uvm_info(get_type_name(),$sformatf("\nAXI4_SLAVE_CONFIG[%0d]\n%s",i,axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].sprint()),UVM_LOW);
+
   end
 endfunction: setup_axi4_slave_agent_cfg
 

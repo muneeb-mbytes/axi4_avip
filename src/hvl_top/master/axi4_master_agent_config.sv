@@ -55,6 +55,7 @@ class axi4_master_agent_config extends uvm_object;
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new(string name = "axi4_master_agent_config");
+  extern function void do_print(uvm_printer printer);
   extern function void master_min_addr_range(int slave_number, bit [ADDRESS_WIDTH-1:0]slave_min_address_range);
   extern function void master_max_addr_range(int slave_number, bit [ADDRESS_WIDTH-1:0]slave_max_address_range);
 endclass : axi4_master_agent_config
@@ -91,6 +92,23 @@ endfunction : master_max_addr_range
 function void axi4_master_agent_config::master_min_addr_range(int slave_number, bit[ADDRESS_WIDTH-1:0]slave_min_address_range);
   master_min_addr_range_array[slave_number] = slave_min_address_range;
 endfunction : master_min_addr_range
+function void axi4_master_agent_config::do_print(uvm_printer printer);
+  super.do_print(printer);
+
+  printer.print_string ("is_active",is_active.name());
+  printer.print_field ("has_coverage",  has_coverage, $bits(has_coverage),  UVM_DEC);
+  printer.print_field ("no_of_slaves",  no_of_slaves, $bits(no_of_slaves),  UVM_DEC);
+  printer.print_field ("no_of_masters", no_of_masters,$bits(no_of_masters), UVM_DEC);
+            
+              
+  foreach(master_max_addr_range_array[i]) begin
+  printer.print_field($sformatf("master_min_addr_range_array[%0d]",i),master_min_addr_range_array[i],
+                                                  $bits(master_min_addr_range_array[i]),UVM_HEX);
+  printer.print_field($sformatf("master_max_addr_range_array[%0d]",i),master_max_addr_range_array[i],
+                                                  $bits(master_max_addr_range_array[i]),UVM_HEX);
+  end
+
+endfunction : do_print
 
 
 `endif
