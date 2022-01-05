@@ -151,8 +151,8 @@ package axi4_globals_pkg;
   //Enum: endian_e
   //Used to declare enum type for the endians
   typedef enum bit {
-    BIG_ENDIAN    = 1'b0
-    LITTLE_ENDIAN = 1'b1,
+    BIG_ENDIAN    = 1'b0,
+    LITTLE_ENDIAN = 1'b1
   } endian_e;
 
   //Enum: awprot_e 
@@ -288,7 +288,7 @@ package axi4_globals_pkg;
   // Struct used in axi4_avip is given below
   //-------------------------------------------------------
 
-  //Struct: axi4_transfer_char_s
+  //Struct: axi4_w_transfer_char_s
   //This struct datatype consists of all signals which are used for seq item conversion
   typedef struct {
     //Write_address_channel
@@ -308,6 +308,12 @@ package axi4_globals_pkg;
     //Write Response Channel
     bit [15:0]  bid;
     bit [1:0]   bresp;
+  }axi4_w_transfer_char_s;
+    
+  //Struct: axi4_r_transfer_char_s
+  //This struct datatype consists of all signals which are used for seq item conversion
+  typedef struct {
+    
     //Read Address Channel
     bit [15:0]  arid;
     bit [7:0]   arlen;
@@ -322,7 +328,8 @@ package axi4_globals_pkg;
     bit [DATA_WIDTH-1: 0]     rdata;
     bit [(DATA_WIDTH/8)-1: 0] rstrb;
     bit [1:0]                 rresp; 
-  } axi4_transfer_char_s;
+  } axi4_r_transfer_char_s;
+  
   
   //Struct: axi4_cfg_char_s
   //This struct datatype consists of all configurations which are used for seq item conversion
