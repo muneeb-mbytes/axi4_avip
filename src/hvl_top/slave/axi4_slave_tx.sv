@@ -156,7 +156,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : rdata
   //Used to send the read data 
-  rand bit [DATA_WIDTH-1:0] rdata [$:32];
+  rand bit [DATA_WIDTH-1:0]rdata[$:DATA_WIDTH];
 
   //Variable : rlast
   //Used to represent the last byte of the transaction
@@ -174,7 +174,9 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to store the read response
   rand rresp_e rresp ;
 
-  constraint rdata_c {rdata.size() == arlen+1; }
+  //Constraint : rdata_c1
+  //Adding constraint to restrict the read data based on awlength
+  constraint rdata_c1 {rdata.size() == arlen+1; }
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
