@@ -334,7 +334,7 @@ package axi4_globals_pkg;
     //Read Data Channel
     bit [15:0]                rid;
     bit [DATA_WIDTH-1: 0]     rdata[$:DATA_WIDTH];
-    bit [(DATA_WIDTH/8)-1: 0] rstrb;
+    //bit [(DATA_WIDTH/8)-1: 0] rstrb;
     bit [1:0]                 rresp; 
   } axi4_r_transfer_char_s;
   
