@@ -27,7 +27,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn);
   axi4_slave_monitor_proxy axi4_slave_mon_proxy_h;
 
   initial begin
-     `uvm_info("axi4 slave monitor bfm",$sformatf("AXI4 SLAVE MONITOR BFM"),UVM_LOW);
+    `uvm_info("axi4 slave monitor bfm",$sformatf("AXI4 SLAVE MONITOR BFM"),UVM_LOW);
   end
 
 endinterface : axi4_slave_monitor_bfm
