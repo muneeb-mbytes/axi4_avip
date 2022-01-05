@@ -2,8 +2,10 @@
 `define VIRTUAL_SEQUENCER_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// Class: virtual_sequencer
-// <Description_here>
+// class: virtual_sequencer
+// description of the class.
+//  
+// this class contains the handle of actual sequencer pointing towards them
 //--------------------------------------------------------------------------------------------
 class virtual_sequencer extends uvm_sequencer#(uvm_sequence_item);
   `uvm_component_utils(virtual_sequencer)
@@ -42,10 +44,10 @@ endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Function: build_phase
-// <Description_here>
+// creates the required ports
 //
 // Parameters:
-//  phase - uvm phase
+//  phase - stores the current phase
 //--------------------------------------------------------------------------------------------
 function void virtual_sequencer::build_phase(uvm_phase phase);
   super.build_phase(phase);
