@@ -56,11 +56,11 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : wdata
   //Used to randomise write data
-  rand bit[DATA_WIDTH-1:0]wdata;
+  rand bit[DATA_WIDTH-1:0]wdata[$:DATA_WIDTH];
 
   //Variable : wstrb
   //Used to randomise write strobe
-  rand bit[DATA_WIDTH/8-1:0]wstrb;
+  rand bit[(DATA_WIDTH/8)-1:0]wstrb[$:DATA_WIDTH];
 
   //Variable : wlast
   //Used to store the write last transfer
@@ -128,11 +128,11 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : rdata
   //Used to randomise read data
-  rand bit[DATA_WIDTH-1:0]rdata;
+  rand bit[DATA_WIDTH-1:0]rdata[$:DATA_WIDTH];
 
   //Variable : rstrb
   //Used to randomise read strobe
-  rand bit[DATA_WIDTH/8-1:0]rstrb;
+  rand bit[(DATA_WIDTH/8)-1:0]rstrb[$:DATA_WIDTH];
 
   //Variable : rresp
   //Used to capture the read response of the trasnaction
@@ -150,10 +150,83 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to send the read ready
   //bit rready;
 
+  //Variable :  endian
+  //Used to differentiate the type of memory storage
+  rand endian_e endian;
+
+  //-------------------------------------------------------
+  // WRITE ADDRESS Constraints
+  //-------------------------------------------------------
+  //Constraint : awburst_c1
+  //Restricting write burst to select only FIXED, INCR and WRAP types
+  constraint awburst_c1{awburst != WRITE_RESERVED;}
+
+  //Constraint : awlength_c2
+  //Adding constraint for restricting write trasnfers
+  constraint awlength_c2{if(awburst==WRITE_FIXED || WRITE_WRAP)
+                           awlen inside {[0:15]};
+                         else if(awburst == WRITE_INCR) 
+                           awlen inside {[0:255]};
+                        }
+
+  //Constraint : awlength_c3
+  //Adding constraint for restricting to get multiples of 2 in wrap burst
+  constraint awlength_c3{if(awburst == WRITE_WRAP)
+                            awlen + 1 inside {2,4,8,16};
+                        }
+  
+  //Constraint : awlock_c4
+  //Adding constraint to select the lock transfer type
+  constraint awlock_c4{soft awlock == WRITE_NORMAL_ACCESS;}
+
+  //-------------------------------------------------------
+  // WRITE DATA Constraints
+  //-------------------------------------------------------
+  //Constraint : wdata_c1
+  //Adding constraint to restrict the write data based on awlength
+  constraint wdata_c1{wdata.size() == awlen + 1;} 
+
+  //Constraint : wstrb_c2
+  //Adding constraint to restrict the write strobe based on awlength
+  constraint wstrb_c2{wstrb.size() == awlen + 1;}
+
+  //-------------------------------------------------------
+  // READ ADDRESS Constraints
+  //-------------------------------------------------------
+  //Constraint : arburst_c1
+  //Restricting read burst to select only FIXED, INCR and WRAP types
+  constraint arburst_c1{arburst != READ_RESERVED;}
+
+  //Constraint : arlength_c2
+  //Adding constraint for restricting read trasnfers
+  constraint arlength_c2{if(arburst==READ_FIXED || READ_WRAP)
+                           arlen inside {[0:15]};
+                         else if(arburst == READ_INCR) 
+                           arlen inside {[0:255]};
+                        }
+  
+  //Constraint : arlength_c3
+  //Adding constraint for restricting to get multiples of 2 in wrap burst
+  constraint arlength_c3{if(arburst == READ_WRAP)
+                            arlen + 1 inside {2,4,8,16};
+                        }
+
+  //Constraint : arlock_c9
+  //Adding constraint to select the lock transfer type
+  constraint arlock_c4{soft arlock == READ_NORMAL_ACCESS;}
+
+  //-------------------------------------------------------
+  // Memory Constraints
+  //-------------------------------------------------------
+  //Constraint : endian_c1
+  //Adding constraint to select the endianess
+  constraint endian_c1{soft endian == LITTLE_ENDIAN;}
+
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new(string name = "axi4_master_tx");
+  extern function void post_randomize();
   extern function void do_copy(uvm_object rhs);
   extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
   extern function void do_print(uvm_printer printer);
@@ -169,6 +242,61 @@ endclass : axi4_master_tx
 function axi4_master_tx::new(string name = "axi4_master_tx");
   super.new(name);
 endfunction : new
+
+//--------------------------------------------------------------------------------------------
+// Function : post_randomize
+// Selects the address based on the slave selected
+//--------------------------------------------------------------------------------------------
+function void axi4_master_tx::post_randomize();
+  
+  ////Variable : index
+  ////Used to store the address_range index value
+  //int index;
+
+  ////Derive the slave number using the index
+  //for(int i=0; i<NO_OF_SLAVES; i++) begin
+  //  if(pselx[i]) begin
+  //    index = i;
+  //  end
+  //end
+ 
+  ////Randmoly chosing paddr value between a given range
+  //if (!std::randomize(awaddr) with { awaddr inside {[axi4_master_agent_cfg_h.master_min_addr_range_array[index]:axi4_master_agent_cfg_h.master_max_addr_range_array[index]]};
+  //  //awaddr %4 == 0;
+  //  //wdata.size() == (awlen+1) * (2**awsize)
+  //}) begin
+  //  `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize awaddr"));
+  //end
+
+  //Used to restrict the address inside the 4kb boundary
+  if(!std::randomize(awaddr) with {awaddr % 4096 == 0;})begin
+    `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize AWADDR"));
+  end
+
+  //Used to restrict the wdata so that it should not exceed 4kb address boundary
+  //if(!std::randomize(wdata) with {(wdata.size()*DATA_WIDTH)/8 == axi4_master_agent_cfg_h[0].master_max_addr_range_array[0] - awaddr;}) begin
+  //  `uvm_fatal("FATAL_STD_RANDOMIZATION_WDATA", $sformatf("Not able to randomize WDATA"));
+  //end
+
+  //Used to restrict the wdata so that it should not exceed 4kb boundary
+  if(!std::randomize(wstrb) with {wstrb.size() == wdata.size();}) begin
+    `uvm_fatal("FATAL_STD_RANDOMIZATION_WSTRB", $sformatf("Not able to randomize WSTRB"));
+  end
+
+  //Used to make wdata byte non-zero when strobe is high for that byte lane
+  for(int i=0; i<DATA_WIDTH/8; i++) begin
+    if(wstrb[i]) begin
+      //`uvm_info(get_type_name(),$sformatf("MASTER-TX-strb[%0d]=%0d",i,strb[i]),UVM_HIGH);
+      if(!std::randomize(wdata) with {wdata[i][8*i+7 -: 8] != 0;}) begin
+        `uvm_fatal("FATAL_STD_RANDOMIZATION_WDATA", $sformatf("Not able to randomize wdata"));
+      end
+      else begin
+        `uvm_info(get_type_name(),$sformatf("MASTER-TX-wdata[%0d]=%0h",8*i+7,wdata[i][8*i+7 +: 8]),UVM_HIGH);
+      end 
+    end
+  end
+
+endfunction : post_randomize
 
 //--------------------------------------------------------------------------------------------
 // Function : do_copy
@@ -277,8 +405,8 @@ function void axi4_master_tx::do_print(uvm_printer printer);
   printer.print_string("awprot",awprot.name());
   printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
   `uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
-  printer.print_field("wdata",wdata,$bits(wdata),UVM_HEX);
-  printer.print_field("wstrb",wstrb,$bits(wstrb),UVM_HEX);
+  //printer.print_field("wdata",wdata,$bits(wdata),UVM_HEX);
+  //printer.print_field("wstrb",wstrb,$bits(wstrb),UVM_HEX);
   `uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","----------------------------------------",UVM_LOW);
   printer.print_string("bid",bid.name());
   printer.print_string("bresp",bresp.name());
@@ -293,9 +421,10 @@ function void axi4_master_tx::do_print(uvm_printer printer);
   printer.print_string("arprot",arprot.name());
   printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
   `uvm_info("------------------------------------------READ_DATA_CHANNEL","----------------------------------------",UVM_LOW);
-  printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
-  printer.print_field("rstrb",rstrb,$bits(rstrb),UVM_HEX);
+  //printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
+  //printer.print_field("rstrb",rstrb,$bits(rstrb),UVM_HEX);
   printer.print_string("rresp",rresp.name());
 endfunction : do_print
 
 `endif
+
