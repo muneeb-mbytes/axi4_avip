@@ -320,27 +320,29 @@ package axi4_globals_pkg;
   //-------------------------------------------------------
 
 
-  typedef struct {
-
-  //Read Address Channel
-    bit [15:0]              arid      ;
-    bit [7:0]               arlen     ;
-    bit [2:0]               arsize    ;
-    bit [1:0]               arburst   ;
-    bit                     arlock    ;
-    bit [3:0] arcache   ;
-    bit [2:0] arprot    ;
-    bit [3:0] arqos     ;
-
+    typedef struct {
+    
+    //Read Address Channel
+    bit [15:0]  arid;
+    bit [7:0]   arlen;
+    bit [2:0]   arsize;
+    bit [1:0]   arburst;
+    bit [3:0]   arcache;
+    bit [2:0]   arprot;
+    bit [3:0]   arqos;
+    bit         arlock;
     //Read Data Channel
-    bit     [15:0] rid       ;
-    bit     [DATA_WIDTH-1: 0] rdata     ;
-    bit     [(DATA_WIDTH/8)-1: 0] rstrb     ;
-    bit          [1:0] rresp; 
+    bit [15:0]                rid;
+    bit [DATA_WIDTH-1: 0]     rdata;
+    bit [(DATA_WIDTH/8)-1: 0] rstrb;
+    bit [1:0]                 rresp; 
   } axi4_r_transfer_char_s;
-
-  //Struct: axi4_cfg_char_s
-  //This struct datatype consists of all configurations which are used for seq item conversion
+  
+  //-------------------------------------------------------
+  // Struct: axi4_cfg_char_s
+  // //This struct datatype consists of all configurations 
+  // which are used for seq item conversion
+  //-------------------------------------------------------    
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] min_address;
     bit [ADDRESS_WIDTH-1:0] max_address;
