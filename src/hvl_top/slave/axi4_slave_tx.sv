@@ -156,11 +156,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : rdata
   //Used to send the read data 
-  rand bit [DATA_WIDTH-1:0] rdata;
-
-  //Variable : rstrb
-  //Used to hold the valid data byte lanes
-  rand bit [(DATA_WIDTH/8)-1:0] rstrb;
+  rand bit [DATA_WIDTH-1:0] rdata [$:32];
 
   //Variable : rlast
   //Used to represent the last byte of the transaction
@@ -176,7 +172,9 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : rresp
   //Used to store the read response
-  rand rresp_e rresp;
+  rand rresp_e rresp ;
+
+  constraint rdata_c {rdata.size() == arlen+1; }
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -250,7 +248,6 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
 
   rid     = axi_slave_tx_copy_obj.rid;
   rdata   = axi_slave_tx_copy_obj.rdata;
-  rstrb   = axi_slave_tx_copy_obj.rstrb;
   rlast   = axi_slave_tx_copy_obj.rlast;
 //  rready  = axi_slave_tx_copy.obj.rready;
 //  rvalid  = axi_slave_tx_copy.obj.rvalid;
@@ -312,7 +309,6 @@ function bit axi4_slave_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
 
   rid     == axi_slave_tx_compare_obj.rid  &&  
   rdata   == axi_slave_tx_compare_obj.rdata && 
-  rstrb   == axi_slave_tx_compare_obj.rstrb && 
   rlast   == axi_slave_tx_compare_obj.rlast ;
   //rready  == axi_slave_tx_compare.obj.rready &&
   //rvalid  == axi_slave_tx_compare.obj.rvalid ;
@@ -356,8 +352,7 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
   printer.print_string("arprot",arprot.name());
   printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
   `uvm_info("------------------------------------------READ_DATA_CHANNEL","----------------------------------------",UVM_LOW);
-  printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
-  printer.print_field("rstrb",rstrb,$bits(rstrb),UVM_HEX);
+  printer.print_field("rdata",rdata.size(),UVM_HEX);
   printer.print_string("rresp",rresp.name());
 
 endfunction : do_print
