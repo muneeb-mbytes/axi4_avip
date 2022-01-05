@@ -285,45 +285,60 @@ package axi4_globals_pkg;
 
 
   //-------------------------------------------------------
-  // Struct used in axi4_avip is given below
+  // Struct : axi4_w_transfer_char_s
+  //  This struct datatype consists of all write signals
+  //  which are used for seq item conversion
   //-------------------------------------------------------
-
-  //Struct: axi4_transfer_char_s
-  //This struct datatype consists of all signals which are used for seq item conversion
   typedef struct {
+
     //Write_address_channel
-    bit [15:0]  awid;
-    bit [7:0]   awlen;
-    bit [2:0]   awsize;
-    bit [1:0]   awburst;
-    bit [3:0]   awcache;
-    bit [2:0]   awprot;
-    bit         awlock;
-    bit         awvalid;
-    bit	        awready;
+    bit [15:0]              awid;
+    bit [7:0]               awlen;
+    bit [2:0]               awsize;
+    bit [1:0]               awburst;
+    bit                     awlock;
+    bit [3:0]               awcache;
+    bit [2:0]               awprot;
+    bit                     awvalid;
+    bit	                    awready;
+
     //Write_data_channel
     bit [DATA_WIDTH-1:0]     wdata;
     bit [(DATA_WIDTH/8)-1:0] wstrb;
     //bit                      wlast;
+
     //Write Response Channel
-    bit [15:0]  bid;
-    bit [1:0]   bresp;
-    //Read Address Channel
-    bit [15:0]  arid;
-    bit [7:0]   arlen;
-    bit [2:0]   arsize;
-    bit [1:0]   arburst;
-    bit [3:0]   arcache;
-    bit [2:0]   arprot;
-    bit [3:0]   arqos;
-    bit         arlock;
+    bit [15:0] bid;
+    bit [1:0] bresp;
+
+  }axi4_w_transfer_char_s; 
+
+  //-------------------------------------------------------
+  // Struct : axi4_r_transfer_char_s
+  //  This struct datatype consists of all read signals
+  //  which are used for seq item conversion
+  //-------------------------------------------------------
+
+
+  typedef struct {
+
+  //Read Address Channel
+    bit [15:0]              arid      ;
+    bit [7:0]               arlen     ;
+    bit [2:0]               arsize    ;
+    bit [1:0]               arburst   ;
+    bit                     arlock    ;
+    bit [3:0] arcache   ;
+    bit [2:0] arprot    ;
+    bit [3:0] arqos     ;
+
     //Read Data Channel
-    bit [15:0]                rid;
-    bit [DATA_WIDTH-1: 0]     rdata;
-    bit [(DATA_WIDTH/8)-1: 0] rstrb;
-    bit [1:0]                 rresp; 
-  } axi4_transfer_char_s;
-  
+    bit     [15:0] rid       ;
+    bit     [DATA_WIDTH-1: 0] rdata     ;
+    bit     [(DATA_WIDTH/8)-1: 0] rstrb     ;
+    bit          [1:0] rresp; 
+  } axi4_r_transfer_char_s;
+
   //Struct: axi4_cfg_char_s
   //This struct datatype consists of all configurations which are used for seq item conversion
   typedef struct {
