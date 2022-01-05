@@ -39,7 +39,9 @@ endfunction : new
  // Print method can be added to display the data members values                                     
  //--------------------------------------------------------------------------------------------      
  function void axi4_slave_cfg_converter:: do_print(uvm_printer printer);                            
-   axi4_transfer_cfg_s axi4_cfg;                                                                     
+   axi4_transfer_cfg_s axi4_cfg;                                                                       
+  printer.print_field("min_address",axi4_cfg.min_address,$bits(axi4_cfg.min_address),UVM_DEC);
+  printer.print_field("max_address",axi4_cfg.max_address,$bits(axi4_cfg.max_address),UVM_DEC);
    //printer.print_field("",$bits(),UVM_DEC);                                                        
  endfunction : do_print                                                                              
                                                                                                 
