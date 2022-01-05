@@ -21,6 +21,8 @@ package axi4_slave_pkg;
   //-------------------------------------------------------
   `include "axi4_slave_tx.sv"
   `include "axi4_slave_agent_config.sv"
+  `include "axi4_slave_seq_item_converter.sv"
+  `include "axi4_slave_cfg_converter.sv"
   `include "axi4_slave_coverage.sv"
   `include "axi4_slave_sequencer.sv"
   `include "axi4_slave_driver_proxy.sv"

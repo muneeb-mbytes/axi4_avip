@@ -17,7 +17,7 @@ class axi4_slave_seq_item_converter extends uvm_object;
   extern static function void from_r_class(input axi4_slave_tx input_conv, output axi4_r_transfer_char_s output_conv);
   extern static function void to_w_class(input axi4_w_transfer_char_s input_conv, output axi4_slave_tx output_conv_h);
   extern static function void to_r_class(input axi4_r_transfer_char_s input_conv, output axi4_slave_tx output_conv_h);
-  extern function void do_print(uvm_prinner printer);
+  extern function void do_print(uvm_printer printer);
 endclass : axi4_slave_seq_item_converter
 //------------------------------------------------------------------------------------------
 // Construct: new
@@ -36,8 +36,7 @@ endfunction : new
 // Parameters:                                                                                      
 // name - axi4_slave_tx, axi4_transfer_char_s                                                      
 //--------------------------------------------------------------------------------------------      
-function void axi4_slave_seq_item_converter::from_w_class(input axi4_slave_tx input_conv, output axi4_transfer_char_s output_conv);
-
+function void axi4_slave_seq_item_converter::from_w_class(input axi4_slave_tx input_conv, output axi4_w_transfer_char_s output_conv);
 
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
    
@@ -145,7 +144,7 @@ endfunction : from_r_class
 //--------------------------------------------------------------------------------------------      
 
 
-function axi4_slave_seq_item_converter::to_w_class(input axi4_transfer_char_s input_conv, output axi4_slave_tx output_conv_h);
+function void axi4_slave_seq_item_converter::to_w_class(input axi4_w_transfer_char_s input_conv, output axi4_slave_tx output_conv_h);
 
 
     output_conv_h = new();
@@ -196,7 +195,7 @@ endfunction : to_w_class
 
 
 
-function axi4_slave_seq_item_converter::to_r_class( input axi4_r_transfer_char_s input_conv, output axi4_slave_tx output_conv_h);
+function void axi4_slave_seq_item_converter::to_r_class( input axi4_r_transfer_char_s input_conv, output axi4_slave_tx output_conv_h);
 
   output_conv_h = new();
 

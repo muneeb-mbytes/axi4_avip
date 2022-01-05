@@ -16,8 +16,8 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
   //-------------------------------------------------------
   // AXI4 Slave Driver bfm instantiation
   //-------------------------------------------------------
-  axi4_slave_driver_bfm axi4_slave_drv_bfm_h (.aclk           (intf.aclk)         , 
-                                              .aresetn        (intf.aresetn)      ,
+  axi4_slave_driver_bfm axi4_slave_drv_bfm_h (.aclk     (intf.aclk)     , 
+                                              .aresetn  (intf.aresetn)  ,
                                               .awid     (intf.awid)     ,           
                                               .awaddr   (intf.awaddr)   ,  
                                               .awlen    (intf.awlen)    ,   

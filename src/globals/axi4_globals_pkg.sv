@@ -293,11 +293,13 @@ package axi4_globals_pkg;
 
     //Write_address_channel
     bit [15:0]              awid;
+    bit [ADDRESS_WIDTH-1:0] awaddr;
     bit [7:0]               awlen;
     bit [2:0]               awsize;
     bit [1:0]               awburst;
     bit                     awlock;
     bit [3:0]               awcache;
+    bit [3:0]               awqos;
     bit [2:0]               awprot;
     bit                     awvalid;
     bit	                    awready;
@@ -324,6 +326,7 @@ package axi4_globals_pkg;
     
     //Read Address Channel
     bit [15:0]  arid;
+    bit [ADDRESS_WIDTH-1:0] araddr;
     bit [7:0]   arlen;
     bit [2:0]   arsize;
     bit [1:0]   arburst;
