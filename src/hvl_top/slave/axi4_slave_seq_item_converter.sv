@@ -121,10 +121,7 @@ function void axi4_slave_seq_item_converter::from_r_class( input axi4_slave_tx i
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv.arqos),UVM_HIGH);
 
   output_conv.rdata = input_conv.rdata;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata =  %0h",output_conv.rdata),UVM_HIGH);
-
-  output_conv.rstrb = input_conv.rstrb;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rstrb =  %0h",output_conv.rstrb),UVM_HIGH);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata =  %0p",output_conv.rdata),UVM_HIGH);
 
   output_conv.araddr = input_conv.araddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv.araddr),UVM_HIGH);
@@ -232,9 +229,6 @@ function void axi4_slave_seq_item_converter::to_r_class( input axi4_r_transfer_c
   input_conv.rdata = output_conv_h.rdata;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata =  %0h",output_conv_h.rdata),UVM_HIGH);
 
-  input_conv.rstrb = output_conv_h.rstrb;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rstrb =  %0h",output_conv_h.rstrb),UVM_HIGH);
-
   input_conv.araddr = output_conv_h.araddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv_h.araddr),UVM_HIGH);
 
@@ -277,8 +271,12 @@ function void axi4_slave_seq_item_converter::do_print(uvm_printer printer);
  printer.print_field("rresp",axi4_r_st.rresp,$bits(axi4_r_st.rresp),UVM_DEC);
  //printer.print_field("araddr",axi4_r_st.araddr,$bits(axi4_r_st.araddr),UVM_DEC);
  //printer.print_field("arqos",axi4_r_st.arqos,$bits(axi4_r_st.arqos),UVM_DEC);
- printer.print_field("rdata",axi4_r_st.rdata,$bits(axi4_r_st.rdata),UVM_DEC);
- printer.print_field("rstrb",axi4_r_st.rstrb,$bits(axi4_r_st.rstrb),UVM_DEC);
+ //printer.print_field("rdata",axi4_r_st.rdata,$bits(axi4_r_st.rdata),UVM_DEC);
+ 
+ foreach(axi4_r_st.rdata[i]) begin
+    printer.print_field($sformatf("rdata[%0d]",i),axi4_r_st.rdata[i],$bits(axi4_r_st.rdata[i]),UVM_HEX);
+  end
+
 endfunction : do_print
 
 
