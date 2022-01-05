@@ -3,11 +3,12 @@
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_slave_sequencer
-// <Description_here>
 //--------------------------------------------------------------------------------------------
 class axi4_slave_sequencer extends uvm_sequencer#(axi4_slave_tx);
   `uvm_component_utils(axi4_slave_sequencer)
 
+  // Variable: axi4_slave_agent_cfg_h
+  // Declaring handle for slave agent config class 
   axi4_slave_agent_config axi4_slave_agent_cfg_h;
   
   //-------------------------------------------------------

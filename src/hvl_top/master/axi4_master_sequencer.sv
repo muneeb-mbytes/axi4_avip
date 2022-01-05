@@ -3,11 +3,12 @@
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_master_sequencer
-// <Description_here>
 //--------------------------------------------------------------------------------------------
 class axi4_master_sequencer extends uvm_sequencer#(axi4_master_tx);
   `uvm_component_utils(axi4_master_sequencer)
 
+  // Variable: axi4_master_agent_cfg_h
+  // Declaring handle for master agent config class 
   axi4_master_agent_config axi4_master_agent_cfg_h;
   
   //-------------------------------------------------------

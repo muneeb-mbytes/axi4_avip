@@ -2,8 +2,12 @@
 `define AXI4_MASTER_DRIVER_PROXY_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// Class: axi4_master_driver_proxy
-// <Description_here>
+//  Class: master_driver_proxy
+//  Description of the class
+//  Driver is written by extending uvm_driver,uvm_driver is inherited from uvm_component, 
+//  Methods and TLM port (seq_item_port) are defined for communication between sequencer and driver,
+//  uvm_driver is a parameterized class and it is parameterized with the type of the request 
+//  sequence_item and the type of the response sequence_item 
 //--------------------------------------------------------------------------------------------
 class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   `uvm_component_utils(axi4_master_driver_proxy)
@@ -42,7 +46,6 @@ endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Function: build_phase
-// <Description_here>
 //
 // Parameters:
 //  phase - uvm phase
@@ -56,7 +59,6 @@ endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
 // Function: connect_phase
-// <Description_here>
 //
 // Parameters:
 //  phase - uvm phase
@@ -67,7 +69,6 @@ endfunction : connect_phase
 
 //--------------------------------------------------------------------------------------------
 // Function: end_of_elaboration_phase
-// <Description_here>
 //
 // Parameters:
 //  phase - uvm phase
@@ -79,7 +80,6 @@ endfunction  : end_of_elaboration_phase
 
 //--------------------------------------------------------------------------------------------
 // Function: start_of_simulation_phase
-// <Description_here>
 //
 // Parameters:
 //  phase - uvm phase
@@ -90,7 +90,8 @@ endfunction : start_of_simulation_phase
 
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
-// <Description_here>
+// Gets the sequence_item, converts them to struct compatible transactions
+// and sends them to the BFM to drive the data over the interface
 //
 // Parameters:
 //  phase - uvm phase

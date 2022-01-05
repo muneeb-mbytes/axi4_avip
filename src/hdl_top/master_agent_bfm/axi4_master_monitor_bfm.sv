@@ -26,6 +26,7 @@ interface axi4_master_monitor_bfm(input aclk, input aresetn);
   //Creating the handle for proxy monitor
   axi4_master_monitor_proxy axi4_master_mon_proxy_h;
 
+  //Printing axi4 master monitor bfm
   initial begin
     `uvm_info("axi4 master monitor bfm",$sformatf("AXI4 MASTER MONITOR BFM"),UVM_LOW);
   end
