@@ -184,7 +184,18 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Adding constraint to restrict the read data based on awlength
   constraint rdata_c1 { rdata.size() == arlen+1; 
                       }
+  
 
+  //Constraint : bresp
+  //Adding constraint to select the type of write response
+  constraint bresp_c1 {soft bresp == WRITE_OKAY;
+                      }
+
+  //Constraint : rresp
+  //Adding constraint to select the type of read response
+  constraint rresp_c1 {soft rresp == READ_OKAY;
+                      }
+                    
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -263,6 +274,7 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   rid   = axi_slave_tx_copy_obj.rid;
   rdata = axi_slave_tx_copy_obj.rdata;
   rlast = axi_slave_tx_copy_obj.rlast;
+  rresp = axi_slave_tx_copy_obj.rresp;
   //rready  = axi_slave_tx_copy.obj.rready;
   //rvalid  = axi_slave_tx_copy.obj.rvalid;
 endfunction : do_copy
@@ -325,7 +337,8 @@ function bit axi4_slave_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   //READ DATA CHANNEL
   rid   == axi_slave_tx_compare_obj.rid  &&  
   rdata == axi_slave_tx_compare_obj.rdata && 
-  rlast == axi_slave_tx_compare_obj.rlast ;
+  rlast == axi_slave_tx_compare_obj.rlast &&
+  rresp == axi_slave_tx_compare_obj.rresp;
   //rready == axi_slave_tx_compare.obj.rready &&
   //rvalid == axi_slave_tx_compare.obj.rvalid ;
 endfunction : do_compare
