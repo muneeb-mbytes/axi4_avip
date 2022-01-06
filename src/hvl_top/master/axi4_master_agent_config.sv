@@ -12,19 +12,10 @@ class axi4_master_agent_config extends uvm_object;
   // Variable: is_active
   // Used for creating the agent in either passive or active mode
   uvm_active_passive_enum is_active=UVM_ACTIVE;  
-
-  // Variable: no_of_masters
-  // Used for specifying the number of masters connected to this axi4_master over axi4 interface
-  int no_of_masters;
-
-  // Variable: no_of_slaves
-  // Used for specifying the number of slaves connected to this axi4_master over axi4 interface
-  int no_of_slaves;
   
   // Variable: has_coverage
   // Used for enabling the master agent coverage
   bit has_coverage;
-
 
   //Variable: slave_no
   //Used to indicate the slave number
@@ -105,8 +96,6 @@ function void axi4_master_agent_config::do_print(uvm_printer printer);
   
   printer.print_string ("is_active",is_active.name());
   printer.print_field ("has_coverage",  has_coverage, $bits(has_coverage),  UVM_DEC);
-  printer.print_field ("no_of_slaves",  no_of_slaves, $bits(no_of_slaves),  UVM_DEC);
-  printer.print_field ("no_of_masters", no_of_masters,$bits(no_of_masters), UVM_DEC);
   
   //Memory Mapping Minimum and Maximum Address Range 
   foreach(master_max_addr_range_array[i]) begin
