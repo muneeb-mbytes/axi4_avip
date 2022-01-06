@@ -33,7 +33,7 @@ endfunction : new
 task axi4_master_read_seq::body();
   super.body();
   req = axi4_master_tx::type_id::create("req");
-  req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
+  //req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize()) begin

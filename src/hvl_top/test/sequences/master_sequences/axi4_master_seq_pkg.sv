@@ -20,6 +20,8 @@ package axi4_master_seq_pkg;
   // Importing the required packages
   //-------------------------------------------------------
   `include "axi4_master_base_seq.sv"
+  `include "axi4_master_read_seq.sv"
+  `include "axi4_master_write_seq.sv"
 
 
 endpackage : axi4_master_seq_pkg

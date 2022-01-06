@@ -20,6 +20,8 @@ package axi4_slave_seq_pkg;
   // Importing the required packages
   //-------------------------------------------------------
   `include "axi4_slave_base_seq.sv"
+  `include "axi4_slave_read_seq.sv"
+  `include "axi4_slave_write_seq.sv"
 
 
 endpackage : axi4_slave_seq_pkg

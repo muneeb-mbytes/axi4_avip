@@ -96,14 +96,14 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_scoreboard::run_phase(uvm_phase phase);
 
-  phase.raise_objection(this, "axi4_scoreboard");
+ // phase.raise_objection(this, "axi4_scoreboard");
 
-  super.run_phase(phase);
+ // super.run_phase(phase);
 
-  // Work here
-  // ...
+ // // Work here
+ // // ...
 
-  phase.drop_objection(this);
+ // phase.drop_objection(this);
 
 endtask : run_phase
 

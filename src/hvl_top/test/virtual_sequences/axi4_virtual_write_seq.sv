@@ -5,7 +5,7 @@
 // Class: axi4_virtual_write_seq
 // Creates and starts the master and slave sequences
 //--------------------------------------------------------------------------------------------
-class axi4_virtual_write_seq extends uvm_object;
+class axi4_virtual_write_seq extends axi4_virtual_seq_base;
   `uvm_object_utils(axi4_virtual_write_seq)
 
   //Variable: axi4_master_write_seq_h
@@ -39,17 +39,16 @@ endfunction : new
 // Creates and starts the data of master and slave sequences
 //--------------------------------------------------------------------------------------------
 task axi4_virtual_write_seq::body();
-  super.body();
   axi4_master_write_seq_h = axi4_master_write_seq::type_id::create("axi4_master_write_seq_h");
   axi4_slave_write_seq_h = axi4_slave_write_seq::type_id::create("axi4_slave_write_seq_h");
    fork
     forever begin
-      axi4_slave_write_seq_h.start(p_sequencer.axi4_slave_seqr_h);
+      axi4_slave_write_seq_h.start(p_sequencer.axi4_slave_write_seqr_h);
     end
   join_none
 
   repeat(5) begin
-    axi4_master_write_seq_h.start(p_sequencer.axi4_master_seqr_h);
+    axi4_master_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
   end
  endtask : body
 

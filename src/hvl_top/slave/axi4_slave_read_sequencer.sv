@@ -88,14 +88,14 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_slave_read_sequencer::run_phase(uvm_phase phase);
 
-  phase.raise_objection(this, "axi4_slave_read_sequencer");
+ // phase.raise_objection(this, "axi4_slave_read_sequencer");
 
-  super.run_phase(phase);
+ // super.run_phase(phase);
 
-  // Work here
-  // ...
+ // // Work here
+ // // ...
 
-  phase.drop_objection(this);
+ // phase.drop_objection(this);
 
 endtask : run_phase
 
