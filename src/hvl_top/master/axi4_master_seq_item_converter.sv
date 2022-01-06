@@ -14,10 +14,10 @@ class axi4_master_seq_item_converter extends uvm_object;
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new(string name = "axi4_master_seq_item_converter");
-  extern static function void from_w_class(input axi4_master_tx input_conv,output axi4_w_transfer_char_s output_conv);
-  extern static function void from_r_class(input axi4_master_tx input_conv,output axi4_r_transfer_char_s output_conv);
-  extern static function void to_w_class(input axi4_w_transfer_char_s input_conv,output axi4_master_tx output_conv_h);
-  extern static function void to_r_class(input axi4_r_transfer_char_s input_conv,output axi4_master_tx output_conv_h);
+  extern static function void from_write_class(input axi4_master_tx input_conv,output axi4_write_transfer_char_s output_conv);
+  extern static function void from_read_class(input axi4_master_tx input_conv,output axi4_read_transfer_char_s output_conv);
+  extern static function void to_write_class(input axi4_write_transfer_char_s input_conv,output axi4_master_tx output_conv_h);
+  extern static function void to_read_class(input axi4_read_transfer_char_s input_conv,output axi4_master_tx output_conv_h);
   extern function void do_print(uvm_printer printer);
 
 endclass : axi4_master_seq_item_converter
@@ -33,14 +33,14 @@ function axi4_master_seq_item_converter::new(string name = "axi4_master_seq_item
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
-// Function: from_w_class
+// Function: from_write_class
 // Converting seq_item transactions into struct data items
 //
 // Parameters:
-// name - axi4_master_tx, axi4_w_transfer_char_s
+// name - axi4_master_tx, axi4_write_transfer_char_s
 //--------------------------------------------------------------------------------------------
 
-function void axi4_master_seq_item_converter::from_w_class( input axi4_master_tx input_conv, output axi4_w_transfer_char_s output_conv);
+function void axi4_master_seq_item_converter::from_write_class( input axi4_master_tx input_conv, output axi4_write_transfer_char_s output_conv);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
  
   $cast(output_conv.awid,input_conv.awid); 
@@ -86,18 +86,18 @@ function void axi4_master_seq_item_converter::from_w_class( input axi4_master_tx
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb = %0p",output_conv.wstrb[i]),UVM_HIGH);
   end
 
-endfunction : from_w_class
+endfunction : from_write_class
 
 
 //--------------------------------------------------------------------------------------------
-// Function: from_r_class
+// Function: from_read_class
 // Converting seq_item transactions into struct data items
 //
 // Parameters:
-// name - axi4_master_tx, axi4_r_transfer_char_s
+// name - axi4_master_tx, axi4_read_transfer_char_s
 //--------------------------------------------------------------------------------------------
 
-function void axi4_master_seq_item_converter::from_r_class( input axi4_master_tx input_conv, output axi4_r_transfer_char_s output_conv);
+function void axi4_master_seq_item_converter::from_read_class( input axi4_master_tx input_conv, output axi4_read_transfer_char_s output_conv);
 
   $cast(output_conv.arid,input_conv.arid);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize arid =  %b",output_conv.arid),UVM_HIGH);
@@ -136,16 +136,16 @@ function void axi4_master_seq_item_converter::from_r_class( input axi4_master_tx
 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
   
-endfunction : from_r_class  
+endfunction : from_read_class  
 
 //--------------------------------------------------------------------------------------------
-// Function: to_w_class
+// Function: to_write_class
 // Converting struct data items into seq_item transactions
 //
 // Parameters:
-// name - axi4_master_tx, axi4_w_transfer_char_s
+// name - axi4_master_tx, axi4_write_transfer_char_s
 //--------------------------------------------------------------------------------------------
-function void axi4_master_seq_item_converter::to_w_class( input axi4_w_transfer_char_s input_conv, output axi4_master_tx output_conv_h);
+function void axi4_master_seq_item_converter::to_write_class( input axi4_write_transfer_char_s input_conv, output axi4_master_tx output_conv_h);
   output_conv_h = new();
 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
@@ -193,16 +193,16 @@ function void axi4_master_seq_item_converter::to_w_class( input axi4_w_transfer_
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb =  %0p",output_conv_h.wstrb),UVM_HIGH);
   end
 
-endfunction : to_w_class
+endfunction : to_write_class
 
 //--------------------------------------------------------------------------------------------
-// Function: to_r_class
+// Function: to_read_class
 // Converting struct data items into seq_item transactions
 //
 // Parameters:
-// name - axi4_master_tx, axi4_r_transfer_char_s
+// name - axi4_master_tx, axi4_read_transfer_char_s
 //--------------------------------------------------------------------------------------------
-function void axi4_master_seq_item_converter::to_r_class( input axi4_r_transfer_char_s input_conv, output axi4_master_tx output_conv_h);
+function void axi4_master_seq_item_converter::to_read_class( input axi4_read_transfer_char_s input_conv, output axi4_master_tx output_conv_h);
 
   output_conv_h = new();
 
@@ -242,7 +242,7 @@ function void axi4_master_seq_item_converter::to_r_class( input axi4_r_transfer_
   end
 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
-endfunction : to_r_class
+endfunction : to_read_class
 
 //--------------------------------------------------------------------------------------------
 // Function: do_print method
@@ -250,8 +250,8 @@ endfunction : to_r_class
 //--------------------------------------------------------------------------------------------
 function void axi4_master_seq_item_converter::do_print(uvm_printer printer);
 
-  axi4_w_transfer_char_s axi4_w_st;
-  axi4_r_transfer_char_s axi4_r_st;
+  axi4_write_transfer_char_s axi4_w_st;
+  axi4_read_transfer_char_s axi4_r_st;
   super.do_print(printer);
   printer.print_field("awid",axi4_w_st.awid,$bits(axi4_w_st.awid),UVM_DEC);
   printer.print_field("awlen",axi4_w_st.awlen,$bits(axi4_w_st.awlen),UVM_DEC);

@@ -142,7 +142,7 @@ interface axi4_slave_driver_bfm(input                        aclk    ,
   // Sampling the signals that are associated with write_address_channel
   //-------------------------------------------------------
 
-  task axi_write_address_phase(axi4_w_transfer_char_s struct_write_pkt);
+  task axi_write_address_phase(axi4_write_transfer_char_s struct_write_pkt);
     @(posedge aclk)begin
       `uvm_info(name,"INSIDE WRITE_ADDRESS_PHASE",UVM_LOW)
       if(!aresetn)begin
@@ -188,7 +188,7 @@ interface axi4_slave_driver_bfm(input                        aclk    ,
   // Samples the write data based on different burst types
   //-------------------------------------------------------
 
-  task axi_write_data_phase(axi4_w_transfer_char_s struct_write_pkt, axi4_transfer_cfg_s struct_cfg);
+  task axi_write_data_phase(axi4_write_transfer_char_s struct_write_pkt, axi4_transfer_cfg_s struct_cfg);
     @(posedge aclk) begin
       `uvm_info(name,"INSIDE WRITE_DATA_PHASE",UVM_LOW)
       assign wready = wvalid;
