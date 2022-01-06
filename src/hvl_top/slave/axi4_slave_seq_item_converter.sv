@@ -77,10 +77,11 @@ function void axi4_slave_seq_item_converter::from_w_class(input axi4_slave_tx in
    
    output_conv.awqos = input_conv.awqos;   
    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig awqos =  %0h",output_conv.awqos),UVM_HIGH);
-
-   output_conv.wdata = input_conv.wdata;
-   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wdata =  %0h",output_conv.wdata),UVM_HIGH);
-
+   
+   foreach(input_conv.wdata[i]) begin
+     output_conv.wdata[i] = input_conv.wdata[i];
+     `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wdata = %0h",output_conv.wdata[i]),UVM_HIGH);
+   end
    
    output_conv.wstrb = input_conv.wstrb;
    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wstrb =  %0h",output_conv.wstrb),UVM_HIGH);
@@ -120,8 +121,10 @@ function void axi4_slave_seq_item_converter::from_r_class( input axi4_slave_tx i
   output_conv.arqos = input_conv.arqos;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv.arqos),UVM_HIGH);
 
-  output_conv.rdata = input_conv.rdata;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata =  %0p",output_conv.rdata),UVM_HIGH);
+  foreach(input_conv.rdata[i]) begin
+    output_conv.rdata[i] = input_conv.rdata[i];
+    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata = %0p",output_conv.rdata[i]),UVM_HIGH);
+  end
 
   output_conv.araddr = input_conv.araddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv.araddr),UVM_HIGH);
@@ -226,8 +229,10 @@ function void axi4_slave_seq_item_converter::to_r_class( input axi4_r_transfer_c
   input_conv.arqos = output_conv_h.arqos;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
 
-  input_conv.rdata = output_conv_h.rdata;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata =  %0h",output_conv_h.rdata),UVM_HIGH);
+  foreach(output_conv_h.rdata[i]) begin
+    input_conv.rdata[i] = output_conv_h.rdata[i];
+    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata =  %0p",output_conv_h.rdata),UVM_HIGH);
+  end
 
   input_conv.araddr = output_conv_h.araddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv_h.araddr),UVM_HIGH);

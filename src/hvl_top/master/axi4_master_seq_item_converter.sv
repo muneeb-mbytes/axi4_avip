@@ -76,14 +76,18 @@ function void axi4_master_seq_item_converter::from_w_class( input axi4_master_tx
 //  output_conv.awqos = input_conv.awqos;
 //  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig awqos =  %0h",output_conv.awqos),UVM_HIGH);
 //
-  output_conv.wdata = input_conv.wdata;
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wdata =  %0p",output_conv.wdata),UVM_HIGH);
+  foreach(input_conv.wdata[i]) begin
+    output_conv.wdata[i] = input_conv.wdata[i];
+    `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wdata =  %0p",output_conv.wdata),UVM_HIGH);
+  end
 
-  output_conv.wstrb = input_conv.wstrb;
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb =  %0p",output_conv.wstrb),UVM_HIGH);
-
+  foreach(input_conv.wstrb[i]) begin
+    output_conv.wstrb[i] = input_conv.wstrb[i];
+    `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb = %0p",output_conv.wstrb[i]),UVM_HIGH);
+  end
 
 endfunction : from_w_class
+
 
 function void axi4_master_seq_item_converter::from_r_class( input axi4_master_tx input_conv, output axi4_r_transfer_char_s output_conv);
   
@@ -118,8 +122,10 @@ function void axi4_master_seq_item_converter::from_r_class( input axi4_master_tx
 //  output_conv.arqos = input_conv.arqos;
 //  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv.arqos),UVM_HIGH);
 //
-  output_conv.rdata = input_conv.rdata;
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig rdata =  %0p",output_conv.rdata),UVM_HIGH);
+  foreach(input_conv.rdata[i]) begin
+    output_conv.rdata[i] = input_conv.rdata[i];
+    `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig rdata = %0p",output_conv.rdata[i]),UVM_HIGH);
+  end
 
  // output_conv.araddr = input_conv.araddr;
  // `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv.araddr),UVM_HIGH);
@@ -173,11 +179,15 @@ function void axi4_master_seq_item_converter::to_w_class( input axi4_w_transfer_
 //  input_conv.awqos = output_conv_h.awqos;
 //  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig awqos =  %0h",output_conv_h.awqos),UVM_HIGH);
 //
-  input_conv.wdata = output_conv_h.wdata;
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wdata =  %0p",output_conv_h.wdata),UVM_HIGH);
+  foreach(output_conv_h.wdata[i]) begin
+    input_conv.wdata[i] = output_conv_h.wdata[i];
+    `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wdata =  %0p",output_conv_h.wdata),UVM_HIGH);
+  end
 
-  input_conv.wstrb = output_conv_h.wstrb;
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb =  %0p",output_conv_h.wstrb),UVM_HIGH);
+  foreach(output_conv_h.wstrb[i]) begin
+    input_conv.wstrb[i] = output_conv_h.wstrb[i];
+    `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb =  %0p",output_conv_h.wstrb),UVM_HIGH);
+  end
 
 endfunction : to_w_class
 
@@ -215,8 +225,10 @@ function void axi4_master_seq_item_converter::to_r_class( input axi4_r_transfer_
 //  input_conv.arqos = output_conv_h.arqos;
 //  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
 
-  input_conv.rdata = output_conv_h.rdata;
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig rdata =  %0p",output_conv_h.rdata),UVM_HIGH);
+  foreach(output_conv_h.rdata[i]) begin
+    input_conv.rdata[i] = output_conv_h.rdata[i];
+    `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig rdata =  %0p",output_conv_h.rdata),UVM_HIGH);
+  end
 
 //  input_conv.araddr = output_conv_h.araddr;
 //  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv_h.araddr),UVM_HIGH);
