@@ -65,8 +65,8 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual function void start_of_simulation_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
-  extern virtual task axi_write_task(uvm_phase phase);
-  extern virtual task axi_read_task(uvm_phase phase);
+  extern virtual task axi_write_task();
+  extern virtual task axi_read_task();
 
 endclass : axi4_master_driver_proxy
 
@@ -140,25 +140,41 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_master_driver_proxy::run_phase(uvm_phase phase);
 
-  phase.raise_objection(this, "axi4_master_driver_proxy");
+  // phase.raise_objection(this, "axi4_master_driver_proxy");
 
   super.run_phase(phase);
    
+  forever begin 
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_read_transfer_char_s struct_read_packet;
+    axi4_transfer_cfg_s       struct_cfg;
+    
+    axi_write_task();
+    axi_read_task();
 
-  // Work here
-  // ...
+    axi4_master_seq_item_converter::from_write_class(req,struct_write_packet); 
+    axi4_master_seq_item_converter::from_read_class(req,struct_read_packet);
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
 
-  phase.drop_objection(this);
+  
+    axi4_master_seq_item_converter::to_write_class(struct_write_packet,req); 
+    axi4_master_seq_item_converter::to_read_class(struct_read_packet,req);
+    //axi4_master_cfg_converter::to_class(struct_cfg,axi4_master_agent_cfg_h);
+
+    axi_write_seq_item_port.item_done();
+    axi_read_seq_item_port.item_done();
+  end
+  // phase.drop_objection(this);
 
 endtask : run_phase
 
-task axi4_master_driver_proxy::axi_write_task(uvm_phase phase);
+task axi4_master_driver_proxy::axi_write_task();
   axi_write_seq_item_port.get_next_item(req);
 
   //axi_write_seq_item_port.finish_item();
 endtask
 
-task axi4_master_driver_proxy::axi_read_task(uvm_phase phase);
+task axi4_master_driver_proxy::axi_read_task();
   axi_read_seq_item_port.get_next_item(req);
 
   //axi_write_seq_item_port.finish_item();
