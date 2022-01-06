@@ -51,10 +51,7 @@ package axi4_globals_pkg;
   //Indicates Slave Memory Depth 
   parameter int MEM_ID = 2**ADDRESS_WIDTH;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 3fa59ccfd2688a1e3f9561d5a9de2df4a6c6d1bb
   //-------------------------------------------------------
   // Enums used in axi4_avip are given below
   //-------------------------------------------------------
@@ -288,11 +285,11 @@ package axi4_globals_pkg;
 
 
   //-------------------------------------------------------
-  // Struct : axi4_w_transfer_char_s
-  // This struct datatype consists of all write signals
-  // which are used for seq item conversion
+  // Structs used in axi_avip are given below
   //-------------------------------------------------------
   
+  //Struct : axi4_w_transfer_char_s
+  //This struct datatype consists of all write signals which are used for seq item conversion
   typedef struct {
     //Write_address_channel
     bit [15:0]              awid;
@@ -315,11 +312,9 @@ package axi4_globals_pkg;
     bit [1:0]  bresp;
   }axi4_w_transfer_char_s; 
 
-  //-------------------------------------------------------
-  // Struct : axi4_r_transfer_char_s
-  //  This struct datatype consists of all read signals
-  //  which are used for seq item conversion
-  //-------------------------------------------------------
+
+  //Struct : axi4_r_transfer_char_s
+  //This struct datatype consists of all read signals which are used for seq item conversion
   typedef struct {
     //Read Address Channel
     bit [15:0] arid;
@@ -338,11 +333,8 @@ package axi4_globals_pkg;
     //bit [(DATA_WIDTH/8)-1: 0] rstrb;
   } axi4_r_transfer_char_s;
 
-  //-------------------------------------------------------
-  // Struct: axi4_cfg_char_s
-  //  This struct datatype consists of all configurations 
-  //  which are used for seq item conversion
-  //-------------------------------------------------------
+  //Struct: axi4_cfg_char_s
+  //This struct datatype consists of all configurations which are used for seq item conversion
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] min_address;
     bit [ADDRESS_WIDTH-1:0] max_address;
