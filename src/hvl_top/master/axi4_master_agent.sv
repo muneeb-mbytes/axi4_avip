@@ -13,9 +13,13 @@ class axi4_master_agent extends uvm_agent;
   // Declaring handle for master agent configuration class 
   axi4_master_agent_config axi4_master_agent_cfg_h;
 
-  // Varible: axi4_master_seqr_h 
-  // Handle for master seuencer
-  axi4_master_sequencer axi4_master_seqr_h;
+  // Varible: axi4_master_write_seqr_h 
+  // Handle for master write sequencer
+  axi4_master_write_sequencer axi4_master_write_seqr_h;
+  
+  // Varible: axi4_master_read_seqr_h 
+  // Handle for master read sequencer
+  axi4_master_read_sequencer axi4_master_read_seqr_h;
   
   // Variable: axi4_master_drv_proxy_h
   // Creating a Handle for axi4_master driver proxy 
@@ -66,7 +70,8 @@ function void axi4_master_agent::build_phase(uvm_phase phase);
   
   if(axi4_master_agent_cfg_h.is_active == UVM_ACTIVE) begin
     axi4_master_drv_proxy_h=axi4_master_driver_proxy::type_id::create("axi4_master_drv_proxy_h",this);
-    axi4_master_seqr_h=axi4_master_sequencer::type_id::create("axi4_master_seqr_h",this);
+    axi4_master_write_seqr_h=axi4_master_write_sequencer::type_id::create("axi4_master_write_seqr_h",this);
+    axi4_master_read_seqr_h=axi4_master_read_sequencer::type_id::create("axi4_master_read_seqr_h",this);
   end
   
   axi4_master_mon_proxy_h=axi4_master_monitor_proxy::type_id::create("axi4_master_mon_proxy_h",this);
@@ -92,11 +97,13 @@ function void axi4_master_agent::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
   if(axi4_master_agent_cfg_h.is_active == UVM_ACTIVE) begin
     axi4_master_drv_proxy_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
-    axi4_master_seqr_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
+    axi4_master_write_seqr_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
+    axi4_master_read_seqr_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
     axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
 
     //Connecting the ports
-    axi4_master_drv_proxy_h.seq_item_port.connect(axi4_master_seqr_h.seq_item_export);
+    axi4_master_drv_proxy_h.axi_write_seq_item_port.connect(axi4_master_write_seqr_h.seq_item_export);
+    axi4_master_drv_proxy_h.axi_read_seq_item_port.connect(axi4_master_read_seqr_h.seq_item_export);
 
     axi4_master_mon_proxy_h.axi4_master_analysis_port.connect(axi4_master_cov_h.axi4_master_analysis_export);
   end

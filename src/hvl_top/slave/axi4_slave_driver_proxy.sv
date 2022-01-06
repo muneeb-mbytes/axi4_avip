@@ -80,13 +80,13 @@ task axi4_slave_driver_proxy::run_phase(uvm_phase phase);
 
     //seq_item_port.get_next_item(req);
 
-    axi4_slave_seq_item_converter::from_w_class(req,struct_write_packet_char);
-    axi4_slave_seq_item_converter::from_r_class(req,struct_read_packet_char);
-    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+   // axi4_slave_seq_item_converter::from_w_class(req,struct_write_packet_char);
+   // axi4_slave_seq_item_converter::from_r_class(req,struct_read_packet_char);
+   // axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
 
     fork
-      axi4_slave_drv_bfm_h.axi_write_address_phase(struct_write_packet_char);
-      axi4_slave_drv_bfm_h.axi_write_data_phase(struct_write_packet_char,struct_cfg);
+   //   axi4_slave_drv_bfm_h.axi_write_address_phase(struct_write_packet_char);
+   //   axi4_slave_drv_bfm_h.axi_write_data_phase(struct_write_packet_char,struct_cfg);
     join_none
 
     //seq_item_port.finish_item();

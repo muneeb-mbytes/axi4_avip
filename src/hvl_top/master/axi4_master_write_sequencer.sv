@@ -1,63 +1,49 @@
-`ifndef VIRTUAL_SEQUENCER_INCLUDED_
-`define VIRTUAL_SEQUENCER_INCLUDED_
+`ifndef AXI4_MASTER_WRITE_SEQUENCER_INCLUDED_
+`define AXI4_MASTER_WRITE_SEQUENCER_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// class: virtual_sequencer
-// description of the class.
-//  
-// this class contains the handle of actual sequencer pointing towards them
+// Class: axi4_master_write_sequencer
 //--------------------------------------------------------------------------------------------
-class virtual_sequencer extends uvm_sequencer#(uvm_sequence_item);
-  `uvm_component_utils(virtual_sequencer)
+class axi4_master_write_sequencer extends uvm_sequencer#(axi4_master_tx);
+  `uvm_component_utils(axi4_master_write_sequencer)
 
-  // Variable: master_write_seqr_h
-  // Declaring master write sequencer handle
-  axi4_master_write_sequencer axi4_master_write_seqr_h;
-
-  // Variable: master_read_seqr_h
-  // Declaring master read sequencer handle
-  axi4_master_read_sequencer axi4_master_read_seqr_h;
-  
-  // Variable: slave_seqr_h
-  // Declaring slave sequencer handle
-  axi4_slave_sequencer axi4_slave_seqr_h;
+  // Variable: axi4_master_agent_cfg_h
+  // Declaring handle for master agent config class 
+  axi4_master_agent_config axi4_master_agent_cfg_h;
   
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
-  extern function new(string name = "virtual_sequencer", uvm_component parent = null);
+  extern function new(string name = "axi4_master_write_sequencer", uvm_component parent = null);
   extern virtual function void build_phase(uvm_phase phase);
   extern virtual function void connect_phase(uvm_phase phase);
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual function void start_of_simulation_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
 
-endclass : virtual_sequencer
+endclass : axi4_master_write_sequencer
 
 //--------------------------------------------------------------------------------------------
 // Construct: new
 //
 // Parameters:
-//  name - virtual_sequencer
+//  name - axi4_master_write_sequencer
 //  parent - parent under which this component is created
 //--------------------------------------------------------------------------------------------
-function virtual_sequencer::new(string name = "virtual_sequencer",
+function axi4_master_write_sequencer::new(string name = "axi4_master_write_sequencer",
                                  uvm_component parent = null);
   super.new(name, parent);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Function: build_phase
-// creates the required ports
+// <Description_here>
 //
 // Parameters:
-//  phase - stores the current phase
+//  phase - uvm phase
 //--------------------------------------------------------------------------------------------
-function void virtual_sequencer::build_phase(uvm_phase phase);
+function void axi4_master_write_sequencer::build_phase(uvm_phase phase);
   super.build_phase(phase);
-  axi4_master_write_seqr_h = axi4_master_write_sequencer::type_id::create("axi4_master_write_seqr_h",this);
-  axi4_master_read_seqr_h = axi4_master_read_sequencer::type_id::create("axi4_master_read_seqr_h",this);
-  axi4_slave_seqr_h = axi4_slave_sequencer::type_id::create("axi4_slave_seqr_h",this);
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
@@ -67,7 +53,7 @@ endfunction : build_phase
 // Parameters:
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
-function void virtual_sequencer::connect_phase(uvm_phase phase);
+function void axi4_master_write_sequencer::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
 endfunction : connect_phase
 
@@ -78,7 +64,7 @@ endfunction : connect_phase
 // Parameters:
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
-function void virtual_sequencer::end_of_elaboration_phase(uvm_phase phase);
+function void axi4_master_write_sequencer::end_of_elaboration_phase(uvm_phase phase);
   super.end_of_elaboration_phase(phase);
 endfunction  : end_of_elaboration_phase
 
@@ -89,7 +75,7 @@ endfunction  : end_of_elaboration_phase
 // Parameters:
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
-function void virtual_sequencer::start_of_simulation_phase(uvm_phase phase);
+function void axi4_master_write_sequencer::start_of_simulation_phase(uvm_phase phase);
   super.start_of_simulation_phase(phase);
 endfunction : start_of_simulation_phase
 
@@ -100,9 +86,9 @@ endfunction : start_of_simulation_phase
 // Parameters:
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
-task virtual_sequencer::run_phase(uvm_phase phase);
+task axi4_master_write_sequencer::run_phase(uvm_phase phase);
 
-  phase.raise_objection(this, "virtual_sequencer");
+  phase.raise_objection(this, "axi4_master_write_sequencer");
 
   super.run_phase(phase);
 
