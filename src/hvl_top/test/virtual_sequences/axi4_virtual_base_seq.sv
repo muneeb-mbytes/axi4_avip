@@ -14,6 +14,7 @@ class axi4_virtual_seq_base extends uvm_sequence#(uvm_sequence_item);
  
    axi4_master_write_sequencer  axi4_master_write_seqr_h;
    axi4_master_read_sequencer  axi4_master_read_seqr_h;
+
    axi4_slave_write_sequencer  axi4_slave_write_seqr_h;
    axi4_slave_read_sequencer  axi4_slave_read_seqr_h;
 
