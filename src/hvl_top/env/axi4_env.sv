@@ -128,10 +128,12 @@ function void axi4_env::connect_phase(uvm_phase phase);
 
   if(axi4_env_cfg_h.has_virtual_seqr) begin
     foreach(axi4_master_agent_h[i]) begin
-      virtual_seqr_h.axi4_master_seqr_h = axi4_master_agent_h[i].axi4_master_seqr_h;
+      virtual_seqr_h.axi4_master_write_seqr_h = axi4_master_agent_h[i].axi4_master_write_seqr_h;
+      virtual_seqr_h.axi4_master_read_seqr_h = axi4_master_agent_h[i].axi4_master_read_seqr_h;
     end
     foreach(axi4_slave_agent_h[i]) begin
-      virtual_seqr_h.axi4_slave_seqr_h = axi4_slave_agent_h[i].axi4_slave_seqr_h;
+      virtual_seqr_h.axi4_slave_write_seqr_h = axi4_slave_agent_h[i].axi4_slave_write_seqr_h;
+      virtual_seqr_h.axi4_slave_read_seqr_h = axi4_slave_agent_h[i].axi4_slave_read_seqr_h;
     end
   end
   

@@ -9,6 +9,26 @@
 class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   `uvm_component_utils(axi4_slave_driver_proxy)
 
+  // Port: seq_item_port
+  //
+  // Derived driver classes should use this port to request items from the
+  // sequencer. They may also use it to send responses back.
+  
+  uvm_seq_item_pull_port #(REQ, RSP) axi_write_seq_item_port;
+  uvm_seq_item_pull_port #(REQ, RSP) axi_read_seq_item_port;
+
+  // Port: rsp_port
+  //
+  // This port provides an alternate way of sending responses back to the
+  // originating sequencer. Which port to use depends on which export the
+  // sequencer provides for connection.
+  
+  uvm_analysis_port #(RSP) axi_write_rsp_port;
+  uvm_analysis_port #(RSP) axi_read_rsp_port;
+  
+  REQ req;
+  RSP rsp;
+
   // Variable: axi4_slave_agent_cfg_h
   // Declaring handle for axi4_slave agent config class 
   axi4_slave_agent_config axi4_slave_agent_cfg_h;
@@ -24,6 +44,8 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   extern virtual function void build_phase(uvm_phase phase);
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
+  extern virtual task axi_write_task(uvm_phase phase);
+  extern virtual task axi_read_task(uvm_phase phase);
 
 endclass : axi4_slave_driver_proxy
 
@@ -36,6 +58,10 @@ endclass : axi4_slave_driver_proxy
 function axi4_slave_driver_proxy::new(string name = "axi4_slave_driver_proxy",
                                  uvm_component parent = null);
   super.new(name, parent);
+  axi_write_seq_item_port    = new("axi_write_seq_item_port", this);
+  axi_read_seq_item_port     = new("axi_read_seq_item_port", this);
+  axi_write_rsp_port         = new("axi_write_rsp_port", this);
+  axi_read_rsp_port          = new("axi_read_rsp_port", this);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
@@ -80,13 +106,13 @@ task axi4_slave_driver_proxy::run_phase(uvm_phase phase);
 
     //seq_item_port.get_next_item(req);
 
-    axi4_slave_seq_item_converter::from_w_class(req,struct_write_packet_char);
-    axi4_slave_seq_item_converter::from_r_class(req,struct_read_packet_char);
-    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+   // axi4_slave_seq_item_converter::from_w_class(req,struct_write_packet_char);
+   // axi4_slave_seq_item_converter::from_r_class(req,struct_read_packet_char);
+   // axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
 
     fork
-      axi4_slave_drv_bfm_h.axi_write_address_phase(struct_write_packet_char);
-      axi4_slave_drv_bfm_h.axi_write_data_phase(struct_write_packet_char,struct_cfg);
+   //   axi4_slave_drv_bfm_h.axi_write_address_phase(struct_write_packet_char);
+   //   axi4_slave_drv_bfm_h.axi_write_data_phase(struct_write_packet_char,struct_cfg);
     join_none
 
     //seq_item_port.finish_item();
@@ -94,5 +120,17 @@ task axi4_slave_driver_proxy::run_phase(uvm_phase phase);
   end
 
 endtask : run_phase 
+
+task axi4_slave_driver_proxy::axi_write_task(uvm_phase phase);
+  axi_write_seq_item_port.get_next_item(req);
+
+  //axi_write_seq_item_port.finish_item();
+endtask
+
+task axi4_slave_driver_proxy::axi_read_task(uvm_phase phase);
+  axi_read_seq_item_port.get_next_item(req);
+
+  //axi_write_seq_item_port.finish_item();
+endtask
 
 `endif
