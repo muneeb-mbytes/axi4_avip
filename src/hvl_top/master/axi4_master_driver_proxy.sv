@@ -12,6 +12,42 @@
 class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   `uvm_component_utils(axi4_master_driver_proxy)
 
+  // Port: seq_item_port
+  //
+  // Derived driver classes should use this port to request items from the
+  // sequencer. They may also use it to send responses back.
+  
+  uvm_seq_item_pull_port #(REQ, RSP) axi_write_seq_item_port;
+  uvm_seq_item_pull_port #(REQ, RSP) axi_read_seq_item_port;
+
+  // Port: rsp_port
+  //
+  // This port provides an alternate way of sending responses back to the
+  // originating sequencer. Which port to use depends on which export the
+  // sequencer provides for connection.
+  
+  uvm_analysis_port #(RSP) axi_write_rsp_port;
+  uvm_analysis_port #(RSP) axi_read_rsp_port;
+  
+  REQ req;
+  RSP rsp;
+  
+  // Function: new
+  //
+  // Creates and initializes an instance of this class using the normal
+  // constructor arguments for <uvm_component>: ~name~ is the name of the
+  // instance, and ~parent~ is the handle to the hierarchical parent, if any.
+  
+ // function new (string name, uvm_component parent);
+ //   super.new(name, parent);
+ //   axi_write_seq_item_port    = new("axi_write_seq_item_port", this);
+ //   axi_read_seq_item_port     = new("axi_read_seq_item_port", this);
+ //   axi_write_rsp_port         = new("axi_write_rsp_port", this);
+ //   axi_read_rsp_port          = new("axi_read_rsp_port", this);
+ //   seq_item_prod_if           = axi_write_seq_item_port;
+ //   seq_item_prod_if           = axi_read_seq_item_port;
+ // endfunction // new
+    
   // Variable: axi4_master_agent_cfg_h
   // Declaring handle for axi4_master agent config class 
   axi4_master_agent_config axi4_master_agent_cfg_h;
@@ -29,6 +65,8 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual function void start_of_simulation_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
+  extern virtual task axi_write_task(uvm_phase phase);
+  extern virtual task axi_read_task(uvm_phase phase);
 
 endclass : axi4_master_driver_proxy
 
@@ -42,6 +80,10 @@ endclass : axi4_master_driver_proxy
 function axi4_master_driver_proxy::new(string name = "axi4_master_driver_proxy",
                                  uvm_component parent = null);
   super.new(name, parent);
+  axi_write_seq_item_port    = new("axi_write_seq_item_port", this);
+  axi_read_seq_item_port     = new("axi_read_seq_item_port", this);
+  axi_write_rsp_port         = new("axi_write_rsp_port", this);
+  axi_read_rsp_port          = new("axi_read_rsp_port", this);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
@@ -101,6 +143,7 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
   phase.raise_objection(this, "axi4_master_driver_proxy");
 
   super.run_phase(phase);
+   
 
   // Work here
   // ...
@@ -108,6 +151,18 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
   phase.drop_objection(this);
 
 endtask : run_phase
+
+task axi4_master_driver_proxy::axi_write_task(uvm_phase phase);
+  axi_write_seq_item_port.get_next_item(req);
+
+  //axi_write_seq_item_port.finish_item();
+endtask
+
+task axi4_master_driver_proxy::axi_read_task(uvm_phase phase);
+  axi_read_seq_item_port.get_next_item(req);
+
+  //axi_write_seq_item_port.finish_item();
+endtask
 
 `endif
 
