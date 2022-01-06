@@ -9,8 +9,12 @@
 class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   `uvm_component_utils(axi4_slave_driver_proxy)
 
+  // Variable: axi4_slave_agent_cfg_h
+  // Declaring handle for axi4_slave agent config class 
   axi4_slave_agent_config axi4_slave_agent_cfg_h;
 
+  //Variable : axi4_slave_drv_bfm_h
+  //Declaring handle for axi4 driver bfm
   virtual axi4_slave_driver_bfm axi4_slave_drv_bfm_h;
 
   //-------------------------------------------------------
@@ -36,7 +40,6 @@ endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Function: build_phase
-// <Description_here>
 //
 // Parameters:
 //  phase - uvm phase
@@ -50,7 +53,6 @@ endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
 // Function: end_of_elaboration_phase
-// <Description_here>
 //
 // Parameters:
 // phase - uvm phase

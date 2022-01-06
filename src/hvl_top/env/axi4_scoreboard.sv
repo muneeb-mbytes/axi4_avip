@@ -3,7 +3,7 @@
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_scoreboard
-// <Description_here>
+// Scoreboard the data getting from monitor port that goes into the implementation port
 //--------------------------------------------------------------------------------------------
 class axi4_scoreboard extends uvm_scoreboard;
   `uvm_component_utils(axi4_scoreboard)

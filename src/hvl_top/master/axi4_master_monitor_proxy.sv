@@ -2,8 +2,12 @@
 `define AXI4_MASTER_MONITOR_PROXY_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// Class: axi4_master_monitor_proxy
-// <Description_here>
+//  Class: axi4_master_monitor_proxy
+//  
+//  Monitor is written by extending uvm_monitor,uvm_monitor is inherited from uvm_component, 
+//  A monitor is a passive entity that samples the DUT signals through virtual interface and 
+//  converts the signal level activity to transaction level,monitor samples DUT signals but does not drive them.
+//  Monitor should have analysis port (TLM port) and virtual interface handle that points to DUT signal
 //--------------------------------------------------------------------------------------------
 class axi4_master_monitor_proxy extends uvm_component;
   `uvm_component_utils(axi4_master_monitor_proxy)
@@ -48,7 +52,6 @@ endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Function: build_phase
-// <Description_here>
 //
 // Parameters:
 //  phase - uvm phase

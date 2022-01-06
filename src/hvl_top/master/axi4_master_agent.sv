@@ -3,7 +3,8 @@
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_master_agent
-// <Description_here>
+// This agent is a configurable with respect to configuration which can create active and passive components
+// It contains testbench components like sequencer,driver_proxy and monitor_proxy for AXI4
 //--------------------------------------------------------------------------------------------
 class axi4_master_agent extends uvm_agent;
   `uvm_component_utils(axi4_master_agent)
@@ -34,9 +35,6 @@ class axi4_master_agent extends uvm_agent;
   extern function new(string name = "axi4_master_agent", uvm_component parent = null);
   extern virtual function void build_phase(uvm_phase phase);
   extern virtual function void connect_phase(uvm_phase phase);
-  extern virtual function void end_of_elaboration_phase(uvm_phase phase);
-  extern virtual function void start_of_simulation_phase(uvm_phase phase);
-  extern virtual task run_phase(uvm_phase phase);
 
 endclass : axi4_master_agent
 
@@ -53,10 +51,10 @@ function axi4_master_agent::new(string name = "axi4_master_agent",
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
-// Function: build_phase
-// <Description_here>
+//  Function: build_phase
+//  Creates the required ports, gets the required configuration from config_db
 //
-// Parameters:
+//  Parameters:
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
 function void axi4_master_agent::build_phase(uvm_phase phase);
@@ -65,14 +63,14 @@ function void axi4_master_agent::build_phase(uvm_phase phase);
  // if(!uvm_config_db #(axi4_master_agent_config)::get(this,"","axi4_master_agent_config",axi4_master_agent_cfg_h)) begin
  //   `uvm_fatal("FATAL_MA_CANNOT_GET_MASTER_AGENT_CONFIG","cannot get axi4_master_agent_cfg_h from uvm_config_db");
  // end
- //
+  
   if(axi4_master_agent_cfg_h.is_active == UVM_ACTIVE) begin
     axi4_master_drv_proxy_h=axi4_master_driver_proxy::type_id::create("axi4_master_drv_proxy_h",this);
     axi4_master_seqr_h=axi4_master_sequencer::type_id::create("axi4_master_seqr_h",this);
   end
-
+  
   axi4_master_mon_proxy_h=axi4_master_monitor_proxy::type_id::create("axi4_master_mon_proxy_h",this);
-
+  
   if(axi4_master_agent_cfg_h.has_coverage) begin
    axi4_master_cov_h = axi4_master_coverage ::type_id::create("axi4_master_cov_h",this);
   end
@@ -84,10 +82,10 @@ function void axi4_master_agent::build_phase(uvm_phase phase);
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
-// Function: connect_phase
-// <Description_here>
+//  Function: connect_phase 
+//  Connecting axi4 master driver, master monitor and master sequencer for configuration
 //
-// Parameters:
+//  Parameters:
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
 function void axi4_master_agent::connect_phase(uvm_phase phase);
@@ -106,48 +104,6 @@ function void axi4_master_agent::connect_phase(uvm_phase phase);
   axi4_master_mon_proxy_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
 
 endfunction : connect_phase
-
-//--------------------------------------------------------------------------------------------
-// Function: end_of_elaboration_phase
-// <Description_here>
-//
-// Parameters:
-//  phase - uvm phase
-//--------------------------------------------------------------------------------------------
-function void axi4_master_agent::end_of_elaboration_phase(uvm_phase phase);
-  super.end_of_elaboration_phase(phase);
-endfunction  : end_of_elaboration_phase
-
-//--------------------------------------------------------------------------------------------
-// Function: start_of_simulation_phase
-// <Description_here>
-//
-// Parameters:
-//  phase - uvm phase
-//--------------------------------------------------------------------------------------------
-function void axi4_master_agent::start_of_simulation_phase(uvm_phase phase);
-  super.start_of_simulation_phase(phase);
-endfunction : start_of_simulation_phase
-
-//--------------------------------------------------------------------------------------------
-// Task: run_phase
-// <Description_here>
-//
-// Parameters:
-//  phase - uvm phase
-//--------------------------------------------------------------------------------------------
-task axi4_master_agent::run_phase(uvm_phase phase);
-
-  phase.raise_objection(this, "axi4_master_agent");
-
-  super.run_phase(phase);
-
-  // Work here
-  // ...
-
-  phase.drop_objection(this);
-
-endtask : run_phase
 
 `endif
 

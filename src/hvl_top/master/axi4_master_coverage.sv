@@ -2,8 +2,8 @@
 `define AXI4_MASTER_COVERAGE_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// Class: axi4_master_coverage
-// <Description_here>
+// Class: master_coverage
+// master_coverage determines the how much code is covered for better functionality of the TB.
 //--------------------------------------------------------------------------------------------
 class axi4_master_coverage extends uvm_subscriber #(axi4_master_tx);
   `uvm_component_utils(axi4_master_coverage)

@@ -52,6 +52,7 @@ package axi4_globals_pkg;
   parameter int MEM_ID = 2**ADDRESS_WIDTH;
 
 
+
   //-------------------------------------------------------
   // Enums used in axi4_avip are given below
   //-------------------------------------------------------
@@ -223,7 +224,7 @@ package axi4_globals_pkg;
     BID_15 = 16'b1000_0000_0000_0000
   } bid_e;
 
-  //Enum: arid
+  //Enum: arid_e
   //Used to declare the enum type of read address id
   typedef enum bit [15:0] {
     ARID_0  = 16'b0000_0000_0000_0001,
@@ -244,7 +245,7 @@ package axi4_globals_pkg;
     ARID_15 = 16'b1000_0000_0000_0000
   } arid_e;
 
-  //Enum: rid
+  //Enum: rid_e
   //Used to declare the enum type of read data/response id
   typedef enum bit [15:0] {
     RID_0  = 16'b0000_0000_0000_0001,
@@ -284,13 +285,14 @@ package axi4_globals_pkg;
   } rresp_e;
 
 
-  //-------------------------------------------------------
-  // Struct : axi4_w_transfer_char_s
-  //  This struct datatype consists of all write signals
-  //  which are used for seq item conversion
-  //-------------------------------------------------------
-  typedef struct {
 
+  //-------------------------------------------------------
+  // Structs used in axi4_avip are given below
+  //-------------------------------------------------------
+  
+  //Struct : axi4_w_transfer_char_s
+  //This struct datatype consists of all write signals which are used for seq item conversion
+  typedef struct {
     //Write_address_channel
     bit [15:0]              awid;
     bit [ADDRESS_WIDTH-1:0] awaddr;
@@ -303,27 +305,18 @@ package axi4_globals_pkg;
     bit [2:0]               awprot;
     bit                     awvalid;
     bit	                    awready;
-
     //Write_data_channel
     bit [DATA_WIDTH:0][DATA_WIDTH-1:0]     wdata;
     bit [DATA_WIDTH:0][(DATA_WIDTH/8)-1:0] wstrb;
     //bit                      wlast;
-
     //Write Response Channel
     bit [15:0] bid;
-    bit [1:0] bresp;
-
+    bit [1:0]  bresp;
   }axi4_w_transfer_char_s; 
 
-  //-------------------------------------------------------
-  // Struct : axi4_r_transfer_char_s
-  //  This struct datatype consists of all read signals
-  //  which are used for seq item conversion
-  //-------------------------------------------------------
-
-
-    typedef struct {
-    
+  //Struct : axi4_r_transfer_char_s
+  //This struct datatype consists of all read signals which are used for seq item conversion
+  typedef struct {
     //Read Address Channel
     bit [15:0]  arid;
     bit [ADDRESS_WIDTH-1:0] araddr;
@@ -337,15 +330,12 @@ package axi4_globals_pkg;
     //Read Data Channel
     bit [15:0]                rid;
     bit [DATA_WIDTH:0][DATA_WIDTH-1: 0]     rdata;
+    bit [1:0]             rresp; 
     //bit [(DATA_WIDTH/8)-1: 0] rstrb;
-    bit [1:0]                 rresp; 
   } axi4_r_transfer_char_s;
   
-  //-------------------------------------------------------
-  // Struct: axi4_cfg_char_s
-  // //This struct datatype consists of all configurations 
-  // which are used for seq item conversion
-  //-------------------------------------------------------    
+  //Struct: axi4_cfg_char_s
+  //This struct datatype consists of all configurations which are used for seq item conversion
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] min_address;
     bit [ADDRESS_WIDTH-1:0] max_address;

@@ -2,8 +2,8 @@
 `define AXI4_SLAVE_COVERAGE_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// Class: axi4_slave_coverage
-// <Description_here>
+// Class: slave_coverage
+// slave_coverage determines the how much code is covered for better functionality of the TB.
 //--------------------------------------------------------------------------------------------
 class axi4_slave_coverage extends uvm_subscriber#(axi4_slave_tx);
   `uvm_component_utils(axi4_slave_coverage)

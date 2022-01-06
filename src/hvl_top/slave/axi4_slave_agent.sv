@@ -76,14 +76,15 @@ function void axi4_slave_agent::build_phase(uvm_phase phase);
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
-// Function: connect_phase 
-// <Description_here>
+//  Function: connect_phase 
+//  Connecting axi4 slave driver, slave monitor and slave sequencer for configuration
 //
-// Parameters:
+//  Parameters:
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
 function void axi4_slave_agent::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
+  
   if(axi4_slave_agent_cfg_h.is_active == UVM_ACTIVE) begin
     axi4_slave_drv_proxy_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
     axi4_slave_seqr_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;

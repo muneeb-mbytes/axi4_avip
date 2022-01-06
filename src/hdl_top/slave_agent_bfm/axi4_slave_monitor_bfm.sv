@@ -25,7 +25,8 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn);
   //Variable : axi4_slave_monitor_proxy_h
   //Creating the handle for proxy monitor
   axi4_slave_monitor_proxy axi4_slave_mon_proxy_h;
-
+  
+  //Printing axi4 slave monitor bfm
   initial begin
     `uvm_info("axi4 slave monitor bfm",$sformatf("AXI4 SLAVE MONITOR BFM"),UVM_LOW);
   end
