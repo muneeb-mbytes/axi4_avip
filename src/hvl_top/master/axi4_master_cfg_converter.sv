@@ -3,7 +3,8 @@
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_master_cfg_converter
-// <Description_here>
+// Description:
+// class for converting the transaction items to struct and vice versa                                                          
 //--------------------------------------------------------------------------------------------
 class axi4_master_cfg_converter extends uvm_object;
   `uvm_object_utils(axi4_master_cfg_converter)
@@ -21,25 +22,26 @@ endclass : axi4_master_cfg_converter
 //--------------------------------------------------------------------------------------------
 // Construct: new
 // Parameters:
-//name - axi4_master_cfg_converter
+// name - axi4_master_cfg_converter
 //--------------------------------------------------------------------------------------------
 function axi4_master_cfg_converter::new(string name = "axi4_master_cfg_converter");
   super.new(name);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
-// function: from_class
+// function: from_w_class
 // converting seq_item transactions into struct data items
 //--------------------------------------------------------------------------------------------
 function void axi4_master_cfg_converter::from_w_class(input axi4_master_agent_config input_conv, output axi4_w_transfer_cfg_s output_conv);
-    output_conv.awaddr=input_conv.awaddr;
-
+  output_conv.awaddr=input_conv.awaddr;
 endfunction: from_w_class
 
+//--------------------------------------------------------------------------------------------
+// function: from_r_class
+// converting seq_item transactions into struct data items
+//--------------------------------------------------------------------------------------------
 function void axi4_master_cfg_converter::from_r_class(input axi4_master_agent_config input_conv, output axi4_r_transfer_cfg_s output_conv);
-
-    output_conv.araddr=input_conv.araddr;
-
+  output_conv.araddr=input_conv.araddr;
 endfunction: from_r_class
 
 //--------------------------------------------------------------------------------------------
