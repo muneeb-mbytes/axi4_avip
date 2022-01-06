@@ -9,14 +9,17 @@
 class axi4_master_tx extends uvm_sequence_item;
   
   `uvm_object_utils(axi4_master_tx)
-
+  
+  //-------------------------------------------------------
+  // WRITE ADDRESS CHANNEL SIGNALS
+  //-------------------------------------------------------
   //Variable : awid
   //Used to send the write address id
   rand awid_e awid;
 
   //Variable : awaddr
   //Used to send the write address
-  rand bit[ADDRESS_WIDTH-1:0]awaddr;
+  rand bit [ADDRESS_WIDTH-1:0] awaddr;
 
   //Variable : awlen
   //Used to send the write address length
@@ -53,14 +56,17 @@ class axi4_master_tx extends uvm_sequence_item;
   //Variable : awready
   //Used to send the write address ready
   //bit awready;
-
+  
+  //-------------------------------------------------------
+  // WRITE DATA CHANNEL SIGNALS
+  //-------------------------------------------------------
   //Variable : wdata
   //Used to randomise write data
-  rand bit[DATA_WIDTH-1:0]wdata[$:DATA_WIDTH];
+  rand bit [DATA_WIDTH-1:0] wdata [$:DATA_WIDTH];
 
   //Variable : wstrb
   //Used to randomise write strobe
-  rand bit[(DATA_WIDTH/8)-1:0]wstrb[$:DATA_WIDTH];
+  rand bit [(DATA_WIDTH/8)-1:0] wstrb [$:DATA_WIDTH];
 
   //Variable : wlast
   //Used to store the write last transfer
@@ -74,6 +80,9 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to send the write ready
   //bit wready;
 
+  //-------------------------------------------------------
+  // WRITE RESPONSE CHANNEL SIGNALS
+  //-------------------------------------------------------
   //Variable : bid
   //Used to send the response id
   bid_e bid;
@@ -81,14 +90,17 @@ class axi4_master_tx extends uvm_sequence_item;
   //Variable : bresp
   //Used to capture the write response of the trasnaction
   bresp_e bresp;
-
+  
+  //-------------------------------------------------------
+  // READ ADDRESS CHANNEL SIGNALS
+  //-------------------------------------------------------
   //Variable : arid
   //Used to send the read address id
   rand arid_e arid;
 
   //Variable : araddr
   //Used to send the read address
-  rand bit[ADDRESS_WIDTH-1:0]araddr;
+  rand bit [ADDRESS_WIDTH-1:0] araddr;
 
   //Variable : arlen
   //Used to send the read address length
@@ -125,14 +137,17 @@ class axi4_master_tx extends uvm_sequence_item;
   //Variable : arready
   //Used to send the read address ready
   //bit arready;
-
+   
+  //-------------------------------------------------------
+  // READ DATA CHANNEL SIGNALS 
+  //-------------------------------------------------------
   //Variable : rdata
   //Used to randomise read data
-  rand bit[DATA_WIDTH-1:0]rdata[$:DATA_WIDTH];
+  rand bit [DATA_WIDTH-1:0] rdata [$:DATA_WIDTH];
 
   //Variable : rstrb
   //Used to randomise read strobe
-  rand bit[(DATA_WIDTH/8)-1:0]rstrb[$:DATA_WIDTH];
+  rand bit [(DATA_WIDTH/8)-1:0] rstrb [$:DATA_WIDTH];
 
   //Variable : rresp
   //Used to capture the read response of the trasnaction
@@ -150,7 +165,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to send the read ready
   //bit rready;
 
-  //Variable :  endian
+  //Variable : endian
   //Used to differentiate the type of memory storage
   rand endian_e endian;
 
@@ -159,73 +174,80 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Constraint : awburst_c1
   //Restricting write burst to select only FIXED, INCR and WRAP types
-  constraint awburst_c1{awburst != WRITE_RESERVED;}
+  constraint awburst_c1 { awburst != WRITE_RESERVED;
+                        }
 
   //Constraint : awlength_c2
   //Adding constraint for restricting write trasnfers
-  constraint awlength_c2{if(awburst==WRITE_FIXED || WRITE_WRAP)
-                           awlen inside {[0:15]};
-                         else if(awburst == WRITE_INCR) 
-                           awlen inside {[0:255]};
-                        }
+  constraint awlength_c2 { if(awburst==WRITE_FIXED || WRITE_WRAP)
+                              awlen inside {[0:15]};
+                           else if(awburst == WRITE_INCR) 
+                              awlen inside {[0:255]};
+                         }
 
   //Constraint : awlength_c3
   //Adding constraint for restricting to get multiples of 2 in wrap burst
-  constraint awlength_c3{if(awburst == WRITE_WRAP)
-                            awlen + 1 inside {2,4,8,16};
-                        }
+  constraint awlength_c3 { if(awburst == WRITE_WRAP)
+                              awlen + 1 inside {2,4,8,16};
+                         }
   
   //Constraint : awlock_c4
   //Adding constraint to select the lock transfer type
-  constraint awlock_c4{soft awlock == WRITE_NORMAL_ACCESS;}
+  constraint awlock_c4 { soft awlock == WRITE_NORMAL_ACCESS;
+                       }
 
   //-------------------------------------------------------
   // WRITE DATA Constraints
   //-------------------------------------------------------
   //Constraint : wdata_c1
   //Adding constraint to restrict the write data based on awlength
-  constraint wdata_c1{wdata.size() == awlen + 1;} 
+  constraint wdata_c1 { wdata.size() == awlen + 1;
+                      } 
 
   //Constraint : wstrb_c2
   //Adding constraint to restrict the write strobe based on awlength
-  constraint wstrb_c2{wstrb.size() == awlen + 1;}
+  constraint wstrb_c2 { wstrb.size() == awlen + 1;
+                      }
 
   //-------------------------------------------------------
   // READ ADDRESS Constraints
   //-------------------------------------------------------
   //Constraint : arburst_c1
   //Restricting read burst to select only FIXED, INCR and WRAP types
-  constraint arburst_c1{arburst != READ_RESERVED;}
+  constraint arburst_c1 { arburst != READ_RESERVED;
+                        }
 
   //Constraint : arlength_c2
   //Adding constraint for restricting read trasnfers
-  constraint arlength_c2{if(arburst==READ_FIXED || READ_WRAP)
-                           arlen inside {[0:15]};
-                         else if(arburst == READ_INCR) 
-                           arlen inside {[0:255]};
-                        }
+  constraint arlength_c2 { if(arburst==READ_FIXED || READ_WRAP)
+                            arlen inside {[0:15]};
+                           else if(arburst == READ_INCR) 
+                            arlen inside {[0:255]};
+                         }
   
   //Constraint : arlength_c3
   //Adding constraint for restricting to get multiples of 2 in wrap burst
-  constraint arlength_c3{if(arburst == READ_WRAP)
+  constraint arlength_c3 { if(arburst == READ_WRAP)
                             arlen + 1 inside {2,4,8,16};
-                        }
+                         }
 
   //Constraint : arlock_c9
   //Adding constraint to select the lock transfer type
-  constraint arlock_c4{soft arlock == READ_NORMAL_ACCESS;}
+  constraint arlock_c4 { soft arlock == READ_NORMAL_ACCESS;
+                       }
 
   //-------------------------------------------------------
   // Memory Constraints
   //-------------------------------------------------------
   //Constraint : endian_c1
   //Adding constraint to select the endianess
-  constraint endian_c1{soft endian == LITTLE_ENDIAN;}
+  constraint endian_c1 { soft endian == LITTLE_ENDIAN;
+                       }
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
-  extern function new(string name = "axi4_master_tx");
+  extern function new (string name = "axi4_master_tx");
   extern function void post_randomize();
   extern function void do_copy(uvm_object rhs);
   extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
@@ -233,11 +255,11 @@ class axi4_master_tx extends uvm_sequence_item;
 endclass : axi4_master_tx
 
 //--------------------------------------------------------------------------------------------
-//  Construct: new
-//  initializes the class object
+// Construct: new
+// initializes the class object
 //
-//  Parameters:
-//  name - axi4_master_tx
+// Parameters:
+// name - axi4_master_tx
 //--------------------------------------------------------------------------------------------
 function axi4_master_tx::new(string name = "axi4_master_tx");
   super.new(name);
@@ -269,7 +291,7 @@ function void axi4_master_tx::post_randomize();
   //end
 
   //Used to restrict the address inside the 4kb boundary
-  if(!std::randomize(awaddr) with {awaddr % 4096 == 0;})begin
+  if(!std::randomize(awaddr) with {awaddr % 4096 == 0;}) begin
     `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize AWADDR"));
   end
 
@@ -295,7 +317,6 @@ function void axi4_master_tx::post_randomize();
       end 
     end
   end
-
 endfunction : post_randomize
 
 //--------------------------------------------------------------------------------------------
@@ -303,7 +324,7 @@ endfunction : post_randomize
 // Copies the axi4 slave_tx into the rhs object
 //
 // Parameters:
-// rhs  - uvm_object
+// rhs - uvm_object
 //--------------------------------------------------------------------------------------------
 function void axi4_master_tx::do_copy(uvm_object rhs);
   axi4_master_tx axi4_master_tx_copy_obj;
@@ -312,7 +333,8 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
     `uvm_fatal("do_copy","cast of the rhs object failed")
   end
   super.do_copy(rhs);
-
+  
+  //WRITE ADDRESS CHANNEL
   awid    = axi4_master_tx_copy_obj.awid;
   awaddr  = axi4_master_tx_copy_obj.awaddr;
   awlen   = axi4_master_tx_copy_obj.awlen;
@@ -322,10 +344,16 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   awcache = axi4_master_tx_copy_obj.awcache;
   awprot  = axi4_master_tx_copy_obj.awprot;
   awqos   = axi4_master_tx_copy_obj.awqos;
-  wdata   = axi4_master_tx_copy_obj.wdata;
-  wstrb   = axi4_master_tx_copy_obj.wstrb;
-  bid     = axi4_master_tx_copy_obj.bid;
-  bresp   = axi4_master_tx_copy_obj.bresp;
+  
+  //WRITE DATA CHANNEL
+  wdata = axi4_master_tx_copy_obj.wdata;
+  wstrb = axi4_master_tx_copy_obj.wstrb;
+  
+  //WRITE RESPONSE CHANNEL
+  bid   = axi4_master_tx_copy_obj.bid;
+  bresp = axi4_master_tx_copy_obj.bresp;
+  
+  //READ ADDRESS CHANNEL
   arid    = axi4_master_tx_copy_obj.arid;
   araddr  = axi4_master_tx_copy_obj.araddr;
   arlen   = axi4_master_tx_copy_obj.arlen;
@@ -335,10 +363,11 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   arcache = axi4_master_tx_copy_obj.arcache;
   arprot  = axi4_master_tx_copy_obj.arprot;
   arqos   = axi4_master_tx_copy_obj.arqos;
-  rdata   = axi4_master_tx_copy_obj.rdata;
-  rstrb   = axi4_master_tx_copy_obj.rstrb;
-  rresp   = axi4_master_tx_copy_obj.rresp;
   
+  //READ DATA CHANNEL
+  rdata = axi4_master_tx_copy_obj.rdata;
+  rstrb = axi4_master_tx_copy_obj.rstrb;
+  rresp = axi4_master_tx_copy_obj.rresp;
 endfunction : do_copy
 
 //--------------------------------------------------------------------------------------------
@@ -357,6 +386,7 @@ function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   end
   
   return super.do_compare(axi4_master_tx_compare_obj, comparer) &&
+  //WRITE ADDRESS CHANNEL
   awid    == axi4_master_tx_compare_obj.awid    &&
   awaddr  == axi4_master_tx_compare_obj.awaddr  &&
   awlen   == axi4_master_tx_compare_obj.awlen   &&
@@ -366,10 +396,16 @@ function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   awcache == axi4_master_tx_compare_obj.awcache &&
   awprot  == axi4_master_tx_compare_obj.awprot  &&
   awqos   == axi4_master_tx_compare_obj.awqos   &&
-  wdata   == axi4_master_tx_compare_obj.wdata   &&
-  wstrb   == axi4_master_tx_compare_obj.wstrb   &&
-  bid     == axi4_master_tx_compare_obj.bid     &&
-  bresp   == axi4_master_tx_compare_obj.bresp   &&
+  
+  //WRITE DATA CHANNEL
+  wdata == axi4_master_tx_compare_obj.wdata &&
+  wstrb == axi4_master_tx_compare_obj.wstrb &&
+  
+  //WRITE RESPONSE CHANNEL
+  bid   == axi4_master_tx_compare_obj.bid   &&
+  bresp == axi4_master_tx_compare_obj.bresp &&
+  
+  //READ ADDRESS CHANNEL
   arid    == axi4_master_tx_compare_obj.arid    &&
   araddr  == axi4_master_tx_compare_obj.araddr  &&
   arlen   == axi4_master_tx_compare_obj.arlen   &&
@@ -379,11 +415,12 @@ function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   arcache == axi4_master_tx_compare_obj.arcache &&
   arprot  == axi4_master_tx_compare_obj.arprot  &&
   arqos   == axi4_master_tx_compare_obj.arqos   &&
-  rdata   == axi4_master_tx_compare_obj.rdata   &&
-  rstrb   == axi4_master_tx_compare_obj.rstrb   &&
-  rresp   == axi4_master_tx_compare_obj.rresp;
 
-endfunction:do_compare
+  //READ DATA CHANNEL
+  rdata == axi4_master_tx_compare_obj.rdata &&
+  rstrb == axi4_master_tx_compare_obj.rstrb &&
+  rresp == axi4_master_tx_compare_obj.rresp;
+endfunction : do_compare
 
 //--------------------------------------------------------------------------------------------
 // Function: do_print method
@@ -394,7 +431,7 @@ endfunction:do_compare
 //--------------------------------------------------------------------------------------------
 function void axi4_master_tx::do_print(uvm_printer printer);
   super.do_print(printer);
-  `uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","----------------------------------------",UVM_LOW);
+  `uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
   printer.print_string("awid",awid.name());
   printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);
   printer.print_string("awlen",awlen.name());
@@ -407,10 +444,10 @@ function void axi4_master_tx::do_print(uvm_printer printer);
   `uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
   //printer.print_field("wdata",wdata,$bits(wdata),UVM_HEX);
   //printer.print_field("wstrb",wstrb,$bits(wstrb),UVM_HEX);
-  `uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","----------------------------------------",UVM_LOW);
+  `uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
   printer.print_string("bid",bid.name());
   printer.print_string("bresp",bresp.name());
-  `uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","----------------------------------------",UVM_LOW);
+  `uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);
   printer.print_string("arid",arid.name());
   printer.print_field("araddr",araddr,$bits(araddr),UVM_HEX);
   printer.print_string("arlen",arlen.name());

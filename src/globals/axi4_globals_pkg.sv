@@ -52,7 +52,6 @@ package axi4_globals_pkg;
   parameter int MEM_ID = 2**ADDRESS_WIDTH;
 
 
-
   //-------------------------------------------------------
   // Enums used in axi4_avip are given below
   //-------------------------------------------------------
@@ -283,7 +282,6 @@ package axi4_globals_pkg;
     READ_SLVERR = 2'b10,
     READ_DECERR = 2'b11
   } rresp_e;
-
 
 
   //-------------------------------------------------------
