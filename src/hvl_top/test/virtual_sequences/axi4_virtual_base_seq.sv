@@ -18,6 +18,8 @@ class axi4_virtual_base_seq extends uvm_sequence;
    axi4_slave_write_sequencer  axi4_slave_write_seqr_h;
    axi4_slave_read_sequencer  axi4_slave_read_seqr_h;
 
+   axi4_env_config env_cfg_h;
+
   //--------------------------------------------------------------------------------------------
   // Externally defined tasks and functions
   //--------------------------------------------------------------------------------------------
@@ -45,6 +47,11 @@ endfunction:new
 // phase - stores the current phase
 //--------------------------------------------------------------------------------------------
 task axi4_virtual_base_seq::body();
+
+   if(!uvm_config_db#(axi4_env_config) ::get(null,get_full_name(),"axi4_env_config",env_cfg_h)) begin
+    `uvm_fatal("CONFIG","cannot get() env_cfg from uvm_config_db.Have you set() it?")
+  end
+
   if(!$cast(p_sequencer,m_sequencer))begin
     `uvm_error(get_full_name(),"Virtual sequencer pointer cast failed")
   end

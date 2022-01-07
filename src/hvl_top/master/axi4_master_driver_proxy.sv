@@ -140,7 +140,6 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_master_driver_proxy::run_phase(uvm_phase phase);
 
-  // phase.raise_objection(this, "axi4_master_driver_proxy");
 
   super.run_phase(phase);
    
@@ -160,24 +159,21 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req); 
     axi4_master_seq_item_converter::to_read_class(struct_read_packet,req);
     //axi4_master_cfg_converter::to_class(struct_cfg,axi4_master_agent_cfg_h);
-
-    axi_write_seq_item_port.item_done();
-    axi_read_seq_item_port.item_done();
   end
-  // phase.drop_objection(this);
 
 endtask : run_phase
+
 
 task axi4_master_driver_proxy::axi_write_task();
   axi_write_seq_item_port.get_next_item(req);
 
-  //axi_write_seq_item_port.finish_item();
+  axi_write_seq_item_port.item_done();
 endtask
 
 task axi4_master_driver_proxy::axi_read_task();
   axi_read_seq_item_port.get_next_item(req);
 
-  //axi_write_seq_item_port.finish_item();
+  axi_write_seq_item_port.item_done();
 endtask
 
 `endif

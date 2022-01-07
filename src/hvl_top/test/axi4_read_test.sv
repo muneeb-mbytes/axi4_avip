@@ -48,6 +48,5 @@ task axi4_read_test::run_phase(uvm_phase phase);
   phase.drop_objection(this);
 
 endtask : run_phase
-
 `endif
 

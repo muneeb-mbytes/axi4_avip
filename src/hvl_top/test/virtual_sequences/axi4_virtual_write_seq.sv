@@ -39,7 +39,6 @@ endfunction : new
 // Creates and starts the data of master and slave sequences
 //--------------------------------------------------------------------------------------------
 task axi4_virtual_write_seq::body();
-  super.body();
   axi4_master_write_seq_h = axi4_master_write_seq::type_id::create("axi4_master_write_seq_h");
   axi4_slave_write_seq_h = axi4_slave_write_seq::type_id::create("axi4_slave_write_seq_h");
 //   fork
