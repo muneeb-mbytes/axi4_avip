@@ -62,10 +62,14 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Variable : wdata
   //Used to randomise write data
+  //varaible[$] gives a unbounded queue
+  //variable[$:value] gives a bounded queue to a value of given value 
   rand bit [DATA_WIDTH-1:0] wdata [$:DATA_WIDTH];
 
   //Variable : wstrb
   //Used to randomise write strobe
+  //varaible[$] gives a unbounded queue
+  //variable[$:value] gives a bounded queue to a value of given value 
   rand bit [(DATA_WIDTH/8)-1:0] wstrb [$:DATA_WIDTH];
 
   //Variable : wlast
@@ -143,10 +147,14 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Variable : rdata
   //Used to randomise read data
+  //varaible[$] gives a unbounded queue
+  //variable[$:value] gives a bounded queue to a value of given value 
   rand bit [DATA_WIDTH-1:0] rdata [$:DATA_WIDTH];
 
   //Variable : rstrb
   //Used to randomise read strobe
+  //varaible[$] gives a unbounded queue
+  //variable[$:value] gives a bounded queue to a value of given value 
   rand bit [(DATA_WIDTH/8)-1:0] rstrb [$:DATA_WIDTH];
 
   //Variable : rresp
@@ -291,7 +299,9 @@ function void axi4_master_tx::post_randomize();
   //end
 
   //Used to restrict the address inside the 4kb boundary
-  if(!std::randomize(awaddr) with {awaddr % 4096 == 0;}) begin
+  if(!std::randomize(awaddr) with {awaddr % 4096 == 0; 
+                                   awaddr inside {[0:4095]};
+                                  }) begin
     `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize AWADDR"));
   end
 
