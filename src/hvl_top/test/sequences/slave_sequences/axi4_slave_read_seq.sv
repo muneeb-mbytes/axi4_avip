@@ -35,7 +35,7 @@ task axi4_slave_read_seq::body();
   start_item(req);
   if(!req.randomize())
   begin
-    'uvm_error(get_type_name(),"randomization failed");
+    `uvm_error(get_type_name(),"randomization failed");
   end
   req.print();
   finish_item(req);
