@@ -51,26 +51,28 @@ package axi4_globals_pkg;
   //Indicates Slave Memory Depth 
   parameter int MEM_ID = 2**ADDRESS_WIDTH;
 
-
+  //Variable: LENGTH
+  //Indicates the length of the address write and read channels
+  parameter int LENGTH = 8;
   //-------------------------------------------------------
   // Enums used in axi4_avip are given below
   //-------------------------------------------------------
   
   //Enum: awlen_e
   //Used to declare the enum type for write address length
-  typedef enum bit [7:0] {
-    WRITE_LEN_FIXED,
-    WRITE_LEN_WRAP,
-    WRITE_LEN_INCR
-  } awlen_e;
+  //typedef enum bit [7:0] {
+  //  WRITE_LEN_FIXED,
+  //  WRITE_LEN_WRAP,
+  //  WRITE_LEN_INCR
+  //} awlen_e;
 
   //Enum: arlen_e
   //Used to declare the enum type for read address length
-  typedef enum bit [7:0] {
-    READ_LEN_FIXED,
-    READ_LEN_WRAP,
-    READ_LEN_INCR
-  } arlen_e;
+  //typedef enum bit [7:0] {
+  //  READ_LEN_FIXED,
+  //  READ_LEN_WRAP,
+  //  READ_LEN_INCR
+  //} arlen_e;
 
   //Enum: awburst_e
   //Used to declare the enum type of write burst type
@@ -288,7 +290,7 @@ package axi4_globals_pkg;
   typedef enum bit {
     WRITE = 1,
     READ  = 0
-  } tx_type;
+  } tx_type_e;
 
 
   //-------------------------------------------------------

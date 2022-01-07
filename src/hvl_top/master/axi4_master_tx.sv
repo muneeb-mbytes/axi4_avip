@@ -19,11 +19,11 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : awaddr
   //Used to send the write address
-  rand bit [ADDRESS_WIDTH-1:0] awaddr;
+  rand bit [ADDRESS_WIDTH-1:0]awaddr;
 
   //Variable : awlen
   //Used to send the write address length
-  rand awlen_e awlen;
+  rand bit [LENGTH-1:0]awlen;
 
   //Variable : awsize
   //Used to send the write address size
@@ -108,7 +108,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : arlen
   //Used to send the read address length
-  rand arlen_e arlen;
+  rand bit [LENGTH-1:0]arlen;
 
   //Variable : arsize
   //Used to send the read address size
@@ -150,12 +150,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //varaible[$] gives a unbounded queue
   //variable[$:value] gives a bounded queue to a value of given value 
   rand bit [DATA_WIDTH-1:0] rdata [$:DATA_WIDTH];
-
-  //Variable : rstrb
-  //Used to randomise read strobe
-  //varaible[$] gives a unbounded queue
-  //variable[$:value] gives a bounded queue to a value of given value 
-  rand bit [(DATA_WIDTH/8)-1:0] rstrb [$:DATA_WIDTH];
 
   //Variable : rresp
   //Used to capture the read response of the trasnaction
@@ -209,13 +203,11 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Constraint : wdata_c1
   //Adding constraint to restrict the write data based on awlength
-  constraint wdata_c1 { wdata.size() == awlen + 1;
-                      } 
+  //constraint wdata_c1 { wdata.size() == awlen + 1;} 
 
   //Constraint : wstrb_c2
   //Adding constraint to restrict the write strobe based on awlength
-  constraint wstrb_c2 { wstrb.size() == awlen + 1;
-                      }
+  //constraint wstrb_c2 { wstrb.size() == awlen + 1;}
 
   //-------------------------------------------------------
   // READ ADDRESS Constraints
@@ -376,7 +368,6 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   
   //READ DATA CHANNEL
   rdata = axi4_master_tx_copy_obj.rdata;
-  rstrb = axi4_master_tx_copy_obj.rstrb;
   rresp = axi4_master_tx_copy_obj.rresp;
 endfunction : do_copy
 
@@ -428,7 +419,6 @@ function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
 
   //READ DATA CHANNEL
   rdata == axi4_master_tx_compare_obj.rdata &&
-  rstrb == axi4_master_tx_compare_obj.rstrb &&
   rresp == axi4_master_tx_compare_obj.rresp;
 endfunction : do_compare
 
@@ -444,7 +434,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
   `uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
   printer.print_string("awid",awid.name());
   printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);
-  printer.print_string("awlen",awlen.name());
+  printer.print_field("awlen",awlen,$bits(awlen),UVM_HEX);
   printer.print_string("awsize",awsize.name());
   printer.print_string("awburst",awburst.name());
   printer.print_string("awlock",awlock.name());
@@ -452,15 +442,19 @@ function void axi4_master_tx::do_print(uvm_printer printer);
   printer.print_string("awprot",awprot.name());
   printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
   `uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
-  //printer.print_field("wdata",wdata,$bits(wdata),UVM_HEX);
-  //printer.print_field("wstrb",wstrb,$bits(wstrb),UVM_HEX);
+  foreach(wdata[i])begin
+    printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
+  end
+  foreach(wstrb[i])begin
+    printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
+  end
   `uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
   printer.print_string("bid",bid.name());
   printer.print_string("bresp",bresp.name());
   `uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);
   printer.print_string("arid",arid.name());
   printer.print_field("araddr",araddr,$bits(araddr),UVM_HEX);
-  printer.print_string("arlen",arlen.name());
+  printer.print_field("arlen",arlen,$bits(arlen),UVM_HEX);
   printer.print_string("arsize",arsize.name());
   printer.print_string("arburst",arburst.name());
   printer.print_string("arlock",arlock.name());
@@ -468,8 +462,10 @@ function void axi4_master_tx::do_print(uvm_printer printer);
   printer.print_string("arprot",arprot.name());
   printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
   `uvm_info("------------------------------------------READ_DATA_CHANNEL","----------------------------------------",UVM_LOW);
+  foreach(rdata[i])begin
+    printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
+  end
   //printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
-  //printer.print_field("rstrb",rstrb,$bits(rstrb),UVM_HEX);
   printer.print_string("rresp",rresp.name());
 endfunction : do_print
 

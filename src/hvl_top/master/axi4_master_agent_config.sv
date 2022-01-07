@@ -17,10 +17,6 @@ class axi4_master_agent_config extends uvm_object;
   // Used for enabling the master agent coverage
   bit has_coverage;
 
-  //Variable: slave_no
-  //Used to indicate the slave number
-  //slave_no_e slave_no;
-  
   //Variable : master_memory
   //Used to store all the data from the slaves
   //Each location of the master memory stores 32 bit data
@@ -40,7 +36,25 @@ class axi4_master_agent_config extends uvm_object;
   //Value - stores the maximum address range of that slave.
   bit [ADDRESS_WIDTH-1:0]master_max_addr_range_array[int];
   
+  //Variable : wait_count_write_address_channel;
+  //Used to determine the number of wait states inserted for write address channel
+  int wait_count_write_address_channel;
+  
+  //Variable : wait_count_write_data_channel;
+  //Used to determine the number of wait states inserted for write data channel
+  int wait_count_write_data_channel;
+  
+  //Variable : wait_count_write_response_channel;
+  //Used to determine the number of wait states inserted for write response channel
+  int wait_count_write_response_channel;
 
+  //Variable : outstanding_write_tx
+  //Used to send the outstanding transactions
+  int outstanding_write_tx;
+  
+  //Variable : outstanding_read_tx
+  //Used to send the outstanding transactions
+  int outstanding_read_tx;
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -105,6 +119,12 @@ function void axi4_master_agent_config::do_print(uvm_printer printer);
                                                   $bits(master_max_addr_range_array[i]),UVM_HEX);
   end
 
+  printer.print_field("wait_count_write_address_channel",wait_count_write_address_channel,$bits(wait_count_write_address_channel),UVM_DEC);
+  printer.print_field("wait_count_write_data_channel",wait_count_write_data_channel,$bits(wait_count_write_data_channel),UVM_DEC);
+  printer.print_field("wait_count_write_response_channel",wait_count_write_response_channel,$bits(wait_count_write_response_channel),UVM_DEC);
+  printer.print_field("outstanding_write_tx",outstanding_write_tx,$bits(outstanding_write_tx),UVM_DEC);
+  printer.print_field("outstanding_read_tx",outstanding_read_tx,$bits(outstanding_read_tx),UVM_DEC);
+  
 endfunction : do_print
 
 

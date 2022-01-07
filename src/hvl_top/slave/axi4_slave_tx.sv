@@ -15,23 +15,23 @@ class axi4_slave_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Variable : awaddr
   //Address selected in axi_slave
-  rand  bit [ADDRESS_WIDTH-1:0] awaddr;
+  bit [ADDRESS_WIDTH-1:0] awaddr;
 
   //Variable : awid
   //Used to identify the write transaction for the adress
-  rand  awid_e awid;
+  awid_e awid;
 
   //Variable : alen
   //Used to represent the no.of beats in a transaction
-  rand awlen_e awlen;
+  bit [LENGTH-1:0]awlen;
 
   //Variable : awsize
   //Used to send the write address size
-  rand awsize_e awsize;
+  awsize_e awsize;
 
   //Variable : awburst
   //Used to send the address burst type
-  rand awburst_e awburst;
+  awburst_e awburst;
 
   //Variable : awready
   //Used to accept the valid address
@@ -43,19 +43,19 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : awlock
   //Used to send the  write address lock
-  rand awlock_e awlock;
+  awlock_e awlock;
 
   //Variable : awcache
   //Used to send the write address cache
-  rand awcache_e awcache;
+  awcache_e awcache;
 
   //Variable : awqos
   //Used to send the write address quality os service
-  rand bit awqos;
+  bit awqos;
 
   //Variable : addr_write_prot
   //used for different access
-  rand awprot_e awprot;
+  awprot_e awprot;
 
   //Variable : endian
   //Used to store data in adress location
@@ -66,15 +66,15 @@ class axi4_slave_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Variable : wdata
   //Used to send the write data 
-  rand bit [DATA_WIDTH-1:0] wdata;
+  bit [DATA_WIDTH-1:0] wdata;
 
   //Variable : wstrb
   //Used to hold the valid data byte lanes
-  rand bit [(DATA_WIDTH/8)-1:0] wstrb;
+  bit [(DATA_WIDTH/8)-1:0] wstrb;
 
   //Variable : wlast
   //Used to represent the last byte of the transaction
-  rand bit wlast;
+  //bit wlast;
 
   //Variable : wready
   //Used to accept the valid data
@@ -93,7 +93,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : bresp
   //Used to send the write response for the transaction
-  rand  bresp_e bresp;
+  rand bresp_e bresp;
 
   //Variable : bready
   //Used to accept write response are  valid data
@@ -116,7 +116,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : arlen
   //Used to represent the no.of beats in a transaction
-  rand arlen_e arlen;
+  rand bit [LENGTH-1:0]arlen;
 
   //Variable : arsize
   //Used to send the write address size
@@ -163,7 +163,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : rlast
   //Used to represent the last byte of the transaction
-  rand bit rlast;
+  //rand bit rlast;
 
   //Variable : rready
   //Used to accept the valid data
@@ -247,7 +247,6 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   //WRITE DATA CHANNEL
   wdata   = axi_slave_tx_copy_obj.wdata;
   wstrb   = axi_slave_tx_copy_obj.wstrb;
-  wlast   = axi_slave_tx_copy_obj.wlast;
   //wready  = axi_slave_tx_copy.obj.wready;
   //wvalid  = axi_slave_tx_copy.obj.wvalid;
   
@@ -273,7 +272,6 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   //READ DATA CHANNEL
   rid   = axi_slave_tx_copy_obj.rid;
   rdata = axi_slave_tx_copy_obj.rdata;
-  rlast = axi_slave_tx_copy_obj.rlast;
   rresp = axi_slave_tx_copy_obj.rresp;
   //rready  = axi_slave_tx_copy.obj.rready;
   //rvalid  = axi_slave_tx_copy.obj.rvalid;
@@ -311,7 +309,6 @@ function bit axi4_slave_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   //WRITE DATA CHANNEL
   wdata == axi_slave_tx_compare_obj.wdata  &&
   wstrb == axi_slave_tx_compare_obj.wstrb  &&
-  wlast == axi_slave_tx_compare_obj.wlast  &&
   //wready  == axi_slave_tx_compare.obj.wready &&
   //wvalid  == axi_slave_tx_compare.obj.wvalid &&
   
@@ -337,7 +334,6 @@ function bit axi4_slave_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   //READ DATA CHANNEL
   rid   == axi_slave_tx_compare_obj.rid  &&  
   rdata == axi_slave_tx_compare_obj.rdata && 
-  rlast == axi_slave_tx_compare_obj.rlast &&
   rresp == axi_slave_tx_compare_obj.rresp;
   //rready == axi_slave_tx_compare.obj.rready &&
   //rvalid == axi_slave_tx_compare.obj.rvalid ;
@@ -353,7 +349,7 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
   `uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
   printer.print_string("awid",awid.name());
   printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);
-  printer.print_string("awlen",awlen.name());
+  printer.print_field("awlen",awlen,$bits(awlen),UVM_HEX);
   printer.print_string("awsize",awsize.name());
   printer.print_string("awburst",awburst.name());
   printer.print_string("awlock",awlock.name());
@@ -369,7 +365,7 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
   `uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);
   printer.print_string("arid",arid.name());
   printer.print_field("araddr",araddr,$bits(araddr),UVM_HEX);
-  printer.print_string("arlen",arlen.name());
+  printer.print_field("arlen",arlen,$bits(arlen),UVM_HEX);
   printer.print_string("arsize",arsize.name());
   printer.print_string("arburst",arburst.name());
   printer.print_string("arlock",arlock.name());
