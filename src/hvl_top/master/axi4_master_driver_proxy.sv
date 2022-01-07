@@ -178,6 +178,10 @@ task axi4_master_driver_proxy::axi_write_task();
     axi_write_seq_item_port.get_next_item(req_wr);
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: req_wr = \n%s",req_wr.sprint()), UVM_NONE); 
 
+    // address_task
+    // data_task
+    // response_task
+
     #10;
     axi_write_seq_item_port.item_done();
   end
@@ -190,6 +194,10 @@ task axi4_master_driver_proxy::axi_read_task();
 
     axi_read_seq_item_port.get_next_item(req_rd);
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: req_rd = \n%s",req_rd.sprint()), UVM_NONE); 
+
+    // read_address_task
+    // read_response_task
+
     #10;
 
     axi_read_seq_item_port.item_done();
