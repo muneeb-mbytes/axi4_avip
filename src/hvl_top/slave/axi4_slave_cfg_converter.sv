@@ -42,10 +42,10 @@ endfunction: from_class
  //--------------------------------------------------------------------------------------------      
  function void axi4_slave_cfg_converter:: do_print(uvm_printer printer);                            
   axi4_transfer_cfg_s axi4_cfg;                                                                       
-  printer.print_field("min_address",axi4_cfg.min_address,$bits(axi4_cfg.min_address),UVM_DEC);
-  printer.print_field("max_address",axi4_cfg.max_address,$bits(axi4_cfg.max_address),UVM_DEC);
-  printer.print_field("wait_count_read_address_channel",axi4_cfg.wait_count_read_address_channel,$bits(axi4_cfg.wait_count_read_address_channel),UVM_DEC);
-  printer.print_field("wait_count_read_data_channel",axi4_cfg.wait_count_read_data_channel,$bits(axi4_cfg.wait_count_read_data_channel),UVM_DEC);
+  printer.print_field("min_address",axi4_cfg.min_address,$bits(axi4_cfg.min_address),UVM_HEX);
+  printer.print_field("max_address",axi4_cfg.max_address,$bits(axi4_cfg.max_address),UVM_HEX);
+  printer.print_field("wait_count_read_address_channel",axi4_cfg.wait_count_read_address_channel,$bits(axi4_cfg.wait_count_read_address_channel),UVM_HEX);
+  printer.print_field("wait_count_read_data_channel",axi4_cfg.wait_count_read_data_channel,$bits(axi4_cfg.wait_count_read_data_channel),UVM_HEX);
   // printer.print_field("",$bits(),UVM_DEC);                                                        
  endfunction : do_print                                                                              
                                                                                                 

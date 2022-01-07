@@ -26,8 +26,8 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   uvm_analysis_port #(RSP) axi_write_rsp_port;
   uvm_analysis_port #(RSP) axi_read_rsp_port;
   
-  REQ req;
-  RSP rsp;
+  REQ req_wr, req_rd;
+  RSP rsp_wr, rsp_rd;
 
   // Variable: axi4_slave_agent_cfg_h
   // Declaring handle for axi4_slave agent config class 
@@ -97,43 +97,77 @@ task axi4_slave_driver_proxy::run_phase(uvm_phase phase);
   `uvm_info(get_type_name(),"SLAVE_DRIVER_PROXY",UVM_MEDIUM)
 
   
- // axi4_slave_drv_bfm_h.wait_for_system_reset();
+  axi4_slave_drv_bfm_h.wait_for_system_reset();
 
-  forever begin
-
-    axi4_write_transfer_char_s struct_write_packet_char;
-    axi4_read_transfer_char_s struct_read_packet_char;
-    axi4_transfer_cfg_s    struct_cfg;
-
-    //seq_item_port.get_next_item(req);
+  fork 
     axi_write_task();
     axi_read_task();
-    axi4_slave_seq_item_converter::from_write_class(req,struct_write_packet_char);
-    axi4_slave_seq_item_converter::from_read_class(req,struct_read_packet_char);
-    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+  join
+
+  //  axi4_write_transfer_char_s struct_write_packet_char;
+  //  axi4_read_transfer_char_s struct_read_packet_char;
+  //  axi4_transfer_cfg_s    struct_cfg;
+
+  //  //seq_item_port.get_next_item(req);
+  //  axi_write_task();
+  //  axi_read_task();
+  //  axi4_slave_seq_item_converter::from_write_class(req,struct_write_packet_char);
+  //  axi4_slave_seq_item_converter::from_read_class(req,struct_read_packet_char);
+  //  axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
 
 
-    axi4_slave_seq_item_converter::to_write_class(struct_write_packet_char,req);
-    axi4_slave_seq_item_converter::to_read_class(struct_read_packet_char,req);
+  //  axi4_slave_seq_item_converter::to_write_class(struct_write_packet_char,req);
+  //  axi4_slave_seq_item_converter::to_read_class(struct_read_packet_char,req);
     //axi4_slave_cfg_converter::to_class(struct_cfg,axi4_slave_agent_cfg_h);
-    
-  end
-
 
 endtask : run_phase 
 
 task axi4_slave_driver_proxy::axi_write_task();
-  axi_write_seq_item_port.get_next_item(req);
 
+  forever begin
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_transfer_cfg_s       struct_cfg;
 
-  axi_write_seq_item_port.item_done();
+    axi_write_seq_item_port.get_next_item(req_wr);
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_req_wr = \n%s",req_wr.sprint()), UVM_NONE); 
+   
+    axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
+    `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
+    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+    `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH); 
+
+    // address_task
+    axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
+
+    // data_task
+    // response_task
+
+    #10;
+    axi_write_seq_item_port.item_done();
+  end
+
 endtask
 
 task axi4_slave_driver_proxy::axi_read_task();
-  axi_read_seq_item_port.get_next_item(req);
+  forever begin
+    axi4_read_transfer_char_s struct_read_packet;
+    axi4_transfer_cfg_s       struct_cfg;
 
+    axi_read_seq_item_port.get_next_item(req_rd);
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_req_rd = \n%s",req_rd.sprint()), UVM_NONE); 
+  
+    axi4_slave_seq_item_converter::from_read_class(req_rd,struct_read_packet);
+    `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_HIGH); 
+    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+    `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg = \n %0p",struct_cfg), UVM_HIGH); 
 
-  axi_write_seq_item_port.item_done();
+    // read_address_task
+    // read_response_task
+
+    #10;
+
+    axi_read_seq_item_port.item_done();
+  end
 endtask
 
 `endif

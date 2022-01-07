@@ -142,7 +142,7 @@ interface axi4_slave_driver_bfm(input                        aclk    ,
   // Sampling the signals that are associated with write_address_channel
   //-------------------------------------------------------
 
-  task axi_write_address_phase(axi4_write_transfer_char_s struct_write_pkt);
+  task axi4_write_address_phase(axi4_write_transfer_char_s struct_write_pkt);
     @(posedge aclk)begin
       `uvm_info(name,"INSIDE WRITE_ADDRESS_PHASE",UVM_LOW)
       if(!aresetn)begin
@@ -166,19 +166,24 @@ interface axi4_slave_driver_bfm(input                        aclk    ,
 			    mem_wprot	[i] 	<= awprot	;	
           //struct_write_pkt.awprot = awprot;
 			    i <= i+1;
-          for(int k=0;k<$size(mem_awid);k++) begin
-            struct_write_pkt.awid = mem_awid[k];
-            struct_write_pkt.awaddr = mem_waddr[k];
-            struct_write_pkt.awlen = mem_wlen[k];
-            struct_write_pkt.awsize = mem_wsize[k];
-            struct_write_pkt.awburst = mem_wburst[k];
-            struct_write_pkt.awlock = mem_wlock[k];
-            struct_write_pkt.awcache = mem_wcache[k];
-            struct_write_pkt.awprot = mem_wprot[k];
-            `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",struct_write_pkt),UVM_HIGH)
-          end
+        //  for(int k=0;k<$size(mem_awid);k++) begin
+        //    struct_write_pkt.awid = mem_awid[k];
+        //    struct_write_pkt.awaddr = mem_waddr[k];
+        //    struct_write_pkt.awlen = mem_wlen[k];
+        //    struct_write_pkt.awsize = mem_wsize[k];
+        //    struct_write_pkt.awburst = mem_wburst[k];
+        //    struct_write_pkt.awlock = mem_wlock[k];
+        //    struct_write_pkt.awcache = mem_wcache[k];
+        //    struct_write_pkt.awprot = mem_wprot[k];
+        //    `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",struct_write_pkt),UVM_HIGH)
+        //  end
         end
       end
+    end
+    repeat(struct_write_pkt.no_of_wait_states)begin
+      `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",struct_write_pkt.no_of_wait_states),UVM_HIGH);
+      @(posedge aclk);
+      awready<=0;
     end
     assign awready = awvalid;
   endtask

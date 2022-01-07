@@ -319,6 +319,9 @@ package axi4_globals_pkg;
     //Write Response Channel
     bit [15:0] bid;
     bit [1:0]  bresp;
+
+    int no_of_wait_states;
+
   } axi4_write_transfer_char_s; 
 
   //Struct: axi4_r_transfer_char_s
@@ -339,6 +342,9 @@ package axi4_globals_pkg;
     bit [DATA_WIDTH:0][DATA_WIDTH-1: 0] rdata;
     bit [1:0]  rresp; 
     //bit [(DATA_WIDTH/8)-1: 0] rstrb;
+    
+    int no_of_wait_states;
+
   } axi4_read_transfer_char_s;
 
   //Struct: axi4_cfg_char_s

@@ -177,6 +177,10 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to store the read response
   rand rresp_e rresp ;
 
+  //Variable : no_of_wait_states
+  //Used to decide the number of wait states
+  rand bit [2:0]no_of_wait_states;
+
   //-------------------------------------------------------
   // Constraints
   //-------------------------------------------------------
@@ -195,6 +199,8 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Adding constraint to select the type of read response
   constraint rresp_c1 {soft rresp == READ_OKAY;
                       }
+  //To randomise the wait states in range of 0 to 3
+  constraint wait_states_c1 {soft no_of_wait_states inside {[0:3]};}
                     
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -375,6 +381,8 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
   `uvm_info("------------------------------------------READ_DATA_CHANNEL","---------------------------------------",UVM_LOW);
   printer.print_field("rdata",rdata.size(),UVM_HEX);
   printer.print_string("rresp",rresp.name());
+
+  printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_HEX);
 endfunction : do_print
 
 `endif
