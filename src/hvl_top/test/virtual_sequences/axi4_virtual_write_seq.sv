@@ -11,6 +11,7 @@ class axi4_virtual_write_seq extends axi4_virtual_base_seq;
   //Variable: axi4_master_write_seq_h
   //Instantiation of axi4_master_write_seq handle
   axi4_master_write_seq axi4_master_write_seq_h;
+  axi4_master_read_seq axi4_master_read_seq_h;
 
   //Variable: axi4_slave_write_seq_h
   //Instantiation of axi4_slave_write_seq handle
@@ -40,17 +41,33 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_virtual_write_seq::body();
   axi4_master_write_seq_h = axi4_master_write_seq::type_id::create("axi4_master_write_seq_h");
+  axi4_master_read_seq_h = axi4_master_read_seq::type_id::create("axi4_master_read_seq_h");
+
   axi4_slave_write_seq_h = axi4_slave_write_seq::type_id::create("axi4_slave_write_seq_h");
 //   fork
   //  forever begin
-  repeat(2)begin
-      axi4_slave_write_seq_h.start(p_sequencer.axi4_slave_write_seqr_h);
-    end
+  // MSHA: repeat(2)begin
+  // MSHA:     axi4_slave_write_seq_h.start(p_sequencer.axi4_slave_write_seqr_h);
+  // MSHA:   end
  // join_none
 
-  repeat(2) begin
-    axi4_master_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
-  end
+  // MSHA:repeat(2) begin
+  // MSHA:  axi4_master_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
+  // MSHA:end
+  
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Insdie axi4_virtual_write_seq"), UVM_NONE); 
+    fork 
+    begin: T1_WRITE
+      repeat(2) begin
+        axi4_master_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
+      end
+    end
+    begin: T2_READ
+      repeat(3) begin
+      axi4_master_read_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
+      end
+    end
+    join
  endtask : body
 
 `endif

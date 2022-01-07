@@ -12,11 +12,11 @@ class axi4_virtual_base_seq extends uvm_sequence;
    //p sequencer macro declaration 
    `uvm_declare_p_sequencer(virtual_sequencer)
  
-   axi4_master_write_sequencer  axi4_master_write_seqr_h;
-   axi4_master_read_sequencer  axi4_master_read_seqr_h;
+   // MSHA:axi4_master_write_sequencer  axi4_master_write_seqr_h;
+   // MSHA:axi4_master_read_sequencer  axi4_master_read_seqr_h;
 
-   axi4_slave_write_sequencer  axi4_slave_write_seqr_h;
-   axi4_slave_read_sequencer  axi4_slave_read_seqr_h;
+   // MSHA:axi4_slave_write_sequencer  axi4_slave_write_seqr_h;
+   // MSHA:axi4_slave_read_sequencer  axi4_slave_read_seqr_h;
 
    axi4_env_config env_cfg_h;
 
@@ -55,11 +55,11 @@ task axi4_virtual_base_seq::body();
   if(!$cast(p_sequencer,m_sequencer))begin
     `uvm_error(get_full_name(),"Virtual sequencer pointer cast failed")
   end
-  axi4_master_write_seqr_h = p_sequencer.axi4_master_write_seqr_h;
-  axi4_master_read_seqr_h = p_sequencer.axi4_master_read_seqr_h;
+  // MSHA:axi4_master_write_seqr_h = p_sequencer.axi4_master_write_seqr_h;
+  // MSHA:axi4_master_read_seqr_h = p_sequencer.axi4_master_read_seqr_h;
 
-  axi4_slave_write_seqr_h = p_sequencer.axi4_slave_write_seqr_h;
-  axi4_slave_read_seqr_h = p_sequencer.axi4_slave_read_seqr_h;
+  // MSHA:axi4_slave_write_seqr_h = p_sequencer.axi4_slave_write_seqr_h;
+  // MSHA:axi4_slave_read_seqr_h = p_sequencer.axi4_slave_read_seqr_h;
 endtask:body
 
 `endif
