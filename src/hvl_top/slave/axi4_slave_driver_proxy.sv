@@ -138,9 +138,12 @@ task axi4_slave_driver_proxy::axi_write_task();
 
     // address_task
     axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
-
+    
     // data_task
+    axi4_slave_drv_bfm_h.axi4_write_data_phase(struct_write_packet,struct_cfg);
+
     // response_task
+    axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg);
 
     #10;
     axi_write_seq_item_port.item_done();
