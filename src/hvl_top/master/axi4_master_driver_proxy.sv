@@ -2,7 +2,7 @@
 `define AXI4_MASTER_DRIVER_PROXY_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-//  Class: master_driver_proxy
+// Class: master_driver_proxy
 //  Driver is written by extending uvm_driver,uvm_driver is inherited from uvm_component, 
 //  Methods and TLM port (seq_item_port) are defined for communication between sequencer and driver,
 //  uvm_driver is a parameterized class and it is parameterized with the type of the request 
@@ -11,28 +11,37 @@
 class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   `uvm_component_utils(axi4_master_driver_proxy)
 
-  // Port: seq_item_port
-  // Derived driver classes should use this port to request items from the sequencer.
-  // They may also use it to send responses back.
-  
+  //Port: axi_write_seq_item_port
+  //This port is used to request write items from the sequencer, they are also used it to send responses back.
   uvm_seq_item_pull_port #(REQ, RSP) axi_write_seq_item_port;
+  
+  //Port: axi_read_seq_item_port
+  //This port is used to request read items from the sequencer, they are also used it to send responses back.
   uvm_seq_item_pull_port #(REQ, RSP) axi_read_seq_item_port;
 
-  // Port: rsp_port
-  // This port provides an alternate way of sending responses back to the originating sequencer. 
-  // Which port to use depends on which export the sequencer provides for connection.
+  //Port: axi_write_rsp_port
+  //This port provides an alternate way of sending responses back to the originating sequencer. 
+  //Which port to use depends on which export the sequencer provides for connection.
   uvm_analysis_port #(RSP) axi_write_rsp_port;
+  
+  //Port: axi_read_rsp_port
+  //This port provides an alternate way of sending responses back to the originating sequencer. 
+  //Which port to use depends on which export the sequencer provides for connection.
   uvm_analysis_port #(RSP) axi_read_rsp_port;
   
-  // REQ, RSP declarations
+  //Variable: req_wr, req_rd
+  //Declaration of REQ handles
   REQ req_wr, req_rd;
+  
+  //Variable: rsp_wr, rsp_rd
+  //Declaration of RSP handles
   RSP rsp_wr, rsp_rd;
       
-  // Variable: axi4_master_agent_cfg_h
-  // Declaring handle for axi4_master agent config class 
+  //Variable: axi4_master_agent_cfg_h
+  //Declaring handle for axi4_master agent config class 
   axi4_master_agent_config axi4_master_agent_cfg_h;
 
-  //Variable : axi4_master_drv_bfm_h
+  //Variable: axi4_master_drv_bfm_h
   //Declaring handle for axi4 driver bfm
   virtual axi4_master_driver_bfm axi4_master_drv_bfm_h;
   
@@ -41,9 +50,7 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //-------------------------------------------------------
   extern function new(string name = "axi4_master_driver_proxy", uvm_component parent = null);
   extern virtual function void build_phase(uvm_phase phase);
-  //extern virtual function void connect_phase(uvm_phase phase);
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
-  //extern virtual function void start_of_simulation_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
   extern virtual task axi4_write_task();
   extern virtual task axi4_read_task();
@@ -79,16 +86,6 @@ function void axi4_master_driver_proxy::build_phase(uvm_phase phase);
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
-// Function: connect_phase
-//
-// Parameters:
-//  phase - uvm phase
-//--------------------------------------------------------------------------------------------
-//function void axi4_master_driver_proxy::connect_phase(uvm_phase phase);
-//  super.connect_phase(phase);
-//endfunction : connect_phase
-
-//--------------------------------------------------------------------------------------------
 // Function: end_of_elaboration_phase
 //
 // Parameters:
@@ -100,16 +97,6 @@ function void axi4_master_driver_proxy::end_of_elaboration_phase(uvm_phase phase
 endfunction  : end_of_elaboration_phase
 
 //--------------------------------------------------------------------------------------------
-// Function: start_of_simulation_phase
-//
-// Parameters:
-//  phase - uvm phase
-//--------------------------------------------------------------------------------------------
-//function void axi4_master_driver_proxy::start_of_simulation_phase(uvm_phase phase);
-//  super.start_of_simulation_phase(phase);
-//endfunction : start_of_simulation_phase
-
-//--------------------------------------------------------------------------------------------
 // Task: run_phase
 // Gets the sequence_item, converts them to struct compatible transactions
 // and sends them to the BFM to drive the data over the interface
@@ -119,35 +106,15 @@ endfunction  : end_of_elaboration_phase
 //--------------------------------------------------------------------------------------------
 task axi4_master_driver_proxy::run_phase(uvm_phase phase);
 
-  //wait for system reset
+  //waiting for system reset
   axi4_master_drv_bfm_h.wait_for_areset_n();
-
-  // super.run_phase(phase);
-    
 
   fork 
     axi4_write_task();
     axi4_read_task();
   join
 
-  // MSHA:forever begin 
-  // MSHA:  axi4_read_transfer_char_s struct_read_packet;
-  // MSHA:  axi4_transfer_cfg_s       struct_cfg;
-  // MSHA:  
-
-  // MSHA:  // MSHA: axi4_master_seq_item_converter::from_write_class(req,struct_write_packet); 
-  // MSHA:  // MSHA: axi4_master_seq_item_converter::from_read_class(req,struct_read_packet);
-  // MSHA:  // MSHA: axi4_master_cfg_converter::from_write_class(axi4_master_agent_cfg_h,struct_cfg);
-
-  // MSHA:
-  // MSHA:  // MSHA: axi4_master_seq_item_converter::to_write_class(struct_write_packet,req); 
-  // MSHA:  // MSHA: axi4_master_seq_item_converter::to_read_class(struct_read_packet,req);
-
-  // MSHA:  //axi4_master_cfg_converter::to_class(struct_cfg,axi4_master_agent_cfg_h);
-  // MSHA:end
-
 endtask : run_phase
-
 
 task axi4_master_driver_proxy::axi4_write_task();
   forever begin
@@ -163,10 +130,10 @@ task axi4_master_driver_proxy::axi4_write_task();
     //Converting configurations into struct config type
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
 
+    //Calling 3 write tasks from bfm
     axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
     axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
     axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
-    //#10;
     
     //Converting transactions into struct data type
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
@@ -175,7 +142,7 @@ task axi4_master_driver_proxy::axi4_write_task();
 
     axi_write_seq_item_port.item_done();
   end
-endtask
+endtask : axi4_write_task
 
 task axi4_master_driver_proxy::axi4_read_task();
   forever begin
@@ -191,9 +158,9 @@ task axi4_master_driver_proxy::axi4_read_task();
     //Converting configurations into struct config type
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
 
+    //Calling 2 read tasks from bfm
     axi4_master_drv_bfm_h.axi4_read_address_channel_task(struct_read_packet,struct_cfg);
     axi4_master_drv_bfm_h.axi4_read_data_channel_task(struct_read_packet,struct_cfg);
-    //#10;
     
     //Converting transactions into struct data type
     axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
@@ -202,7 +169,7 @@ task axi4_master_driver_proxy::axi4_read_task();
 
     axi_read_seq_item_port.item_done();
   end
-endtask
+endtask : axi4_read_task
 
 `endif
 

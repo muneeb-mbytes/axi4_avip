@@ -5,11 +5,65 @@
 import axi4_globals_pkg::*;
 
 //--------------------------------------------------------------------------------------------
-//Interface : axi4_master_driver_bfm
-//Used as the HDL driver for axi4
-//It connects with the HVL driver_proxy for driving the stimulus
+// Interface : axi4_master_driver_bfm
+//  Used as the HDL driver for axi4
+//  It connects with the HVL driver_proxy for driving the stimulus
 //--------------------------------------------------------------------------------------------
-interface axi4_master_driver_bfm(input aclk, input aresetn); 
+interface axi4_master_driver_bfm(input                    aclk    , 
+                                 input                    aresetn ,
+                                 
+                                 //Write_address_channel
+                                 input [3:0]              awid    ,
+                                 input [ADDRESS_WIDTH-1:0]awaddr  ,
+                                 input [3: 0]             awlen   ,
+                                 input [2: 0]             awsize  ,
+                                 input [1: 0]             awburst ,
+                                 input [1: 0]             awlock  ,
+                                 input [3: 0]             awcache ,
+                                 input [2: 0]             awprot  ,
+                                 input                    awvalid ,
+                                 output reg	              awready ,
+
+                                 //Write_data_channel
+                                 input [DATA_WIDTH-1: 0]    wdata  ,
+                                 input [(DATA_WIDTH/8)-1: 0]wstrb  ,
+                                 input                      wlast  ,
+                                 input [3: 0]               wuser  ,
+                                 input                      wvalid ,
+                                 output reg	                wready ,
+
+                                 //Write Response Channel
+                                 output reg [3:0]bid    ,
+                                 output reg [1:0]bresp  ,
+                                 output reg [3:0]buser  ,
+                                 output reg bvalid ,
+                                 input		  bready ,
+
+                                 //Read Address Channel
+                                 input [3: 0]              arid    ,
+                                 input [ADDRESS_WIDTH-1: 0]araddr  ,
+                                 input [7:0]               arlen   ,
+                                 input [2:0]               arsize  ,
+                                 input [1:0]               arburst ,
+                                 input [1:0]               arlock  ,
+                                 input [3:0]               arcache ,
+                                 input [2:0]               arprot  ,
+                                 input [3:0]               arQOS   ,
+                                 input [3:0]               arregion,
+                                 input [3:0]               aruser  ,
+                                 input                     arvalid ,
+                                 output reg                arready ,
+
+                                 //Read Data Channel
+                                 output reg [3:0]                rid     ,
+                                 output reg [DATA_WIDTH-1: 0]    rdata   ,
+                                 output reg [(DATA_WIDTH/8)-1: 0]rstrb   ,
+                                 output reg [1:0]                rresp   ,
+                                 output reg                      rlast   ,
+                                 output reg [3:0]                ruser   ,
+                                 output reg                      rvalid  ,
+                                 input		                       rready  
+                              );  
   
   //-------------------------------------------------------
   // Importing UVM Package 
