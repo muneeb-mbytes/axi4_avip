@@ -180,10 +180,10 @@ task axi4_slave_driver_proxy::axi4_read_task();
     `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg = \n %0p",struct_cfg), UVM_HIGH); 
 
     //read address task
-    axi4_slave_drv_bfm_h.axi4_read_address_channel_task(struct_read_packet,struct_cfg);
+    axi4_slave_drv_bfm_h.axi4_read_address_phase(struct_read_packet,struct_cfg);
     
     //read response task
-    axi4_slave_drv_bfm_h.axi4_read_data_channel_task(struct_read_packet,struct_cfg);
+    axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
     //#10;
     
     //Converting struct into transactions
