@@ -1,5 +1,5 @@
-`ifndef AXI4_SLAVE_AGENT_BFMNCLUDED_
-`define AXI4_SLAVE_AGENT_BFMNCLUDED_
+`ifndef AXI4_SLAVE_AGENT_BFM_INCLUDED_
+`define AXI4_SLAVE_AGENT_BFM_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
 // Module:AXI4 Slave Agent BFM

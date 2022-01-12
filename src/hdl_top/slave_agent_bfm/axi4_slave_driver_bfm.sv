@@ -1,5 +1,5 @@
-`ifndef AXI4_SLAVE_DRIVER_BFMNCLUDED_
-`define AXI4_SLAVE_DRIVER_BFMNCLUDED_
+`ifndef AXI4_SLAVE_DRIVER_BFM_INCLUDED_
+`define AXI4_SLAVE_DRIVER_BFM_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
 //Interface : axi4_slave_driver_bfm
