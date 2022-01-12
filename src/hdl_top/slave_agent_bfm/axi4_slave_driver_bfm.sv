@@ -300,6 +300,26 @@ interface axi4_slave_driver_bfm(input                        aclk    ,
     end
   endtask
 
+  //-------------------------------------------------------
+  // Task: axi4_read_address_channel_task
+  // This task will drive the read address signals
+  //-------------------------------------------------------
+  task axi4_read_address_channel_task (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
+    `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
+    `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
+    `uvm_info(name,$sformatf("DRIVE TO READ ADDRESS CHANNEL"),UVM_HIGH);
+  endtask : axi4_read_address_channel_task
+
+  //-------------------------------------------------------
+  // Task: axi4_read_data_channel_task
+  // This task will drive the read data signals
+  //-------------------------------------------------------
+  task axi4_read_data_channel_task (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
+    `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
+    `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
+    `uvm_info(name,$sformatf("DRIVE TO READ DATA CHANNEL"),UVM_HIGH);
+  endtask : axi4_read_data_channel_task
+
 endinterface : axi4_slave_driver_bfm
 
 `endif
