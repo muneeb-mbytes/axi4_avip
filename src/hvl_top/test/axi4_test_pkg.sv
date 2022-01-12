@@ -26,6 +26,7 @@ package axi4_test_pkg;
   `include "axi4_base_test.sv"
   `include "axi4_write_test.sv"
   `include "axi4_read_test.sv"
+  `include "axi4_write_read_test.sv"
 
 endpackage : axi4_test_pkg
 
