@@ -315,7 +315,8 @@ package axi4_globals_pkg;
     //Write_data_channel
     bit [DATA_WIDTH:0][DATA_WIDTH-1:0]     wdata;
     bit [DATA_WIDTH:0][(DATA_WIDTH/8)-1:0] wstrb;
-    //bit                      wlast;
+    bit                      wlast;
+    bit                      wuser;
     //Write Response Channel
     bit [15:0] bid;
     bit [1:0]  bresp;

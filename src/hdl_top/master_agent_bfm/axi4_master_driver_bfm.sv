@@ -42,24 +42,23 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
                                  input	 bready ,
 
                                  //Read Address Channel
-                                 input   [3: 0]              arid    ,
-                                 input   [ADDRESS_WIDTH-1: 0]araddr  ,
-                                 input   [7:0]               arlen   ,
-                                 input   [2:0]               arsize  ,
-                                 input   [1:0]               arburst ,
-                                 input   [1:0]               arlock  ,
-                                 input   [3:0]               arcache ,
-                                 input   [2:0]               arprot  ,
-                                 input   [3:0]               arQOS   ,
-                                 input   [3:0]               arregion,
-                                 input   [3:0]               aruser  ,
-                                 input                       arvalid ,
-                                 output reg                     arready ,
+                                 output reg [3: 0]              arid    ,
+                                 output reg [ADDRESS_WIDTH-1: 0]araddr  ,
+                                 output reg [7:0]               arlen   ,
+                                 output reg [2:0]               arsize  ,
+                                 output reg [1:0]               arburst ,
+                                 output reg [1:0]               arlock  ,
+                                 output reg [3:0]               arcache ,
+                                 output reg [2:0]               arprot  ,
+                                 output reg [3:0]               arQOS   ,
+                                 output reg [3:0]               arregion,
+                                 output reg [3:0]               aruser  ,
+                                 output reg                     arvalid ,
+                                 input                          arready ,
 
                                  //Read Data Channel
                                  output reg [3:0]                rid     ,
                                  output reg [DATA_WIDTH-1: 0]    rdata   ,
-                                 output reg [(DATA_WIDTH/8)-1: 0]rstrb   ,
                                  output reg [1:0]                rresp   ,
                                  output reg                      rlast   ,
                                  output reg [3:0]                ruser   ,
@@ -87,7 +86,7 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
   axi4_master_driver_proxy axi4_master_drv_proxy_h;
 
   initial begin
-    `uvm_info(name,$sformatf(name),UVM_HIGH)
+    `uvm_info(name,$sformatf(name),UVM_LOW)
   end
 
   //-------------------------------------------------------
@@ -162,7 +161,7 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
     end
   endtask : detect_read_address_wait_state
 
-    //-------------------------------------------------------
+  //-------------------------------------------------------
   // Task: detect_read_data_wait_state
   // Waiting for the rready to set to high for data transfer and 
   // to get the response back, in read data channel
@@ -202,17 +201,18 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
         detect_write_address_wait_state(data_write_packet);
       end
 
-   else begin
-     awid    = 1'b0;
-     awaddr  = 1'b0;
-     awlen   = 1'b0;
-     awsize  = 1'b0;
-     awburst = 1'b0;
-     awlock  = 1'b0;
-     awcache = 1'b0;
-     awprot  = 1'b0;
-   end
-
+   //TODO:SAHA
+   //should we add else?
+   //else begin
+   //  awid    = 1'b0;
+   //  awaddr  = 1'b0;
+   //  awlen   = 1'b0;
+   //  awsize  = 1'b0;
+   //  awburst = 1'b0;
+   //  awlock  = 1'b0;
+   //  awcache = 1'b0;
+   //  awprot  = 1'b0;
+   //end
   endtask : axi4_write_address_channel_task
 
   //-------------------------------------------------------
@@ -226,11 +226,11 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
 
       wdata  <= data_write_packet.wdata;
       wstrb  <= data_write_packet.wstrb; 
-//      wlast  <= data_write_packet.wlast;
-//      wuser  <= data_write_packet.wuser;
+      wlast  <= data_write_packet.wlast;
+      wuser  <= data_write_packet.wuser;
       wvalid <= 1'b1;
       
-      if (wready==0) begin
+      if(wready==0) begin
         detect_write_data_wait_state(data_write_packet);
       end
 
@@ -246,6 +246,18 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
+
+    bid    <= data_write_packet.bid;
+    bresp  <= data_write_packet.bresp;
+    //buser  <= data_write_packet.buser;
+    bvalid <= 1'b1;
+
+    if(bready==0) begin
+      detect_write_response_wait_state(data_write_packet);
+    end
+
+    //TODO:SAHA
+    //else
   endtask : axi4_write_response_channel_task
 
   //-------------------------------------------------------
@@ -256,6 +268,23 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO READ ADDRESS CHANNEL"),UVM_HIGH)
+
+    arid    <= data_read_packet.arid;
+    araddr  <= data_read_packet.araddr;
+    arlen   <= data_read_packet.arlen;
+    arsize  <= data_read_packet.arsize;
+    arburst <= data_read_packet.arburst;
+    arlock  <= data_read_packet.arlock;
+    arcache <= data_read_packet.arcache;
+    arprot  <= data_read_packet.arprot;
+    arvalid <= 1'b1;
+    
+    if (arready==0) begin
+      detect_read_address_wait_state(data_read_packet);
+    end
+
+   //TODO:SAHA
+   //else
   endtask : axi4_read_address_channel_task
 
   //-------------------------------------------------------
@@ -266,6 +295,20 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO READ DATA CHANNEL"),UVM_HIGH)
+
+   rid    <= data_read_packet.rid;
+   rdata  <= data_read_packet.rdata;
+   rresp  <= data_read_packet.rresp;
+ //  rlast  <= data_read_packet.rlast;
+ //  ruser  <= data_read_packet.ruser;
+   rvalid <= 1'b1;
+   
+   if(rready==0) begin
+     detect_read_data_wait_state(data_read_packet);
+   end;
+
+   //TODO:SAHA
+   //else
   endtask : axi4_read_data_channel_task
 
 endinterface : axi4_master_driver_bfm

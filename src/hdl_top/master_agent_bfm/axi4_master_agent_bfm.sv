@@ -54,7 +54,6 @@ module axi4_master_agent_bfm #(parameter int MASTER_ID = 0)(axi4_if intf);
                                                 .arready(intf.arready),
                                                 .rid(intf.rid),
                                                 .rdata(intf.rdata),
-                                                .rstrb(intf.rstrb),
                                                 .rresp(intf.rresp),
                                                 .rlast(intf.rlast),
                                                 .ruser(intf.ruser),      
