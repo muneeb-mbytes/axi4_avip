@@ -17,6 +17,9 @@ class axi4_master_agent_config extends uvm_object;
   // Used for enabling the master agent coverage
   bit has_coverage;
 
+  bit [ADDRESS_WIDTH-1:0] awaddr;
+  bit [ADDRESS_WIDTH-1:0] araddr;
+
   //Variable : master_memory
   //Used to store all the data from the slaves
   //Each location of the master memory stores 32 bit data

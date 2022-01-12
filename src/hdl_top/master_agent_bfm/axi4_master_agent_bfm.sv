@@ -17,7 +17,17 @@ module axi4_master_agent_bfm #(parameter int MASTER_ID = 0)(axi4_if intf);
   // AXI4 Master Driver bfm instantiation
   //-------------------------------------------------------
   axi4_master_driver_bfm axi4_master_drv_bfm_h (.aclk(intf.aclk), 
-                                                .aresetn(intf.aresetn)
+                                                .aresetn(intf.aresetn),
+                                                .awid(intf.awid),
+                                                .awaddr(intf.awaddr),
+                                                .awlen(intf.awlen),
+                                                .awsize(intf.awsize),
+                                                .awburst(intf.awburst),
+                                                .awlock(intf.awlock),
+                                                .awcache(intf.awcache),
+                                                .awprot(intf.awprot),
+                                                .awvalid(intf.awvalid),
+                                                .awready(intf.awready)
                                               );
    
 

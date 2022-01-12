@@ -57,6 +57,16 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to send the write address ready
   //bit awready;
   
+    int wait_count_write_address_channel;
+    int wait_count_write_data_channel;
+    int wait_count_write_response_channel;
+    int wait_count_read_address_channel;
+    int wait_count_read_data_channel;
+    
+    int outstanding_write_tx;
+    int outstanding_read_tx;
+    int no_of_wait_states;
+
   //-------------------------------------------------------
   // WRITE DATA CHANNEL SIGNALS
   //-------------------------------------------------------

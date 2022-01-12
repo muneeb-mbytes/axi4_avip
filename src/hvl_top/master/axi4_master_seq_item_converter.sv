@@ -86,6 +86,10 @@ function void axi4_master_seq_item_converter::from_write_class( input axi4_maste
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb = %0p",output_conv.wstrb[i]),UVM_HIGH);
   end
 
+  output_conv.wait_count_write_address_channel =input_conv.wait_count_write_address_channel ;
+  output_conv.wait_count_write_data_channel =input_conv.wait_count_write_data_channel ;
+  output_conv.wait_count_write_response_channel =input_conv.wait_count_write_response_channel ;
+
 endfunction : from_write_class
 
 
@@ -133,6 +137,9 @@ function void axi4_master_seq_item_converter::from_read_class( input axi4_master
     output_conv.rdata[i] = input_conv.rdata[i];
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig rdata = %0p",output_conv.rdata[i]),UVM_HIGH);
   end
+
+  output_conv.wait_count_read_address_channel =input_conv.wait_count_read_address_channel ;
+  output_conv.wait_count_read_data_channel =input_conv.wait_count_read_data_channel ;
 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
   

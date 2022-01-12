@@ -320,6 +320,11 @@ package axi4_globals_pkg;
     bit [15:0] bid;
     bit [1:0]  bresp;
 
+    int wait_count_write_address_channel;
+    int wait_count_write_data_channel;
+    int wait_count_write_response_channel;
+    
+    int outstanding_write_tx;
     int no_of_wait_states;
 
   } axi4_write_transfer_char_s; 
@@ -343,6 +348,10 @@ package axi4_globals_pkg;
     bit [1:0]  rresp; 
     //bit [(DATA_WIDTH/8)-1: 0] rstrb;
     
+    int wait_count_read_address_channel;
+    int wait_count_read_data_channel;
+    
+    int outstanding_read_tx;
     int no_of_wait_states;
 
   } axi4_read_transfer_char_s;
@@ -352,13 +361,8 @@ package axi4_globals_pkg;
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] min_address;
     bit [ADDRESS_WIDTH-1:0] max_address;
-    int wait_count_read_address_channel;
-    int wait_count_read_data_channel;
-    int wait_count_write_address_channel;
-    int wait_count_write_data_channel;
-    int wait_count_write_response_channel;
-    int outstanding_write_tx;
-    int outstanding_read_tx;
+    bit [ADDRESS_WIDTH-1:0] awaddr;
+    bit [ADDRESS_WIDTH-1:0] araddr;
   } axi4_transfer_cfg_s;
 
 endpackage : axi4_globals_pkg
