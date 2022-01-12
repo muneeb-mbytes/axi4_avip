@@ -27,8 +27,40 @@ module axi4_master_agent_bfm #(parameter int MASTER_ID = 0)(axi4_if intf);
                                                 .awcache(intf.awcache),
                                                 .awprot(intf.awprot),
                                                 .awvalid(intf.awvalid),
-                                                .awready(intf.awready)
-                                              );
+                                                .awready(intf.awready),
+                                                .wdata(intf.wdata),
+                                                .wstrb(intf.wstrb),
+                                                .wlast(intf.wlast),
+                                                .wuser(intf.wuser),
+                                                .wvalid(intf.wvalid),
+                                                .wready(intf.wready),
+                                                .bid(intf.bid),
+                                                .bresp(intf.bresp),
+                                                .buser(intf.buser),
+                                                .bvalid(intf.bvalid),
+                                                .bready(intf.bready),
+                                                .arid(intf.arid),
+                                                .araddr(intf.araddr),
+                                                .arlen(intf.arlen),
+                                                .arsize(intf.arsize),
+                                                .arburst(intf.arburst),
+                                                .arlock(intf.arlock),
+                                                .arcache(intf.arcache),
+                                                .arprot(intf.arprot),
+                                                .arQOS(intf.arQOS),
+                                                .arregion(intf.arregion),
+                                                .aruser(intf.aruser),
+                                                .arvalid(intf.arvalid),
+                                                .arready(intf.arready),
+                                                .rid(intf.rid),
+                                                .rdata(intf.rdata),
+                                                .rstrb(intf.rstrb),
+                                                .rresp(intf.rresp),
+                                                .rlast(intf.rlast),
+                                                .ruser(intf.ruser),      
+                                                .rvalid(intf.rvalid),
+                                                .rready(intf.rready)
+                                                );
    
 
   //-------------------------------------------------------
