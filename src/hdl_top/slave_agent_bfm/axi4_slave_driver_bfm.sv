@@ -222,23 +222,23 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
         //    data_write_packet.awlock = mem_wlock[k];
         //    data_write_packet.awcache = mem_wcache[k];
         //    data_write_packet.awprot = mem_wprot[k];
-            data_write_packet.awid = awid;
-            data_write_packet.awaddr = awaddr;
-            data_write_packet.awlen = awlen;
-            data_write_packet.awsize = awsize;
-            data_write_packet.awburst = awburst;
-            data_write_packet.awlock = awlock;
-            data_write_packet.awcache = awcache;
-            data_write_packet.awprot = awprot;
-            `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
-          end
-        end
-      end
-    //end
+  data_write_packet.awid = awid;
+  data_write_packet.awaddr = awaddr;
+  data_write_packet.awlen = awlen;
+  data_write_packet.awsize = awsize;
+  data_write_packet.awburst = awburst;
+  data_write_packet.awlock = awlock;
+  data_write_packet.awcache = awcache;
+  data_write_packet.awprot = awprot;
+    `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
+  end
+  end
+  end
+  //end
 
-      if (awready==0) begin
-        detect_write_address_wait_state(data_write_packet);
-      end
+  if (awready==0) begin
+    detect_write_address_wait_state(data_write_packet);
+  end
    // repeat(data_write_packet.no_of_wait_states)begin
      // `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
      // @(posedge aclk);
@@ -256,17 +256,17 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
     
-    if(wvalid)begin
-      wready=1;
-      data_write_packet.wdata=wdata;
-      data_write_packet.wstrb=wstrb;
+  if(wvalid)begin
+    wready=1;
+    data_write_packet.wdata=wdata;
+    data_write_packet.wstrb=wstrb;
+  end
+  if (wready==0) begin
+      detect_write_data_wait_state(data_write_packet);
     end
-    if (wready==0) begin
-        detect_write_data_wait_state(data_write_packet);
-      end
-   // else begin
-    //  wready=0;
-   // end
+  // else begin
+  //  wready=0;
+  // end
 
     //write else also
   endtask : axi4_write_data_phase
@@ -388,11 +388,12 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
-    bid=data_write_packet.bid;
-    bvalid=1;
+  bid=data_write_packet.bid;
+  bresp=data_write_packet.bresp;
+  bvalid=1;
   while(!bready)begin 
-    @(posedge aclk);
-    bvalid=0;
+  @(posedge aclk);
+  bvalid=0;
   end
 
   endtask : axi4_write_response_phase
@@ -404,22 +405,22 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("DRIVE TO READ ADDRESS CHANNEL"),UVM_HIGH);
-    if(arvalid)begin
-      arready=1;
-      data_read_packet.arid=arid;
-      data_read_packet.arid=arid;
-      data_read_packet.araddr=araddr;
-      data_read_packet.arlen = arlen;
-      data_read_packet.arsize = arsize;
-      data_read_packet.arburst = arburst;
-      data_read_packet.arlock = arlock;
-      data_read_packet.arcache = arcache;
-      data_read_packet.arprot = arprot;
-    end
+    
+  if(arvalid)begin
+    arready=1;
+    data_read_packet.arid=arid;
+    data_read_packet.araddr=araddr;
+    data_read_packet.arlen = arlen;
+    data_read_packet.arsize = arsize;
+    data_read_packet.arburst = arburst;
+    data_read_packet.arlock = arlock;
+    data_read_packet.arcache = arcache;
+    data_read_packet.arprot = arprot;
+  end
 
-    if (arready==0) begin
-        detect_read_address_wait_state(data_read_packet);
-      end
+  if (arready==0) begin
+      detect_read_address_wait_state(data_read_packet);
+    end
   //  else begin
    //   arready=0;
    // end
@@ -436,6 +437,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     `uvm_info(name,$sformatf("DRIVE TO READ DATA CHANNEL"),UVM_HIGH);
     
   rid=data_read_packet.rid;
+  rdata=data_read_packet.rdata;
   rvalid=1;
   while(!rready)begin 
   @(posedge aclk);
