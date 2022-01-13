@@ -217,11 +217,11 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Constraint : wdata_c1
   //Adding constraint to restrict the write data based on awlength
-  //constraint wdata_c1 { wdata.size() == awlen + 1;} 
+  constraint wdata_c1 { wdata.size() == awlen + 1;} 
 
   //Constraint : wstrb_c2
   //Adding constraint to restrict the write strobe based on awlength
-  //constraint wstrb_c2 { wstrb.size() == awlen + 1;}
+  constraint wstrb_c2 { wstrb.size() == awlen + 1;}
 
   //-------------------------------------------------------
   // READ ADDRESS Constraints

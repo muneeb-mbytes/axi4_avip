@@ -224,12 +224,14 @@ interface axi4_master_driver_bfm(input bit aclk,
 
     //TODO SAHA: loop for 5 burst
    // if(tx_type==WRITE) begin
+     if(awvalid && awready)begin
       wdata  <= data_write_packet.wdata;
       wstrb  <= data_write_packet.wstrb;
    // end
       wlast  <= data_write_packet.wlast;
       wuser  <= data_write_packet.wuser;
       wvalid <= 1'b1;
+    end
       
       if(wready==0) begin
         detect_write_data_wait_state(data_write_packet);
