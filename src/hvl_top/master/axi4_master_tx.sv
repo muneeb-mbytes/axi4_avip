@@ -305,11 +305,11 @@ function void axi4_master_tx::post_randomize();
   //end
 
   //Used to restrict the address inside the 4kb boundary
-  if(!std::randomize(awaddr) with {awaddr % 4096 == 0; 
-                                   awaddr inside {[0:4095]};
-                                  }) begin
-    `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize AWADDR"));
-  end
+//  if(!std::randomize(awaddr) with {awaddr % 4096 == 0; 
+//                                   awaddr inside {[0:4095]};
+//                                  }) begin
+//    `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize AWADDR"));
+//  end
 
   //Used to restrict the wdata so that it should not exceed 4kb address boundary
   //if(!std::randomize(wdata) with {(wdata.size()*DATA_WIDTH)/8 == axi4_master_agent_cfg_h[0].master_max_addr_range_array[0] - awaddr;}) begin
@@ -317,22 +317,22 @@ function void axi4_master_tx::post_randomize();
   //end
 
   //Used to restrict the wdata so that it should not exceed 4kb boundary
-  if(!std::randomize(wstrb) with {wstrb.size() == wdata.size();}) begin
-    `uvm_fatal("FATAL_STD_RANDOMIZATION_WSTRB", $sformatf("Not able to randomize WSTRB"));
-  end
-
-  //Used to make wdata byte non-zero when strobe is high for that byte lane
-  for(int i=0; i<DATA_WIDTH/8; i++) begin
-    if(wstrb[i]) begin
-      //`uvm_info(get_type_name(),$sformatf("MASTER-TX-strb[%0d]=%0d",i,strb[i]),UVM_HIGH);
-      if(!std::randomize(wdata) with {wdata[i][8*i+7 -: 8] != 0;}) begin
-        `uvm_fatal("FATAL_STD_RANDOMIZATION_WDATA", $sformatf("Not able to randomize wdata"));
-      end
-      else begin
-        `uvm_info(get_type_name(),$sformatf("MASTER-TX-wdata[%0d]=%0h",8*i+7,wdata[i][8*i+7 +: 8]),UVM_HIGH);
-      end 
-    end
-  end
+//  if(!std::randomize(wstrb) with {wstrb.size() == wdata.size();}) begin
+//    `uvm_fatal("FATAL_STD_RANDOMIZATION_WSTRB", $sformatf("Not able to randomize WSTRB"));
+//  end
+//
+//  //Used to make wdata byte non-zero when strobe is high for that byte lane
+//  for(int i=0; i<DATA_WIDTH/8; i++) begin
+//    if(wstrb[i]) begin
+//      //`uvm_info(get_type_name(),$sformatf("MASTER-TX-strb[%0d]=%0d",i,strb[i]),UVM_HIGH);
+//      if(!std::randomize(wdata) with {wdata[i][8*i+7 -: 8] != 0;}) begin
+//        `uvm_fatal("FATAL_STD_RANDOMIZATION_WDATA", $sformatf("Not able to randomize wdata"));
+//      end
+//      else begin
+//        `uvm_info(get_type_name(),$sformatf("MASTER-TX-wdata[%0d]=%0h",8*i+7,wdata[i][8*i+7 +: 8]),UVM_HIGH);
+//      end 
+//    end
+//  end
 endfunction : post_randomize
 
 //--------------------------------------------------------------------------------------------

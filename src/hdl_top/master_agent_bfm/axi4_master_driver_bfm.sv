@@ -209,19 +209,6 @@ interface axi4_master_driver_bfm(input bit aclk,
       if (awready==0) begin
         detect_write_address_wait_state(data_write_packet);
       end
-
-   //TODO:SAHA
-   //should we add else?
-   //else begin
-   //  awid    = 1'b0;
-   //  awaddr  = 1'b0;
-   //  awlen   = 1'b0;
-   //  awsize  = 1'b0;
-   //  awburst = 1'b0;
-   //  awlock  = 1'b0;
-   //  awcache = 1'b0;
-   //  awprot  = 1'b0;
-   //end
   endtask : axi4_write_address_channel_task
 
   //-------------------------------------------------------
@@ -233,6 +220,9 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
 
+    
+
+    //TODO SAHA: loop for 5 burst
    // if(tx_type==WRITE) begin
       wdata  <= data_write_packet.wdata;
       wstrb  <= data_write_packet.wstrb;
@@ -244,9 +234,6 @@ interface axi4_master_driver_bfm(input bit aclk,
       if(wready==0) begin
         detect_write_data_wait_state(data_write_packet);
       end
-
-    //TODO:SAHA
-    //write else also
   endtask : axi4_write_data_channel_task
 
   //-------------------------------------------------------
