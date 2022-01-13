@@ -16,7 +16,7 @@ module hdl_top;
   // Clock Reset Initialization
   //-------------------------------------------------------
   bit aclk;
-  bit rst;
+  bit aresetn;
 
   //-------------------------------------------------------
   // Display statement for HDL_TOP
@@ -38,23 +38,19 @@ module hdl_top;
   // Active low reset
   //-------------------------------------------------------
   initial begin
-    rst = 1'b1;
+    aresetn = 1'b1;
+    #10 aresetn = 1'b0;
 
-    repeat (2) begin
+    repeat (1) begin
       @(posedge aclk);
     end
-    rst = 1'b0;
-
-    repeat (2) begin
-      @(posedge aclk);
-    end
-    rst = 1'b1;
+    aresetn = 1'b1;
   end
-  
+
   // Variable : intf
   // axi4 Interface Instantiation
   axi4_if intf(.aclk(aclk),
-              .aresetn(rst));
+              .aresetn(aresetn));
 
   //-------------------------------------------------------
   // AXI4  No of Master and Slaves Agent Instantiation

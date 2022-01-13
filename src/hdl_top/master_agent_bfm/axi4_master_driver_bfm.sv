@@ -224,8 +224,10 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
 
+   // if(tx_type==WRITE) begin
       wdata  <= data_write_packet.wdata;
-      wstrb  <= data_write_packet.wstrb; 
+      wstrb  <= data_write_packet.wstrb;
+   // end
       wlast  <= data_write_packet.wlast;
       wuser  <= data_write_packet.wuser;
       wvalid <= 1'b1;
@@ -295,9 +297,11 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO READ DATA CHANNEL"),UVM_HIGH)
-
-   rid    <= data_read_packet.rid;
-   rdata  <= data_read_packet.rdata;
+    
+    rid    <= data_read_packet.rid;
+   // if(tx_type==READ) begin
+      rdata  <= data_read_packet.rdata;
+   // end
    rresp  <= data_read_packet.rresp;
  //  rlast  <= data_read_packet.rlast;
  //  ruser  <= data_read_packet.ruser;

@@ -183,6 +183,8 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to differentiate the type of memory storage
   rand endian_e endian;
 
+  tx_type_e tx_type;
+
   //-------------------------------------------------------
   // WRITE ADDRESS Constraints
   //-------------------------------------------------------

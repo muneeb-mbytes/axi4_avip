@@ -37,6 +37,7 @@ task axi4_master_write_seq::body();
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_write_seq"), UVM_NONE); 
 
   start_item(req);
+  //if(!req.randomize() with {req.tx_type == WRITE;}) begin
   if(!req.randomize()) begin
     `uvm_fatal("axi4","Rand failed");
   end

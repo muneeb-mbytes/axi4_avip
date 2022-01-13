@@ -50,7 +50,7 @@ task axi4_virtual_write_seq::body();
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Insdie axi4_virtual_write_seq"), UVM_NONE); 
   fork 
     begin: T1_WRITE
-      repeat(2) begin
+      repeat(5) begin
         axi4_master_write_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
         axi4_slave_write_seq_h.start(p_sequencer.axi4_slave_write_seqr_h);
       end
