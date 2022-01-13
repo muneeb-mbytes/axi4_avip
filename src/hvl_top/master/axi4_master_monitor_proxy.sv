@@ -22,7 +22,11 @@ class axi4_master_monitor_proxy extends uvm_component;
   
   // Variable: apb_master_analysis_port
   //declaring analysis port for the monitor port
-  uvm_analysis_port#(axi4_master_tx) axi4_master_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_read_address_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_read_data_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_write_address_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_write_data_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_write_response_analysis_port;
 
 
   //-------------------------------------------------------
@@ -47,7 +51,11 @@ endclass : axi4_master_monitor_proxy
 function axi4_master_monitor_proxy::new(string name = "axi4_master_monitor_proxy",
                                  uvm_component parent = null);
   super.new(name, parent);
-  axi4_master_analysis_port = new("axi4_master_analysis_port",this);
+  axi4_master_read_address_analysis_port = new("axi4_master_read_address_analysis_port",this);
+  axi4_master_read_data_analysis_port = new("axi4_master_read_data_analysis_port",this);
+  axi4_master_write_address_analysis_port = new("axi4_master_write_address_analysis_port",this);
+  axi4_master_write_data_analysis_port = new("axi4_master_write_data_analysis_port",this);
+  axi4_master_write_response_analysis_port = new("axi4_master_write_response_analysis_port",this);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------

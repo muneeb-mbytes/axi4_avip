@@ -14,7 +14,11 @@ class axi4_master_coverage extends uvm_subscriber #(axi4_master_tx);
   
   // Variable: axi4_master_analysis_export
   //declaring analysis port for coverage
-  uvm_analysis_port #(axi4_master_tx)axi4_master_analysis_export;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_read_address_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_read_data_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_write_address_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_write_data_analysis_port;
+  uvm_analysis_port#(axi4_master_tx) axi4_master_write_response_analysis_port;
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -35,7 +39,12 @@ endclass : axi4_master_coverage
 function axi4_master_coverage::new(string name = "axi4_master_coverage",
                                  uvm_component parent = null);
   super.new(name, parent);
-  axi4_master_analysis_export = new("axi4_master_analysis_export",this);
+  axi4_master_read_address_analysis_port = new("axi4_master_read_address_analysis_port",this);
+  axi4_master_read_data_analysis_port = new("axi4_master_read_data_analysis_port",this);
+  axi4_master_write_address_analysis_port = new("axi4_master_write_address_analysis_port",this);
+  axi4_master_write_data_analysis_port = new("axi4_master_write_data_analysis_port",this);
+  axi4_master_write_response_analysis_port = new("axi4_master_write_response_analysis_port",this);
+
 endfunction : new
 
 //--------------------------------------------------------------------------------------------

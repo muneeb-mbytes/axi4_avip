@@ -138,8 +138,13 @@ function void axi4_env::connect_phase(uvm_phase phase);
   end
   
   foreach(axi4_master_agent_h[i]) begin
-    axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_analysis_port.connect(axi4_scoreboard_h.axi4_master_analysis_fifo.analysis_export);
+    axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_read_address_analysis_port.connect(axi4_scoreboard_h.axi4_master_analysis_fifo.analysis_export);
+    axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_read_data_analysis_port.connect(axi4_scoreboard_h.axi4_master_analysis_fifo.analysis_export);
+    axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_write_address_analysis_port.connect(axi4_scoreboard_h.axi4_master_analysis_fifo.analysis_export);
+    axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_write_data_analysis_port.connect(axi4_scoreboard_h.axi4_master_analysis_fifo.analysis_export);
+    axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_write_response_analysis_port.connect(axi4_scoreboard_h.axi4_master_analysis_fifo.analysis_export);
   end
+
   foreach(axi4_slave_agent_h[i]) begin
     axi4_slave_agent_h[i].axi4_slave_mon_proxy_h.axi4_slave_analysis_port.connect(axi4_scoreboard_h.axi4_slave_analysis_fifo.analysis_export);
   end
