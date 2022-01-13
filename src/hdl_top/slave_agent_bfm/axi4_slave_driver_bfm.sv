@@ -99,7 +99,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
 
   // Creating Memories for each signal to store each transaction attributes
 
-  reg [	15: 0]	            mem_awid	  [20];
+  reg [	15: 0]	            mem_awid	  [0:19];
   reg [	ADDRESS_WIDTH-1: 0]	mem_waddr	  [20];
   reg [	7:0]	              mem_wlen	  [256] ;
   reg [	2:0]	              mem_wsize	  [20];
@@ -129,13 +129,10 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
   //-------------------------------------------------------
 
   task wait_for_system_reset();
-    @(posedge aclk);
-    if(!aresetn) begin
-      `uvm_info(name,$sformatf("SYSTEM RESET ACTIVATED"),UVM_NONE)
-    end
-    else begin
-      `uvm_info(name,$sformatf("SYSTEM RESET DE-ACTIVATED"),UVM_NONE)
-    end
+    @(negedge aresetn);
+    `uvm_info(name,$sformatf("SYSTEM RESET ACTIVATED"),UVM_NONE)
+    @(posedge aresetn);
+    `uvm_info(name,$sformatf("SYSTEM RESET DE-ACTIVATED"),UVM_NONE)
   endtask 
   
   //-------------------------------------------------------
@@ -211,23 +208,25 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
       else begin
         if(awvalid)begin
         //  awready=1;
-          mem_awid 	[i]	  <= awid  	;	
-          //data_write_packet.awid = awid   ;
-			    mem_waddr	[i] 	<= awaddr	;
+          mem_awid 	[i]	  = awid  	;	
+          `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
+          `uvm_info("mem_awid",$sformatf("awid=%0d",awid),UVM_HIGH)
+         //data_write_packet.awid = awid   ;
+			    mem_waddr	[i] 	= awaddr	;
           //data_write_packet.awaddr = awaddr;
-			    mem_wlen 	[i]	  <= awlen	;	
+			    mem_wlen 	[i]	  = awlen	;	
           //data_write_packet.awlen = awlen;
-			    mem_wsize	[i] 	<= awsize	;	
+			    mem_wsize	[i] 	= awsize	;	
           //data_write_packet.awsize = awsize;
-			    mem_wburst[i] 	<= awburst;	
+			    mem_wburst[i] 	= awburst;	
           //data_write_packet.awburst = awburst;
-			    mem_wlock	[i] 	<= awlock	;	
+			    mem_wlock	[i] 	= awlock	;	
           //data_write_packet.awlock = awlock;
-			    mem_wcache[i] 	<= awcache;	
+			    mem_wcache[i] 	= awcache;	
           //data_write_packet.awcache = awcache;
-			    mem_wprot	[i] 	<= awprot	;	
+			    mem_wprot	[i] 	= awprot	;	
           //data_write_packet.awprot = awprot;
-			    i <= i+1;
+			    i = i+1;
           for(int k=0;k<$size(mem_awid);k++) begin
             data_write_packet.awid = mem_awid[k];
             data_write_packet.awaddr = mem_waddr[k];
@@ -294,7 +293,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
 
   task axi4_write_data_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
 
-    //@(posedge aclk) begin
+    @(posedge aclk) begin
       `uvm_info(name,"INSIDE WRITE_DATA_PHASE",UVM_LOW)
       repeat(data_write_packet.no_of_wait_states)begin
         `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
@@ -308,7 +307,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
 
       if(!aresetn)begin
       end
-    //end
+    end
 
     //FIXED_Burst type
     
@@ -374,29 +373,36 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
   endtask
 
   task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
+    int j;
     @(posedge aclk)begin
       `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
       if(!aresetn)begin
-        bresp <= 2'bz;
+        bresp = 2'bz;
         bvalid = 0;
       end
       
       else begin
-        bid_local = $urandom;  
-        if(bid_local == mem_awid[i])begin   
-          //bid  <= mem_awid[i];
-          if(wready && wvalid)begin
+        //`uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
+        //`uvm_info("bid_debug",$sformatf("data_write_packet.awid=%0d",data_write_packet.awid),UVM_HIGH)
+        //`uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
+        //`uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
+        //bid  <= mem_awid[i];
+        //if(wready && wvalid)begin
+        if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
 
-          bid  <= mem_awid[i];
+          //bid  <= mem_awid[i];
+          bid  = bid_local;
+        `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
+        `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
             bresp <= WRITE_OKAY;
             bvalid = 1;
-            i++;
-          end
-          else begin
-            bresp <= 2'bxx;
-            bvalid = 0;
-          end
-        end
+            j++;
+         // end
+          //else begin
+          //  bresp <= 2'bxx;
+          //  bvalid = 0;
+         // end
+        //end
       end
     end
   endtask

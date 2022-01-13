@@ -164,6 +164,7 @@ endtask : axi4_write_task
 // task axi4 read task
 //-------------------------------------------------------
 task axi4_slave_driver_proxy::axi4_read_task();
+
   forever begin
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
@@ -184,7 +185,6 @@ task axi4_slave_driver_proxy::axi4_read_task();
     
     //read response task
     axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
-    //#10;
     
     //Converting struct into transactions
     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
