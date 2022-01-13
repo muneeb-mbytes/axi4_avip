@@ -327,7 +327,7 @@ package axi4_globals_pkg;
     
     int outstanding_write_tx;
     int no_of_wait_states;
-
+    bit tx_type; 
   } axi4_write_transfer_char_s; 
 
   //Struct: axi4_r_transfer_char_s
@@ -354,7 +354,7 @@ package axi4_globals_pkg;
     
     int outstanding_read_tx;
     int no_of_wait_states;
-
+    bit tx_type; 
   } axi4_read_transfer_char_s;
 
   //Struct: axi4_cfg_char_s
