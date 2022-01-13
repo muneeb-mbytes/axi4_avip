@@ -11,58 +11,58 @@ import axi4_globals_pkg::*;
 //  Used as the HDL driver for axi4
 //  It connects with the HVL driver_proxy for driving the stimulus
 //--------------------------------------------------------------------------------------------
-interface axi4_master_driver_bfm(input bit                aclk    , 
-                                 input bit                aresetn ,
+interface axi4_master_driver_bfm(input bit aclk, 
+                                 input bit aresetn,
                                  
-                                 //Write_address_channel
-                                 output reg [3:0]              awid    ,
-                                 output reg [ADDRESS_WIDTH-1:0]awaddr  ,
-                                 output reg  [3:0]              awlen   ,
-                                 output reg  [2:0]              awsize  ,
-                                 output reg  [1:0]              awburst ,
-                                 output reg  [1:0]              awlock  ,
-                                 output reg  [3:0]              awcache ,
-                                 output reg  [2:0]              awprot  ,
-                                 output reg                     awvalid ,
-                                 input    	               awready ,
+                                 //Write Address Channel Signals
+                                 output reg [3:0]              awid,
+                                 output reg [ADDRESS_WIDTH-1:0]awaddr,
+                                 output reg [3:0]              awlen,
+                                 output reg [2:0]              awsize,
+                                 output reg [1:0]              awburst,
+                                 output reg [1:0]              awlock,
+                                 output reg [3:0]              awcache,
+                                 output reg [2:0]              awprot,
+                                 output reg                    awvalid,
+                                 input    	                   awready,
 
-                                 //Write_data_channel
-                                 output reg    [DATA_WIDTH-1: 0]wdata  ,
-                                 output reg [(DATA_WIDTH/8)-1:0]wstrb  ,
-                                 output reg                     wlast  ,
-                                 output reg                [3:0]wuser  ,
-                                 output reg                     wvalid ,
-                                 input                   wready ,
+                                 //Write Data Channel Signals
+                                 output reg    [DATA_WIDTH-1: 0]wdata,
+                                 output reg [(DATA_WIDTH/8)-1:0]wstrb,
+                                 output reg                     wlast,
+                                 output reg                [3:0]wuser,
+                                 output reg                     wvalid,
+                                 input                          wready,
 
-                                 //Write Response Channel
-                                 output reg [3:0]bid    ,
-                                 output reg [1:0]bresp  ,
-                                 output reg [3:0]buser  ,
-                                 output reg  bvalid ,
-                                 input	 bready ,
+                                 //Write Response Channel Signals
+                                 output reg [3:0]bid,
+                                 output reg [1:0]bresp,
+                                 output reg [3:0]buser,
+                                 output reg      bvalid,
+                                 input	         bready,
 
-                                 //Read Address Channel
-                                 output reg [3: 0]              arid    ,
-                                 output reg [ADDRESS_WIDTH-1: 0]araddr  ,
-                                 output reg [7:0]               arlen   ,
-                                 output reg [2:0]               arsize  ,
-                                 output reg [1:0]               arburst ,
-                                 output reg [1:0]               arlock  ,
-                                 output reg [3:0]               arcache ,
-                                 output reg [2:0]               arprot  ,
-                                 output reg [3:0]               arQOS   ,
+                                 //Read Address Channel Signals
+                                 output reg [3:0]               arid,
+                                 output reg [ADDRESS_WIDTH-1: 0]araddr,
+                                 output reg [7:0]               arlen,
+                                 output reg [2:0]               arsize,
+                                 output reg [1:0]               arburst,
+                                 output reg [1:0]               arlock,
+                                 output reg [3:0]               arcache,
+                                 output reg [2:0]               arprot,
+                                 output reg [3:0]               arQOS,
                                  output reg [3:0]               arregion,
-                                 output reg [3:0]               aruser  ,
-                                 output reg                     arvalid ,
-                                 input                          arready ,
+                                 output reg [3:0]               aruser,
+                                 output reg                     arvalid,
+                                 input                          arready,
 
-                                 //Read Data Channel
-                                 output reg [3:0]                rid     ,
-                                 output reg [DATA_WIDTH-1: 0]    rdata   ,
-                                 output reg [1:0]                rresp   ,
-                                 output reg                      rlast   ,
-                                 output reg [3:0]                ruser   ,
-                                 output reg                      rvalid  ,
+                                 //Read Data Channel Signals
+                                 output reg [3:0]            rid,
+                                 output reg [DATA_WIDTH-1: 0]rdata,
+                                 output reg [1:0]            rresp,
+                                 output reg                  rlast,
+                                 output reg [3:0]            ruser,
+                                 output reg                  rvalid,
                                  input	                     rready  
                                 );  
   
@@ -73,15 +73,15 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
   `include "uvm_macros.svh" 
 
   //-------------------------------------------------------
-  // Importing axi4 Global Package master package
+  // Importing Global Package
   //-------------------------------------------------------
   import axi4_master_pkg::axi4_master_driver_proxy;
 
-  //Variable : name
+  //Variable: name
   //Used to store the name of the interface
   string name = "AXI4_MASTER_DRIVER_BFM"; 
 
-  //Variable : axi4_master_driver_proxy_h
+  //Variable: axi4_master_driver_proxy_h
   //Creating the handle for master driver proxy
   axi4_master_driver_proxy axi4_master_drv_proxy_h;
 
@@ -90,16 +90,20 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
   end
 
   //-------------------------------------------------------
-  // Task: wait_for_areset_n
+  // Task: wait_for_aresetn
   // Waiting for the system reset to be active low
   //-------------------------------------------------------
-  task wait_for_areset_n();
+  task wait_for_aresetn();
     @(negedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DETECTED"),UVM_HIGH)
  
     @(posedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DEACTIVATED"),UVM_HIGH)
-  endtask : wait_for_areset_n
+  endtask : wait_for_aresetn
+
+  //--------------------------------------------------------------------------------------------
+  // Tasks written for detecting wait count of all 5 channels are given below
+  //--------------------------------------------------------------------------------------------
 
   //-------------------------------------------------------
   // Task: detect_write_address_wait_state
@@ -175,6 +179,11 @@ interface axi4_master_driver_bfm(input bit                aclk    ,
       data_read_packet.wait_count_read_data_channel++;
     end
   endtask : detect_read_data_wait_state
+
+
+  //--------------------------------------------------------------------------------------------
+  // Tasks written for all 5 channels in BFM are given below
+  //--------------------------------------------------------------------------------------------
 
   //-------------------------------------------------------
   // Task: axi4_write_address_channel_task

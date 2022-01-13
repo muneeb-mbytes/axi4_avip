@@ -98,8 +98,8 @@ endfunction  : end_of_elaboration_phase
 
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
-// Gets the sequence_item, converts them to struct compatible transactions
-// and sends them to the BFM to drive the data over the interface
+//  Gets the sequence_item, converts them to struct compatible transactions
+//  and sends them to the BFM to drive the data over the interface
 //
 // Parameters:
 //  phase - uvm phase
@@ -107,7 +107,7 @@ endfunction  : end_of_elaboration_phase
 task axi4_master_driver_proxy::run_phase(uvm_phase phase);
 
   //waiting for system reset
-  axi4_master_drv_bfm_h.wait_for_areset_n();
+  axi4_master_drv_bfm_h.wait_for_aresetn();
 
   fork 
     axi4_write_task();
@@ -116,6 +116,11 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
 
 endtask : run_phase
 
+//--------------------------------------------------------------------------------------------
+// Task: axi4_write_task
+//  Gets the sequence_item, converts them to struct compatible transactions
+//  and sends them to the BFM to drive the data over the interface
+//--------------------------------------------------------------------------------------------
 task axi4_master_driver_proxy::axi4_write_task();
   forever begin
     axi4_write_transfer_char_s struct_write_packet;
@@ -144,6 +149,11 @@ task axi4_master_driver_proxy::axi4_write_task();
   end
 endtask : axi4_write_task
 
+//--------------------------------------------------------------------------------------------
+// Task: axi4_read_task
+//  Gets the sequence_item, converts them to struct compatible transactions
+//  and sends them to the BFM to drive the data over the interface
+//--------------------------------------------------------------------------------------------
 task axi4_master_driver_proxy::axi4_read_task();
   forever begin
     axi4_read_transfer_char_s struct_read_packet;
