@@ -2,7 +2,7 @@
 `define AXI4_MASTER_DRIVER_PROXY_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// Class: master_driver_proxy
+//  Class: master_driver_proxy
 //  Driver is written by extending uvm_driver,uvm_driver is inherited from uvm_component, 
 //  Methods and TLM port (seq_item_port) are defined for communication between sequencer and driver,
 //  uvm_driver is a parameterized class and it is parameterized with the type of the request 

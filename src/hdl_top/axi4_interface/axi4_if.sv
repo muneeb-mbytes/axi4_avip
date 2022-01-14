@@ -10,9 +10,9 @@ import axi4_globals_pkg::*;
 //--------------------------------------------------------------------------------------------
 interface axi4_if(input aclk, input aresetn);
 
- // // Variable: aclk
- // // axi4 clock signal
- // bit aclk;
+  // Variable: aclk
+  // axi4 clock signal
+  // bit aclk;
 
   //Write_address_channel
   logic     [3: 0] awid     ;
@@ -33,7 +33,7 @@ interface axi4_if(input aclk, input aresetn);
   logic            wvalid    ;
  	logic            wready    ;
   //Write Response Channel
-  logic     [3: 0] bid      ;
+  logic     [3: 0] bid       ;
   logic     [1: 0] bresp     ;
   logic     [3: 0] buser     ;
   logic            bvalid    ;
