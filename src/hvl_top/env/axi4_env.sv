@@ -4,7 +4,7 @@
 //--------------------------------------------------------------------------------------------
 // Class: axi4 env
 // Description:
-// Environment contains slave_agent_top,master_agent_top and virtual_sequencer
+// Environment contains slave_agent_top,master_agent_top and axi4_virtual_sequencer
 //--------------------------------------------------------------------------------------------
 class axi4_env extends uvm_env;
   `uvm_component_utils(axi4_env)
@@ -22,8 +22,8 @@ class axi4_env extends uvm_env;
   axi4_slave_agent axi4_slave_agent_h[];
 
   //Variable : axi4_virtual_seqr_h
-  //Declaring axi4 virtual seqr handle
-  virtual_sequencer virtual_seqr_h;
+  //Declaring axi4_virtual seqr handle
+  axi4_virtual_sequencer axi4_virtual_seqr_h;
 
   //Variable : axi4__scoreboard_h
   //Declaring axi4 scoreboard handle
@@ -98,7 +98,7 @@ function void axi4_env::build_phase(uvm_phase phase);
   end
   
   if(axi4_env_cfg_h.has_virtual_seqr) begin
-    virtual_seqr_h = virtual_sequencer::type_id::create("virtual_seqr_h",this);
+    axi4_virtual_seqr_h = axi4_virtual_sequencer::type_id::create("axi4_virtual_seqr_h",this);
   end
 
   if(axi4_env_cfg_h.has_scoreboard) begin
@@ -128,12 +128,12 @@ function void axi4_env::connect_phase(uvm_phase phase);
 
   if(axi4_env_cfg_h.has_virtual_seqr) begin
     foreach(axi4_master_agent_h[i]) begin
-      virtual_seqr_h.axi4_master_write_seqr_h = axi4_master_agent_h[i].axi4_master_write_seqr_h;
-      virtual_seqr_h.axi4_master_read_seqr_h = axi4_master_agent_h[i].axi4_master_read_seqr_h;
+      axi4_virtual_seqr_h.axi4_master_write_seqr_h = axi4_master_agent_h[i].axi4_master_write_seqr_h;
+      axi4_virtual_seqr_h.axi4_master_read_seqr_h = axi4_master_agent_h[i].axi4_master_read_seqr_h;
     end
     foreach(axi4_slave_agent_h[i]) begin
-      virtual_seqr_h.axi4_slave_write_seqr_h = axi4_slave_agent_h[i].axi4_slave_write_seqr_h;
-      virtual_seqr_h.axi4_slave_read_seqr_h = axi4_slave_agent_h[i].axi4_slave_read_seqr_h;
+      axi4_virtual_seqr_h.axi4_slave_write_seqr_h = axi4_slave_agent_h[i].axi4_slave_write_seqr_h;
+      axi4_virtual_seqr_h.axi4_slave_read_seqr_h = axi4_slave_agent_h[i].axi4_slave_read_seqr_h;
     end
   end
   

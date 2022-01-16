@@ -183,6 +183,8 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to differentiate the type of memory storage
   rand endian_e endian;
 
+  //Variable : tx_type
+  //Used to determine the transaction type
   tx_type_e tx_type;
 
   //-------------------------------------------------------
@@ -211,6 +213,11 @@ class axi4_master_tx extends uvm_sequence_item;
   //Adding constraint to select the lock transfer type
   constraint awlock_c4 { soft awlock == WRITE_NORMAL_ACCESS;
                        }
+
+  //Constraint : awburst_c5
+  //Adding a soft constraint to detrmine the burst type
+  constraint awburst_c5 { soft awburst == WRITE_INCR; 
+                        }
 
   //-------------------------------------------------------
   // WRITE DATA Constraints
@@ -250,6 +257,10 @@ class axi4_master_tx extends uvm_sequence_item;
   constraint arlock_c4 { soft arlock == READ_NORMAL_ACCESS;
                        }
 
+  //Constraint : arburst_c5
+  //Adding a soft constraint to detrmine the burst type
+  constraint arburst_c5 { soft arburst == READ_INCR; 
+                        }
   //-------------------------------------------------------
   // Memory Constraints
   //-------------------------------------------------------

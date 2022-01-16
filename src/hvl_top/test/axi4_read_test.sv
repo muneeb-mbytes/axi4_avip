@@ -44,7 +44,7 @@ task axi4_read_test::run_phase(uvm_phase phase);
   axi4_virtual_read_seq_h =axi4_virtual_read_seq::type_id::create("axi4_virtual_read_seq_h");
   `uvm_info(get_type_name(),$sformatf("axi4_read_test"),UVM_LOW);
   phase.raise_objection(this);
-  axi4_virtual_read_seq_h.start(axi4_env_h.virtual_seqr_h);
+  axi4_virtual_read_seq_h.start(axi4_env_h.axi4_virtual_seqr_h);
   phase.drop_objection(this);
 
 endtask : run_phase

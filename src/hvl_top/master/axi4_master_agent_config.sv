@@ -17,8 +17,8 @@ class axi4_master_agent_config extends uvm_object;
   // Used for enabling the master agent coverage
   bit has_coverage;
 
-  bit [ADDRESS_WIDTH-1:0] awaddr;
-  bit [ADDRESS_WIDTH-1:0] araddr;
+  //bit [ADDRESS_WIDTH-1:0] awaddr;
+  //bit [ADDRESS_WIDTH-1:0] araddr;
 
   //Variable : master_memory
   //Used to store all the data from the slaves
@@ -47,9 +47,9 @@ class axi4_master_agent_config extends uvm_object;
   //Used to determine the number of wait states inserted for write data channel
   int wait_count_write_data_channel;
   
-  //Variable : wait_count_write_response_channel;
-  //Used to determine the number of wait states inserted for write response channel
-  int wait_count_write_response_channel;
+  //Variable : wait_count_read_address_channel;
+  //Used to determine the number of wait states inserted for read address channel
+  int wait_count_read_address_channel;
 
   //Variable : outstanding_write_tx
   //Used to send the outstanding transactions
@@ -124,7 +124,7 @@ function void axi4_master_agent_config::do_print(uvm_printer printer);
 
   printer.print_field("wait_count_write_address_channel",wait_count_write_address_channel,$bits(wait_count_write_address_channel),UVM_DEC);
   printer.print_field("wait_count_write_data_channel",wait_count_write_data_channel,$bits(wait_count_write_data_channel),UVM_DEC);
-  printer.print_field("wait_count_write_response_channel",wait_count_write_response_channel,$bits(wait_count_write_response_channel),UVM_DEC);
+  printer.print_field("wait_count_read_address_channel",wait_count_read_address_channel,$bits(wait_count_read_address_channel),UVM_DEC);
   printer.print_field("outstanding_write_tx",outstanding_write_tx,$bits(outstanding_write_tx),UVM_DEC);
   printer.print_field("outstanding_read_tx",outstanding_read_tx,$bits(outstanding_read_tx),UVM_DEC);
   

@@ -72,8 +72,10 @@ function void axi4_slave_seq_item_converter::from_write_class(input axi4_slave_t
      `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wdata = %0h",output_conv.wdata[i]),UVM_HIGH);
    end
    
-   output_conv.wstrb = input_conv.wstrb;
-   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wstrb =  %0h",output_conv.wstrb),UVM_HIGH);
+   foreach(input_conv.wstrb[i]) begin
+     output_conv.wstrb[i] = input_conv.wstrb[i];
+     `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wstrb[%0d] =  %0h",i,output_conv.wstrb[i]),UVM_HIGH);
+   end
 
   $cast(output_conv.bresp,input_conv.bresp);
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize bresp =  %b",output_conv.bresp),UVM_HIGH);                        
@@ -188,12 +190,21 @@ function void axi4_slave_seq_item_converter::to_write_class(input axi4_write_tra
   input_conv.awqos = output_conv_h.awqos;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig awqos =  %0h",output_conv_h.awqos),UVM_HIGH);
 
-  input_conv.wdata = output_conv_h.wdata;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wdata =  %0h",output_conv_h.wdata),UVM_HIGH);
+  //input_conv.wdata = output_conv_h.wdata;
+  //`uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wdata =  %0h",output_conv_h.wdata),UVM_HIGH);
 
-  input_conv.wstrb = output_conv_h.wstrb;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wstrb =  %0h",output_conv_h.wstrb),UVM_HIGH);
+  //input_conv.wstrb = output_conv_h.wstrb;
+  //`uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wstrb =  %0h",output_conv_h.wstrb),UVM_HIGH);
 
+  foreach(output_conv_h.wdata[i]) begin
+    input_conv.wdata[i] = output_conv_h.wdata[i];
+    `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wdata =  %0p",output_conv_h.wdata),UVM_HIGH);
+  end
+
+  foreach(output_conv_h.wstrb[i]) begin
+    input_conv.wstrb[i] = output_conv_h.wstrb[i];
+    `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb = %0p",output_conv_h.wstrb[i]),UVM_HIGH);
+  end
 endfunction : to_write_class
 
 
@@ -269,8 +280,8 @@ function void axi4_slave_seq_item_converter::do_print(uvm_printer printer);
   printer.print_field("bid",axi4_w_st.bid,$bits(axi4_w_st.bid),UVM_HEX);
   //printer.print_field("awaddr",axi4_w_st.awaddr,$bits(axi4_w_st.awaddr),UVM_HEX);
   //printer.print_field("awqos",axi4_w_st.awqos,$bits(axi4_w_st.awqos),UVM_HEX);
-  printer.print_field("wdata",axi4_w_st.wdata,$bits(axi4_w_st.wdata),UVM_HEX);
-  printer.print_field("wstrb",axi4_w_st.wstrb,$bits(axi4_w_st.wstrb),UVM_HEX);
+  //printer.print_field("wdata",axi4_w_st.wdata,$bits(axi4_w_st.wdata),UVM_HEX);
+  //printer.print_field("wstrb",axi4_w_st.wstrb,$bits(axi4_w_st.wstrb),UVM_HEX);
  
   printer.print_field("arid",axi4_r_st.arid,$bits(axi4_r_st.arid),UVM_HEX);
   printer.print_field("arlen",axi4_r_st.arlen,$bits(axi4_r_st.arlen),UVM_HEX);

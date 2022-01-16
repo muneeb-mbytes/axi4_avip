@@ -225,16 +225,21 @@ interface axi4_master_driver_bfm(input bit aclk,
 
     //TODO SAHA: loop for 5 burst
     // if(tx_type==WRITE) begin
-   if(awvalid)begin
-     wvalid <= 1'b1;
-     if(wready==0) begin
-       detect_write_data_wait_state(data_write_packet);
-     end
-     wdata  <= data_write_packet.wdata;
-     wstrb  <= data_write_packet.wstrb;
-     wlast  <= data_write_packet.wlast;
-     wuser  <= data_write_packet.wuser;
-   end
+    for(int i=0; i<data_write_packet.awlen + 1; i++) begin
+    //foreach(wdata[i]) begin
+      if(awvalid)begin
+        wvalid <= 1'b1;
+        if(wready==0) begin
+          detect_write_data_wait_state(data_write_packet);
+        end
+        `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
+        wdata  <= data_write_packet.wdata[i];
+        wstrb  <= data_write_packet.wstrb[i];
+        wlast  <= data_write_packet.wlast;
+        wuser  <= data_write_packet.wuser;
+      end
+      @(posedge aclk);
+    end
       
   endtask : axi4_write_data_channel_task
 

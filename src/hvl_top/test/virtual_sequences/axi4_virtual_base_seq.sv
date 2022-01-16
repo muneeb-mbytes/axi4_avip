@@ -10,7 +10,7 @@ class axi4_virtual_base_seq extends uvm_sequence;
   `uvm_object_utils(axi4_virtual_base_seq)
 
    //p sequencer macro declaration 
-   `uvm_declare_p_sequencer(virtual_sequencer)
+   `uvm_declare_p_sequencer(axi4_virtual_sequencer)
  
    // MSHA:axi4_master_write_sequencer  axi4_master_write_seqr_h;
    // MSHA:axi4_master_read_sequencer  axi4_master_read_seqr_h;
