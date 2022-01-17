@@ -372,7 +372,8 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
       end
   endtask
 
-  task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
+  task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s
+    struct_cfg,int valid_delay = 2);
     int j;
     @(posedge aclk)begin
       `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
@@ -397,7 +398,13 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
             bresp <= WRITE_OKAY;
             bvalid = 1;
             j++;
-         // end
+            
+            repeat(valid_delay-1) begin
+              @(posedge aclk);
+            end
+            bvalid = 0;
+          
+          //end
           //else begin
           //  bresp <= 2'bxx;
           //  bvalid = 0;
