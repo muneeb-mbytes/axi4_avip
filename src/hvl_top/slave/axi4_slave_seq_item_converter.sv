@@ -83,6 +83,8 @@ function void axi4_slave_seq_item_converter::from_write_class(input axi4_slave_t
   output_conv.awaddr = input_conv.awaddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig awaddr =  %0h",output_conv.awaddr),UVM_HIGH);
   
+  output_conv.no_of_wait_states = input_conv.no_of_wait_states;
+  
   output_conv.wait_count_write_address_channel =input_conv.wait_count_write_address_channel ;
   output_conv.wait_count_write_data_channel =input_conv.wait_count_write_data_channel ;
   output_conv.wait_count_write_response_channel =input_conv.wait_count_write_response_channel ;

@@ -131,6 +131,17 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
   task wait_for_system_reset();
     @(negedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET ACTIVATED"),UVM_NONE)
+    awready <= 0;
+    wready  <= 0;
+    bid     <= 0;
+    bresp   <= 'bx;
+    bvalid  <= 0;
+    //arready <= 0;
+    rid     <= 'bx;
+    rdata   <= 'bx;
+    rresp   <= 'bx;
+    rvalid  <= 0;
+    rlast   <= 0;
     @(posedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DE-ACTIVATED"),UVM_NONE)
   endtask 
@@ -170,15 +181,15 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
   // Waiting for the arready to set to high to setup the address,
   // in read address channel
   //-------------------------------------------------------
-  task detect_read_address_wait_state(inout axi4_read_transfer_char_s data_read_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_READ_ADDRESS_WAIT_STATE"),UVM_HIGH)
+  //task detect_read_address_wait_state(inout axi4_read_transfer_char_s data_read_packet);
+  //  @(posedge aclk);
+  //  `uvm_info(name,$sformatf("DETECT_READ_ADDRESS_WAIT_STATE"),UVM_HIGH)
 
-    while(arready==0) begin
-      @(posedge aclk);
-      data_read_packet.wait_count_read_address_channel++;
-    end
-  endtask : detect_read_address_wait_state
+  //  while(arready==0) begin
+  //    @(posedge aclk);
+  //    data_read_packet.wait_count_read_address_channel++;
+  //  end
+  //endtask : detect_read_address_wait_state
   
   //-------------------------------------------------------
   // Task: detect_read_data_wait_state
@@ -207,7 +218,6 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
       end
       else begin
         if(awvalid)begin
-        //  awready=1;
           mem_awid 	[i]	  = awid  	;	
           `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
           `uvm_info("mem_awid",$sformatf("awid=%0d",awid),UVM_HIGH)
@@ -227,6 +237,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
 			    mem_wprot	[i] 	= awprot	;	
           //data_write_packet.awprot = awprot;
 			    i = i+1;
+  end
           for(int k=0;k<$size(mem_awid);k++) begin
             data_write_packet.awid = mem_awid[k];
             data_write_packet.awaddr = mem_waddr[k];
@@ -247,21 +258,21 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
   end
   end
-  end
   //end
 
  // if (awready==0) begin
  //   detect_write_address_wait_state(data_write_packet);
  // end
-   `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+   `uvm_info(name,$sformatf("Before DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
    // repeat(data_write_packet.no_of_wait_states)begin
    //   `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
    //   @(posedge aclk);
    //   awready<=0;
    // end
-   assign awready = awvalid;  //awready <= 1;
+   //assign awready = awvalid;  //awready <= 1;
+  awready <= awvalid;  //awready <= 1;
 
-    data_write_packet.awready=awready;
+   // data_write_packet.awready=awready;
   endtask
 
   //-------------------------------------------------------
@@ -453,11 +464,11 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     data_read_packet.arprot = arprot;
    end
 
-    repeat(data_read_packet.no_of_wait_states)begin
-      `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
-      @(posedge aclk);
-      arready<=0;
-    end
+    //repeat(data_read_packet.no_of_wait_states)begin
+    //  `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
+    //  @(posedge aclk);
+    //  arready<=0;
+    //end
     assign arready = arvalid;
    // data_read_packet.arready=arready;
     
