@@ -96,7 +96,12 @@ interface axi4_master_driver_bfm(input bit aclk,
   task wait_for_aresetn();
     @(negedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DETECTED"),UVM_HIGH)
- 
+    awvalid <= 1'b0;
+    wvalid  <= 1'b0;
+    bready  <= 1'b0;
+    arvalid <= 1'b0;
+    rready  <= 1'b0;
+     
     @(posedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DEACTIVATED"),UVM_HIGH)
   endtask : wait_for_aresetn
@@ -203,17 +208,17 @@ interface axi4_master_driver_bfm(input bit aclk,
     awvalid <= 1'b1;
     
     `uvm_info(name,$sformatf("Detect awready = %0d",awready),UVM_HIGH)
-    if(awready==='bx||awready === 0) begin
+    while(awready === 0) begin
       @(posedge aclk);
       data_write_packet.wait_count_write_address_channel++;
-      `uvm_info(name,$sformatf("Detect awready = %0d",awready),UVM_HIGH)
+      `uvm_info(name,$sformatf("inside Detect awready = %0d",awready),UVM_HIGH)
     end
+    `uvm_info(name,$sformatf("After loop of Detecting awready = %0d",awready),UVM_HIGH)
 
    // if(awready==0) begin
    //   `uvm_info(name,"WAIT_ADD_DETECT",UVM_HIGH)
    //   detect_write_address_wait_state(data_write_packet);
    // end
-
       
   endtask : axi4_write_address_channel_task
 
@@ -227,20 +232,22 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
 
-    //TODO SAHA: loop for 5 burst
     // if(tx_type==WRITE) begin
     for(int i=0; i<data_write_packet.awlen + 1; i++) begin
     //foreach(wdata[i]) begin
       if(awvalid)begin
-        wvalid <= 1'b1;
-        if(wready==0) begin
-          detect_write_data_wait_state(data_write_packet);
-        end
-        `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
         wdata  <= data_write_packet.wdata[i];
         wstrb  <= data_write_packet.wstrb[i];
         wlast  <= data_write_packet.wlast;
         wuser  <= data_write_packet.wuser;
+        wvalid <= 1'b1;
+        `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
+
+        while(wready==0) begin
+          @(posedge aclk);
+          data_write_packet.wait_count_write_data_channel++;
+        end
+        `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
       end
       @(posedge aclk);
     end
@@ -286,12 +293,6 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO READ ADDRESS CHANNEL"),UVM_HIGH)
-
-    arvalid <= 1'b1;
-    
-    if (arready==0) begin
-      detect_read_address_wait_state(data_read_packet);
-    end
     arid    <= data_read_packet.arid;
     araddr  <= data_read_packet.araddr;
     arlen   <= data_read_packet.arlen;
@@ -300,6 +301,12 @@ interface axi4_master_driver_bfm(input bit aclk,
     arlock  <= data_read_packet.arlock;
     arcache <= data_read_packet.arcache;
     arprot  <= data_read_packet.arprot;
+
+    arvalid <= 1'b1;
+    
+    if (arready==0) begin
+      detect_read_address_wait_state(data_read_packet);
+    end
 
    //TODO:SAHA
    //else
