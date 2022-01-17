@@ -253,11 +253,12 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
  // if (awready==0) begin
  //   detect_write_address_wait_state(data_write_packet);
  // end
-    repeat(data_write_packet.no_of_wait_states)begin
-      `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
-      @(posedge aclk);
-      awready<=0;
-    end
+   `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+   // repeat(data_write_packet.no_of_wait_states)begin
+   //   `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+   //   @(posedge aclk);
+   //   awready<=0;
+   // end
    assign awready = awvalid;  //awready <= 1;
 
     data_write_packet.awready=awready;
@@ -388,7 +389,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
         //`uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
         //`uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
         //bid  <= mem_awid[i];
-        //if(wready && wvalid)begin
+        if(wready && wvalid)begin
         if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
 
           //bid  <= mem_awid[i];
@@ -404,7 +405,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
             end
             bvalid = 0;
           
-          //end
+          end
           //else begin
           //  bresp <= 2'bxx;
           //  bvalid = 0;
