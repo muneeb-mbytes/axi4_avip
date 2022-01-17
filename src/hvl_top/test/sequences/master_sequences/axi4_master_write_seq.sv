@@ -38,10 +38,12 @@ task axi4_master_write_seq::body();
 
   start_item(req);
   //if(!req.randomize() with {req.tx_type == WRITE;}) begin
-  if(!req.randomize()) begin
+    if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
+                              req.tx_type == WRITE;
+                              req.awburst == WRITE_FIXED;}) begin
     `uvm_fatal("axi4","Rand failed");
   end
-  //req.print();
+  req.print();
   finish_item(req);
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_write_seq"), UVM_NONE); 
 

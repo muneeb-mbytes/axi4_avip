@@ -33,8 +33,7 @@ endfunction : new
 task axi4_slave_write_seq::body();
   req=axi4_slave_tx::type_id::create("req");
   start_item(req);
-  if(!req.randomize())
-  begin
+  if(!req.randomize() with {req.bresp == WRITE_OKAY;}) begin
     `uvm_error(get_type_name(),"randomization failed");
   end
   req.print();

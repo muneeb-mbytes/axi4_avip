@@ -110,15 +110,11 @@ interface axi4_master_driver_bfm(input bit aclk,
   // Waiting for the awready to set to high to setup the address,
   // in write address channel
   //-------------------------------------------------------
-  task detect_write_address_wait_state(inout axi4_write_transfer_char_s data_write_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_WRITE_ADDRESS_WAIT_STATE"),UVM_HIGH)
+  //task detect_write_address_wait_state(inout axi4_write_transfer_char_s data_write_packet);
+  //  @(posedge aclk);
+  //  `uvm_info(name,$sformatf("DETECT_WRITE_ADDRESS_WAIT_STATE"),UVM_HIGH)
 
-    while(awready==0) begin
-      @(posedge aclk);
-      data_write_packet.wait_count_write_address_channel++;
-    end
-  endtask : detect_write_address_wait_state
+  //endtask : detect_write_address_wait_state
 
   //-------------------------------------------------------
   // Task: detect_write_data_wait_state
@@ -196,12 +192,6 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVING WRITE ADDRESS CHANNEL"),UVM_HIGH)
     
-    awvalid <= 1'b1;
-
-    if(awready==0) begin
-      detect_write_address_wait_state(data_write_packet);
-    end
-
     awid    <= data_write_packet.awid;
     awaddr  <= data_write_packet.awaddr;
     awlen   <= data_write_packet.awlen;
@@ -210,6 +200,20 @@ interface axi4_master_driver_bfm(input bit aclk,
     awlock  <= data_write_packet.awlock;
     awcache <= data_write_packet.awcache;
     awprot  <= data_write_packet.awprot;
+    awvalid <= 1'b1;
+    
+    `uvm_info(name,$sformatf("Detect awready = %0d",awready),UVM_HIGH)
+    if(awready==='bx||awready === 0) begin
+      @(posedge aclk);
+      data_write_packet.wait_count_write_address_channel++;
+      `uvm_info(name,$sformatf("Detect awready = %0d",awready),UVM_HIGH)
+    end
+
+   // if(awready==0) begin
+   //   `uvm_info(name,"WAIT_ADD_DETECT",UVM_HIGH)
+   //   detect_write_address_wait_state(data_write_packet);
+   // end
+
       
   endtask : axi4_write_address_channel_task
 

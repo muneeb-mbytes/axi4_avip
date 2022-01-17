@@ -498,7 +498,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
 
    if(rready==0) begin
      detect_read_data_wait_state(data_read_packet);
-   end;
+   end
  // while(!rready)begin 
   //@(posedge aclk);
   //rvalid=0;

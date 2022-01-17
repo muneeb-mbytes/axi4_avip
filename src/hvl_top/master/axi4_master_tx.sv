@@ -185,7 +185,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : tx_type
   //Used to determine the transaction type
-  tx_type_e tx_type;
+  rand tx_type_e tx_type;
 
   //-------------------------------------------------------
   // WRITE ADDRESS Constraints
