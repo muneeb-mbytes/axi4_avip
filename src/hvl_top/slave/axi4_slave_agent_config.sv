@@ -32,9 +32,9 @@ class axi4_slave_agent_config extends uvm_object;
   //Declaration of slave_memory to store the data from master
   bit [7:0]slave_memory[longint];
   
-  //Variable : wait_count_read_address_channel;
-  //Used to determine the number of wait states inserted for read address channel
-  int wait_count_read_address_channel;
+  //Variable : wait_count_write_response_channel;
+  //Used to determine the number of wait states inserted for write response channel
+  int wait_count_write_response_channel;
   
   //Variable : wait_count_read_data_channel;
   //Used to determine the number of wait states inserted for read data channel
@@ -84,7 +84,7 @@ function void axi4_slave_agent_config::do_print(uvm_printer printer);
   printer.print_field ("has_coverage" ,has_coverage,  $bits(has_coverage),  UVM_DEC);
   printer.print_field ("min_address"  ,min_address,   $bits(max_address),   UVM_HEX);
   printer.print_field ("max_address"  ,max_address,   $bits(max_address),   UVM_HEX);
-  printer.print_field("wait_count_read_address_channel",wait_count_read_address_channel,$bits(wait_count_read_address_channel),UVM_DEC);
+  printer.print_field("wait_count_write_response_channel",wait_count_write_response_channel,$bits(wait_count_write_response_channel),UVM_DEC);
   printer.print_field("wait_count_read_data_channel",wait_count_read_data_channel,$bits(wait_count_read_data_channel),UVM_DEC);
          
 endfunction : do_print

@@ -313,12 +313,13 @@ package axi4_globals_pkg;
     bit                     awvalid;
     bit	                    awready;
     //Write_data_channel
-    bit [DATA_WIDTH:0][DATA_WIDTH-1:0]     wdata;
-    bit [DATA_WIDTH:0][(DATA_WIDTH/8)-1:0] wstrb;
+    bit [DATA_WIDTH-1:0]wdata[$];
+    bit [(DATA_WIDTH/8)-1:0]wstrb[$];
     bit                      wlast;
     bit                      wuser;
     //Write Response Channel
     bit [15:0] bid;
+    bit bvalid;
     bit [1:0]  bresp;
 
     int wait_count_write_address_channel;
@@ -346,6 +347,9 @@ package axi4_globals_pkg;
     //Read Data Channel
     bit [15:0] rid;
     bit [DATA_WIDTH:0][DATA_WIDTH-1: 0] rdata;
+    bit rvalid;
+    bit rlast;
+    bit ruser;
     bit [1:0]  rresp; 
     //bit [(DATA_WIDTH/8)-1: 0] rstrb;
     
@@ -362,8 +366,17 @@ package axi4_globals_pkg;
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] min_address;
     bit [ADDRESS_WIDTH-1:0] max_address;
-    bit [ADDRESS_WIDTH-1:0] awaddr;
-    bit [ADDRESS_WIDTH-1:0] araddr;
+    int wait_count_read_address_channel;
+    int wait_count_read_data_channel;
+    int wait_count_write_address_channel;
+    int wait_count_write_data_channel;
+    int wait_count_write_response_channel;
+    
+    int outstanding_write_tx;
+    
+    int outstanding_read_tx;
+    //bit [ADDRESS_WIDTH-1:0] awaddr;
+    //bit [ADDRESS_WIDTH-1:0] araddr;
   } axi4_transfer_cfg_s;
 
 endpackage : axi4_globals_pkg

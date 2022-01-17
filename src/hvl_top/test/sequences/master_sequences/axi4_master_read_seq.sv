@@ -31,15 +31,15 @@ endfunction : new
 // Creates the req of type master transaction and randomises the req
 //--------------------------------------------------------------------------------------------
 task axi4_master_read_seq::body();
-  super.body();
+  //super.body();
   req = axi4_master_tx::type_id::create("req");
-//  req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
+  //req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize()) begin
     `uvm_fatal("axi4","Rand failed");
   end
-  req.print();
+  //req.print();
   finish_item(req);
 endtask : body
 

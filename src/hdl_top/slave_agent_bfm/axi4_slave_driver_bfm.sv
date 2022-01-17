@@ -362,8 +362,8 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
           for(int n = 0;n<(2**mem_wsize[i1]);n++)begin
             if(wstrb[n])begin
               `uvm_info(name,$sformatf("mem_wstrb[%0d] = %0h",n,wstrb[n]),UVM_HIGH);
-              data_write_packet.wdata <= wdata[n*8 +: 8];
-              `uvm_info(name,$sformatf("wdata = %0h",data_write_packet.wdata),UVM_HIGH);
+              data_write_packet.wdata[i1] = wdata[n*8 +: 8];
+              `uvm_info(name,$sformatf("wdata = %p",data_write_packet.wdata),UVM_HIGH);
               @(posedge aclk);
             end
             else @(posedge aclk);
