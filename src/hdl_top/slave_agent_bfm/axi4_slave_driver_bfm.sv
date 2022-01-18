@@ -313,8 +313,13 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
           end
         end
       end
-  endtask
+  endtask : axi4_write_data_phase
 
+  //-------------------------------------------------------
+  // Task: axi4_write_response_phase
+  // This task will drive the write response signals
+  //-------------------------------------------------------
+  
   task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s
     struct_cfg,int valid_delay = 2);
     int j;
@@ -355,7 +360,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         //end
       end
     end
-  endtask
+  endtask : axi4_write_response_phase
 
   //-------------------------------------------------------
   // Task: axi4_write_response_phase
