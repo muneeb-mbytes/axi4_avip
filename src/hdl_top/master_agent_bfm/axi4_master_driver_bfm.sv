@@ -153,33 +153,31 @@ interface axi4_master_driver_bfm(input bit aclk,
   // This task will drive the write data signals
   //-------------------------------------------------------
   task axi4_write_data_channel_task (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
-    @(posedge aclk);
-    @(posedge aclk);
+    //@(posedge aclk);
+  // @(posedge aclk);
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
 
     // if(tx_type==WRITE) begin
-    //for(int i=0; i<data_write_packet.awlen + 1; i++) begin
-    foreach(data_write_packet.wdata[i]) begin
-      if(awvalid)begin
+    for(int i=0; i<data_write_packet.awlen + 1; i++) begin
+   // foreach(data_write_packet.wdata[i]) begin
+     @(posedge aclk);
         wdata  <= data_write_packet.wdata[i];
         wstrb  <= data_write_packet.wstrb[i];
-        wlast  <= data_write_packet.wlast;
         wuser  <= data_write_packet.wuser;
         wvalid <= 1'b1;
         `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
-
       //@(posedge aclk);
         while(wready===0) begin
           @(posedge aclk);
           data_write_packet.wait_count_write_data_channel++;
         end
         `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
-      end
-      @(posedge aclk);
-    end
-      
+        if(data_write_packet.awlen == i)begin  
+          wlast  <= 1'b1;
+        end
+      end      
   endtask : axi4_write_data_channel_task
 
   //-------------------------------------------------------
