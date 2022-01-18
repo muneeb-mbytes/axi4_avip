@@ -161,7 +161,22 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     // Sample the values
     // DO you work 
 
+     data_write_packet.awid = awid;
+     data_write_packet.awaddr = awaddr;
+     data_write_packet.awlen = awlen;
+     data_write_packet.awsize = awsize;
+     data_write_packet.awburst = awburst;
+     data_write_packet.awlock = awlock;
+     data_write_packet.awcache = awcache;
+     data_write_packet.awprot = awprot;
     // based on the wait_cycles we can choose to drive the awready
+
+   `uvm_info(name,$sformatf("Before DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+    repeat(data_write_packet.no_of_wait_states)begin
+      `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+      @(posedge aclk);
+      awready<=0;
+    end
     awready <= 1;
 
 
@@ -213,19 +228,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
    // MSHA:   end
   //end
 
- // if (awready==0) begin
- //   detect_write_address_wait_state(data_write_packet);
- // end
-   `uvm_info(name,$sformatf("Before DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
-   // repeat(data_write_packet.no_of_wait_states)begin
-   //   `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
-   //   @(posedge aclk);
-   //   awready<=0;
-   // end
-   //assign awready = awvalid;  //awready <= 1;
-
-  // MSHA: awready <= awvalid;  //awready <= 1;
-
    // data_write_packet.awready=awready;
   endtask
 
@@ -233,185 +235,207 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // Task: axi4_write_data_phase
   // This task will sample the write data signals
   //-------------------------------------------------------
- // task axi4_write_data_phase (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
- //   `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
- //   `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
- //   `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
- //   
- // if(wvalid)begin
- //   wready=1;
- //   data_write_packet.wdata=wdata;
- //   data_write_packet.wstrb=wstrb;
- // end
- // if (wready==0) begin
- //     detect_write_data_wait_state(data_write_packet);
- //   end
- // // else begin
- // //  wready=0;
- // // end
+  task axi4_write_data_phase (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
+    @(posedge aclk);
+    `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
+    `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
+    `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
+    
+    wready=0;
+  
+  while(wvalid === 0) begin
+      @(posedge aclk);
+    end
 
- //   //write else also
- // endtask : axi4_write_data_phase
+    `uvm_info("SLAVE_DRIVER", $sformatf("DEBUG_MSHA :: outside of wvalid"), UVM_NONE);
+    foreach(data_write_packet.wdata[i])begin
+    data_write_packet.wdata[i]=wdata[i];
+    data_write_packet.wstrb[i]=wstrb[i];
+  end
+
+   `uvm_info(name,$sformatf("Before DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+    repeat(data_write_packet.no_of_wait_states)begin
+      `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+      @(posedge aclk);
+      wready<=0;
+    end
+    wready <= 1;
+
+    //write else also
+  endtask : axi4_write_data_phase
   //-------------------------------------------------------
   // Task: axi_write_data_phase
   // Samples the write data based on different burst types
   //-------------------------------------------------------
 
-  task axi4_write_data_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
-
-    @(posedge aclk) begin
-      `uvm_info(name,"INSIDE WRITE_DATA_PHASE",UVM_LOW)
-      repeat(data_write_packet.no_of_wait_states)begin
-        `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
-        @(posedge aclk);
-        wready<=0;
-      end
-      assign wready = wvalid;
-
-   // data_write_packet.wready=wready;
-     // wready <= 1;
-
-      if(!aresetn)begin
-      end
-    end
-
-    //FIXED_Burst type
-    
-    @(posedge aclk)begin
-      if(aresetn)begin
-        for(int i = 0,k_t = 0;i<$size(mem_awid);i++)begin
-          if(mem_wburst[i] == WRITE_FIXED)begin
-            for(int j = 0;j<(mem_wlen[i]+1);j = j+1)begin
-              for(int k = 0,k1 = 0;k1<(2**mem_wsize[i]);k1++)begin
-                if(wstrb[k1])begin
-                  data_write_packet.awaddr <= mem_waddr[i]+k-k_t; 
-                  `uvm_info(name,$sformatf("w_addr = %0h",data_write_packet.awaddr),UVM_HIGH);
-                  k++;
-                  @(posedge aclk);
-                end
-                else begin
-                  k++; 
-                  k_t++;
-                  @(posedge aclk);
-                end
-              end
-            end
-          end
-         
-          //INCR Burst type
-
-          else if(mem_wburst[i] == WRITE_INCR)begin 
-             for(int j = 0;j<(mem_wlen[i]+1);j = j+1)begin
-               for(int k = 0,k1 = 0;k1<(2**mem_wsize[i]);k1++)begin
-                 if(wstrb[k1])begin
-                   data_write_packet.awaddr  <= mem_waddr[i]+(j*(2**mem_wsize[i]))+k-k_t;
-                   `uvm_info(name,$sformatf("addr = %0h",data_write_packet.awaddr),UVM_HIGH);
-                   k++;
-                   @(posedge aclk);
-                 end
-                 else begin
-                   k++; 
-                   k_t++;
-                   @(posedge aclk);
-                 end
-               end
-             end
-           end
-           
-         end
-       end
-      end
-      
-      for(int i1 = 0;i1<$size(mem_awid);i1++)begin
-        if(mem_wburst[i1])begin
-          `uvm_info(name,$sformatf("mem_burst[%0d] = %0h",i1,mem_wburst[i1]),UVM_HIGH);
-          for(int n = 0;n<(2**mem_wsize[i1]);n++)begin
-            if(wstrb[n])begin
-              `uvm_info(name,$sformatf("mem_wstrb[%0d] = %0h",n,wstrb[n]),UVM_HIGH);
-              data_write_packet.wdata[i1] = wdata[n*8 +: 8];
-              `uvm_info(name,$sformatf("wdata = %p",data_write_packet.wdata),UVM_HIGH);
-              @(posedge aclk);
-            end
-            else @(posedge aclk);
-          end
-        end
-      end
-  endtask : axi4_write_data_phase
+//  task axi4_write_data_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
+//
+//    @(posedge aclk) begin
+//      `uvm_info(name,"INSIDE WRITE_DATA_PHASE",UVM_LOW)
+//      repeat(data_write_packet.no_of_wait_states)begin
+//        `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+//        @(posedge aclk);
+//        wready<=0;
+//      end
+//      assign wready = wvalid;
+//
+//   // data_write_packet.wready=wready;
+//     // wready <= 1;
+//
+//      if(!aresetn)begin
+//      end
+//    end
+//
+//    //FIXED_Burst type
+//    
+//    @(posedge aclk)begin
+//      if(aresetn)begin
+//        for(int i = 0,k_t = 0;i<$size(mem_awid);i++)begin
+//          if(mem_wburst[i] == WRITE_FIXED)begin
+//            for(int j = 0;j<(mem_wlen[i]+1);j = j+1)begin
+//              for(int k = 0,k1 = 0;k1<(2**mem_wsize[i]);k1++)begin
+//                if(wstrb[k1])begin
+//                  data_write_packet.awaddr <= mem_waddr[i]+k-k_t; 
+//                  `uvm_info(name,$sformatf("w_addr = %0h",data_write_packet.awaddr),UVM_HIGH);
+//                  k++;
+//                  @(posedge aclk);
+//                end
+//                else begin
+//                  k++; 
+//                  k_t++;
+//                  @(posedge aclk);
+//                end
+//              end
+//            end
+//          end
+//         
+//          //INCR Burst type
+//
+//          else if(mem_wburst[i] == WRITE_INCR)begin 
+//             for(int j = 0;j<(mem_wlen[i]+1);j = j+1)begin
+//               for(int k = 0,k1 = 0;k1<(2**mem_wsize[i]);k1++)begin
+//                 if(wstrb[k1])begin
+//                   data_write_packet.awaddr  <= mem_waddr[i]+(j*(2**mem_wsize[i]))+k-k_t;
+//                   `uvm_info(name,$sformatf("addr = %0h",data_write_packet.awaddr),UVM_HIGH);
+//                   k++;
+//                   @(posedge aclk);
+//                 end
+//                 else begin
+//                   k++; 
+//                   k_t++;
+//                   @(posedge aclk);
+//                 end
+//               end
+//             end
+//           end
+//           
+//         end
+//       end
+//      end
+//      
+//      for(int i1 = 0;i1<$size(mem_awid);i1++)begin
+//        if(mem_wburst[i1])begin
+//          `uvm_info(name,$sformatf("mem_burst[%0d] = %0h",i1,mem_wburst[i1]),UVM_HIGH);
+//          for(int n = 0;n<(2**mem_wsize[i1]);n++)begin
+//            if(wstrb[n])begin
+//              `uvm_info(name,$sformatf("mem_wstrb[%0d] = %0h",n,wstrb[n]),UVM_HIGH);
+//              data_write_packet.wdata[i1] = wdata[n*8 +: 8];
+//              `uvm_info(name,$sformatf("wdata = %p",data_write_packet.wdata),UVM_HIGH);
+//              @(posedge aclk);
+//            end
+//            else @(posedge aclk);
+//          end
+//        end
+//      end
+//  endtask : axi4_write_data_phase
 
   //-------------------------------------------------------
   // Task: axi4_write_response_phase
   // This task will drive the write response signals
   //-------------------------------------------------------
   
-  task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s
-    struct_cfg,int valid_delay = 2);
-    int j;
-    @(posedge aclk)begin
-      `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
-      if(!aresetn)begin
-        bresp = 2'bz;
-        bvalid = 0;
-      end
-      
-      else begin
-        //`uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
-        //`uvm_info("bid_debug",$sformatf("data_write_packet.awid=%0d",data_write_packet.awid),UVM_HIGH)
-        //`uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
-        //`uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
-        //bid  <= mem_awid[i];
-        if(wready && wvalid)begin
-        if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
+ // task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s
+ //   struct_cfg,int valid_delay = 2);
+ //   int j;
+ //   @(posedge aclk)begin
+ //     `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
+ //     if(!aresetn)begin
+ //     //  bresp = 2'bz;
+ //       bvalid = 0;
+ //     end
+ //     
+ //     else begin
+ //       //`uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
+ //       //`uvm_info("bid_debug",$sformatf("data_write_packet.awid=%0d",data_write_packet.awid),UVM_HIGH)
+ //       //`uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
+ //       //`uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
+ //       //bid  <= mem_awid[i];
+ //       if(wready && wvalid)begin
+ //       if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
 
-          //bid  <= mem_awid[i];
-          bid  = bid_local;
-        `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
-        `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
-            bresp <= WRITE_OKAY;
-            bvalid = 1;
-            j++;
-            
-            repeat(valid_delay-1) begin
-              @(posedge aclk);
-            end
-            bvalid = 0;
-          
-          end
-          //else begin
-          //  bresp <= 2'bxx;
-          //  bvalid = 0;
-         // end
-        //end
-      end
-    end
-  endtask : axi4_write_response_phase
+ //         //bid  <= mem_awid[i];
+ //         bid  = bid_local;
+ //       `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
+ //       `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
+ //           bresp <= WRITE_OKAY;
+ //           bvalid = 1;
+ //           j++;
+ //           
+ //           repeat(valid_delay-1) begin
+ //             @(posedge aclk);
+ //           end
+ //           bvalid = 0;
+ //         
+ //         end
+ //         //else begin
+ //         //  bresp <= 2'bxx;
+ //         //  bvalid = 0;
+ //        // end
+ //       //end
+ //     end
+ //   end
+ // endtask : axi4_write_response_phase
 
   //-------------------------------------------------------
   // Task: axi4_write_response_phase
   // This task will drive the write response signals
   //-------------------------------------------------------
- // task axi4_write_response_phase (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
- //   `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
- //   `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
- //   `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
- // bid=data_write_packet.bid;
- // bresp=data_write_packet.bresp;
- // bvalid=1;
- // while(!bready)begin 
- // @(posedge aclk);
- // bvalid=0;
- // end
+  task axi4_write_response_phase (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
+    @(posedge aclk);
+    `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
+    `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
+    `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
+  
+    bid=data_write_packet.bid;
+    bresp=data_write_packet.bresp;
+    bvalid=1;
 
- // endtask : axi4_write_response_phase
+    `uvm_info(name,$sformatf("detect_bready = %0d",bready),UVM_HIGH)
+    while(bready === 0) begin
+      @(posedge aclk);
+      data_write_packet.wait_count_write_response_channel++;
+      `uvm_info(name,$sformatf("inside_detect_bready = %0d",bready),UVM_HIGH)
+    end
+    `uvm_info(name,$sformatf("After_loop_of_Detecting_bready = %0d",bready),UVM_HIGH)
+ 
+  endtask : axi4_write_response_phase
   //-------------------------------------------------------
   // Task: axi4_read_address_phase
   // This task will sample the read address signals
   //-------------------------------------------------------
   task axi4_read_address_phase (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
+    @(posedge aclk);
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("DRIVE TO READ ADDRESS CHANNEL"),UVM_HIGH);
     
-     if(arvalid)begin
+    arready <= 0;
+
+    while(arvalid === 0) begin
+      @(posedge aclk);
+    end
+
+    `uvm_info("SLAVE_DRIVER", $sformatf("DEBUG_MSHA :: outside of arvalid"), UVM_NONE); 
        data_read_packet.arid=arid;
        data_read_packet.araddr=araddr;
        data_read_packet.arlen = arlen;
@@ -420,31 +444,22 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
        data_read_packet.arlock = arlock;
        data_read_packet.arcache = arcache;
        data_read_packet.arprot = arprot;
+     
+     repeat(data_read_packet.no_of_wait_states)begin
+       `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
+       @(posedge aclk);
+       arready<=0;
      end
-
-    //repeat(data_read_packet.no_of_wait_states)begin
-    //  `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
-    //  @(posedge aclk);
-    //  arready<=0;
-    //end
-    assign arready = arvalid;
-   // data_read_packet.arready=arready;
-    
-    //awready <= 1;
- // if (arready==0) begin
-  //   detect_read_address_wait_state(data_read_packet);
-  //  end
-  //  else begin
-   //   arready=0;
-   // end
-
-  endtask : axi4_read_address_phase
+     arready<=1;
+  
+   endtask : axi4_read_address_phase
 
   //-------------------------------------------------------
   // Task: axi4_read_data_channel_task
   // This task will drive the read data signals
   //-------------------------------------------------------
   task axi4_read_data_phase (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
+    @(posedge aclk);
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("DRIVE TO READ DATA CHANNEL"),UVM_HIGH);
@@ -454,7 +469,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     rresp=data_read_packet.rresp;
     rvalid=1;
 
-    while(rready==0) begin
+    while(rready===0) begin
       @(posedge aclk);
       data_read_packet.wait_count_read_data_channel++;
     end
