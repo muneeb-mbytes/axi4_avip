@@ -15,14 +15,14 @@ interface axi4_master_driver_bfm(input bit aclk,
                                  input bit aresetn,
                                  
                                  //Write Address Channel Signals
-                                 output reg [3:0]              awid,
+                                 output reg               [3:0]awid,
                                  output reg [ADDRESS_WIDTH-1:0]awaddr,
-                                 output reg [3:0]              awlen,
-                                 output reg [2:0]              awsize,
-                                 output reg [1:0]              awburst,
-                                 output reg [1:0]              awlock,
-                                 output reg [3:0]              awcache,
-                                 output reg [2:0]              awprot,
+                                 output reg               [3:0]awlen,
+                                 output reg               [2:0]awsize,
+                                 output reg               [1:0]awburst,
+                                 output reg               [1:0]awlock,
+                                 output reg               [3:0]awcache,
+                                 output reg               [2:0]awprot,
                                  output reg                    awvalid,
                                  input    	                   awready,
 
@@ -35,35 +35,35 @@ interface axi4_master_driver_bfm(input bit aclk,
                                  input                          wready,
 
                                  //Write Response Channel Signals
-                                 input                     [3:0]bid,
-                                 input                     [1:0]bresp,
-                                 input                     [3:0]buser,
-                                 input                          bvalid,
-                                 output	reg                     bready,
+                                 input      [3:0]bid,
+                                 input      [1:0]bresp,
+                                 input      [3:0]buser,
+                                 input           bvalid,
+                                 output	reg      bready,
 
                                  //Read Address Channel Signals
-                                 output reg [3:0]               arid,
-                                 output reg [ADDRESS_WIDTH-1: 0]araddr,
-                                 output reg [7:0]               arlen,
-                                 output reg [2:0]               arsize,
-                                 output reg [1:0]               arburst,
-                                 output reg [1:0]               arlock,
-                                 output reg [3:0]               arcache,
-                                 output reg [2:0]               arprot,
-                                 output reg [3:0]               arQOS,
-                                 output reg [3:0]               arregion,
-                                 output reg [3:0]               aruser,
-                                 output reg                     arvalid,
-                                 input                          arready,
+                                 output reg               [3:0]arid,
+                                 output reg [ADDRESS_WIDTH-1:0]araddr,
+                                 output reg               [7:0]arlen,
+                                 output reg               [2:0]arsize,
+                                 output reg               [1:0]arburst,
+                                 output reg               [1:0]arlock,
+                                 output reg               [3:0]arcache,
+                                 output reg               [2:0]arprot,
+                                 output reg               [3:0]arQOS,
+                                 output reg               [3:0]arregion,
+                                 output reg               [3:0]aruser,
+                                 output reg                    arvalid,
+                                 input                         arready,
 
                                  //Read Data Channel Signals
-                                 input                     [3:0]rid,
-                                 input         [DATA_WIDTH-1: 0]rdata,
-                                 input                     [1:0]rresp,
-                                 input                          rlast,
-                                 input                     [3:0]ruser,
-                                 input                          rvalid,
-                                 output	reg                     rready  
+                                 input                  [3:0]rid,
+                                 input      [DATA_WIDTH-1: 0]rdata,
+                                 input                  [1:0]rresp,
+                                 input                       rlast,
+                                 input                  [3:0]ruser,
+                                 input                       rvalid,
+                                 output	reg                  rready  
                                 );  
   
   //-------------------------------------------------------
@@ -107,82 +107,6 @@ interface axi4_master_driver_bfm(input bit aclk,
   endtask : wait_for_aresetn
 
   //--------------------------------------------------------------------------------------------
-  // Tasks written for detecting wait count of all 5 channels are given below
-  //--------------------------------------------------------------------------------------------
-
-  //-------------------------------------------------------
-  // Task: detect_write_address_wait_state
-  // Waiting for the awready to set to high to setup the address,
-  // in write address channel
-  //-------------------------------------------------------
-  //task detect_write_address_wait_state(inout axi4_write_transfer_char_s data_write_packet);
-  //  @(posedge aclk);
-  //  `uvm_info(name,$sformatf("DETECT_WRITE_ADDRESS_WAIT_STATE"),UVM_HIGH)
-
-  //endtask : detect_write_address_wait_state
-
-  //-------------------------------------------------------
-  // Task: detect_write_data_wait_state
-  // Waiting for the wready to set to high to transfer the data packet,
-  // in write address channel
-  //-------------------------------------------------------
-  task detect_write_data_wait_state(inout axi4_write_transfer_char_s data_write_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
-
-    while(wready==0) begin
-      @(posedge aclk);
-      data_write_packet.wait_count_write_data_channel++;
-    end
-  endtask : detect_write_data_wait_state
-
-  //-------------------------------------------------------
-  // Task: detect_write_response_wait_state
-  // Waiting for the bready to set to high to get the response,
-  // in write response channel
-  //-------------------------------------------------------
-  task detect_write_response_wait_state(inout axi4_write_transfer_char_s data_write_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_WRITE_RESPONSE_WAIT_STATE"),UVM_HIGH)
-
-    while(bready==0) begin
-      @(posedge aclk);
-      data_write_packet.wait_count_write_response_channel++;
-    end
-  endtask : detect_write_response_wait_state
-
-  //-------------------------------------------------------
-  // Task: detect_read_address_wait_state
-  // Waiting for the arready to set to high to setup the address,
-  // in read address channel
-  //-------------------------------------------------------
-  task detect_read_address_wait_state(inout axi4_read_transfer_char_s data_read_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_READ_ADDRESS_WAIT_STATE"),UVM_HIGH)
-
-    while(arready==0) begin
-      @(posedge aclk);
-      data_read_packet.wait_count_read_address_channel++;
-    end
-  endtask : detect_read_address_wait_state
-
-  //-------------------------------------------------------
-  // Task: detect_read_data_wait_state
-  // Waiting for the rready to set to high for data transfer and 
-  // to get the response back, in read data channel
-  //-------------------------------------------------------
-  task detect_read_data_wait_state(inout axi4_read_transfer_char_s data_read_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_READ_DATA_WAIT_STATE"),UVM_HIGH)
-
-    while(rready==0) begin
-      @(posedge aclk);
-      data_read_packet.wait_count_read_data_channel++;
-    end
-  endtask : detect_read_data_wait_state
-
-
-  //--------------------------------------------------------------------------------------------
   // Tasks written for all 5 channels in BFM are given below
   //--------------------------------------------------------------------------------------------
 
@@ -195,7 +119,7 @@ interface axi4_master_driver_bfm(input bit aclk,
 
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
-    `uvm_info(name,$sformatf("DRIVING WRITE ADDRESS CHANNEL"),UVM_HIGH)
+    `uvm_info(name,$sformatf("DRIVING_WRITE_ADDRESS_CHANNEL"),UVM_HIGH)
     
     awid    <= data_write_packet.awid;
     awaddr  <= data_write_packet.awaddr;
@@ -207,13 +131,13 @@ interface axi4_master_driver_bfm(input bit aclk,
     awprot  <= data_write_packet.awprot;
     awvalid <= 1'b1;
     
-    `uvm_info(name,$sformatf("Detect awready = %0d",awready),UVM_HIGH)
+    `uvm_info(name,$sformatf("detect_awready = %0d",awready),UVM_HIGH)
     while(awready === 0) begin
       @(posedge aclk);
       data_write_packet.wait_count_write_address_channel++;
-      `uvm_info(name,$sformatf("inside Detect awready = %0d",awready),UVM_HIGH)
+      `uvm_info(name,$sformatf("inside_detect_awready = %0d",awready),UVM_HIGH)
     end
-    `uvm_info(name,$sformatf("After loop of Detecting awready = %0d",awready),UVM_HIGH)
+    `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d",awready),UVM_HIGH)
 
    // if(awready==0) begin
    //   `uvm_info(name,"WAIT_ADD_DETECT",UVM_HIGH)
@@ -228,13 +152,14 @@ interface axi4_master_driver_bfm(input bit aclk,
   //-------------------------------------------------------
   task axi4_write_data_channel_task (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
     @(posedge aclk);
+    @(posedge aclk);
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
 
     // if(tx_type==WRITE) begin
-    for(int i=0; i<data_write_packet.awlen + 1; i++) begin
-    //foreach(wdata[i]) begin
+    //for(int i=0; i<data_write_packet.awlen + 1; i++) begin
+    foreach(data_write_packet.wdata[i]) begin
       if(awvalid)begin
         wdata  <= data_write_packet.wdata[i];
         wstrb  <= data_write_packet.wstrb[i];
@@ -243,7 +168,8 @@ interface axi4_master_driver_bfm(input bit aclk,
         wvalid <= 1'b1;
         `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
 
-        while(wready==0) begin
+      //@(posedge aclk);
+        while(wready===0) begin
           @(posedge aclk);
           data_write_packet.wait_count_write_data_channel++;
         end
@@ -264,15 +190,6 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
 
-    //bid    <= data_write_packet.bid;
-    //bresp  <= data_write_packet.bresp;
-    //buser  <= data_write_packet.buser;
-    //bvalid <= 1'b1;
-
-    //if(bready==0) begin
-    //  detect_write_response_wait_state(data_write_packet);
-    //end
-
     bready <= 1'b1;
     data_write_packet.bvalid = bvalid;
     if(bvalid == 1'b1 && bready == 1'b1) begin
@@ -280,8 +197,6 @@ interface axi4_master_driver_bfm(input bit aclk,
       data_write_packet.bresp = bresp;
     end
 
-  //TODO:SAHA
-  //else
   endtask : axi4_write_response_channel_task
 
   //-------------------------------------------------------
@@ -304,12 +219,6 @@ interface axi4_master_driver_bfm(input bit aclk,
 
     arvalid <= 1'b1;
     
-    if (arready==0) begin
-      detect_read_address_wait_state(data_read_packet);
-    end
-
-   //TODO:SAHA
-   //else
   endtask : axi4_read_address_channel_task
 
   //-------------------------------------------------------
@@ -322,31 +231,15 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO READ DATA CHANNEL"),UVM_HIGH)
     
-    //rid    <= data_read_packet.rid;
-    // if(tx_type==READ) begin
-    //rdata  <= data_read_packet.rdata;
-    // end
-    //rresp  <= data_read_packet.rresp;
-    //  rlast  <= data_read_packet.rlast;
-    //  ruser  <= data_read_packet.ruser;
-    //rvalid <= 1'b1;
-   
-   //if(rvalid==1'b1) begin
-     //detect_read_data_wait_state(data_read_packet);
-   //end
-
    rready <= 1'b1;
    data_read_packet.rvalid  = rvalid;
    if(rvalid == 1'b1 && rready == 1'b1) begin
-     data_read_packet.rid    = rid;
-     data_read_packet.rdata  = rdata;
-     data_read_packet.rresp   = rresp;
-     data_read_packet.rlast   = rlast;
-     data_read_packet.ruser   = ruser;
+     data_read_packet.rid   = rid;
+     data_read_packet.rdata = rdata;
+     data_read_packet.rresp = rresp;
+     data_read_packet.rlast = rlast;
+     data_read_packet.ruser = ruser;
    end
-
-   //TODO:SAHA
-   //else
   endtask : axi4_read_data_channel_task
 
 endinterface : axi4_master_driver_bfm
