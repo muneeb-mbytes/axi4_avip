@@ -183,7 +183,16 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     end
     `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
 
-    // based on the wait_cycles we can choose to drive the awready
+   //  data_write_packet.awid = awid;
+   //  data_write_packet.awaddr = awaddr;
+   //  data_write_packet.awlen = awlen;
+   //  data_write_packet.awsize = awsize;
+   //  data_write_packet.awburst = awburst;
+   //  data_write_packet.awlock = awlock;
+   //  data_write_packet.awcache = awcache;
+   //  data_write_packet.awprot = awprot;
+    
+   // based on the wait_cycles we can choose to drive the awready
     `uvm_info(name,$sformatf("Before DRIVING WRITE ADDRS WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
     repeat(data_write_packet.no_of_wait_states)begin
       `uvm_info(name,$sformatf("DRIVING_WRITE_ADDRS_WAIT_STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
@@ -191,7 +200,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       awready<=0;
     end
     assign awready = awvalid;
-  endtask
+
+  endtask: axi4_write_address_phase 
 
   //-------------------------------------------------------
   // Task: axi4_write_data_phase
@@ -256,33 +266,39 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
   endtask : axi4_write_data_phase
 
-
   //-------------------------------------------------------
   // Task: axi4_write_response_phase
   // This task will drive the write response signals
   //-------------------------------------------------------
   
   task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg,int valid_delay = 2);
-    int j;
-    @(posedge aclk)begin
-      `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
     
-      if(wready && wvalid)begin
-        if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
-          bid  = bid_local;
-          `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
-          `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
-          bresp <= WRITE_OKAY;
-          bvalid = 1;
-          j++;
+    int j;
+    @(posedge aclk);
+    `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
+    
+    if(wready && wvalid)begin
+      if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
+        bid  = bid_local;
+        `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
+        `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
+        bresp <= WRITE_OKAY;
+        bvalid = 1;
+        j++;
           
-          repeat(valid_delay-1) begin
-            @(posedge aclk);
-          end
-          bvalid = 0;
-        end
-      end
-    endtask : axi4_write_response_phase
+     //   repeat(valid_delay-1) begin
+     //     @(posedge aclk);
+     //   end
+     //   bvalid = 0;
+      end 
+    
+    while(bready === 0) begin
+      @(posedge aclk);
+      data_write_packet.wait_count_write_response_channel++;
+      `uvm_info(name,$sformatf("inside_detect_bready = %0d",bready),UVM_HIGH)
+    end
+    `uvm_info(name,$sformatf("After_loop_of_Detecting_bready = %0d",bready),UVM_HIGH)
+  endtask : axi4_write_response_phase
 
   //-------------------------------------------------------
   // Task: axi4_read_address_phase
@@ -294,7 +310,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("INSIDE TO READ ADDRESS CHANNEL"),UVM_HIGH);
     
-
     // Ready can be HIGH even before we start to check 
     // based on wait_cycles variable
     // Can make arready to zero 
@@ -340,16 +355,24 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       arready<=0;
     end
     assign arready = arvalid;
+   
+  //  data_read_packet.arid=arid;
+  //  data_read_packet.araddr=araddr;
+  //  data_read_packet.arlen = arlen;
+  //  data_read_packet.arsize = arsize;
+  //  data_read_packet.arburst = arburst;
+  //  data_read_packet.arlock = arlock;
+  //  data_read_packet.arcache = arcache;
+  //  data_read_packet.arprot = arprot;
 
   endtask: axi4_read_address_phase
     
-
   //-------------------------------------------------------
   // Task: axi4_read_data_channel_task
   // This task will drive the read data signals
   //-------------------------------------------------------
   task axi4_read_data_phase (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
-
+    
     int j1;
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);

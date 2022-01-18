@@ -14,12 +14,18 @@ class axi4_slave_monitor_proxy extends uvm_monitor;
   // Handle for axi4 slave agent configuration
   axi4_slave_agent_config axi4_slave_agent_cfg_h;
 
-  //Declaring Monitor Analysis Import
-  uvm_analysis_port #(axi4_slave_tx) axi4_slave_analysis_port;
-
-  //Declaring Virtual Monitor BFM Handle
+ 
+  // Declaring Virtual Monitor BFM Handle
   virtual axi4_slave_monitor_bfm axi4_slave_mon_bfm_h;
 
+  // Variable: axi4_slave_analysis_port
+  // Declaring analysis port for the monitor port
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_write_address_analysis_port;
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_write_data_analysis_port;
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_write_response_analysis_port;
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_read_address_analysis_port;
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_read_data_analysis_port;
+  
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -40,8 +46,11 @@ endclass : axi4_slave_monitor_proxy
 function axi4_slave_monitor_proxy::new(string name = "axi4_slave_monitor_proxy",
                                  uvm_component parent = null);
   super.new(name, parent);
-  axi4_slave_analysis_port = new("axi4_slave_analysis_port",this);
-  
+  axi4_slave_read_address_analysis_port = new("axi4_slave_read_address_analysis_port",this);
+  axi4_slave_read_data_analysis_port = new("axi4_slave_read_data_analysis_port",this);
+  axi4_slave_write_address_analysis_port = new("axi4_slave_write_address_analysis_port",this);
+  axi4_slave_write_data_analysis_port = new("axi4_slave_write_data_analysis_port",this);
+  axi4_slave_write_response_analysis_port = new("axi4_slave_write_response_analysis_port",this);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------

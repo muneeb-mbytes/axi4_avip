@@ -14,8 +14,11 @@ class axi4_slave_coverage extends uvm_subscriber#(axi4_slave_tx);
 
   // Variable: axi4_slave_analysis_export
   //declaring analysis port for coverage
-  uvm_analysis_port #(axi4_slave_tx)axi4_slave_analysis_export;
-
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_read_address_analysis_port;
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_read_data_analysis_port;
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_write_address_analysis_port;
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_write_data_analysis_port;
+  uvm_analysis_port#(axi4_slave_tx) axi4_slave_write_response_analysis_port;
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -35,7 +38,11 @@ endclass : axi4_slave_coverage
 function axi4_slave_coverage::new(string name = "axi4_slave_coverage",
                                  uvm_component parent = null);
   super.new(name, parent);
-  axi4_slave_analysis_export = new("axi4_slave_analysis_export",this);
+  axi4_slave_read_address_analysis_port = new("axi4_slave_read_address_analysis_port",this);
+  axi4_slave_read_data_analysis_port = new("axi4_slave_read_data_analysis_port",this);
+  axi4_slave_write_address_analysis_port = new("axi4_slave_write_address_analysis_port",this);
+  axi4_slave_write_data_analysis_port = new("axi4_slave_write_data_analysis_port",this);
+  axi4_slave_write_response_analysis_port = new("axi4_slave_write_response_analysis_port",this);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------

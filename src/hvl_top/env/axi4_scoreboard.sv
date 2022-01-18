@@ -15,6 +15,14 @@ class axi4_scoreboard extends uvm_scoreboard;
   uvm_tlm_analysis_fifo#(axi4_master_tx) axi4_master_write_address_analysis_fifo;
   uvm_tlm_analysis_fifo#(axi4_master_tx) axi4_master_write_data_analysis_fifo;
   uvm_tlm_analysis_fifo#(axi4_master_tx) axi4_master_write_response_analysis_fifo;
+  
+  //Variable : axi4_slave_analysis_fifo
+  //Used to store the axi4_slave_data
+  uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_read_address_analysis_fifo;
+  uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_read_data_analysis_fifo;
+  uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_address_analysis_fifo;
+  uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_data_analysis_fifo;
+  uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_response_analysis_fifo;
 
   //Variable : axi4_slave_analysis_fifo
   //Used to store the axi4_slave_data
@@ -48,7 +56,12 @@ function axi4_scoreboard::new(string name = "axi4_scoreboard",
   axi4_master_write_address_analysis_fifo = new("axi4_master_write_address_analysis_fifo",this);
   axi4_master_write_data_analysis_fifo = new("axi4_master_write_data_analysis_fifo",this);
   axi4_master_write_response_analysis_fifo= new("axi4_master_write_response_analysis_fifo",this);
-  axi4_slave_analysis_fifo  = new("axi4_slave_analysis_fifo",this);
+ 
+  axi4_slave_read_address_analysis_fifo = new("axi4_slave_read_address_analysis_fifo",this);
+  axi4_slave_read_data_analysis_fifo = new("axi4_slave_read_data_analysis_fifo",this);
+  axi4_slave_write_address_analysis_fifo = new("axi4_slave_write_address_analysis_fifo",this);
+  axi4_slave_write_data_analysis_fifo = new("axi4_slave_write_data_analysis_fifo",this);
+  axi4_slave_write_response_analysis_fifo= new("axi4_slave_write_response_analysis_fifo",this);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
