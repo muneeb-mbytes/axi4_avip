@@ -143,52 +143,74 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   //-------------------------------------------------------
 
   task axi4_write_address_phase(axi4_write_transfer_char_s data_write_packet);
-   // @(posedge aclk)begin
-      `uvm_info(name,"INSIDE WRITE_ADDRESS_PHASE",UVM_LOW)
-      if(!aresetn)begin
-      end
-      else begin
-        if(awvalid)begin
-          mem_awid 	[i]	  = awid  	;	
-          `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
-          `uvm_info("mem_awid",$sformatf("awid=%0d",awid),UVM_HIGH)
-         //data_write_packet.awid = awid   ;
-			    mem_waddr	[i] 	= awaddr	;
-          //data_write_packet.awaddr = awaddr;
-			    mem_wlen 	[i]	  = awlen	;	
-          //data_write_packet.awlen = awlen;
-			    mem_wsize	[i] 	= awsize	;	
-          //data_write_packet.awsize = awsize;
-			    mem_wburst[i] 	= awburst;	
-          //data_write_packet.awburst = awburst;
-			    mem_wlock	[i] 	= awlock	;	
-          //data_write_packet.awlock = awlock;
-			    mem_wcache[i] 	= awcache;	
-          //data_write_packet.awcache = awcache;
-			    mem_wprot	[i] 	= awprot	;	
-          //data_write_packet.awprot = awprot;
-			    i = i+1;
-        end
-          for(int k=0;k<$size(mem_awid);k++) begin
-            data_write_packet.awid = mem_awid[k];
-            data_write_packet.awaddr = mem_waddr[k];
-            data_write_packet.awlen = mem_wlen[k];
-            data_write_packet.awsize = mem_wsize[k];
-            data_write_packet.awburst = mem_wburst[k];
-            data_write_packet.awlock = mem_wlock[k];
-            data_write_packet.awcache = mem_wcache[k];
-            data_write_packet.awprot = mem_wprot[k];
-           //  data_write_packet.awid = awid;
-           //  data_write_packet.awaddr = awaddr;
-           //  data_write_packet.awlen = awlen;
-           //  data_write_packet.awsize = awsize;
-           //  data_write_packet.awburst = awburst;
-           //  data_write_packet.awlock = awlock;
-           //  data_write_packet.awcache = awcache;
-           //  data_write_packet.awprot = awprot;
-         `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
-       end
-     end
+    @(posedge aclk);
+
+    // Ready can be HIGH even before we start to check 
+    // based on wait_cycles variable
+    //
+
+    // Can make awready to zero 
+    awready <= 0;
+
+    while(awvalid === 0) begin
+      @(posedge aclk);
+    end
+
+    `uvm_info("SLAVE_DRIVER", $sformatf("DEBUG_MSHA :: outside of awvalid"), UVM_NONE); 
+     
+    // Sample the values
+    // DO you work 
+
+    // based on the wait_cycles we can choose to drive the awready
+    awready <= 1;
+
+
+   // MSHA: // @(posedge aclk)begin
+   // MSHA:    `uvm_info(name,"INSIDE WRITE_ADDRESS_PHASE",UVM_LOW)
+   // MSHA:    if(!aresetn)begin
+   // MSHA:    end
+   // MSHA:    else begin
+   // MSHA:      if(awvalid)begin
+   // MSHA:        mem_awid 	[i]	  = awid  	;	
+   // MSHA:        `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
+   // MSHA:        `uvm_info("mem_awid",$sformatf("awid=%0d",awid),UVM_HIGH)
+   // MSHA:       //data_write_packet.awid = awid   ;
+	 // MSHA:  	    mem_waddr	[i] 	= awaddr	;
+   // MSHA:        //data_write_packet.awaddr = awaddr;
+	 // MSHA:  	    mem_wlen 	[i]	  = awlen	;	
+   // MSHA:        //data_write_packet.awlen = awlen;
+	 // MSHA:  	    mem_wsize	[i] 	= awsize	;	
+   // MSHA:        //data_write_packet.awsize = awsize;
+	 // MSHA:  	    mem_wburst[i] 	= awburst;	
+   // MSHA:        //data_write_packet.awburst = awburst;
+	 // MSHA:  	    mem_wlock	[i] 	= awlock	;	
+   // MSHA:        //data_write_packet.awlock = awlock;
+	 // MSHA:  	    mem_wcache[i] 	= awcache;	
+   // MSHA:        //data_write_packet.awcache = awcache;
+	 // MSHA:  	    mem_wprot	[i] 	= awprot	;	
+   // MSHA:        //data_write_packet.awprot = awprot;
+	 // MSHA:  	    i = i+1;
+   // MSHA:      end
+   // MSHA:        for(int k=0;k<$size(mem_awid);k++) begin
+   // MSHA:          data_write_packet.awid = mem_awid[k];
+   // MSHA:          data_write_packet.awaddr = mem_waddr[k];
+   // MSHA:          data_write_packet.awlen = mem_wlen[k];
+   // MSHA:          data_write_packet.awsize = mem_wsize[k];
+   // MSHA:          data_write_packet.awburst = mem_wburst[k];
+   // MSHA:          data_write_packet.awlock = mem_wlock[k];
+   // MSHA:          data_write_packet.awcache = mem_wcache[k];
+   // MSHA:          data_write_packet.awprot = mem_wprot[k];
+   // MSHA:         //  data_write_packet.awid = awid;
+   // MSHA:         //  data_write_packet.awaddr = awaddr;
+   // MSHA:         //  data_write_packet.awlen = awlen;
+   // MSHA:         //  data_write_packet.awsize = awsize;
+   // MSHA:         //  data_write_packet.awburst = awburst;
+   // MSHA:         //  data_write_packet.awlock = awlock;
+   // MSHA:         //  data_write_packet.awcache = awcache;
+   // MSHA:         //  data_write_packet.awprot = awprot;
+   // MSHA:       `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
+   // MSHA:     end
+   // MSHA:   end
   //end
 
  // if (awready==0) begin
@@ -201,7 +223,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
    //   awready<=0;
    // end
    //assign awready = awvalid;  //awready <= 1;
-  awready <= awvalid;  //awready <= 1;
+
+  // MSHA: awready <= awvalid;  //awready <= 1;
 
    // data_write_packet.awready=awready;
   endtask

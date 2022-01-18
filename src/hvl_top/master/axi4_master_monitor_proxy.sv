@@ -116,6 +116,16 @@ task axi4_master_monitor_proxy::run_phase(uvm_phase phase);
 
  // phase.raise_objection(this, "axi4_master_monitor_proxy");
 
+ // Wait for system reset
+ //
+ // MSHA: fork 
+
+  // MSHA: BFM.wr_addresss();
+  // MSHA: convert to packet
+  // MSHA: send the packet via analysis port
+
+ // MSHA: join
+
  // super.run_phase(phase);
 
  // // Work here

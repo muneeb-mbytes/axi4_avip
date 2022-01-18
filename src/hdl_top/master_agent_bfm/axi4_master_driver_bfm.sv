@@ -115,6 +115,8 @@ interface axi4_master_driver_bfm(input bit aclk,
   // This task will drive the write address signals
   //-------------------------------------------------------
   task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s cfg_packet);
+    
+
     @(posedge aclk);
 
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
