@@ -124,7 +124,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info(name,$sformatf("SYSTEM RESET ACTIVATED"),UVM_NONE)
     awready <= 0;
     wready  <= 0;
-    bid     <= 0;
+    bid     <= 'bx;
     bresp   <= 'bx;
     bvalid  <= 0;
   // arready <= 0;
@@ -136,66 +136,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     @(posedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DE-ACTIVATED"),UVM_NONE)
   endtask 
-  
-  //-------------------------------------------------------
-  // Task: detect_write_address_wait_state
-  // Waiting for the awready to set to high to setup the address,
-  // in write address channel
-  //-------------------------------------------------------
-  task detect_write_address_wait_state(inout axi4_write_transfer_char_s data_write_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_WRITE_ADDRESS_WAIT_STATE"),UVM_HIGH)
-
-    while(awready==0) begin
-      @(posedge aclk);
-      data_write_packet.wait_count_write_address_channel++;
-    end
-  endtask : detect_write_address_wait_state
-  
-  //-------------------------------------------------------
-  // Task: detect_write_data_wait_state
-  // Waiting for the wready to set to high to transfer the data packet,
-  // in write address channel
-  //-------------------------------------------------------
-  task detect_write_data_wait_state(inout axi4_write_transfer_char_s data_write_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
-
-    while(wready==0) begin
-      @(posedge aclk);
-      data_write_packet.wait_count_write_data_channel++;
-    end
-  endtask : detect_write_data_wait_state
-  
-  //-------------------------------------------------------
-  // Task: detect_read_address_wait_state
-  // Waiting for the arready to set to high to setup the address,
-  // in read address channel
-  //-------------------------------------------------------
-  //task detect_read_address_wait_state(inout axi4_read_transfer_char_s data_read_packet);
-  //  @(posedge aclk);
-  //  `uvm_info(name,$sformatf("DETECT_READ_ADDRESS_WAIT_STATE"),UVM_HIGH)
-
-  //  while(arready==0) begin
-  //    @(posedge aclk);
-  //    data_read_packet.wait_count_read_address_channel++;
-  //  end
-  //endtask : detect_read_address_wait_state
-  
-  //-------------------------------------------------------
-  // Task: detect_read_data_wait_state
-  // Waiting for the rready to set to high for data transfer and 
-  // to get the response back, in read data channel
-  //-------------------------------------------------------
-  task detect_read_data_wait_state(inout axi4_read_transfer_char_s data_read_packet);
-    @(posedge aclk);
-    `uvm_info(name,$sformatf("DETECT_READ_DATA_WAIT_STATE"),UVM_HIGH)
-
-    while(rready==0) begin
-      @(posedge aclk);
-      data_read_packet.wait_count_read_data_channel++;
-    end
-  endtask : detect_read_data_wait_state
   
   //-------------------------------------------------------
   // Task: axi_write_address_phase
@@ -485,14 +425,11 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     rdata=data_read_packet.rdata;
     rresp=data_read_packet.rresp;
     rvalid=1;
-    
-    if(rready==0) begin
-     detect_read_data_wait_state(data_read_packet);
-   end
- // while(!rready)begin 
-  //@(posedge aclk);
-  //rvalid=0;
-  //end
+
+    while(rready==0) begin
+      @(posedge aclk);
+      data_read_packet.wait_count_read_data_channel++;
+    end
   
   endtask : axi4_read_data_phase
 
