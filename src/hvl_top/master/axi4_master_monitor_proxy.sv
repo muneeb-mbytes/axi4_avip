@@ -16,6 +16,9 @@ class axi4_master_monitor_proxy extends uvm_component;
   // Declaring handle for axi4_master agent config class 
   axi4_master_agent_config axi4_master_agent_cfg_h;
 
+  axi4_master_tx req_rd;
+  axi4_master_tx req_wr;
+
   //Variable : apb_master_mon_bfm_h
   //Declaring handle for apb monitor bfm
   virtual axi4_master_monitor_bfm axi4_master_mon_bfm_h;
@@ -38,6 +41,12 @@ class axi4_master_monitor_proxy extends uvm_component;
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual function void start_of_simulation_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
+  extern virtual task axi4_write_address();
+  extern virtual task axi4_write_data();
+  extern virtual task axi4_write_response();
+  extern virtual task axi4_read_address();
+  extern virtual task axi4_read_data();
+
 
 endclass : axi4_master_monitor_proxy
 
@@ -114,26 +123,72 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_master_monitor_proxy::run_phase(uvm_phase phase);
 
- // phase.raise_objection(this, "axi4_master_monitor_proxy");
-
- // Wait for system reset
- //
- // MSHA: fork 
-
-  // MSHA: BFM.wr_addresss();
-  // MSHA: convert to packet
-  // MSHA: send the packet via analysis port
-
- // MSHA: join
-
- // super.run_phase(phase);
-
- // // Work here
- // // ...
-
- // phase.drop_objection(this);
+  fork 
+    axi4_write_address();
+    axi4_write_data();
+    axi4_write_response();
+    axi4_read_address();
+    axi4_read_data();
+  join
 
 endtask : run_phase
+
+task axi4_master_monitor_proxy::axi4_write_address();
+  forever begin
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+
+    axi4_master_mon_bfm_h.wait_for_aresetn();
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_mon_bfm_h.axi4_write_address_sampling(struct_write_packet,struct_cfg);
+    axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+  end
+endtask
+
+task axi4_master_monitor_proxy::axi4_write_data();
+ // forever begin
+ //   axi4_write_transfer_char_s struct_write_packet;
+ //   axi4_transfer_cfg_s        struct_cfg;
+
+ //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+ //   axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
+ //   axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+ // end
+endtask
+
+task axi4_master_monitor_proxy::axi4_write_response();
+//  forever begin
+//    axi4_write_transfer_char_s struct_write_packet;
+//    axi4_transfer_cfg_s        struct_cfg;
+//
+//    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+//    axi4_master_mon_bfm_h.axi4_write_response_sampling(struct_write_packet,struct_cfg);
+//    axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+//  end
+endtask
+
+
+task axi4_master_monitor_proxy::axi4_read_address();
+ // forever begin
+ //   axi4_read_transfer_char_s struct_read_packet;
+ //   axi4_transfer_cfg_s        struct_cfg;
+
+ //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+ //   axi4_master_mon_bfm_h.axi4_read_address_sampling(struct_read_packet,struct_cfg);
+ //   axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+ // end
+endtask
+
+task axi4_master_monitor_proxy::axi4_read_data();
+ // forever begin
+ //   axi4_read_transfer_char_s struct_read_packet;
+ //   axi4_transfer_cfg_s        struct_cfg;
+
+ //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+ //   axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
+ //   axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+ // end
+endtask
 
 `endif
 
