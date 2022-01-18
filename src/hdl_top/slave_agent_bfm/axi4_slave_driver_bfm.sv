@@ -7,70 +7,61 @@
 //It connects with the HVL driver_proxy for driving the stimulus
 //--------------------------------------------------------------------------------------------
 import axi4_globals_pkg::*;
-interface axi4_slave_driver_bfm(input                          aclk    , 
-                                input                          aresetn ,
+interface axi4_slave_driver_bfm(input                     aclk    , 
+                                input                     aresetn ,
                                 //Write_address_channel
-                                input [3:0]                    awid    ,
-                                input [ADDRESS_WIDTH-1:0]      awaddr  ,
-                                input [3: 0]                   awlen   ,
-                                input [2: 0]                   awsize  ,
-                                input [1: 0]                   awburst ,
-                                input [1: 0]                   awlock  ,
-                                input [3: 0]                   awcache ,
-                                input [2: 0]                   awprot  ,
-                                input                          awvalid ,
-                                output reg	                   awready ,
+                                input [3:0]               awid    ,
+                                input [ADDRESS_WIDTH-1:0] awaddr  ,
+                                input [3: 0]              awlen   ,
+                                input [2: 0]              awsize  ,
+                                input [1: 0]              awburst ,
+                                input [1: 0]              awlock  ,
+                                input [3: 0]              awcache ,
+                                input [2: 0]              awprot  ,
+                                input                     awvalid ,
+                                output reg	              awready ,
 
                                 //Write_data_channel
-                                input [DATA_WIDTH-1: 0]         wdata  ,
-                                input [(DATA_WIDTH/8)-1: 0]     wstrb  ,
-                                input                           wlast  ,
-                                input [3: 0]                    wuser  ,
-                                input                           wvalid ,
-                                output reg	                    wready ,
+                                input [DATA_WIDTH-1: 0]     wdata  ,
+                                input [(DATA_WIDTH/8)-1: 0] wstrb  ,
+                                input                       wlast  ,
+                                input [3: 0]                wuser  ,
+                                input                       wvalid ,
+                                output reg	                wready ,
 
                                 //Write Response Channel
-                                output reg [3:0]                bid    ,
-                                output reg [1:0]                bresp  ,
-                                output reg [3:0]                buser  ,
-                                output reg                      bvalid ,
-                                input		                        bready ,
+                                output reg [3:0]            bid    ,
+                                output reg [1:0]            bresp  ,
+                                output reg [3:0]            buser  ,
+                                output reg                  bvalid ,
+                                input		                    bready ,
 
                                 //Read Address Channel
-                                input [3: 0]                    arid    ,
-                                input [ADDRESS_WIDTH-1: 0]      araddr  ,
-                                input [7:0]                     arlen   ,
-                                input [2:0]                     arsize  ,
-                                input [1:0]                     arburst ,
-                                input [1:0]                     arlock  ,
-                                input [3:0]                     arcache ,
-                                input [2:0]                     arprot  ,
-                                input [3:0]                     arQOS   ,
-                                input [3:0]                     arregion,
-                                input [3:0]                     aruser  ,
-                                input                           arvalid ,
-                                output reg                      arready ,
+                                input [3: 0]                arid    ,
+                                input [ADDRESS_WIDTH-1: 0]  araddr  ,
+                                input [7:0]                 arlen   ,
+                                input [2:0]                 arsize  ,
+                                input [1:0]                 arburst ,
+                                input [1:0]                 arlock  ,
+                                input [3:0]                 arcache ,
+                                input [2:0]                 arprot  ,
+                                input [3:0]                 arQOS   ,
+                                input [3:0]                 arregion,
+                                input [3:0]                 aruser  ,
+                                input                       arvalid ,
+                                output reg                  arready ,
 
                                 //Read Data Channel
-                                output reg [3:0]                 rid     ,
-                                output reg [DATA_WIDTH-1: 0]     rdata   ,
-                                output reg [(DATA_WIDTH/8)-1: 0] rstrb   ,
-                                output reg [1:0]                 rresp   ,
-                                output reg                       rlast   ,
-                                output reg [3:0]                 ruser   ,
-                                output reg                       rvalid  ,
-                                input		                         rready  
+                                output reg [3:0]                rid    ,
+                                output reg [DATA_WIDTH-1: 0]    rdata  ,
+                                output reg [(DATA_WIDTH/8)-1: 0]rstrb  ,
+                                output reg [1:0]                rresp  ,
+                                output reg                      rlast  ,
+                                output reg [3:0]                ruser  ,
+                                output reg                      rvalid ,
+                                input		                        rready  
                               ); 
                               
-  // Internal signals
-  // reg                            sys_clk_i      ;  
-  // reg      [ ADDRESS_WIDTH-1: 0] sys_addr_o     ;  
-  // reg      [ 8-1: 0]             sys_wdata_o    ;  
-  // reg      [ AXI_SW-1: 0]        sys_sel_o      ;  
-  // reg                            sys_wen_o      ;  
-  // reg                            sys_ren_o      ;  
-  // reg      [ 8-1: 0]             sys_rdata_i    ; 
-
   //-------------------------------------------------------
   // Importing UVM Package 
   //-------------------------------------------------------
@@ -136,7 +127,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     bid     <= 0;
     bresp   <= 'bx;
     bvalid  <= 0;
-    //arready <= 0;
+  // arready <= 0;
     rid     <= 'bx;
     rdata   <= 'bx;
     rresp   <= 'bx;
@@ -237,7 +228,7 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
 			    mem_wprot	[i] 	= awprot	;	
           //data_write_packet.awprot = awprot;
 			    i = i+1;
-  end
+        end
           for(int k=0;k<$size(mem_awid);k++) begin
             data_write_packet.awid = mem_awid[k];
             data_write_packet.awaddr = mem_waddr[k];
@@ -247,17 +238,17 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
             data_write_packet.awlock = mem_wlock[k];
             data_write_packet.awcache = mem_wcache[k];
             data_write_packet.awprot = mem_wprot[k];
-//  data_write_packet.awid = awid;
-//  data_write_packet.awaddr = awaddr;
-//  data_write_packet.awlen = awlen;
-//  data_write_packet.awsize = awsize;
-//  data_write_packet.awburst = awburst;
-//  data_write_packet.awlock = awlock;
-//  data_write_packet.awcache = awcache;
-//  data_write_packet.awprot = awprot;
-    `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
-  end
-  end
+           //  data_write_packet.awid = awid;
+           //  data_write_packet.awaddr = awaddr;
+           //  data_write_packet.awlen = awlen;
+           //  data_write_packet.awsize = awsize;
+           //  data_write_packet.awburst = awburst;
+           //  data_write_packet.awlock = awlock;
+           //  data_write_packet.awcache = awcache;
+           //  data_write_packet.awprot = awprot;
+         `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
+       end
+     end
   //end
 
  // if (awready==0) begin
@@ -453,16 +444,15 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     `uvm_info(name,$sformatf("DRIVE TO READ ADDRESS CHANNEL"),UVM_HIGH);
     
      if(arvalid)begin
-   // arready=1;
-    data_read_packet.arid=arid;
-    data_read_packet.araddr=araddr;
-    data_read_packet.arlen = arlen;
-    data_read_packet.arsize = arsize;
-    data_read_packet.arburst = arburst;
-    data_read_packet.arlock = arlock;
-    data_read_packet.arcache = arcache;
-    data_read_packet.arprot = arprot;
-   end
+       data_read_packet.arid=arid;
+       data_read_packet.araddr=araddr;
+       data_read_packet.arlen = arlen;
+       data_read_packet.arsize = arsize;
+       data_read_packet.arburst = arburst;
+       data_read_packet.arlock = arlock;
+       data_read_packet.arcache = arcache;
+       data_read_packet.arprot = arprot;
+     end
 
     //repeat(data_read_packet.no_of_wait_states)begin
     //  `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
@@ -491,12 +481,12 @@ interface axi4_slave_driver_bfm(input                          aclk    ,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("DRIVE TO READ DATA CHANNEL"),UVM_HIGH);
     
-  rid=data_read_packet.rid;
-  rdata=data_read_packet.rdata;
-  rresp=data_read_packet.rresp;
-  rvalid=1;
-
-   if(rready==0) begin
+    rid=data_read_packet.rid;
+    rdata=data_read_packet.rdata;
+    rresp=data_read_packet.rresp;
+    rvalid=1;
+    
+    if(rready==0) begin
      detect_read_data_wait_state(data_read_packet);
    end
  // while(!rready)begin 
