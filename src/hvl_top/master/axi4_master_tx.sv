@@ -65,7 +65,7 @@ class axi4_master_tx extends uvm_sequence_item;
   
   int outstanding_write_tx;
   int outstanding_read_tx;
-  int no_of_wait_states;
+  rand int no_of_wait_states;
 
   //-------------------------------------------------------
   // WRITE DATA CHANNEL SIGNALS
@@ -235,6 +235,9 @@ class axi4_master_tx extends uvm_sequence_item;
   //Adding constraint to restrict the write strobe based on awlength
   constraint wstrb_c2 { wstrb.size() == awlen + 1;}
 
+  //Constraint : no_of_wait_states_c3
+  //Adding constraint to restrict the number of wait states for response
+  constraint no_of_wait_states_c3 { no_of_wait_states inside  {[0:16]};}
   //-------------------------------------------------------
   // READ ADDRESS Constraints
   //-------------------------------------------------------
@@ -502,6 +505,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_BIN);
   end
   //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
+  printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
   printer.print_string("bid",bid.name());
   printer.print_string("bresp",bresp.name());
   //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);

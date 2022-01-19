@@ -95,6 +95,7 @@ function void axi4_master_seq_item_converter::from_write_class( input axi4_maste
   output_conv_h.wuser = input_conv.wuser;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wuser =  %0h",output_conv_h.wuser),UVM_HIGH);
 
+  output_conv_h.no_of_wait_states = input_conv.no_of_wait_states;
   output_conv_h.wait_count_write_address_channel =input_conv.wait_count_write_address_channel ;
   output_conv_h.wait_count_write_data_channel =input_conv.wait_count_write_data_channel ;
   output_conv_h.wait_count_write_response_channel =input_conv.wait_count_write_response_channel ;
