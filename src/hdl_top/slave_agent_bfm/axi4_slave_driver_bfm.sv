@@ -208,7 +208,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // This task will sample the write data signals
   //-------------------------------------------------------
   task axi4_write_data_phase (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
-    @(posedge aclk);
+  //  @(posedge aclk);
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("INSIDE WRITE DATA CHANNEL"),UVM_HIGH)
@@ -245,10 +245,11 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
  //  end
 
     for(int a=0;a<$size(mem_awid);a++)begin
-    `uvm_info("SLAVE_DEBUG",$sformatf("mem_awid_size = %0d, mem_awid[%0d] = %0d",$size(mem_awid),a,mem_awid[a]),UVM_HIGH)
+      `uvm_info("SLAVE_DEBUG",$sformatf("mem_awid_size = %0d, mem_awid[%0d] = %0d",$size(mem_awid),a,mem_awid[a]),UVM_HIGH)
       if(mem_wburst[a]==2'b00||mem_wburst[a])begin
         `uvm_info("SLAVE_DEBUG",$sformatf("mem_wburst = %0d",mem_wburst[a]),UVM_HIGH)
         for(int s = 0;s<(mem_wlen[a]+1);s = s+1)begin
+          @(posedge aclk);
           `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",mem_wlen[a]),UVM_HIGH)
           for(int n = 0;n<(2**mem_wsize[a]);n++)begin
             `uvm_info("SLAVE_DEBUG",$sformatf("length = %0d",s),UVM_HIGH)
@@ -259,6 +260,9 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
               data_write_packet.wdata[n]=wdata[8*n+7 -: 8];
               `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0b",n,data_write_packet.wdata[n]),UVM_HIGH);
             end
+          end
+          if(s == mem_wlen[a]) begin
+            data_write_packet.wlast = wlast;
           end
         end
       end
@@ -283,7 +287,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
         `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
         bresp <= WRITE_OKAY;
-        bvalid = 1;
+        bvalid <= 1;
         j++;
           
      //   repeat(valid_delay-1) begin
@@ -336,14 +340,14 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 	   	j = j+1                   ;
     end
     for(int p=0;p<$size(mem_awid);p++) begin
-      data_read_packet.arid = mem_arid[p]      ;
-      data_read_packet.araddr = mem_raddr[p]   ;
-      data_read_packet.arlen = mem_rlen[p]     ;
-      data_read_packet.arsize = mem_rsize[p]   ;
-      data_read_packet.arburst = mem_rburst[p] ;
-      data_read_packet.arlock = mem_rlock[p]   ;
-      data_read_packet.arcache = mem_rcache[p] ;
-      data_read_packet.arprot = mem_rprot[p]   ;
+      data_read_packet.arid    = mem_arid[p]     ;
+      data_read_packet.araddr  = mem_raddr[p]    ;
+      data_read_packet.arlen   = mem_rlen[p]     ;
+      data_read_packet.arsize  = mem_rsize[p]    ;
+      data_read_packet.arburst = mem_rburst[p]   ;
+      data_read_packet.arlock  = mem_rlock[p]    ;
+      data_read_packet.arcache = mem_rcache[p]   ;
+      data_read_packet.arprot  = mem_rprot[p]    ;
     end
     `uvm_info(name,$sformatf("struct_pkt_rd_addr_phase = \n %0p",data_read_packet),UVM_HIGH)
 
@@ -382,6 +386,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       rid  <= rid_local;
     
       `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",arlen),UVM_HIGH);
+
       for(int i1=0; i1<mem_rlen[j1] + 1; i1++) begin
         @(posedge aclk);
         `uvm_info("RDATA_DEBUG",$sformatf("rid= %0d",rid),UVM_HIGH);
