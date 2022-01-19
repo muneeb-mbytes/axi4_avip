@@ -219,6 +219,11 @@ class axi4_master_tx extends uvm_sequence_item;
   constraint awburst_c5 { soft awburst == WRITE_INCR; 
                         }
 
+  //Constraint : awsize_c6
+  //Adding a soft constraint to detrmine the awsize
+  constraint awsize_c6 { soft awsize inside {[0:2]}; 
+                        }
+
   //-------------------------------------------------------
   // WRITE DATA Constraints
   //-------------------------------------------------------
@@ -295,6 +300,29 @@ endfunction : new
 // Selects the address based on the slave selected
 //--------------------------------------------------------------------------------------------
 function void axi4_master_tx::post_randomize();
+
+  //for(int i=0; i<awlen + 1; i++)begin
+  foreach(wdata[i])begin
+    `uvm_info("DEBUG_NAD", $sformatf("wdata[%0d]=%0h",i,wdata[i]),UVM_HIGH);
+    //if(wdata[i] != 0) begin
+      if(!std::randomize(wstrb) with {wstrb.size() == awlen + 1; 
+                                      if(awsize == WRITE_1_BYTE)  
+                                        $countones(wstrb[i]) == 1;
+                                        //wstrb[i] == 'd1 || wstrb[i] == 'd2 || wstrb[i] == 'd4 || wstrb[i] == 'd8;
+                                      if(awsize == WRITE_2_BYTES)  
+                                        $countones(wstrb[i]) == 2;
+                                      if(awsize == WRITE_4_BYTES)  
+                                        $countones(wstrb[i]) == 4;
+                                      })
+      begin
+        `uvm_fatal("FATAL_STD_RANDOMIZATION_WSTRB", $sformatf("Not able to randomize wstrb"));
+      end
+      else begin
+        `uvm_info("DEBUG_NAD", $sformatf("awsize=%0d",awsize),UVM_HIGH);
+        `uvm_info("DEBUG_NAD", $sformatf("wstrb[%0d]=%0d",i,wstrb[i]),UVM_HIGH);
+      end
+    //end
+  end
   
   ////Variable : index
   ////Used to store the address_range index value
