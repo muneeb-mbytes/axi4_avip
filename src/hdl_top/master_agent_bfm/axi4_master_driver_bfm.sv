@@ -138,6 +138,9 @@ interface axi4_master_driver_bfm(input bit aclk,
       `uvm_info(name,$sformatf("inside_detect_awready = %0d",awready),UVM_HIGH)
     end
     `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d",awready),UVM_HIGH)
+    
+    @(posedge aclk);
+    awvalid <= 1'b0;
 
   endtask : axi4_write_address_channel_task
 
@@ -156,6 +159,7 @@ interface axi4_master_driver_bfm(input bit aclk,
       wdata  <= data_write_packet.wdata[i];
       wstrb  <= data_write_packet.wstrb[i];
       wuser  <= data_write_packet.wuser;
+      wlast  <= 1'b0;
       wvalid <= 1'b1;
       `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
         
@@ -173,7 +177,7 @@ interface axi4_master_driver_bfm(input bit aclk,
 
     @(posedge aclk);
     wlast <= 1'b0;
-    //wvalid<= 1'b0;
+    wvalid<= 1'b0;
 
     `uvm_info(name,$sformatf("WRITE_DATA_COMP data_write_packet=\n%p",data_write_packet),UVM_HIGH)
   endtask : axi4_write_data_channel_task
@@ -235,6 +239,9 @@ interface axi4_master_driver_bfm(input bit aclk,
     end
     `uvm_info(name,$sformatf("After_loop_of_Detecting_arready = %0d",arready),UVM_HIGH)
     
+    @(posedge aclk);
+    arvalid <= 1'b0;
+
   endtask : axi4_read_address_channel_task
 
   //-------------------------------------------------------
