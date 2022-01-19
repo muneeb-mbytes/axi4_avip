@@ -255,11 +255,11 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
             `uvm_info("SLAVE_DEBUG",$sformatf("length = %0d",s),UVM_HIGH)
             `uvm_info("SLAVE_DEBUG",$sformatf("mem_size = %0d",mem_wsize[a]),UVM_HIGH)
             `uvm_info("SLAVE_DEBUG",$sformatf("mem_strb[%0d] = %0d",n,wstrb[n]),UVM_HIGH)
-            if(wstrb[n])begin
+           // if(wstrb[n])begin
               `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata = %0b",wdata),UVM_HIGH);
               data_write_packet.wdata[n]=wdata[8*n+7 -: 8];
               `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0b",n,data_write_packet.wdata[n]),UVM_HIGH);
-            end
+           // end
           end
           if(s == mem_wlen[a]) begin
             data_write_packet.wlast = wlast;
@@ -281,8 +281,9 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     @(posedge aclk);
     `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
     
-    if(wready && wvalid)begin
+    //if(wready && wvalid)begin
       if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
+        @(posedge aclk);
         bid  = bid_local;
         `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
         `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
@@ -290,18 +291,21 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         bvalid <= 1;
         j++;
           
-     //   repeat(valid_delay-1) begin
-     //     @(posedge aclk);
-     //   end
-     //   bvalid = 0;
-      end 
+    //    repeat(valid_delay-1) begin
+    //      @(posedge aclk);
+    //    end
+    //    bvalid = 0;
+    // end 
     
     while(bready === 0) begin
       @(posedge aclk);
       data_write_packet.wait_count_write_response_channel++;
       `uvm_info(name,$sformatf("inside_detect_bready = %0d",bready),UVM_HIGH)
     end
+
     `uvm_info(name,$sformatf("After_loop_of_Detecting_bready = %0d",bready),UVM_HIGH)
+    bvalid <= 1'b0;
+
   endtask : axi4_write_response_phase
 
   //-------------------------------------------------------
@@ -376,14 +380,13 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // This task will drive the read data signals
   //-------------------------------------------------------
   task axi4_read_data_phase (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
-    
     int j1;
+    @(posedge aclk);
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("INSIDE READ DATA CHANNEL"),UVM_LOW);
     
     if(std::randomize(rid_local) with {rid_local ==  mem_arid[j1];})
-      rid  <= rid_local;
     
       `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",arlen),UVM_HIGH);
 
@@ -392,9 +395,10 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         `uvm_info("RDATA_DEBUG",$sformatf("rid= %0d",rid),UVM_HIGH);
         `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",mem_rlen[j1]),UVM_HIGH);
         `uvm_info("RDATA_DEBUG",$sformatf("i1_arlen= %0d",i1),UVM_HIGH);
+        rid  <= rid_local;
         rdata<=data_read_packet.rdata[i1];
         rresp<=data_read_packet.rresp;
-        rvalid<=1;
+        rvalid<=1'b1;
         `uvm_info("RDATA_DEBUG",$sformatf("RDATA[%0d]=%0h",i1,data_read_packet.rdata[i1]),UVM_HIGH)
         `uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata),UVM_HIGH)
       
@@ -407,6 +411,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         rlast  <= 1'b1;
         @(posedge aclk);
         rlast <= 1'b0;
+        rvalid <= 1'b0;
       end
     end
     j1++;
