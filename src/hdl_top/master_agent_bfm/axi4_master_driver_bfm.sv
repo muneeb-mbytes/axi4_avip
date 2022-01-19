@@ -229,6 +229,9 @@ interface axi4_master_driver_bfm(input bit aclk,
     arlock  <= data_read_packet.arlock;
     arcache <= data_read_packet.arcache;
     arprot  <= data_read_packet.arprot;
+    arQOS   <= data_read_packet.arqos;
+    aruser  <= data_read_packet.aruser;
+    arregion<= data_read_packet.arregion;
     arvalid <= 1'b1;
 
     `uvm_info(name,$sformatf("detect_awready = %0d",arready),UVM_HIGH)

@@ -343,6 +343,8 @@ package axi4_globals_pkg;
     bit [3:0]  arcache;
     bit [2:0]  arprot;
     bit [3:0]  arqos;
+    bit [3:0]  arregion;
+    bit [3:0]  aruser;
     bit        arlock;
     //Read Data Channel
     bit [15:0] rid;
