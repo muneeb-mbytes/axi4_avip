@@ -207,6 +207,10 @@ interface axi4_master_driver_bfm(input bit aclk,
     data_write_packet.bvalid = bvalid;
     data_write_packet.bid = bid;
     data_write_packet.bresp = bresp;
+    data_write_packet.buser = buser;
+
+    @(posedge aclk);
+    bready <= 1'b0;
 
   endtask : axi4_write_response_channel_task
 
@@ -257,37 +261,42 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO READ DATA CHANNEL"),UVM_HIGH)
-   
-    rready <= 1'b1;
-    for(int i=0; i<data_read_packet.arlen + 1; i++) begin
-     @(posedge aclk);
-      data_read_packet.rid   = rid;
-      data_read_packet.rdata = rdata;
-      data_read_packet.ruser = ruser;
-      data_read_packet.rvalid <= 1'b1;
-        `uvm_info(name,$sformatf("DETECT_READ_DATA_WAIT_STATE"),UVM_HIGH)
-        while(rready===0) begin
-          @(posedge aclk);
-          data_read_packet.wait_count_read_data_channel++;
-        end
-        `uvm_info(name,$sformatf("DEBUG_NA:RDATA[%0d]=%0h",i,data_read_packet.rdata[i]),UVM_HIGH)
-        if(data_read_packet.arlen == i)begin  
-          data_read_packet.rlast  <= 1'b1;
-        end
+    
+    //Driving rready as low initially
+    rready  <= 0;
 
-      //while(rlast === 1'b0)begin
-      //  @(posedge aclk);
-      //end
-
-    //if(rlast==1'b1) begin
+    data_read_packet.rvalid   = rvalid;
+    if(rvalid === 1'b1) begin
       repeat(data_read_packet.no_of_wait_states)begin
         `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
         @(posedge aclk);
         rready<=0;
       end
-      data_read_packet.rresp = rresp;
-    //end
-  end
+    end
+
+    //Driving ready as high
+    rready <= 1'b1;
+    
+    for(int i=0; i<data_read_packet.arlen + 1; i++) begin
+      @(posedge aclk);
+      data_read_packet.rid      = rid;
+      data_read_packet.rdata[i] = rdata[i];
+      data_read_packet.ruser    = ruser;
+      data_read_packet.rresp    = rresp;
+      `uvm_info(name,$sformatf("DEBUG_NA:RDATA[%0d]=%0h",i,data_read_packet.rdata[i]),UVM_HIGH)
+      
+      if(data_read_packet.arlen == i)begin  
+        data_read_packet.rlast  <= rlast;
+      end
+      
+      //while(rlast === 1'b0)begin
+      //  @(posedge aclk);
+      //end
+    end
+   
+    @(posedge aclk);
+    rready <= 1'b0;
+
   endtask : axi4_read_data_channel_task
 
 endinterface : axi4_master_driver_bfm

@@ -69,7 +69,9 @@ function void axi4_master_seq_item_converter::from_write_class( input axi4_maste
 
   $cast(output_conv_h.bresp,input_conv.bresp);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize bresp =  %b",output_conv_h.bresp),UVM_HIGH);
-  
+ 
+  output_conv_h.buser = input_conv.buser;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize buser =  %b",output_conv_h.buser),UVM_HIGH);
   //$cast(output_conv_h.tx_type,input_conv.tx_type); 
   //`uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize tx_type =  %b",output_conv_h.tx_type),UVM_HIGH);
 
@@ -156,6 +158,9 @@ function void axi4_master_seq_item_converter::from_read_class( input axi4_master
     output_conv_h.rdata[i] = input_conv.rdata[i];
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig rdata = %0p",output_conv_h.rdata[i]),UVM_HIGH);
   end
+
+  output_conv_h.ruser = input_conv.ruser;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig ruser =  %0b",output_conv_h.ruser),UVM_HIGH);
 
   output_conv_h.wait_count_read_address_channel =input_conv.wait_count_read_address_channel ;
   output_conv_h.wait_count_read_data_channel =input_conv.wait_count_read_data_channel ;

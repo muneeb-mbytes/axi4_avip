@@ -321,6 +321,7 @@ package axi4_globals_pkg;
     bit [15:0] bid;
     bit bvalid;
     bit [1:0]  bresp;
+    bit buser;
 
     int wait_count_write_address_channel;
     int wait_count_write_data_channel;

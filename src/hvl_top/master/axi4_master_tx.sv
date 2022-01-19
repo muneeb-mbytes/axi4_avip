@@ -109,6 +109,10 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to capture the write response of the trasnaction
   bresp_e bresp;
   
+  //Variable : buser
+  //Used to capture the buser
+  bit buser;
+
   //-------------------------------------------------------
   // READ ADDRESS CHANNEL SIGNALS
   //-------------------------------------------------------
@@ -181,9 +185,9 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to store the read last transfer
   bit rlast;
 
-  //Variable : rvalid
-  //Used to send the read valid
-  //bit rvalid;
+  //Variable : ruser
+  //Used to read the read user value
+  bit ruser;
   
   //Variable : rready
   //Used to send the read ready
@@ -247,7 +251,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
-  constraint no_of_wait_states_c3 { no_of_wait_states inside  {[0:16]};}
+  constraint no_of_wait_states_c3 { no_of_wait_states inside  {[0:3]};}
   //-------------------------------------------------------
   // READ ADDRESS Constraints
   //-------------------------------------------------------
@@ -546,6 +550,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     end
     //printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
     printer.print_string("rresp",rresp.name());
+    printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
   end
 endfunction : do_print
 
