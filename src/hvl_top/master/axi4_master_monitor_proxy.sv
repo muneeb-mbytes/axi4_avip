@@ -123,6 +123,8 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_master_monitor_proxy::run_phase(uvm_phase phase);
 
+  axi4_master_mon_bfm_h.wait_for_aresetn();
+
   fork 
     axi4_write_address();
     axi4_write_data();
@@ -138,10 +140,13 @@ task axi4_master_monitor_proxy::axi4_write_address();
     axi4_write_transfer_char_s struct_write_packet;
     axi4_transfer_cfg_s        struct_cfg;
 
-    axi4_master_mon_bfm_h.wait_for_aresetn();
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside axi4_write_address"), UVM_NONE); 
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_address_sampling(struct_write_packet,struct_cfg);
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+
+    // print value
+    // sending the packet via analysis port
   end
 endtask
 

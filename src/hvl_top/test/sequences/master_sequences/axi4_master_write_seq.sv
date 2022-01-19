@@ -43,7 +43,8 @@ task axi4_master_write_seq::body();
                               req.awburst == WRITE_FIXED;}) begin
     `uvm_fatal("axi4","Rand failed");
   end
-  req.print();
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  //req.print();
   finish_item(req);
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_write_seq"), UVM_NONE); 
 

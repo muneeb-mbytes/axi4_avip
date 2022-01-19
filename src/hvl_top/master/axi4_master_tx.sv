@@ -80,7 +80,9 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to randomise write strobe
   //varaible[$] gives a unbounded queue
   //variable[$:value] gives a bounded queue to a value of given value 
-  rand bit [(DATA_WIDTH/8)-1:0] wstrb [$:DATA_WIDTH];
+
+  // MSHA: rand bit [(DATA_WIDTH/8)-1:0] wstrb [$:DATA_WIDTH];
+  bit [(DATA_WIDTH/8)-1:0] wstrb [$:DATA_WIDTH];
 
   //Variable : wlast
   //Used to store the write last transfer
@@ -233,7 +235,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Constraint : wstrb_c2
   //Adding constraint to restrict the write strobe based on awlength
-  constraint wstrb_c2 { wstrb.size() == awlen + 1;}
+  // MSHA: constraint wstrb_c2 { wstrb.size() == awlen + 1;}
 
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
@@ -305,6 +307,7 @@ endfunction : new
 function void axi4_master_tx::post_randomize();
 
   //for(int i=0; i<awlen + 1; i++)begin
+
   foreach(wdata[i])begin
     `uvm_info("DEBUG_NAD", $sformatf("wdata[%0d]=%0h",i,wdata[i]),UVM_HIGH);
     //if(wdata[i] != 0) begin
@@ -326,7 +329,14 @@ function void axi4_master_tx::post_randomize();
       end
     //end
   end
-  
+ 
+  // TODO(mshariff): Write comments for this logic
+  foreach(this.wstrb[i]) begin
+    this.wstrb[i] = wstrb[i];
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: this.wstrb[%0d] =  %0d",i,this.wstrb[i]), UVM_NONE); 
+  end
+
+
   ////Variable : index
   ////Used to store the address_range index value
   //int index;
@@ -502,7 +512,8 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
   end
   foreach(wstrb[i])begin
-    printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_BIN);
+    // MSHA: printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
+    printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_DEC);
   end
   //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
   printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
