@@ -76,11 +76,11 @@ class axi4_slave_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Variable : wdata
   //Used to send the write data 
-  bit [DATA_WIDTH-1:0] wdata[$:DATA_WIDTH];
+  bit [DATA_WIDTH-1:0] wdata[$:2**LENGTH];
 
   //Variable : wstrb
   //Used to hold the valid data byte lanes
-  bit [(DATA_WIDTH/8)-1:0] wstrb[$:DATA_WIDTH];
+  bit [(DATA_WIDTH/8)-1:0] wstrb[$:2**LENGTH];
 
   //Variable : wlast
   //Used to represent the last byte of the transaction
@@ -169,7 +169,8 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : rdata
   //Used to send the read data 
-  rand bit [DATA_WIDTH-1:0] rdata [$:DATA_WIDTH];
+  //rand bit [DATA_WIDTH-1:0] rdata [$:DATA_WIDTH];
+  rand bit [DATA_WIDTH-1:0] rdata [$:2**LENGTH];
 
   //Variable : rlast
   //Used to represent the last byte of the transaction
@@ -197,6 +198,7 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Constraint : rdata_c1
   //Adding constraint to restrict the read data based on awlength
   constraint rdata_c1 { rdata.size() == arlen+1; 
+                        rdata.size() != 0;
                       }
   
 

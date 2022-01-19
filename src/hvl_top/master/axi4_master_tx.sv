@@ -74,7 +74,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to randomise write data
   //varaible[$] gives a unbounded queue
   //variable[$:value] gives a bounded queue to a value of given value 
-  rand bit [DATA_WIDTH-1:0] wdata [$:DATA_WIDTH];
+  rand bit [DATA_WIDTH-1:0] wdata [$:2**LENGTH];
 
   //Variable : wstrb
   //Used to randomise write strobe
@@ -82,7 +82,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //variable[$:value] gives a bounded queue to a value of given value 
 
   // MSHA: rand bit [(DATA_WIDTH/8)-1:0] wstrb [$:DATA_WIDTH];
-  bit [(DATA_WIDTH/8)-1:0] wstrb [$:DATA_WIDTH];
+  bit [(DATA_WIDTH/8)-1:0] wstrb [$:2**LENGTH];
 
   //Variable : wlast
   //Used to store the write last transfer
@@ -171,7 +171,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to randomise read data
   //varaible[$] gives a unbounded queue
   //variable[$:value] gives a bounded queue to a value of given value 
-  rand bit [DATA_WIDTH-1:0] rdata [$:DATA_WIDTH];
+  bit [DATA_WIDTH-1:0] rdata [$:2**LENGTH];
 
   //Variable : rresp
   //Used to capture the read response of the trasnaction
@@ -179,7 +179,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : rlast
   //Used to store the read last transfer
-  //bit rlast;
+  bit rlast;
 
   //Variable : rvalid
   //Used to send the read valid
