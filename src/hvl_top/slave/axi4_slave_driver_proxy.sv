@@ -129,7 +129,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
     axi4_transfer_cfg_s       struct_cfg;
 
     axi_write_seq_item_port.get_next_item(req_wr);
-    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_req_wr = \n%s",req_wr.sprint()), UVM_NONE); 
+    //`uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_req_wr = \n%s",req_wr.sprint()), UVM_NONE); 
    
     //Converting transactions into struct data type
     axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
@@ -153,7 +153,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
     //Converting transactions into struct data type
     axi4_slave_seq_item_converter::to_write_class(struct_write_packet,req_wr);
 
-    `uvm_info("DEBUG_MSHA", $sformatf("AFTER :: Received req packet \n %s", req_wr.sprint()), UVM_NONE);
+   // `uvm_info("DEBUG_MSHA", $sformatf("AFTER :: Received req packet \n %s", req_wr.sprint()), UVM_NONE);
 
     axi_write_seq_item_port.item_done();
   end
@@ -170,7 +170,6 @@ task axi4_slave_driver_proxy::axi4_read_task();
     axi4_transfer_cfg_s       struct_cfg;
 
     axi_read_seq_item_port.get_next_item(req_rd);
-    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_req_rd = \n%s",req_rd.sprint()), UVM_NONE); 
   
     //Converting transactions into struct data type
     axi4_slave_seq_item_converter::from_read_class(req_rd,struct_read_packet);
@@ -189,7 +188,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
     //Converting struct into transactions
     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
 
-    `uvm_info("DEBUG_MSHA", $sformatf("AFTER :: Received req packet \n %s", req_rd.sprint()), UVM_NONE);
+    //`uvm_info("DEBUG_MSHA", $sformatf("AFTER :: Received req packet \n %s", req_rd.sprint()), UVM_NONE);
 
 
     #10;

@@ -173,7 +173,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : rlast
   //Used to represent the last byte of the transaction
-  //rand bit rlast;
+  rand bit rlast;
 
   //Variable : rready
   //Used to accept the valid data
@@ -181,7 +181,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : rvalid
   //Used to accept the valid address
-  //bit rvalid;
+  bit rvalid;
 
   //Variable : rresp
   //Used to store the read response
@@ -219,6 +219,7 @@ class axi4_slave_tx extends uvm_sequence_item;
   extern function void do_copy(uvm_object rhs);
   extern function bit do_compare (uvm_object rhs, uvm_comparer comparer);
   extern function void do_print(uvm_printer printer);
+
 endclass : axi4_slave_tx
 
 //--------------------------------------------------------------------------------------------

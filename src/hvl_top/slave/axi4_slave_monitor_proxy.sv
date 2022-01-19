@@ -14,9 +14,11 @@ class axi4_slave_monitor_proxy extends uvm_monitor;
   // Handle for axi4 slave agent configuration
   axi4_slave_agent_config axi4_slave_agent_cfg_h;
 
- 
   // Declaring Virtual Monitor BFM Handle
   virtual axi4_slave_monitor_bfm axi4_slave_mon_bfm_h;
+
+  axi4_slave_tx req_rd;
+  axi4_slave_tx req_wr;
 
   // Variable: axi4_slave_analysis_port
   // Declaring analysis port for the monitor port
@@ -33,6 +35,12 @@ class axi4_slave_monitor_proxy extends uvm_monitor;
   extern virtual function void build_phase(uvm_phase phase);
   extern function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
+  extern virtual task axi4_slave_write_address();
+  extern virtual task axi4_slave_write_data();
+  extern virtual task axi4_slave_write_response();
+  extern virtual task axi4_slave_read_address();
+  extern virtual task axi4_slave_read_data();
+
 
 endclass : axi4_slave_monitor_proxy
 
@@ -84,6 +92,43 @@ endfunction : end_of_elaboration_phase
 //--------------------------------------------------------------------------------------------
 task axi4_slave_monitor_proxy::run_phase(uvm_phase phase);
 
+  fork 
+    axi4_slave_write_address();
+    axi4_slave_write_data();
+    axi4_slave_write_response();
+    axi4_slave_read_address();
+    axi4_slave_read_data();
+  join
+
 endtask : run_phase 
+
+task axi4_slave_monitor_proxy::axi4_slave_write_address();
+  forever begin
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+
+    axi4_slave_mon_bfm_h.wait_for_aresetn();
+    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
+    axi4_slave_mon_bfm_h.axi4_slave_write_address_sampling(struct_write_packet,struct_cfg);
+    axi4_slave_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+  end
+endtask
+
+task axi4_slave_monitor_proxy::axi4_slave_write_data();
+
+endtask
+
+task axi4_slave_monitor_proxy::axi4_slave_write_response();
+
+endtask
+
+task axi4_slave_monitor_proxy::axi4_slave_read_address();
+
+endtask
+
+task axi4_slave_monitor_proxy::axi4_slave_read_data();
+
+endtask
+
 
 `endif
