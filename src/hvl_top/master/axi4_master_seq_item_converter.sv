@@ -146,6 +146,12 @@ function void axi4_master_seq_item_converter::from_read_class( input axi4_master
   output_conv_h.arqos = input_conv.arqos;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
 
+  output_conv_h.aruser = input_conv.aruser;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig aruser =  %0h",output_conv_h.aruser),UVM_HIGH);
+
+  output_conv_h.arregion = input_conv.arregion;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig arregion =  %0h",output_conv_h.arregion),UVM_HIGH);
+
   foreach(input_conv.rdata[i]) begin
     output_conv_h.rdata[i] = input_conv.rdata[i];
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig rdata = %0p",output_conv_h.rdata[i]),UVM_HIGH);
