@@ -209,10 +209,8 @@ task axi4_master_monitor_proxy::axi4_read_data();
     axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
 
     $cast(req_rd_clone_packet,req_rd.clone());
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling is
-    %p",req_rd.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling clone packet
-    is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling is %p",req_rd.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling clone packet is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
 
     axi4_master_read_data_analysis_port.write(req_rd);
   end
