@@ -185,14 +185,15 @@ task axi4_master_monitor_proxy::axi4_read_address();
 endtask
 
 task axi4_master_monitor_proxy::axi4_read_data();
- // forever begin
- //   axi4_read_transfer_char_s struct_read_packet;
- //   axi4_transfer_cfg_s        struct_cfg;
-
- //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
- //   axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
- //   axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
- // end
+  forever begin
+    axi4_read_transfer_char_s struct_read_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+    
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: Inside axi4_read_data"), UVM_NONE);
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
+    axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+  end
 endtask
 
 `endif
