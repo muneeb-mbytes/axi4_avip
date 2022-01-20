@@ -50,7 +50,7 @@ interface axi4_master_driver_bfm(input bit aclk,
                                  output reg               [1:0]arlock,
                                  output reg               [3:0]arcache,
                                  output reg               [2:0]arprot,
-                                 output reg               [3:0]arQOS,
+                                 output reg               [3:0]arqos,
                                  output reg               [3:0]arregion,
                                  output reg               [3:0]aruser,
                                  output reg                    arvalid,
@@ -234,7 +234,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     arlock  <= data_read_packet.arlock;
     arcache <= data_read_packet.arcache;
     arprot  <= data_read_packet.arprot;
-    arQOS   <= data_read_packet.arqos;
+    arqos   <= data_read_packet.arqos;
     aruser  <= data_read_packet.aruser;
     arregion<= data_read_packet.arregion;
     arvalid <= 1'b1;
