@@ -127,14 +127,14 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     rvalid  <= 0;
     rlast   <= 0;
     bvalid  <= 0;
-    buser   <= 'bx;
-    ruser   <= 'bx;
     arready <= 0;
     bid     <= 'bx;
     bresp   <= 'bx;
+    buser   <= 'bx;
     rid     <= 'bx;
     rdata   <= 'bx;
     rresp   <= 'bx;
+    ruser   <= 'bx;
     @(posedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DE-ACTIVATED"),UVM_NONE)
   endtask 
@@ -144,7 +144,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // Sampling the signals that are associated with write_address_channel
   //-------------------------------------------------------
 
-  task axi4_write_address_phase(axi4_write_transfer_char_s data_write_packet);
+  task axi4_write_address_phase(inout axi4_write_transfer_char_s data_write_packet);
     @(posedge aclk);
     `uvm_info(name,"INSIDE WRITE_ADDRESS_PHASE",UVM_LOW)
 
@@ -161,6 +161,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
      
     // Sample the values
     if(awvalid)begin
+
       mem_awid 	[i]	  = awid  	;	
       `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
       `uvm_info("mem_awid",$sformatf("awid=%0d",awid),UVM_HIGH)
@@ -171,19 +172,21 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 	   	mem_wlock	[i] 	= awlock	;	
 	   	mem_wcache[i] 	= awcache ;	
 	   	mem_wprot	[i] 	= awprot	;	
-	   	i = i+1                   ;
+     
+      data_write_packet.awid = mem_awid[i]      ;
+      data_write_packet.awaddr = mem_waddr[i]   ;
+      data_write_packet.awlen = mem_wlen[i]     ;
+      data_write_packet.awsize = mem_wsize[i]   ;
+      data_write_packet.awburst = mem_wburst[i] ;
+      data_write_packet.awlock = mem_wlock[i]   ;
+      data_write_packet.awcache = mem_wcache[i] ;
+      data_write_packet.awprot = mem_wprot[i]   ;
+      
+      i = i+1                   ;
+    
     end
-    for(int k=0;k<$size(mem_awid);k++) begin
-      data_write_packet.awid = mem_awid[k]      ;
-      data_write_packet.awaddr = mem_waddr[k]   ;
-      data_write_packet.awlen = mem_wlen[k]     ;
-      data_write_packet.awsize = mem_wsize[k]   ;
-      data_write_packet.awburst = mem_wburst[k] ;
-      data_write_packet.awlock = mem_wlock[k]   ;
-      data_write_packet.awcache = mem_wcache[k] ;
-      data_write_packet.awprot = mem_wprot[k]   ;
-    end
-    `uvm_info(name,$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
+
+    `uvm_info("struct_pkt_debug",$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
 
    //  data_write_packet.awid = awid;
    //  data_write_packet.awaddr = awaddr;
@@ -230,6 +233,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       @(posedge aclk);
       wready<=0;
     end
+
     wready <= 1 ;
     
  //  for(int s = 0;s<(awlen+1);s = s+1)begin
@@ -344,17 +348,16 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 	   	mem_rlock	[j] 	= arlock	;	
 	   	mem_rcache[j] 	= arcache ;	
 	   	mem_rprot	[j] 	= arprot	;	
+
+      data_read_packet.arid    = mem_arid[j]     ;
+      data_read_packet.araddr  = mem_raddr[j]    ;
+      data_read_packet.arlen   = mem_rlen[j]     ;
+      data_read_packet.arsize  = mem_rsize[j]    ;
+      data_read_packet.arburst = mem_rburst[j]   ;
+      data_read_packet.arlock  = mem_rlock[j]    ;
+      data_read_packet.arcache = mem_rcache[j]   ;
+      data_read_packet.arprot  = mem_rprot[j]    ;
 	   	j = j+1                   ;
-    end
-    for(int p=0;p<$size(mem_awid);p++) begin
-      data_read_packet.arid    = mem_arid[p]     ;
-      data_read_packet.araddr  = mem_raddr[p]    ;
-      data_read_packet.arlen   = mem_rlen[p]     ;
-      data_read_packet.arsize  = mem_rsize[p]    ;
-      data_read_packet.arburst = mem_rburst[p]   ;
-      data_read_packet.arlock  = mem_rlock[p]    ;
-      data_read_packet.arcache = mem_rcache[p]   ;
-      data_read_packet.arprot  = mem_rprot[p]    ;
     end
     `uvm_info(name,$sformatf("struct_pkt_rd_addr_phase = \n %0p",data_read_packet),UVM_HIGH)
 
@@ -399,13 +402,14 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",mem_rlen[j1]),UVM_HIGH);
         `uvm_info("RDATA_DEBUG",$sformatf("i1_arlen= %0d",i1),UVM_HIGH);
         rid  <= rid_local;
-        for(int l1=0; l1<(2**mem_rsize[j1]); l1++) begin
-          `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize= %0d",mem_rsize[j1]),UVM_HIGH);
-          `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize_l1= %0d",l1),UVM_HIGH);
-          rdata[8*l1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
-          `uvm_info("RDATA_DEBUG",$sformatf("RDATA[%0d]=%0h",i1,data_read_packet.rdata[i1]),UVM_HIGH)
-          `uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*l1+7 -: 8]),UVM_HIGH)
-        end
+        //for(int l1=0; l1<(2**mem_rsize[j1]); l1++) begin
+        //  `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize= %0d",mem_rsize[j1]),UVM_HIGH);
+        //  `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize_l1= %0d",l1),UVM_HIGH);
+          rdata<=data_read_packet.rdata[i1];
+         // rdata[8*l1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
+         // `uvm_info("RDATA_DEBUG",$sformatf("RDATA[%0d]=%0h",i1,data_read_packet.rdata[i1]),UVM_HIGH)
+         //`uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*l1+7 -: 8]),UVM_HIGH)
+       // end
         rresp<=data_read_packet.rresp;
         ruser<=data_read_packet.ruser;
         
