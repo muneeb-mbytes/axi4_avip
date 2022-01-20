@@ -47,7 +47,7 @@ interface axi4_if(input aclk, input aresetn);
   logic     [1:0] arlock     ;
   logic     [3:0] arcache    ;
   logic     [2:0] arprot     ;
-  logic     [3:0] arQOS      ;
+  logic     [3:0] arqos      ;
   logic     [3:0] arregion   ;
   logic     [3:0] aruser     ;
   logic           arvalid    ;

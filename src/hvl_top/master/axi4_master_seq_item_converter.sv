@@ -42,8 +42,7 @@ endfunction : new
 
 function void axi4_master_seq_item_converter::from_write_class( input axi4_master_tx input_conv, output axi4_write_transfer_char_s output_conv_h);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
-  
-  $cast(output_conv_h.awid,input_conv.awid); 
+ $cast(output_conv_h.awid,input_conv.awid); 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize awid =  %b",output_conv_h.awid),UVM_HIGH);
 
   $cast(output_conv_h.awlen,input_conv.awlen);
@@ -181,7 +180,10 @@ function void axi4_master_seq_item_converter::to_write_class( input axi4_write_t
 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
  
-  $cast(input_conv.awid,output_conv_h.awid); 
+
+  output_conv_h.tx_type = WRITE; 
+
+  $cast(output_conv_h.awid,input_conv.awid); 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize awid =  %b",output_conv_h.awid),UVM_HIGH);
 
   $cast(input_conv.awlen,output_conv_h.awlen);
@@ -211,7 +213,7 @@ function void axi4_master_seq_item_converter::to_write_class( input axi4_write_t
   $cast(input_conv.tx_type,output_conv_h.tx_type); 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize tx_type = %b",output_conv_h.tx_type),UVM_HIGH);
 
-  input_conv.awaddr = output_conv_h.awaddr;
+  output_conv_h.awaddr = input_conv.awaddr;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig awaddr =  %0h",output_conv_h.awaddr),UVM_HIGH);
 
   input_conv.awqos = output_conv_h.awqos;

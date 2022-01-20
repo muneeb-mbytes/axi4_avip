@@ -45,7 +45,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
                                 input [1:0]                 arlock  ,
                                 input [3:0]                 arcache ,
                                 input [2:0]                 arprot  ,
-                                input [3:0]                 arQOS   ,
+                                input [3:0]                 arqos   ,
                                 input [3:0]                 arregion,
                                 input [3:0]                 aruser  ,
                                 input                       arvalid ,
@@ -98,7 +98,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   reg [ 1	: 0]	            mem_wlock	  [0:19];
   reg [ 3	: 0]	            mem_wcache  [0:19];
   reg [ 2	: 0]	            mem_wprot	  [0:19];
-  reg [ 3	: 0]	            mem_wQOS  	[0:19];
+  reg [ 3	: 0]	            mem_wqos  	[0:19];
   reg [ 3	: 0]	            mem_wregion	[0:19];
   reg [ 3	: 0]	            mem_wuser	  [0:19];
 
@@ -110,7 +110,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   reg [ 1	: 0]	            mem_rlock	  [0:19];
   reg [ 3	: 0]	            mem_rcache  [0:19];
   reg [ 2	: 0]	            mem_rprot	  [0:19];
-  reg [ 3	: 0]	            mem_rQOS   	[0:19];
+  reg [ 3	: 0]	            mem_rqos   	[0:19];
   reg [ 3	: 0]	            mem_rregion [0:19];
   reg [ 3	: 0]	            mem_ruser	  [0:19];
 
