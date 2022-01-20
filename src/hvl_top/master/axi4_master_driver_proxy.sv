@@ -136,10 +136,10 @@ task axi4_master_driver_proxy::axi4_write_task();
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
 
     //Calling 3 write tasks from axi4_master_drv_bfm in HDL side
-    axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
-    axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
-    axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
-
+     axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
+     axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
+     axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
+  
     // MSHA: fork
     // MSHA:   axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
     // MSHA:   axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
@@ -154,6 +154,7 @@ task axi4_master_driver_proxy::axi4_write_task();
     axi_write_seq_item_port.item_done();
   end
 endtask : axi4_write_task
+
 
 //--------------------------------------------------------------------------------------------
 // Task: axi4_read_task

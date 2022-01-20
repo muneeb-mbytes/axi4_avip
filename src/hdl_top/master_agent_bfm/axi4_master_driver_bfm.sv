@@ -139,7 +139,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     end
     `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d",awready),UVM_HIGH)
     
-    @(posedge aclk);
+   // @(posedge aclk);
     awvalid <= 1'b0;
 
   endtask : axi4_write_address_channel_task
@@ -149,6 +149,7 @@ interface axi4_master_driver_bfm(input bit aclk,
   // This task will drive the write data signals
   //-------------------------------------------------------
   task axi4_write_data_channel_task (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
+    
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)

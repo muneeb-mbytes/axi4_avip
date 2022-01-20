@@ -54,7 +54,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
                                 //Read Data Channel
                                 output reg [3:0]                rid    ,
                                 output reg [DATA_WIDTH-1: 0]    rdata  ,
-                                output reg [(DATA_WIDTH/8)-1: 0]rstrb  ,
+                               // output reg [(DATA_WIDTH/8)-1: 0]rstrb  ,
                                 output reg [1:0]                rresp  ,
                                 output reg                      rlast  ,
                                 output reg [3:0]                ruser  ,
@@ -127,6 +127,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     rvalid  <= 0;
     rlast   <= 0;
     bvalid  <= 0;
+    buser   <= 'bx;
+    ruser   <= 'bx;
     arready <= 0;
     bid     <= 'bx;
     bresp   <= 'bx;
@@ -288,6 +290,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
         `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
         bresp <= WRITE_OKAY;
+        buser<=data_write_packet.buser;
         bvalid <= 1;
         j++;
           
@@ -404,6 +407,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
           `uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*l1+7 -: 8]),UVM_HIGH)
         end
         rresp<=data_read_packet.rresp;
+        ruser<=data_read_packet.ruser;
+        
         rvalid<=1'b1;
       
       while(rready==0) begin
