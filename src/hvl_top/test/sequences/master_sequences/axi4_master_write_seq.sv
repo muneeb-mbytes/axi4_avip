@@ -33,11 +33,13 @@ endfunction : new
 task axi4_master_write_seq::body();
   //super.body();
   req = axi4_master_tx::type_id::create("req");
+    // MSHA: req.type = this.type;
   //req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_write_seq"), UVM_NONE); 
 
   start_item(req);
   //if(!req.randomize() with {req.tx_type == WRITE;}) begin
+
     if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
                               req.awburst == WRITE_FIXED;}) begin

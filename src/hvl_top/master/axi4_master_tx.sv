@@ -201,6 +201,11 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to determine the transaction type
   rand tx_type_e tx_type;
 
+  //Variable: transfer_type
+  //Used to the determine the type of the transfer
+  rand transfer_type_e transfer_type;
+
+
   //-------------------------------------------------------
   // WRITE ADDRESS Constraints
   //-------------------------------------------------------
@@ -510,6 +515,7 @@ endfunction : do_compare
 function void axi4_master_tx::do_print(uvm_printer printer);
   //super.do_print(printer);
   //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
+  printer.print_string("tx_type",tx_type.name());
   if(tx_type == WRITE) begin
     printer.print_string("awid",awid.name());
     printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);
@@ -552,6 +558,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("rresp",rresp.name());
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
   end
+  printer.print_string("transfer_type",transfer_type.name());
 endfunction : do_print
 
 `endif
