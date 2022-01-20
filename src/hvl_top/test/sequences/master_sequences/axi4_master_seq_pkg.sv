@@ -19,9 +19,12 @@ package axi4_master_seq_pkg;
   //-------------------------------------------------------
   // Importing the required packages
   //-------------------------------------------------------
-  `include "axi4_master_base_seq.sv"
-  `include "axi4_master_write_seq.sv"
-  `include "axi4_master_read_seq.sv"
+  `include "axi4_master_bk_base_seq.sv"
+  `include "axi4_master_nbk_base_seq.sv"
+  `include "axi4_master_bk_write_seq.sv"
+  `include "axi4_master_nbk_write_seq.sv"
+  `include "axi4_master_bk_read_seq.sv"
+  `include "axi4_master_nbk_read_seq.sv"
 
 
 endpackage : axi4_master_seq_pkg
