@@ -55,7 +55,7 @@ interface axi4_if(input aclk, input aresetn);
   //Read Data Channel
   logic     [3: 0] rid      ;
   logic     [DATA_WIDTH-1: 0] rdata     ;
-  logic     [(DATA_WIDTH/8)-1:0] rstrb  ;
+  //logic     [(DATA_WIDTH/8)-1:0] rstrb  ;
   logic     [1:0] rresp      ;
   logic           rlast      ;
   logic     [3:0] ruser      ;

@@ -58,7 +58,7 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
                                                                             
                                               .rid      (intf.rid)      ,     
                                               .rdata    (intf.rdata)    ,   
-                                              .rstrb    (intf.rstrb)    ,   
+                                            //  .rstrb    (intf.rstrb)    ,   
                                               .rresp    (intf.rresp)    ,   
                                               .rlast    (intf.rlast)    ,   
                                               .ruser    (intf.ruser)    ,   
@@ -110,7 +110,7 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
                                                                              
                                                .rid      (intf.rid)      ,     
                                                .rdata    (intf.rdata)    ,   
-                                               .rstrb    (intf.rstrb)    ,   
+                                              // .rstrb    (intf.rstrb)    ,   
                                                .rresp    (intf.rresp)    ,   
                                                .rlast    (intf.rlast)    ,   
                                                .ruser    (intf.ruser)    ,   
