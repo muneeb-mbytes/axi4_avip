@@ -47,7 +47,7 @@ interface axi4_master_monitor_bfm(input bit aclk,
                                  input  [1:0]               arlock,
                                  input  [3:0]               arcache,
                                  input  [2:0]               arprot,
-                                 input  [3:0]               arQOS,
+                                 input  [3:0]               arqos,
                                  input  [3:0]               arregion,
                                  input  [3:0]               aruser,
                                  input                      arvalid,
@@ -101,9 +101,9 @@ interface axi4_master_monitor_bfm(input bit aclk,
 
   task axi4_write_address_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
-    @(negedge aclk);
+    @(posedge aclk);
     while(awvalid!==1 || awready!==1)begin
-      @(negedge aclk);
+      @(posedge aclk);
       `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
     end    
     `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop ......."),UVM_HIGH)
@@ -145,6 +145,29 @@ interface axi4_master_monitor_bfm(input bit aclk,
   endtask
  
   task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s);
+
+      @(posedge aclk);
+      while(arvalid==0)begin
+      @(posedge aclk);
+    end
+
+      @(posedge aclk);
+      while(arready==0)begin
+      @(posedge aclk);
+    end
+    
+    req.arid     = arid;
+    req.araddr   = araddr;
+    req.arlen    = arlen;
+    req.arsize   = arsize;
+    req.arburst  = arburst;
+    req.arlock   = arlock;
+    req.arcache  = arcache;
+    req.arprot   = arprot;
+    req.arqos    = arqos;
+    req.arregion = arregion;
+    req.aruser   = aruser;
+
 
   endtask
  

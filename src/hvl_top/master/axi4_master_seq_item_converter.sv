@@ -43,62 +43,64 @@ endfunction : new
 function void axi4_master_seq_item_converter::from_write_class( input axi4_master_tx input_conv, output axi4_write_transfer_char_s output_conv_h);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
   
-  $cast(output_conv_h.awid,input_conv.awid); 
+  $cast(input_conv.awid,output_conv_h.awid); 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize awid =  %b",output_conv_h.awid),UVM_HIGH);
 
-  $cast(output_conv_h.awlen,input_conv.awlen);
+  $cast(input_conv.awlen,output_conv_h.awlen);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize awlen =  %b",output_conv_h.awlen),UVM_HIGH);
 
-  $cast(output_conv_h.awsize,input_conv.awsize);
+  $cast(input_conv.awsize,output_conv_h.awsize);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomizing awsize =  %b",output_conv_h.awsize),UVM_HIGH);
 
-  $cast(output_conv_h.awburst,input_conv.awburst); 
+  $cast(input_conv.awburst,output_conv_h.awburst); 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize awburst =  %b",output_conv_h.awburst),UVM_HIGH);
 
-  $cast(output_conv_h.awlock,input_conv.awlock);
+  $cast(input_conv.awlock,output_conv_h.awlock);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize awlock =  %b",output_conv_h.awlock),UVM_HIGH);
 
-  $cast(output_conv_h.awcache,input_conv.awcache);
+  $cast(input_conv.awcache,output_conv_h.awcache);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomizing awcache =  %b",output_conv_h.awcache),UVM_HIGH);
 
-  $cast(output_conv_h.awprot,input_conv.awprot);
+  $cast(input_conv.awprot,output_conv_h.awprot);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomizing awprot =  %b",output_conv_h.awprot),UVM_HIGH);
 
-  $cast(output_conv_h.bid,input_conv.bid);
+  $cast(input_conv.bid,output_conv_h.bid);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize bid =  %b",output_conv_h.bid),UVM_HIGH);
 
-  $cast(output_conv_h.bresp,input_conv.bresp);
+  $cast(input_conv.bresp,output_conv_h.bresp);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize bresp =  %b",output_conv_h.bresp),UVM_HIGH);
-  
-  //$cast(output_conv_h.tx_type,input_conv.tx_type); 
+ 
+  input_conv.buser = output_conv_h.buser;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize buser =  %b",output_conv_h.buser),UVM_HIGH);
+  //$cast(input_conv.tx_type,output_conv_h.tx_type); 
   //`uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize tx_type =  %b",output_conv_h.tx_type),UVM_HIGH);
 
-  output_conv_h.awaddr = input_conv.awaddr;
+  input_conv.awaddr = output_conv_h.awaddr;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig awaddr =  %0h",output_conv_h.awaddr),UVM_HIGH);
 
-  output_conv_h.awqos = input_conv.awqos;
+  input_conv.awqos = output_conv_h.awqos;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig awqos =  %0h",output_conv_h.awqos),UVM_HIGH);
 
-  foreach(input_conv.wdata[i]) begin
-    output_conv_h.wdata[i] = input_conv.wdata[i];
+  foreach(output_conv_h.wdata[i]) begin
+    input_conv.wdata[i] = output_conv_h.wdata[i];
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wdata =  %0p",output_conv_h.wdata),UVM_HIGH);
   end
 
-  foreach(input_conv.wstrb[i]) begin
-    output_conv_h.wstrb[i] = input_conv.wstrb[i];
+  foreach(output_conv_h.wstrb[i]) begin
+    input_conv.wstrb[i] = output_conv_h.wstrb[i];
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb = %0p",output_conv_h.wstrb[i]),UVM_HIGH);
   end
 
-  output_conv_h.wlast = input_conv.wlast;
+  input_conv.wlast = output_conv_h.wlast;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wlast =  %0h",output_conv_h.wlast),UVM_HIGH);
 
-  output_conv_h.wuser = input_conv.wuser;
+  input_conv.wuser = output_conv_h.wuser;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wuser =  %0h",output_conv_h.wuser),UVM_HIGH);
 
-  output_conv_h.no_of_wait_states = input_conv.no_of_wait_states;
-  output_conv_h.wait_count_write_address_channel =input_conv.wait_count_write_address_channel ;
-  output_conv_h.wait_count_write_data_channel =input_conv.wait_count_write_data_channel ;
-  output_conv_h.wait_count_write_response_channel =input_conv.wait_count_write_response_channel ;
+  input_conv.no_of_wait_states = output_conv_h.no_of_wait_states;
+  input_conv.wait_count_write_address_channel =output_conv_h.wait_count_write_address_channel ;
+  input_conv.wait_count_write_data_channel =output_conv_h.wait_count_write_data_channel ;
+  input_conv.wait_count_write_response_channel =output_conv_h.wait_count_write_response_channel ;
 
 endfunction : from_write_class
 
@@ -113,46 +115,55 @@ endfunction : from_write_class
 
 function void axi4_master_seq_item_converter::from_read_class( input axi4_master_tx input_conv, output axi4_read_transfer_char_s output_conv_h);
 
-  $cast(output_conv_h.arid,input_conv.arid);
+  $cast(input_conv.arid,output_conv_h.arid);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize arid =  %b",output_conv_h.arid),UVM_HIGH);
 
-  $cast(output_conv_h.arlen,input_conv.arlen);
+  $cast(input_conv.arlen,output_conv_h.arlen);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize arlen =  %b",output_conv_h.arlen),UVM_HIGH);
 
-  $cast(output_conv_h.arsize,input_conv.arsize);
+  $cast(input_conv.arsize,output_conv_h.arsize);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize arsize =  %b",output_conv_h.arsize),UVM_HIGH);
 
-  $cast(output_conv_h.arburst,input_conv.arburst);
+  $cast(input_conv.arburst,output_conv_h.arburst);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize arburst =  %b",output_conv_h.arburst),UVM_HIGH);
 
-  $cast(output_conv_h.arlock,input_conv.arlock);
+  $cast(input_conv.arlock,output_conv_h.arlock);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize arlock =  %b",output_conv_h.arlock),UVM_HIGH);
 
-  $cast(output_conv_h.arcache,input_conv.arcache);
+  $cast(input_conv.arcache,output_conv_h.arcache);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize arcache =  %b",output_conv_h.arcache),UVM_HIGH);
 
-  $cast(output_conv_h.arprot,input_conv.arprot);
+  $cast(input_conv.arprot,output_conv_h.arprot);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize arprot =  %b",output_conv_h.arprot),UVM_HIGH);
 
-  $cast(output_conv_h.rresp,input_conv.rresp);
+  $cast(input_conv.rresp,output_conv_h.rresp);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize rresp =  %b",output_conv_h.rresp),UVM_HIGH);
   
-  //$cast(output_conv_h.tx_type,input_conv.tx_type); 
+  //$cast(input_conv.tx_type,output_conv_h.tx_type); 
   //`uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize tx_type =  %b",output_conv_h.tx_type),UVM_HIGH);
 
-  output_conv_h.araddr = input_conv.araddr;
+  input_conv.araddr = output_conv_h.araddr;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv_h.araddr),UVM_HIGH);
 
-  output_conv_h.arqos = input_conv.arqos;
+  input_conv.arqos = output_conv_h.arqos;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
 
-  foreach(input_conv.rdata[i]) begin
-    output_conv_h.rdata[i] = input_conv.rdata[i];
+  input_conv.aruser = output_conv_h.aruser;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig aruser =  %0h",output_conv_h.aruser),UVM_HIGH);
+
+  input_conv.arregion = output_conv_h.arregion;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig arregion =  %0h",output_conv_h.arregion),UVM_HIGH);
+
+  foreach(output_conv_h.rdata[i]) begin
+    input_conv.rdata[i] = output_conv_h.rdata[i];
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig rdata = %0p",output_conv_h.rdata[i]),UVM_HIGH);
   end
 
-  output_conv_h.wait_count_read_address_channel =input_conv.wait_count_read_address_channel ;
-  output_conv_h.wait_count_read_data_channel =input_conv.wait_count_read_data_channel ;
+  input_conv.ruser = output_conv_h.ruser;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig ruser =  %0b",output_conv_h.ruser),UVM_HIGH);
+
+  input_conv.wait_count_read_address_channel =output_conv_h.wait_count_read_address_channel ;
+  input_conv.wait_count_read_data_channel =output_conv_h.wait_count_read_data_channel ;
 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
   
