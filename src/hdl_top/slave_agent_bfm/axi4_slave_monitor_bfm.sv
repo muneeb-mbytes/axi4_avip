@@ -53,7 +53,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
                                 //Read Data Channel
                                 input  [3:0]                rid    ,
                                 input  [DATA_WIDTH-1: 0]    rdata  ,
-                                input  [(DATA_WIDTH/8)-1: 0]rstrb  ,
+                                //input  [(DATA_WIDTH/8)-1: 0]rstrb  ,
                                 input  [1:0]                rresp  ,
                                 input                       rlast  ,
                                 input  [3:0]                ruser  ,
