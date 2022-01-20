@@ -201,7 +201,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       @(posedge aclk);
       awready<=0;
     end
-    assign awready = awvalid;
+    awready <= 1;
 
   endtask: axi4_write_address_phase 
 
@@ -230,7 +230,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       @(posedge aclk);
       wready<=0;
     end
-    assign wready = wvalid;
+    wready <= 1;
     
  //  for(int s = 0;s<(awlen+1);s = s+1)begin
  //    `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",awlen),UVM_HIGH)
@@ -365,7 +365,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       @(posedge aclk);
       arready<=0;
     end
-    assign arready = arvalid;
+   arready <= 1;
    
   //  data_read_packet.arid=arid;
   //  data_read_packet.araddr=araddr;
