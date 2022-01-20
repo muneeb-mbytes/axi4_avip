@@ -299,7 +299,7 @@ package axi4_globals_pkg;
     BLOCKING_READ       = 2'b01, 
     NON_BLOCKING_WRITE  = 2'b10, 
     NON_BLOCKING_READ   = 2'b11 
-  }trasnsfer_type_e;
+  }transfer_type_e;
 
   //-------------------------------------------------------
   // Structs used in axi_avip are given below
