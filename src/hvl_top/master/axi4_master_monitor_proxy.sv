@@ -157,14 +157,19 @@ task axi4_master_monitor_proxy::axi4_write_address();
 endtask
 
 task axi4_master_monitor_proxy::axi4_write_data();
- // forever begin
- //   axi4_write_transfer_char_s struct_write_packet;
- //   axi4_transfer_cfg_s        struct_cfg;
+  forever begin
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_transfer_cfg_s        struct_cfg;
 
- //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
- //   axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
- //   axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
- // end
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside axi4_write_data"), UVM_NONE); 
+   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
+    axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+  
+    $cast(req_wr_clone_packet,req_wr.clone());
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling is %p",req_wr.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling clone packet is %p",req_wr_clone_packet.sprint()),UVM_HIGH)
+  end
 endtask
 
 task axi4_master_monitor_proxy::axi4_write_response();
