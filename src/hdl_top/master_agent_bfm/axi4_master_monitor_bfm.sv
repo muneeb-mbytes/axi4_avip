@@ -178,7 +178,7 @@ interface axi4_master_monitor_bfm(input bit aclk,
       `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop of read data sample"),UVM_HIGH)
     end    
     `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of read data sample"),UVM_HIGH)
-    `uvm_info("FROM MASTER MON BFM",$sformatf("arlen =%d",arlen),UVM_HIGH) 
+   
     for(int i=0; i<arlen + 1; i++) begin
       @(posedge aclk);
       req.rid      = rid;
