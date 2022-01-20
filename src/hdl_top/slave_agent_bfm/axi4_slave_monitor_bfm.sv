@@ -110,7 +110,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
       @(posedge aclk);
       `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
     end    
-    `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop ......."),UVM_HIGH)
+    `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop from axi4_slave_write_address_sampling "),UVM_HIGH)
    
     req.awid = awid;
     req.awaddr = awaddr;

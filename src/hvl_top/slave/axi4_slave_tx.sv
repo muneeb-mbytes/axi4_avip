@@ -190,6 +190,8 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   transfer_type_e transfer_type;
 
+  tx_type_e tx_type;
+
   //Variable : no_of_wait_states
   //Used to decide the number of wait states
   //rand bit [2:0]no_of_wait_states;
@@ -247,7 +249,7 @@ endfunction : new
 function void axi4_slave_tx::do_copy (uvm_object rhs);
   axi4_slave_tx axi_slave_tx_copy_obj;
 
-  if($cast(axi_slave_tx_copy_obj,rhs )) begin
+  if(!$cast(axi_slave_tx_copy_obj,rhs )) begin
     `uvm_fatal("do_copy","cast of the rhs object failed")
   end
 
