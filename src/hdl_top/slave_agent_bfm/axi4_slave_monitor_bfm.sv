@@ -104,9 +104,9 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
 
   task axi4_slave_write_address_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
-    @(negedge aclk);
+    @(posedge aclk);
     while(awvalid!==1 || awready!==1)begin
-      @(negedge aclk);
+      @(posedge aclk);
       `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
     end    
     `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop ......."),UVM_HIGH)
