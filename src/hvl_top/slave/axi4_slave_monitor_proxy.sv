@@ -111,6 +111,9 @@ task axi4_slave_monitor_proxy::axi4_slave_write_address();
     axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
     axi4_slave_mon_bfm_h.axi4_slave_write_address_sampling(struct_write_packet,struct_cfg);
     axi4_slave_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_slave_write_address_sampling is %s",req_wr.sprint()),UVM_HIGH)
+    axi4_slave_write_address_analysis_port.write(req_wr);
+
   end
 endtask
 

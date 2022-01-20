@@ -36,7 +36,7 @@ task axi4_master_read_seq::body();
   //req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
   
   start_item(req);
-  if(!req.randomize() with {req.arsize == READ_2_BYTES;
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arburst == READ_FIXED;}) begin
     `uvm_fatal("axi4","Rand failed");

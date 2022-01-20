@@ -33,10 +33,10 @@ endfunction : new
 task axi4_slave_read_seq::body();
   req=axi4_slave_tx::type_id::create("req");
   start_item(req);
-  if(!req.randomize() with {req.bresp == READ_OKAY;}) begin
+  if(!req.randomize() with {req.rresp == READ_OKAY;}) begin
     `uvm_error(get_type_name(),"randomization failed");
   end
-  req.print();
+  `uvm_info("REQ_READ_DEBUG",$sformatf("read_req = \n %0p",req.sprint()),UVM_HIGH);
   finish_item(req);
 endtask : body
 
