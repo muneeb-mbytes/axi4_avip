@@ -129,11 +129,35 @@ task axi4_master_driver_proxy::axi4_write_task();
     axi_write_seq_item_port.get_next_item(req_wr);
     `uvm_info(get_type_name(),$sformatf("DEBUG_SAHA_BEFORE::Sending_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE); 
 
+    //Converting configurations into struct config type
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
+
     //Converting transactions into struct data type
     axi4_master_seq_item_converter::from_write_class(req_wr,struct_write_packet);
 
-    //Converting configurations into struct config type
-    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
+    // MSHA: // put the req_wr into a FIFO/queue (depth must be equal to outstanding
+    // MSHA: // transfers variable value )
+    // MSHA: //  Throw the error when we reach the limit
+
+    // MSHA: if(req_wr.type == WR_BLOCK) begin
+
+    // MSHA:   //Calling 3 write tasks from axi4_master_drv_bfm in HDL side
+    // MSHA:   axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
+    // MSHA:   axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
+    // MSHA:   axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
+
+    // MSHA: end
+    // MSHA: else begin
+    // MSHA:   fork 
+    // MSHA:     // struct_packet_local = FIFO.peek();
+    // MSHA:     ADD(struct_packet)
+    // MSHA:     // struct_packet_local = FIFO.peek();
+    // MSHA:     DATA(struct_packet)
+    // MSHA:     // struct_packet_local = FIFO.peek();
+    // MSHA:     RES(struct_packet)
+    // MSHA:     //pop the element and display the current outstanding value
+    // MSHA:   join_any
+    // MSHA: end
 
     //Calling 3 write tasks from axi4_master_drv_bfm in HDL side
      axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
