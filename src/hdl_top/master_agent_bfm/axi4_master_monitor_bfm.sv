@@ -141,6 +141,16 @@ interface axi4_master_monitor_bfm(input bit aclk,
   endtask
  
   task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
+    @(negedge aclk);
+    while(awvalid!==1 || awready!==1)begin
+      @(negedge aclk);
+      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop of the write response"),UVM_HIGH)
+    end    
+    `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of the write sampling"),UVM_HIGH)
+    req.bid = bid;
+    req.bresp = bresp;
+
+    `uvm_info("FROM MASTER MON BFM",$sformatf("WRITE RESPONSE SAMPLING: \n %p ",req),UVM_HIGH) 
 
   endtask
  
