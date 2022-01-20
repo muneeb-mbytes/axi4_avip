@@ -4,4 +4,4 @@ work
 cov
 *.log
 transcript
-*vish*
+*.vstf*

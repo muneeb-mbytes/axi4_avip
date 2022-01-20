@@ -140,7 +140,7 @@ interface axi4_master_monitor_bfm(input bit aclk,
 
   endtask
  
-  task axi4_write_response_sampling(inout axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
+  task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
     @(negedge aclk);
     while(awvalid!==1 || awready!==1)begin
       @(negedge aclk);
@@ -154,29 +154,36 @@ interface axi4_master_monitor_bfm(input bit aclk,
 
   endtask
  
-  task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s);
+  task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
-      @(posedge aclk);
-      while(arvalid==0)begin
-      @(posedge aclk);
-    end
+    @(negedge aclk);
+    while(arvalid!==1 || arready!==1)begin
+      @(negedge aclk);
+      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
+    end    
+    `uvm_info("FROM MASTER MON BFM READ",$sformatf("after while loop ......."),UVM_HIGH)
 
-      @(posedge aclk);
-      while(arready==0)begin
-      @(posedge aclk);
-    end
-    
-    req.arid     = arid;
-    req.araddr   = araddr;
-    req.arlen    = arlen;
-    req.arsize   = arsize;
-    req.arburst  = arburst;
-    req.arlock   = arlock;
-    req.arcache  = arcache;
-    req.arprot   = arprot;
-    req.arqos    = arqos;
-    req.arregion = arregion;
-    req.aruser   = aruser;
+   //   @(posedge aclk);
+   //   while(arvalid==0)begin
+   //   @(posedge aclk);
+   // end
+
+   //   @(posedge aclk);
+   //   while(arready==0)begin
+   //   @(posedge aclk);
+   // end
+   // 
+   // req.arid     = arid;
+   // req.araddr   = araddr;
+   // req.arlen    = arlen;
+   // req.arsize   = arsize;
+   // req.arburst  = arburst;
+   // req.arlock   = arlock;
+   // req.arcache  = arcache;
+   // req.arprot   = arprot;
+   // req.arqos    = arqos;
+   // req.arregion = arregion;
+   // req.aruser   = aruser;
 
 
   endtask
