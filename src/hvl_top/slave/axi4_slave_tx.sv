@@ -188,6 +188,8 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to store the read response
   rand rresp_e rresp ;
 
+  transfer_type_e transfer_type;
+
   //Variable : no_of_wait_states
   //Used to decide the number of wait states
   //rand bit [2:0]no_of_wait_states;
