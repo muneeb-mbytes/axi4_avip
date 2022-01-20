@@ -510,6 +510,7 @@ endfunction : do_compare
 function void axi4_master_tx::do_print(uvm_printer printer);
   //super.do_print(printer);
   //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
+  printer.print_string("tx_type",tx_type.name());
   if(tx_type == WRITE) begin
     printer.print_string("awid",awid.name());
     printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);

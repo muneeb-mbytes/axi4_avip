@@ -101,9 +101,9 @@ interface axi4_master_monitor_bfm(input bit aclk,
 
   task axi4_write_address_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
-    @(negedge aclk);
+    @(posedge aclk);
     while(awvalid!==1 || awready!==1)begin
-      @(negedge aclk);
+      @(posedge aclk);
       `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
     end    
     `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop ......."),UVM_HIGH)
@@ -178,7 +178,28 @@ interface axi4_master_monitor_bfm(input bit aclk,
 
   endtask
  
-  task axi4_read_data_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s);
+  task axi4_read_data_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
+  @(posedge aclk);
+    while(rvalid!==1 || rready!==1)begin
+      @(posedge aclk);
+      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop of read data sample"),UVM_HIGH)
+    end    
+    `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of read data sample"),UVM_HIGH)
+    `uvm_info("FROM MASTER MON BFM",$sformatf("arlen =%d",arlen),UVM_HIGH) 
+    for(int i=0; i<arlen + 1; i++) begin
+      @(posedge aclk);
+      req.rid      = rid;
+      req.rdata[i] = rdata[i];
+      req.ruser    = ruser;
+      req.rresp    = rresp;
+      
+      if(req.arlen == i)begin  
+        req.rlast  <= rlast;
+      end
+      
+      //`uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
+    end
+    `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("Read data packet: %p",req),UVM_HIGH)
 
   endtask
 

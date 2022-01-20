@@ -139,6 +139,7 @@ task axi4_master_monitor_proxy::axi4_write_address();
   forever begin
     axi4_write_transfer_char_s struct_write_packet;
     axi4_transfer_cfg_s        struct_cfg;
+    axi4_master_tx             req_wr_clone_packet;
 
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside axi4_write_address"), UVM_NONE); 
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
@@ -149,6 +150,11 @@ task axi4_master_monitor_proxy::axi4_write_address();
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
     `uvm_info("", $sformatf("DEBUG_MSHA :: After sampling tranaction %s",req_wr.sprint()), UVM_NONE); 
 
+    $cast(req_wr_clone_packet,req_wr.clone());
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_address_sampling is %p",req_wr.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_address_sampling clone packet is %p",req_wr_clone_packet.sprint()),UVM_HIGH)
+
+    axi4_master_read_address_analysis_port.write(req_wr);
     // print value
     // sending the packet via analysis port
   end
@@ -189,14 +195,15 @@ task axi4_master_monitor_proxy::axi4_read_address();
 endtask
 
 task axi4_master_monitor_proxy::axi4_read_data();
- // forever begin
- //   axi4_read_transfer_char_s struct_read_packet;
- //   axi4_transfer_cfg_s        struct_cfg;
-
- //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
- //   axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
- //   axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
- // end
+  forever begin
+    axi4_read_transfer_char_s struct_read_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+    
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: Inside axi4_read_data"), UVM_NONE);
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
+    axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+  end
 endtask
 
 `endif
