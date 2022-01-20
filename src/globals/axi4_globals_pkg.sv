@@ -292,6 +292,14 @@ package axi4_globals_pkg;
     READ  = 0
   } tx_type_e;
 
+  //Enum : transfer_type_e
+  //Used to the determine the type of the transfer
+  typedef enum bit[1:0]{
+    BLOCKING_WRITE      = 2'b00, 
+    BLOCKING_READ       = 2'b01, 
+    NON_BLOCKING_WRITE  = 2'b10, 
+    NON_BLOCKING_READ   = 2'b11 
+  }trasnsfer_type_e;
 
   //-------------------------------------------------------
   // Structs used in axi_avip are given below
@@ -349,7 +357,7 @@ package axi4_globals_pkg;
     bit        arlock;
     //Read Data Channel
     bit [15:0] rid;
-    bit [DATA_WIDTH:0][DATA_WIDTH-1: 0] rdata;
+    bit [DATA_WIDTH:0]rdata[$];
     bit rvalid;
     bit rlast;
     bit ruser;
