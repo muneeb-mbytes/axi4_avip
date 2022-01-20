@@ -52,7 +52,6 @@ interface axi4_master_monitor_bfm(input bit aclk,
                                  input  [3:0]               aruser,
                                  input                      arvalid,
                                  input                      arready,
-git@github.com:muneeb-mbytes/axi4_avip.git
                                  //Read Data Channel Signals
                                  input                     [3:0]rid,
                                  input       [DATA_WIDTH-1: 0]rdata,
@@ -119,7 +118,8 @@ git@github.com:muneeb-mbytes/axi4_avip.git
     `uvm_info("FROM MASTER MON BFM",$sformatf("datapacket =%p",req),UVM_HIGH)
   endtask
  
-  task axi4_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s);
+  task axi4_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s
+    cfg);
  
     @(posedge aclk);
     while(wvalid!==1 || wready!==1)begin
@@ -131,12 +131,13 @@ git@github.com:muneeb-mbytes/axi4_avip.git
     req.wstrb.push_back(wstrb);
     req.wlast = wlast;
     req.wuser = wuser;
+    `uvm_info("FROM MASTER MON BFM write data",$sformatf("datapacket =%p",req),UVM_HIGH)
   endtask
- 
+  
   task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
-    @(negedge aclk);
-    while(awvalid!==1 || awready!==1)begin
-      @(negedge aclk);
+    @(posedge aclk);
+    while(bvalid!==1 || bready!==1)begin
+      @(posedge aclk);
       `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop of the write response"),UVM_HIGH)
     end    
     `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of the write sampling"),UVM_HIGH)
@@ -149,194 +150,27 @@ git@github.com:muneeb-mbytes/axi4_avip.git
  
   task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
-    @(negedge aclk);
+    @(posedge aclk);
     while(arvalid!==1 || arready!==1)begin
-      @(negedge aclk);
+      @(posedge aclk);
       `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
     end    
     `uvm_info("FROM MASTER MON BFM READ",$sformatf("after while loop ......."),UVM_HIGH)
 
-   //   @(posedge aclk);
-   //   while(arvalid==0)begin
-   //   @(posedge aclk);
-   // end
-
-   //   @(posedge aclk);
-   //   while(arready==0)begin
-   //   @(posedge aclk);
-   // end
-   // 
-   // req.arid     = arid;
-   // req.araddr   = araddr;
-   // req.arlen    = arlen;
-   // req.arsize   = arsize;
-   // req.arburst  = arburst;
-   // req.arlock   = arlock;
-   // req.arcache  = arcache;
-   // req.arprot   = arprot;
-   // req.arqos    = arqos;
-   // req.arregion = arregion;
-   // req.aruser   = aruser;
-
-    req.awlen   = awlen;
-    req.awsize  = awsize;
-    req.awburst = awburst;
-    req.awlock  = awlock;
-    req.awcache = awcache;
-    req.awprot  = awprot;
+    req.arid    = arid;
+    req.araddr  = araddr;
+    req.arlen   = arlen;
+    req.arsize  = arsize;
+    req.arburst = arburst;
+    req.arlock  = arlock;
+    req.arcache = arcache;
+    req.arprot  = arprot;
+    req.arqos   = arqos;
+    req.arregion = arregion;
+    req.aruser     = aruser;
     `uvm_info("FROM MASTER MON BFM",$sformatf("datapacket =%p",req),UVM_HIGH)
   endtask
- 
-  task axi4_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s);
- 
-  //  if(wvalid==0)
-  //  begin
-  //    @(posedge aclk);
-  //    while(wvalid==0)begin
-  //    @(posedge aclk);
-  //  end
-  //  end
-
-  //  if(wready==0)
-  //  begin
-  //    @(posedge aclk);
-  //    while(wready==0)begin
-  //    @(posedge aclk);
-  //  end
-  //  end
-  //  req.wdata.push_back(wdata);
-
-  endtask
- 
-  task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
-    @(negedge aclk);
-    while(awvalid!==1 || awready!==1)begin
-      @(negedge aclk);
-      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop of the write response"),UVM_HIGH)
-    end    
-    `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of the write sampling"),UVM_HIGH)
-    req.bid = bid;
-    req.bresp = bresp;
-
-    `uvm_info("FROM MASTER MON BFM",$sformatf("WRITE RESPONSE SAMPLING: \n %p ",req),UVM_HIGH) 
-
-  endtask
- 
-  task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
-
-    @(negedge aclk);
-    while(arvalid!==1 || arready!==1)begin
-      @(negedge aclk);
-      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
-    end    
-    `uvm_info("FROM MASTER MON BFM READ",$sformatf("after while loop ......."),UVM_HIGH)
-
-   //   @(posedge aclk);
-   //   while(arvalid==0)begin
-   //   @(posedge aclk);
-   // end
-
-   //   @(posedge aclk);
-   //   while(arready==0)begin
-   //   @(posedge aclk);
-   // end
-   // 
-   // req.arid     = arid;
-   // req.araddr   = araddr;
-   // req.arlen    = arlen;
-   // req.arsize   = arsize;
-   // req.arburst  = arburst;
-   // req.arlock   = arlock;
-   // req.arcache  = arcache;
-   // req.arprot   = arprot;
-   // req.arqos    = arqos;
-   // req.arregion = arregion;
-   // req.aruser   = aruser;
-
-
-  endtask
- 
-  ta
-  endtask
- 
-      req.awlen   = awlen;
-    req.awsize  = awsize;
-    req.awburst = awburst;
-    req.awlock  = awlock;
-    req.awcache = awcache;
-    req.awprot  = awprot;
-    `uvm_info("FROM MASTER MON BFM",$sformatf("datapacket =%p",req),UVM_HIGH)
-  endtask
- 
-  task axi4_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s);
- 
-  //  if(wvalid==0)
-  //  begin
-  //    @(posedge aclk);
-  //    while(wvalid==0)begin
-  //    @(posedge aclk);
-  //  end
-  //  end
-
-  //  if(wready==0)
-  //  begin
-  //    @(posedge aclk);
-  //    while(wready==0)begin
-  //    @(posedge aclk);
-  //  end
-  //  end
-  //  req.wdata.push_back(wdata);
-
-  endtask
- 
-  task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
-    @(negedge aclk);
-    while(awvalid!==1 || awready!==1)begin
-      @(negedge aclk);
-      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop of the write response"),UVM_HIGH)
-    end    
-    `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of the write sampling"),UVM_HIGH)
-    req.bid = bid;
-    req.bresp = bresp;
-
-    `uvm_info("FROM MASTER MON BFM",$sformatf("WRITE RESPONSE SAMPLING: \n %p ",req),UVM_HIGH) 
-
-  endtask
- 
-  task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
-
-    @(negedge aclk);
-    while(arvalid!==1 || arready!==1)begin
-      @(negedge aclk);
-      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
-    end    
-    `uvm_info("FROM MASTER MON BFM READ",$sformatf("after while loop ......."),UVM_HIGH)
-
-   //   @(posedge aclk);
-   //   while(arvalid==0)begin
-   //   @(posedge aclk);
-   // end
-
-   //   @(posedge aclk);
-   //   while(arready==0)begin
-   //   @(posedge aclk);
-   // end
-   // 
-   // req.arid     = arid;
-   // req.araddr   = araddr;
-   // req.arlen    = arlen;
-   // req.arsize   = arsize;
-   // req.arburst  = arburst;
-   // req.arlock   = arlock;
-   // req.arcache  = arcache;
-   // req.arprot   = arprot;
-   // req.arqos    = arqos;
-   // req.arregion = arregion;
-   // req.aruser   = aruser;
-
-
-  endtask
- 
+  
   task axi4_read_data_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
   @(posedge aclk);
     while(rvalid!==1 || rready!==1)begin

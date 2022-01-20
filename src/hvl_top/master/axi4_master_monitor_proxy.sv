@@ -160,9 +160,10 @@ task axi4_master_monitor_proxy::axi4_write_data();
   forever begin
     axi4_write_transfer_char_s struct_write_packet;
     axi4_transfer_cfg_s        struct_cfg;
-
+    axi4_master_tx             req_wr_clone_packet;
+    
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside axi4_write_data"), UVM_NONE); 
-   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
   
@@ -170,6 +171,8 @@ task axi4_master_monitor_proxy::axi4_write_data();
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling is %p",req_wr.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling clone packet is %p",req_wr_clone_packet.sprint()),UVM_HIGH)
   end
+
+    axi4_master_write_data_analysis_port.write(req_wr);
 endtask
 
 task axi4_master_monitor_proxy::axi4_write_response();
