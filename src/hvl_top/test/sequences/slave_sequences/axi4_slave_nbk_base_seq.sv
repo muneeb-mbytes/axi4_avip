@@ -34,8 +34,8 @@ task axi4_slave_nbk_base_seq::body();
 //    `uvm_error(get_full_name(),"slave_agent_config pointer cast failed")
 //  end
   req = axi4_slave_tx::type_id::create("req");
-  req.transfer_type=NON_BLOCKING_WRITE;
-  req.transfer_type=NON_BLOCKING_READ;
+  //req.transfer_type=NON_BLOCKING_WRITE;
+  //req.transfer_type=NON_BLOCKING_READ;
 endtask
 
 `endif

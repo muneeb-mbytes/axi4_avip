@@ -160,7 +160,7 @@ interface axi4_master_monitor_bfm(input bit aclk,
       @(posedge aclk);
       `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
     end    
-    `uvm_info("FROM MASTER MON BFM READ",$sformatf("after while loop ......."),UVM_HIGH)
+    `uvm_info("FROM MASTER MON BFM READ ADDR",$sformatf("after while loop ......."),UVM_HIGH)
 
     req.arid    = arid;
     req.araddr  = araddr;

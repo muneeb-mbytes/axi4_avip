@@ -156,33 +156,33 @@ task axi4_master_driver_proxy::axi4_write_task();
 
     else if(req_wr.transfer_type ==  NON_BLOCKING_WRITE) begin
       fork
-      begin  
-      `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type inside fork = %s",req_wr.transfer_type),UVM_HIGH); 
-       // local_master_tx = axi4_master_fifo_h.peek();
-        axi4_master_fifo_h.peek(local_master_tx);
-        `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking local master tx = %s",local_master_tx.sprint()),UVM_HIGH); 
-        axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
-        `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking struct packet = %p",struct_write_packet),UVM_HIGH); 
-        axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
-      end
+        begin  
+        `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type inside fork = %s",req_wr.transfer_type),UVM_HIGH); 
+         // local_master_tx = axi4_master_fifo_h.peek();
+          axi4_master_fifo_h.peek(local_master_tx);
+          `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking local master tx = %s",local_master_tx.sprint()),UVM_HIGH); 
+          axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
+          `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking struct packet = %p",struct_write_packet),UVM_HIGH); 
+          axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
+        end
     
-      begin
-        //local_master_tx = axi4_master_fifo_h.peek();
-        axi4_master_fifo_h.peek(local_master_tx);
-        axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
-        axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
-      end
+        begin
+          //local_master_tx = axi4_master_fifo_h.peek();
+          axi4_master_fifo_h.peek(local_master_tx);
+          axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
+          axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
+        end
      
-     begin
-        //local_master_tx = axi4_master_fifo_h.peek();
-        axi4_master_fifo_h.peek(local_master_tx);
-        axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
-        axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
-     end
+        begin
+           //local_master_tx = axi4_master_fifo_h.peek();
+           axi4_master_fifo_h.peek(local_master_tx);
+           axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
+           axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
+        end
         //local_master_tx = axi4_master_fifo_h.get();
-        axi4_master_fifo_h.get(local_master_tx);
 
       join_any
+        axi4_master_fifo_h.get(local_master_tx);
     end
     // MSHA:     // struct_packet_local = FIFO.peek();
     // MSHA:     ADD(struct_packet)

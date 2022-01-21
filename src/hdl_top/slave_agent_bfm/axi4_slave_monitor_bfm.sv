@@ -151,16 +151,13 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
     
   task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
+    @(posedge aclk);
+    while(arvalid!==1 || arready!==1)begin
       @(posedge aclk);
-      while(arvalid==0)begin
-      @(posedge aclk);
-    end
-
-      @(posedge aclk);
-      while(arready==0)begin
-      @(posedge aclk);
-    end
-
+      `uvm_info("FROM SLAVE MON BFM READ ADDR",$sformatf("Inside while loop of read address"),UVM_HIGH)
+    end    
+    `uvm_info("FROM SLAVE MON BFM READ ADDR",$sformatf("after while loop of read address"),UVM_HIGH)
+    
     req.arid     = arid;
     req.araddr   = araddr;
     req.arlen    = arlen;
@@ -172,6 +169,8 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
     req.arqos    = arqos;
     req.arregion = arregion;
     req.aruser   = aruser;
+
+    `uvm_info("FROM SLAVE MON BFM READ ADDR",$sformatf("datapacket =%p",req),UVM_HIGH)
 
   endtask
  

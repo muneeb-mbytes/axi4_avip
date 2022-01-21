@@ -202,14 +202,21 @@ endtask
 
 
 task axi4_master_monitor_proxy::axi4_read_address();
- // forever begin
- //   axi4_read_transfer_char_s struct_read_packet;
- //   axi4_transfer_cfg_s        struct_cfg;
+  forever begin
+    axi4_read_transfer_char_s struct_read_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+    axi4_master_tx             req_rd_clone_packet;
 
- //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
- //   axi4_master_mon_bfm_h.axi4_read_address_sampling(struct_read_packet,struct_cfg);
- //   axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
- // end
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_mon_bfm_h.axi4_read_address_sampling(struct_read_packet,struct_cfg);
+    axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+    
+    $cast(req_rd_clone_packet,req_rd.clone());
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address is %p",req_rd.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address clone packet is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
+
+    axi4_master_read_address_analysis_port.write(req_rd);
+  end
 endtask
 
 task axi4_master_monitor_proxy::axi4_read_data();

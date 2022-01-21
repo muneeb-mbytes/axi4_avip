@@ -32,6 +32,7 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_slave_nbk_write_seq::body();
   super.body();
+  req.transfer_type = NON_BLOCKING_WRITE;
 //  req = axi4_slave_tx::type_id::create("req");
     // MSHA: req.type = this.type;
   //req.axi4_slave_agent_cfg_h = p_sequencer.axi4_slave_agent_cfg_h;
@@ -40,7 +41,7 @@ task axi4_slave_nbk_write_seq::body();
   start_item(req);
   //if(!req.randomize() with {req.tx_type == WRITE;}) begin
 
-    if(!req.randomize() with {req.transfer_type == NON_BLOCKING_WRITE;})begin
+    if(!req.randomize())begin
     `uvm_fatal("axi4","Rand failed");
   end
   `uvm_info("SLAVE_WRITE_NBK_SEQ", $sformatf("slave_seq = \n%s",req.sprint()), UVM_NONE); 
