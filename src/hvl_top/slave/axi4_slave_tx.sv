@@ -70,6 +70,7 @@ class axi4_slave_tx extends uvm_sequence_item;
  int outstanding_write_tx;
  int outstanding_read_tx;
  rand int no_of_wait_states;
+ transfer_type_e transfer_type;
 
   //-------------------------------------------------------
   // WRITE DATA CHANNEL SIGNALS
