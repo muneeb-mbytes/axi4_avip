@@ -157,14 +157,22 @@ task axi4_master_monitor_proxy::axi4_write_address();
 endtask
 
 task axi4_master_monitor_proxy::axi4_write_data();
- // forever begin
- //   axi4_write_transfer_char_s struct_write_packet;
- //   axi4_transfer_cfg_s        struct_cfg;
+  forever begin
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+    axi4_master_tx             req_wr_clone_packet;
+    
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside axi4_write_data"), UVM_NONE); 
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
+    axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+  
+    $cast(req_wr_clone_packet,req_wr.clone());
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling is %p",req_wr.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling clone packet is %p",req_wr_clone_packet.sprint()),UVM_HIGH)
+  end
 
- //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
- //   axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
- //   axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
- // end
+    axi4_master_write_data_analysis_port.write(req_wr);
 endtask
 
 task axi4_master_monitor_proxy::axi4_write_response();
@@ -200,7 +208,7 @@ task axi4_master_monitor_proxy::axi4_read_data();
     
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
-    //`uvm_info(get_type_name(), $sformatf("DEBUG :: from BFM :: Read data %p ",struct_read_packet), UVM_NONE);
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: From Master MON BFM :: Read data: %p ",struct_read_packet), UVM_NONE);
     axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
 
     $cast(req_rd_clone_packet,req_rd.clone());
