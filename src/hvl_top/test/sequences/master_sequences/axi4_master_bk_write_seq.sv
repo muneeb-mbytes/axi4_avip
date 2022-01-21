@@ -32,7 +32,7 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_seq::body();
   super.body();
-  req.transfer_type=BLOCKING_WRITE;
+  //req.transfer_type=BLOCKING_WRITE;
   //req = axi4_master_tx::type_id::create("req");
     // MSHA: req.type = this.type;
   //req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
