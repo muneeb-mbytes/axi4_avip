@@ -185,6 +185,7 @@ task axi4_master_monitor_proxy::axi4_write_response();
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside axi4_write_response"), UVM_NONE); 
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_response_sampling(struct_write_packet,struct_cfg);
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: FROM MASTER MON BFM :: WRITE RESPONSE %p",struct_write_packet), UVM_NONE); 
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
 
     `uvm_info(get_type_name(),$sformatf("Recived pkt from the MASTER_MON_BFM: \n %s",req_wr.sprint()),UVM_HIGH);
