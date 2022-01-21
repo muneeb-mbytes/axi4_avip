@@ -391,7 +391,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("INSIDE READ DATA CHANNEL"),UVM_LOW);
-    
+
+    if(arready) begin
     if(std::randomize(rid_local) with {rid_local ==  mem_arid[j1];})
     
       `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",arlen),UVM_HIGH);
@@ -428,6 +429,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       end
     end
     j1++;
+  end
   
   endtask : axi4_read_data_phase
 
