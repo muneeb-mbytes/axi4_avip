@@ -32,7 +32,7 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_slave_nbk_write_seq::body();
   super.body();
-  req.transfer_type=NON_BLOCKING_WRITE;
+  req.transfer_type = NON_BLOCKING_WRITE;
 //  req = axi4_slave_tx::type_id::create("req");
     // MSHA: req.type = this.type;
   //req.axi4_slave_agent_cfg_h = p_sequencer.axi4_slave_agent_cfg_h;
@@ -44,7 +44,7 @@ task axi4_slave_nbk_write_seq::body();
     if(!req.randomize())begin
     `uvm_fatal("axi4","Rand failed");
   end
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_seq \n%s",req.sprint()), UVM_NONE); 
+  `uvm_info("SLAVE_WRITE_NBK_SEQ", $sformatf("slave_seq = \n%s",req.sprint()), UVM_NONE); 
   //req.print();
   finish_item(req);
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_slave_nbk_write_seq"), UVM_NONE); 
