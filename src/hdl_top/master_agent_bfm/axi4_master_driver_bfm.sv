@@ -137,10 +137,24 @@ interface axi4_master_driver_bfm(input bit aclk,
       data_write_packet.wait_count_write_address_channel++;
       `uvm_info(name,$sformatf("inside_detect_awready = %0d",awready),UVM_HIGH)
     end
-    `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d",awready),UVM_HIGH)
+    `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d, awvalid = %0d",awready,awvalid),UVM_HIGH)
     
-   // @(posedge aclk);
+    while(awvalid !== 1'b1) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("DEBUG_JAGAN awready= %0d, awvalid=%0d",awready,awready),UVM_HIGH)
+    end
+     
+    if(awvalid === 1) begin
+      while(awready !== 1)begin
+        `uvm_info(name,$sformatf("DEBUG_JAGAN awready= %0d",awready),UVM_HIGH)
+        awvalid <= 1'b1;
+        @(posedge aclk);
+      end
+    end
     awvalid <= 1'b0;
+    //end
+    //@(posedge aclk);
+    //awvalid <= 1'b0;
 
   endtask : axi4_write_address_channel_task
 
@@ -172,9 +186,26 @@ interface axi4_master_driver_bfm(input bit aclk,
       `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
         
       if(data_write_packet.awlen == i)begin  
+        `uvm_info(name,$sformatf("DEBUG_NA:WLAST=%0d",wlast),UVM_HIGH)
         wlast  <= 1'b1;
+        `uvm_info(name,$sformatf("DEBUG_NA:After driving WLAST=%0d",wlast),UVM_HIGH)
       end
     end
+
+    //while(wvalid !== 1'b1) begin
+    //  @(posedge aclk);
+    //  `uvm_info(name,$sformatf("DEBUG_JAGAN wready= %0d, wvalid=%0d",wready,wready),UVM_HIGH)
+    //end
+    // 
+    //if(wvalid === 1) begin
+    //  while(wready !== 1)begin
+    //    `uvm_info(name,$sformatf("DEBUG_JAGAN wready= %0d",wready),UVM_HIGH)
+    //    wvalid <= 1'b1;
+    //    @(posedge aclk);
+    //  end
+    //end
+    //wvalid <= 1'b0;
+    //wlast  <= 1'b0;
 
     @(posedge aclk);
     wlast <= 1'b0;
@@ -246,9 +277,23 @@ interface axi4_master_driver_bfm(input bit aclk,
       `uvm_info(name,$sformatf("inside_detect_awready = %0d",arready),UVM_HIGH)
     end
     `uvm_info(name,$sformatf("After_loop_of_Detecting_arready = %0d",arready),UVM_HIGH)
+
+    while(arvalid !== 1'b1) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("DEBUG_JAGAN arready= %0d, arvalid=%0d",arready,arready),UVM_HIGH)
+    end
+     
+    if(arvalid === 1) begin
+      while(arready !== 1)begin
+        `uvm_info(name,$sformatf("DEBUG_JAGAN arready= %0d",arready),UVM_HIGH)
+        arvalid <= 1'b1;
+        @(posedge aclk);
+      end
+    end
+    arvalid <= 1'b0;
     
     //@(posedge aclk);
-    arvalid <= 1'b0;
+    //arvalid <= 1'b0;
 
   endtask : axi4_read_address_channel_task
 
@@ -295,7 +340,7 @@ interface axi4_master_driver_bfm(input bit aclk,
       //end
     end
    
-   // @(posedge aclk);
+    @(posedge aclk);
     rready <= 1'b0;
 
   endtask : axi4_read_data_channel_task
