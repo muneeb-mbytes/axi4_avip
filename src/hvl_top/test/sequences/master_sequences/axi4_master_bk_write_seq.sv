@@ -32,7 +32,7 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_seq::body();
   super.body();
-  req.transfer_type=BLOCKING_WRITE;
+  //req.transfer_type=BLOCKING_WRITE;
   //req = axi4_master_tx::type_id::create("req");
     // MSHA: req.type = this.type;
   //req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
@@ -42,7 +42,8 @@ task axi4_master_bk_write_seq::body();
   //if(!req.randomize() with {req.tx_type == WRITE;}) begin
 
     if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
-                             // req.tx_type == WRITE;
+                              req.tx_type == WRITE;
+                              req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_FIXED;}) begin
     `uvm_fatal("axi4","Rand failed");
   end

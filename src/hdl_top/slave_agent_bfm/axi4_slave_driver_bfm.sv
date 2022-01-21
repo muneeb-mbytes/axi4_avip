@@ -227,12 +227,12 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info("SLAVE_DRIVER_WRITE_DATA_PHASE", $sformatf("outside of wvalid"), UVM_NONE); 
 
     // based on the wait_cycles we can choose to drive the wready
-    `uvm_info(name,$sformatf("Before DRIVING WRITE DATA WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
-    repeat(data_write_packet.no_of_wait_states)begin
-      `uvm_info(name,$sformatf("DRIVING_WRITE_DATA_WAIT_STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
-      @(posedge aclk);
-      wready<=0;
-    end
+   // `uvm_info(name,$sformatf("Before DRIVING WRITE DATA WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+   // repeat(data_write_packet.no_of_wait_states)begin
+   //   `uvm_info(name,$sformatf("DRIVING_WRITE_DATA_WAIT_STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+   //   @(posedge aclk);
+   //   wready<=0;
+   // end
 
     wready <= 1 ;
     
@@ -287,7 +287,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     @(posedge aclk);
     `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
     
-    //if(wready && wvalid)begin
+    if(wlast)begin
       if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
         @(posedge aclk);
         bid  = bid_local;
@@ -302,7 +302,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     //      @(posedge aclk);
     //    end
     //    bvalid = 0;
-    // end 
+     end 
     
     while(bready === 0) begin
       @(posedge aclk);

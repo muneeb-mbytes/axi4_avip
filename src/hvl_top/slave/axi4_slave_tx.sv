@@ -70,6 +70,7 @@ class axi4_slave_tx extends uvm_sequence_item;
  int outstanding_write_tx;
  int outstanding_read_tx;
  rand int no_of_wait_states;
+ transfer_type_e transfer_type;
 
   //-------------------------------------------------------
   // WRITE DATA CHANNEL SIGNALS
@@ -188,7 +189,9 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to store the read response
   rand rresp_e rresp ;
 
-  transfer_type_e transfer_type;
+  //transfer_type_e transfer_type;
+
+  tx_type_e tx_type;
 
   //Variable : no_of_wait_states
   //Used to decide the number of wait states
@@ -247,7 +250,7 @@ endfunction : new
 function void axi4_slave_tx::do_copy (uvm_object rhs);
   axi4_slave_tx axi_slave_tx_copy_obj;
 
-  if($cast(axi_slave_tx_copy_obj,rhs )) begin
+  if(!$cast(axi_slave_tx_copy_obj,rhs )) begin
     `uvm_fatal("do_copy","cast of the rhs object failed")
   end
 
@@ -404,6 +407,7 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
   printer.print_string("rresp",rresp.name());
 
   printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_HEX);
+  printer.print_string("TRNASFER_TYPE",transfer_type.name());
 endfunction : do_print
 
 `endif
