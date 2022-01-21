@@ -138,7 +138,24 @@ task axi4_slave_monitor_proxy::axi4_slave_read_address();
 endtask
 
 task axi4_slave_monitor_proxy::axi4_slave_read_data();
+forever begin
+    axi4_read_transfer_char_s struct_read_packet;
+    axi4_transfer_cfg_s       struct_cfg;
+    axi4_slave_tx             req_rd_clone_packet; 
 
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: Inside axi4_read_data"), UVM_NONE);
+    
+    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
+    axi4_slave_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: From Slave MON BFM :: Read data: %p ",struct_read_packet), UVM_NONE);
+    axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+
+    $cast(req_rd_clone_packet,req_rd.clone());
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling is %p",req_rd.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling clone packet is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
+
+    axi4_slave_read_data_analysis_port.write(req_rd);
+  end
 endtask
 
 
