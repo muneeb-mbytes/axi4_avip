@@ -364,9 +364,9 @@ interface axi4_master_driver_bfm(input bit aclk,
       @(posedge aclk);
     end
 
-    while(bvalid !== 1'b1)begin
-      @(posedge aclk);
-    end
+    //while(bvalid !== 1'b1)begin
+    //  @(posedge aclk);
+    //end
 
     `uvm_info(name,$sformatf("DEBUG_NA:WAIT_TASK_ENDED"),UVM_HIGH)
 
