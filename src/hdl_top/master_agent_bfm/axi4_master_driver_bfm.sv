@@ -217,7 +217,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     //wvalid <= 1'b0;
     //wlast  <= 1'b0;
 
-    // MSHA: @(posedge aclk);
+    //@(posedge aclk);
     wlast <= 1'b0;
     wvalid<= 1'b0;
 
@@ -234,7 +234,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
 
-    if(wlast !== 1'b1) begin
+    while(wlast !== 1'b1) begin
       @(posedge aclk);
       `uvm_info(name,$sformatf("WAITING FOR WLAST :: %0d",wlast),UVM_HIGH);
     end
@@ -355,6 +355,22 @@ interface axi4_master_driver_bfm(input bit aclk,
     rready <= 1'b0;
 
   endtask : axi4_read_data_channel_task
+
+  task axi4_wait_task();
+    
+    `uvm_info(name,$sformatf("DEBUG_NA:WAIT_TASK_CALLED"),UVM_HIGH)
+
+    while(wlast !== 1'b1)begin
+      @(posedge aclk);
+    end
+
+    while(bvalid !== 1'b1)begin
+      @(posedge aclk);
+    end
+
+    `uvm_info(name,$sformatf("DEBUG_NA:WAIT_TASK_ENDED"),UVM_HIGH)
+
+  endtask : axi4_wait_task
 
 endinterface : axi4_master_driver_bfm
 
