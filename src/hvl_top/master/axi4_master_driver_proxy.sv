@@ -234,16 +234,12 @@ task axi4_master_driver_proxy::axi4_read_task();
     axi_read_seq_item_port.get_next_item(req_rd);
     `uvm_info(get_type_name(),$sformatf("DEBUG_SAHA_BEFORE::Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE); 
 
-    //Converting transactions into struct data type
-    axi4_master_seq_item_converter::from_read_class(req_rd,struct_read_packet);
-
     //Converting configurations into struct config type
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
 
-
     // MSHA: // put the req_rd into a FIFO/queue (depth must be equal to outstanding
     // MSHA: // transfers variable value )
-    axi4_master_fifo_h.read(req_rd);
+    //axi4_master_fifo_h.read(req_rd);
 
 
     // MSHA: //  Throw the error when we reach the limit
