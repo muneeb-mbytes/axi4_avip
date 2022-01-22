@@ -154,7 +154,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
     do begin
       @(posedge aclk);
-    end while(awvalid===0);
+    end while{awvalid===0};
 
    // while(awvalid === 0) begin
    //   @(posedge aclk);
@@ -163,31 +163,33 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info("SLAVE_DRIVER_WADDR_PHASE", $sformatf("outside of awvalid"), UVM_NONE); 
      
     // Sample the values
-   
-   mem_awid 	[i]	  = awid  	;	
-   `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
-   `uvm_info("mem_awid",$sformatf("awid=%0d",awid),UVM_HIGH)
-	 mem_waddr	[i] 	= awaddr	;
-	 mem_wlen 	[i]	  = awlen	  ;	
-	 mem_wsize	[i] 	= awsize	;	
-	 mem_wburst[i] 	= awburst ;	
-	 mem_wlock	[i] 	= awlock	;	
-	 mem_wcache[i] 	= awcache ;	
-	 mem_wprot	[i] 	= awprot	;	
-   
-   data_write_packet.awid    = mem_awid   [i] ;
-   data_write_packet.awaddr  = mem_waddr  [i] ;
-   data_write_packet.awlen   = mem_wlen   [i] ;
-   data_write_packet.awsize  = mem_wsize  [i] ;
-   data_write_packet.awburst = mem_wburst [i] ;
-   data_write_packet.awlock  = mem_wlock  [i] ;
-   data_write_packet.awcache = mem_wcache [i] ;
-   data_write_packet.awprot  = mem_wprot  [i] ;
-   
-   i = i+1                   ;
-    
+    if(awvalid)begin
 
-   `uvm_info("struct_pkt_debug",$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
+      mem_awid 	[i]	  = awid  	;	
+      `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
+      `uvm_info("mem_awid",$sformatf("awid=%0d",awid),UVM_HIGH)
+	   	mem_waddr	[i] 	= awaddr	;
+	   	mem_wlen 	[i]	  = awlen	  ;	
+	    mem_wsize	[i] 	= awsize	;	
+	   	mem_wburst[i] 	= awburst ;	
+	   	mem_wlock	[i] 	= awlock	;	
+	   	mem_wcache[i] 	= awcache ;	
+	   	mem_wprot	[i] 	= awprot	;	
+     
+      data_write_packet.awid    = mem_awid   [i] ;
+      data_write_packet.awaddr  = mem_waddr  [i] ;
+      data_write_packet.awlen   = mem_wlen   [i] ;
+      data_write_packet.awsize  = mem_wsize  [i] ;
+      data_write_packet.awburst = mem_wburst [i] ;
+      data_write_packet.awlock  = mem_wlock  [i] ;
+      data_write_packet.awcache = mem_wcache [i] ;
+      data_write_packet.awprot  = mem_wprot  [i] ;
+      
+      i = i+1                   ;
+    
+    end
+
+    `uvm_info("struct_pkt_debug",$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
 
    //  data_write_packet.awid = awid;
    //  data_write_packet.awaddr = awaddr;
@@ -225,18 +227,14 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info(name,$sformatf("INSIDE WRITE DATA CHANNEL"),UVM_HIGH)
     
     wready <= 0;
-    
-    do begin
-      @(posedge aclk);
-    end while(wvalid===0);
 
-  //  while(wvalid === 0) begin
-  //    @(posedge aclk);
-  //  end
+    while(wvalid === 0) begin
+      @(posedge aclk);
+    end
 
     `uvm_info("SLAVE_DRIVER_WRITE_DATA_PHASE", $sformatf("outside of wvalid"), UVM_NONE); 
 
-   // based on the wait_cycles we can choose to drive the wready
+    // based on the wait_cycles we can choose to drive the wready
    // `uvm_info(name,$sformatf("Before DRIVING WRITE DATA WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
    // repeat(data_write_packet.no_of_wait_states)begin
    //   `uvm_info(name,$sformatf("DRIVING_WRITE_DATA_WAIT_STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
@@ -279,15 +277,11 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
           end
           if(s == mem_wlen[a]) begin
             data_write_packet.wlast = wlast;
-            `uvm_info("slave_wlast",$sformatf("slave_wlast = %0b",wlast),UVM_HIGH);
             `uvm_info("slave_wlast",$sformatf("sampled_slave_wlast = %0b",data_write_packet.wlast),UVM_HIGH);
-            if(!data_write_packet.wlast)begin
-              @(posedge aclk);
-              wready<=0;
-            end
           end
         end
       end
+      //mem_wlast[a] = data_write_packet.wlast;
     end
 
   endtask : axi4_write_data_phase
