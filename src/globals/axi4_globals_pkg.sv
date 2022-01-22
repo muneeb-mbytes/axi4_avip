@@ -54,6 +54,8 @@ package axi4_globals_pkg;
   //Variable: LENGTH
   //Indicates the length of the address write and read channels
   parameter int LENGTH = 8;
+
+  parameter int OUTSTANDING_FIFO_DEPTH = 16;
   //-------------------------------------------------------
   // Enums used in axi4_avip are given below
   //-------------------------------------------------------

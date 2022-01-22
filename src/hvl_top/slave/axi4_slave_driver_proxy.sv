@@ -154,29 +154,26 @@ task axi4_slave_driver_proxy::axi4_write_task();
     if(req_wr.transfer_type ==  NON_BLOCKING_WRITE) begin
       
       fork
+        `uvm_info("SEQ_DEBUG", $sformatf("seq =  \n %0p",req_wr.sprint()),UVM_HIGH);
         
-      `uvm_info("SEQ_DEBUG", $sformatf("seq =  \n %0p",req_wr.sprint()),UVM_HIGH); 
-
-       //Converting transactions into struct data type
-       axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
-       `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
-
-      //Converting configurations into struct config type
-      axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
-      `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH); 
-
-      //write address_task
-      axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
-    
-      // write data_task
-      axi4_slave_drv_bfm_h.axi4_write_data_phase(struct_write_packet,struct_cfg);
-
+        //Converting transactions into struct data type
+        axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
+        `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
+        
+        //Converting configurations into struct config type
+        axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+        `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH); 
+        
+        //write address_task
+        axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
+        
+        // write data_task
+        axi4_slave_drv_bfm_h.axi4_write_data_phase(struct_write_packet,struct_cfg);
+      join
+      
       // write response_task
       axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg);
-
-    join_any
-  end
-
+    end
 
     #10;
 
@@ -246,8 +243,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
 
     //`uvm_info("DEBUG_MSHA", $sformatf("AFTER :: Received req packet \n %s", req_rd.sprint()), UVM_NONE);
-
-
+  
     #10;
 
     axi_read_seq_item_port.item_done();

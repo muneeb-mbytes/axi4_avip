@@ -77,10 +77,10 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   //Creating the handle for proxy driver
   axi4_slave_driver_proxy axi4_slave_drv_proxy_h;
   
-  reg [3:0] i = 0;
+  reg [3: 0] i = 0;
+  reg [3: 0] j = 0;
   reg [3: 0] bid_local; 
   reg [3: 0] rid_local; 
-  reg [3:0] j = 0;
 
   initial begin
     `uvm_info("axi4 slave driver bfm",$sformatf("AXI4 SLAVE DRIVER BFM"),UVM_LOW);
@@ -90,29 +90,30 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
   // Creating Memories for each signal to store each transaction attributes
 
-  reg [	15: 0]	            mem_awid	  [0:19];
-  reg [	ADDRESS_WIDTH-1: 0]	mem_waddr	  [0:19];
-  reg [	7 : 0]	            mem_wlen	  [0:19];
-  reg [	2 : 0]	            mem_wsize	  [0:19];
-  reg [ 1	: 0]	            mem_wburst  [0:19];
-  reg [ 1	: 0]	            mem_wlock	  [0:19];
-  reg [ 3	: 0]	            mem_wcache  [0:19];
-  reg [ 2	: 0]	            mem_wprot	  [0:19];
-  reg [ 3	: 0]	            mem_wqos  	[0:19];
-  reg [ 3	: 0]	            mem_wregion	[0:19];
-  reg [ 3	: 0]	            mem_wuser	  [0:19];
+  reg [	15: 0]	            mem_awid	  [OUTSTANDING_FIFO_DEPTH];
+  reg [	ADDRESS_WIDTH-1: 0]	mem_waddr	  [OUTSTANDING_FIFO_DEPTH];
+  reg [	7 : 0]	            mem_wlen	  [OUTSTANDING_FIFO_DEPTH];
+  reg [	2 : 0]	            mem_wsize	  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 1	: 0]	            mem_wburst  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 1	: 0]	            mem_wlock	  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 3	: 0]	            mem_wcache  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 2	: 0]	            mem_wprot	  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 3	: 0]	            mem_wqos  	[OUTSTANDING_FIFO_DEPTH];
+  reg [ 3	: 0]	            mem_wregion	[OUTSTANDING_FIFO_DEPTH];
+  reg [ 3	: 0]	            mem_wuser	  [OUTSTANDING_FIFO_DEPTH];
 
-  reg [	15: 0]	            mem_arid	  [0:19];
-  reg [	ADDRESS_WIDTH-1: 0]	mem_raddr	  [0:19];
-  reg [	7	: 0]	            mem_rlen	  [0:19];
-  reg [	2	: 0]	            mem_rsize	  [0:19];
-  reg [ 1	: 0]	            mem_rburst  [0:19];
-  reg [ 1	: 0]	            mem_rlock	  [0:19];
-  reg [ 3	: 0]	            mem_rcache  [0:19];
-  reg [ 2	: 0]	            mem_rprot	  [0:19];
-  reg [ 3	: 0]	            mem_rqos   	[0:19];
-  reg [ 3	: 0]	            mem_rregion [0:19];
-  reg [ 3	: 0]	            mem_ruser	  [0:19];
+  reg [	15: 0]	            mem_arid	  [OUTSTANDING_FIFO_DEPTH];
+  reg [	ADDRESS_WIDTH-1: 0]	mem_raddr	  [OUTSTANDING_FIFO_DEPTH];
+  reg [	7	: 0]	            mem_rlen	  [OUTSTANDING_FIFO_DEPTH];
+  reg [	2	: 0]	            mem_rsize	  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 1	: 0]	            mem_rburst  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 1	: 0]	            mem_rlock	  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 3	: 0]	            mem_rcache  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 2	: 0]	            mem_rprot	  [OUTSTANDING_FIFO_DEPTH];
+  reg [ 3	: 0]	            mem_rqos   	[OUTSTANDING_FIFO_DEPTH];
+  reg [ 3	: 0]	            mem_rregion [OUTSTANDING_FIFO_DEPTH];
+  reg [ 3	: 0]	            mem_ruser	  [OUTSTANDING_FIFO_DEPTH];
+//bit                       mem_wlast   [OUTSTANDING_FIFO_DEPTH];
 
   //-------------------------------------------------------
   // Task: wait_for_system_reset
@@ -173,14 +174,14 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 	   	mem_wcache[i] 	= awcache ;	
 	   	mem_wprot	[i] 	= awprot	;	
      
-      data_write_packet.awid = mem_awid[i]      ;
-      data_write_packet.awaddr = mem_waddr[i]   ;
-      data_write_packet.awlen = mem_wlen[i]     ;
-      data_write_packet.awsize = mem_wsize[i]   ;
-      data_write_packet.awburst = mem_wburst[i] ;
-      data_write_packet.awlock = mem_wlock[i]   ;
-      data_write_packet.awcache = mem_wcache[i] ;
-      data_write_packet.awprot = mem_wprot[i]   ;
+      data_write_packet.awid    = mem_awid   [i] ;
+      data_write_packet.awaddr  = mem_waddr  [i] ;
+      data_write_packet.awlen   = mem_wlen   [i] ;
+      data_write_packet.awsize  = mem_wsize  [i] ;
+      data_write_packet.awburst = mem_wburst [i] ;
+      data_write_packet.awlock  = mem_wlock  [i] ;
+      data_write_packet.awcache = mem_wcache [i] ;
+      data_write_packet.awprot  = mem_wprot  [i] ;
       
       i = i+1                   ;
     
@@ -205,6 +206,10 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       awready<=0;
     end
     awready <= 1;
+
+    if(i == OUTSTANDING_FIFO_DEPTH)begin
+      awready <= 0;
+    end
 
   endtask: axi4_write_address_phase 
 
@@ -269,9 +274,11 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
           end
           if(s == mem_wlen[a]) begin
             data_write_packet.wlast = wlast;
+            `uvm_info("slave_wlast",$sformatf("sampled_slave_wlast = %0b",data_write_packet.wlast),UVM_HIGH);
           end
         end
       end
+      //mem_wlast[a] = data_write_packet.wlast;
     end
 
   endtask : axi4_write_data_phase
@@ -281,29 +288,21 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // This task will drive the write response signals
   //-------------------------------------------------------
   
-  task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg,int valid_delay = 2);
+  task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
     
     int j;
     @(posedge aclk);
     `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
-    
-    if(wlast)begin
-      if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
-        @(posedge aclk);
-        bid  = bid_local;
-        `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
-        `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
-        bresp <= WRITE_OKAY;
-        buser<=data_write_packet.buser;
-        bvalid <= 1;
-        j++;
+    if(std::randomize(bid_local) with {bid_local ==  mem_awid[j];})
+      @(posedge aclk);
+      bid  = bid_local;
+      `uvm_info("bid_debug",$sformatf("mem_awid[%0d]=%0d",j,mem_awid[j]),UVM_HIGH)
+      `uvm_info("bid_debug",$sformatf("bid_local=%0d",bid_local),UVM_HIGH)
+      bresp <= WRITE_OKAY;
+      buser<=data_write_packet.buser;
+      bvalid <= 1;
+      j++;
           
-    //    repeat(valid_delay-1) begin
-    //      @(posedge aclk);
-    //    end
-    //    bvalid = 0;
-     end 
-    
     while(bready === 0) begin
       @(posedge aclk);
       data_write_packet.wait_count_write_response_channel++;
