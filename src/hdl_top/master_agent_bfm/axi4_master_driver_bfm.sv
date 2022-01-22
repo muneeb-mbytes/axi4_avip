@@ -141,12 +141,12 @@ interface axi4_master_driver_bfm(input bit aclk,
     
     while(awvalid !== 1'b1) begin
       @(posedge aclk);
-      `uvm_info(name,$sformatf("DEBUG_JAGAN awready= %0d, awvalid=%0d",awready,awready),UVM_HIGH)
+      `uvm_info(name,$sformatf("DEBUG_SAHA:: awready= %0d, awvalid=%0d",awready,awready),UVM_HIGH)
     end
      
     if(awvalid === 1) begin
       while(awready !== 1)begin
-        `uvm_info(name,$sformatf("DEBUG_JAGAN awready= %0d",awready),UVM_HIGH)
+        `uvm_info(name,$sformatf("DEBUG_SAHA:: awready= %0d",awready),UVM_HIGH)
         awvalid <= 1'b1;
         @(posedge aclk);
       end
@@ -169,8 +169,12 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
 
     // if(tx_type==WRITE) begin
+    @(posedge aclk);
+
     for(int i=0; i<data_write_packet.awlen + 1; i++) begin
-      @(posedge aclk);
+      // MSHA: repeat(data_write_packet.wait_cycles_between_beats) begin
+      // MSHA:   @(posedge aclk);
+      // MSHA: end
       wdata  <= data_write_packet.wdata[i];
       wstrb  <= data_write_packet.wstrb[i];
       wuser  <= data_write_packet.wuser;
@@ -178,28 +182,34 @@ interface axi4_master_driver_bfm(input bit aclk,
       wvalid <= 1'b1;
       `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
         
-      while(wready===0) begin
-        @(posedge aclk);
-        data_write_packet.wait_count_write_data_channel++;
-      end
-      
-      `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
-        
+      // MSHA:while(wready===0) begin
+      // MSHA:  @(posedge aclk);
+      // MSHA:  data_write_packet.wait_count_write_data_channel++;
+      // MSHA:end
+
       if(data_write_packet.awlen == i)begin  
         `uvm_info(name,$sformatf("DEBUG_NA:WLAST=%0d",wlast),UVM_HIGH)
         wlast  <= 1'b1;
         `uvm_info(name,$sformatf("DEBUG_NA:After driving WLAST=%0d",wlast),UVM_HIGH)
       end
+
+      do begin
+        @(posedge aclk);
+        // MSHA: data_write_packet.wait_count_write_data_channel++;
+      end while(wready===0);
+      
+      `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
+       
     end
 
     //while(wvalid !== 1'b1) begin
     //  @(posedge aclk);
-    //  `uvm_info(name,$sformatf("DEBUG_JAGAN wready= %0d, wvalid=%0d",wready,wready),UVM_HIGH)
+    //  `uvm_info(name,$sformatf("DEBUG_SAHA:: wready= %0d, wvalid=%0d",wready,wready),UVM_HIGH)
     //end
     // 
     //if(wvalid === 1) begin
     //  while(wready !== 1)begin
-    //    `uvm_info(name,$sformatf("DEBUG_JAGAN wready= %0d",wready),UVM_HIGH)
+    //    `uvm_info(name,$sformatf("DEBUG_SAHA:: wready= %0d",wready),UVM_HIGH)
     //    wvalid <= 1'b1;
     //    @(posedge aclk);
     //  end
@@ -207,7 +217,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     //wvalid <= 1'b0;
     //wlast  <= 1'b0;
 
-    @(posedge aclk);
+    // MSHA: @(posedge aclk);
     wlast <= 1'b0;
     wvalid<= 1'b0;
 
@@ -232,14 +242,14 @@ interface axi4_master_driver_bfm(input bit aclk,
     repeat(data_write_packet.no_of_wait_states)begin
       `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
       @(posedge aclk);
-      bready<=0;
+      bready <= 0;
     end
 
-    bready <= 1'b1;
     data_write_packet.bvalid = bvalid;
-    data_write_packet.bid = bid;
-    data_write_packet.bresp = bresp;
-    data_write_packet.buser = buser;
+    data_write_packet.bid    = bid;
+    data_write_packet.bresp  = bresp;
+    data_write_packet.buser  = buser;
+    bready <= 1'b1;
 
     `uvm_info(name,$sformatf("CHECKING WRITE RESPONSE :: %p",data_write_packet),UVM_HIGH);
     @(posedge aclk);
@@ -281,12 +291,12 @@ interface axi4_master_driver_bfm(input bit aclk,
 
     while(arvalid !== 1'b1) begin
       @(posedge aclk);
-      `uvm_info(name,$sformatf("DEBUG_JAGAN arready= %0d, arvalid=%0d",arready,arready),UVM_HIGH)
+      `uvm_info(name,$sformatf("DEBUG_SAHA:: arready= %0d, arvalid=%0d",arready,arready),UVM_HIGH)
     end
      
     if(arvalid === 1) begin
       while(arready !== 1)begin
-        `uvm_info(name,$sformatf("DEBUG_JAGAN arready= %0d",arready),UVM_HIGH)
+        `uvm_info(name,$sformatf("DEBUG_SAHA:: arready= %0d",arready),UVM_HIGH)
         arvalid <= 1'b1;
         @(posedge aclk);
       end

@@ -29,6 +29,8 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //Which port to use depends on which export the sequencer provides for connection.
   uvm_analysis_port #(RSP) axi_read_rsp_port;
 
+  //Variable: axi4_master_fifo_h
+  //Declaring handle for uvm_tlm_analysis_fifo
   uvm_tlm_analysis_fifo #(axi4_master_tx) axi4_master_fifo_h;
   
   //Variable: req_wr, req_rd
@@ -126,9 +128,9 @@ endtask : run_phase
 //--------------------------------------------------------------------------------------------
 task axi4_master_driver_proxy::axi4_write_task();
   forever begin
-    axi4_master_tx local_master_tx;
-    axi4_write_transfer_char_s struct_write_packet;
+    axi4_master_tx             local_master_tx;
     axi4_transfer_cfg_s        struct_cfg;
+    axi4_write_transfer_char_s struct_write_packet;
 
     axi_write_seq_item_port.get_next_item(req_wr);
     `uvm_info(get_type_name(),$sformatf("DEBUG_SAHA_BEFORE::Sending_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE); 
@@ -138,52 +140,74 @@ task axi4_master_driver_proxy::axi4_write_task();
 
     //Converting transactions into struct data type
 
-    // MSHA: // put the req_wr into a FIFO/queue (depth must be equal to outstanding
-    // MSHA: // transfers variable value )
+    // MSHA: put the req_wr into a FIFO/queue (depth must be equal to outstanding transfers variable value)
     axi4_master_fifo_h.write(req_wr);
 
-    // MSHA: //  Throw the error when we reach the limi
-    `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type outside if= %s",req_wr.transfer_type),UVM_HIGH); 
+    // MSHA: Throw the error when we reach the limit
+    `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type outside if = %s",req_wr.transfer_type),UVM_HIGH); 
     
     if(req_wr.transfer_type == BLOCKING_WRITE) begin
-      //Calling 3 write tasks from axi4_master_drv_bfm in HDL side
       axi4_master_seq_item_converter::from_write_class(req_wr,struct_write_packet);
       `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type = %s",req_wr.transfer_type),UVM_HIGH); 
+      
+      //Calling 3 write tasks from axi4_master_drv_bfm in HDL side
       axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
       axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
       axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
     end
 
-    else if(req_wr.transfer_type ==  NON_BLOCKING_WRITE) begin
+    else if(req_wr.transfer_type == NON_BLOCKING_WRITE) begin
       fork
         begin  
-        `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type inside fork = %s",req_wr.transfer_type),UVM_HIGH); 
-         // local_master_tx = axi4_master_fifo_h.peek();
-          axi4_master_fifo_h.peek(local_master_tx);
-          `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking local master tx = %s",local_master_tx.sprint()),UVM_HIGH); 
-          axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
-          `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking struct packet = %p",struct_write_packet),UVM_HIGH); 
-          axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
+          axi4_master_tx             local_master_addr_tx;
+          axi4_write_transfer_char_s struct_write_addr_packet;
+          `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type inside fork = %s",req_wr.transfer_type),UVM_HIGH); 
+          // local_master_tx = axi4_master_fifo_h.peek();
+           
+          // // TODO(mshariff): if peek is unsuccessful 
+          // MSHA: axi4_master_fifo_h.peek(local_master_addr_tx);
+          // MSHA: `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking local master tx = %s",local_master_addr_tx.sprint()),UVM_HIGH); 
+          axi4_master_seq_item_converter::from_write_class(req_wr,struct_write_addr_packet);
+          `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::C`hecking struct packet = %p",struct_write_addr_packet),UVM_HIGH); 
+          axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_addr_packet,struct_cfg);
         end
     
         begin
           //local_master_tx = axi4_master_fifo_h.peek();
-          axi4_master_fifo_h.peek(local_master_tx);
-          axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
-          axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
+          axi4_master_tx             local_master_data_tx;
+          axi4_write_transfer_char_s struct_write_data_packet;
+
+          axi4_master_fifo_h.peek(local_master_data_tx);
+          axi4_master_seq_item_converter::from_write_class(local_master_data_tx,struct_write_data_packet);
+          axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_data_packet,struct_cfg);
         end
      
         begin
-           //local_master_tx = axi4_master_fifo_h.peek();
-           axi4_master_fifo_h.peek(local_master_tx);
-           axi4_master_seq_item_converter::from_write_class(local_master_tx,struct_write_packet);
-           axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
+          //local_master_tx = axi4_master_fifo_h.peek();
+          axi4_master_tx             local_master_response_tx;
+          axi4_write_transfer_char_s struct_write_response_packet;
+
+          axi4_master_fifo_h.peek(local_master_response_tx);
+          axi4_master_seq_item_converter::from_write_class(local_master_response_tx,struct_write_response_packet);
+          axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_response_packet,struct_cfg);
+          // MSHA:axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+
+          // MSHA:`uvm_info(get_type_name(),$sformatf("DEBUG_SAHA_AFTER::Received_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
+
+        axi4_master_fifo_h.get(local_master_tx);
+        `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Out of response task"), UVM_NONE); 
+        // decrement the out-standing transfers counter
+
         end
         //local_master_tx = axi4_master_fifo_h.get();
 
       join_any
-        axi4_master_fifo_h.get(local_master_tx);
+
+      // fine-grain control
+      // MSHA: p_addr.await();
     end
+
+
     // MSHA:     // struct_packet_local = FIFO.peek();
     // MSHA:     ADD(struct_packet)
     // MSHA:     // struct_packet_local = FIFO.peek();
@@ -222,21 +246,59 @@ endtask : axi4_write_task
 //--------------------------------------------------------------------------------------------
 task axi4_master_driver_proxy::axi4_read_task();
   forever begin
+    axi4_master_tx local_master_tx;
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
 
     axi_read_seq_item_port.get_next_item(req_rd);
     `uvm_info(get_type_name(),$sformatf("DEBUG_SAHA_BEFORE::Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE); 
 
-    //Converting transactions into struct data type
-    axi4_master_seq_item_converter::from_read_class(req_rd,struct_read_packet);
-
     //Converting configurations into struct config type
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
 
-    //Calling 2 read channel tasks from axi4_master_drv_bfm in HDL side
-    axi4_master_drv_bfm_h.axi4_read_address_channel_task(struct_read_packet,struct_cfg);
-    axi4_master_drv_bfm_h.axi4_read_data_channel_task(struct_read_packet,struct_cfg);
+    // MSHA: // put the req_rd into a FIFO/queue (depth must be equal to outstanding
+    // MSHA: // transfers variable value )
+    //axi4_master_fifo_h.read(req_rd);
+
+
+    // MSHA: //  Throw the error when we reach the limit
+    `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type outside if= %s",req_rd.transfer_type),UVM_HIGH); 
+    
+    if(req_rd.transfer_type == BLOCKING_READ) begin
+      //Calling 2 read tasks from axi4_master_drv_bfm in HDL side
+      axi4_master_seq_item_converter::from_read_class(req_rd,struct_read_packet);
+      `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type = %s",req_rd.transfer_type),UVM_HIGH); 
+      axi4_master_drv_bfm_h.axi4_read_address_channel_task(struct_read_packet,struct_cfg);
+      axi4_master_drv_bfm_h.axi4_read_data_channel_task(struct_read_packet,struct_cfg);
+    end
+
+    else if(req_rd.transfer_type ==  NON_BLOCKING_READ) begin
+      fork
+        begin  
+        `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type inside fork = %s",req_rd.transfer_type),UVM_HIGH); 
+         // local_master_tx = axi4_master_fifo_h.peek();
+          axi4_master_fifo_h.peek(local_master_tx);
+          `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking local master tx = %s",local_master_tx.sprint()),UVM_HIGH); 
+          axi4_master_seq_item_converter::from_read_class(local_master_tx,struct_read_packet);
+          `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking struct packet = %p",struct_read_packet),UVM_HIGH); 
+          axi4_master_drv_bfm_h.axi4_read_address_channel_task(struct_read_packet,struct_cfg);
+        end
+
+        begin
+          //local_master_tx = axi4_master_fifo_h.peek();
+          axi4_master_fifo_h.peek(local_master_tx);
+          axi4_master_seq_item_converter::from_read_class(local_master_tx,struct_read_packet);
+          axi4_master_drv_bfm_h.axi4_read_data_channel_task(struct_read_packet,struct_cfg);
+        end
+
+      join_any
+        axi4_master_fifo_h.get(local_master_tx);
+    end
+
+    
+   // //Calling 2 read channel tasks from axi4_master_drv_bfm in HDL side
+   // axi4_master_drv_bfm_h.axi4_read_address_channel_task(struct_read_packet,struct_cfg);
+   // axi4_master_drv_bfm_h.axi4_read_data_channel_task(struct_read_packet,struct_cfg);
     
     //Converting transactions into struct data type
     axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);

@@ -208,6 +208,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     awready <= 1;
 
     if(i == OUTSTANDING_FIFO_DEPTH)begin
+      `uvm_info(name,$sformatf("REACHED OUTSTANDING_FIFO_DEPTH"),UVM_MEDIUM)
       @(posedge aclk);
       awready <= 0;
     end
