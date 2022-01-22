@@ -169,8 +169,12 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("DRIVE TO WRITE DATA CHANNEL"),UVM_HIGH)
 
     // if(tx_type==WRITE) begin
+    @(posedge aclk);
+
     for(int i=0; i<data_write_packet.awlen + 1; i++) begin
-      @(posedge aclk);
+      // MSHA: repeat(data_write_packet.wait_cycles_between_beats) begin
+      // MSHA:   @(posedge aclk);
+      // MSHA: end
       wdata  <= data_write_packet.wdata[i];
       wstrb  <= data_write_packet.wstrb[i];
       wuser  <= data_write_packet.wuser;
@@ -178,18 +182,24 @@ interface axi4_master_driver_bfm(input bit aclk,
       wvalid <= 1'b1;
       `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
         
-      while(wready===0) begin
-        @(posedge aclk);
-        data_write_packet.wait_count_write_data_channel++;
-      end
-      
-      `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
-       
+      // MSHA:while(wready===0) begin
+      // MSHA:  @(posedge aclk);
+      // MSHA:  data_write_packet.wait_count_write_data_channel++;
+      // MSHA:end
+
       if(data_write_packet.awlen == i)begin  
         `uvm_info(name,$sformatf("DEBUG_NA:WLAST=%0d",wlast),UVM_HIGH)
         wlast  <= 1'b1;
         `uvm_info(name,$sformatf("DEBUG_NA:After driving WLAST=%0d",wlast),UVM_HIGH)
       end
+
+      do begin
+        @(posedge aclk);
+        // MSHA: data_write_packet.wait_count_write_data_channel++;
+      end while(wready===0);
+      
+      `uvm_info(name,$sformatf("DEBUG_NA:WDATA[%0d]=%0h",i,data_write_packet.wdata[i]),UVM_HIGH)
+       
     end
 
     //while(wvalid !== 1'b1) begin
@@ -207,7 +217,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     //wvalid <= 1'b0;
     //wlast  <= 1'b0;
 
-    @(posedge aclk);
+    // MSHA: @(posedge aclk);
     wlast <= 1'b0;
     wvalid<= 1'b0;
 

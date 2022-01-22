@@ -278,6 +278,10 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
           end
         end
       end
+
+      // thread which check for number of cycles to wait till you reach the last 
+      // if not, throw error and come out
+        //
       //mem_wlast[a] = data_write_packet.wlast;
     end
 

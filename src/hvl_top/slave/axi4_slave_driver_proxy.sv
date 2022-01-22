@@ -131,6 +131,13 @@ task axi4_slave_driver_proxy::axi4_write_task();
     axi_write_seq_item_port.get_next_item(req_wr);
     //`uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_req_wr = \n%s",req_wr.sprint()), UVM_NONE); 
     
+
+    // 1. wait for address (put into the fifo only when the outstadning value is less than the
+    // FIFO size - throw error when u have reached the limit) 
+    // 1. wait for data (combine data with address (peek)info to make a packet - then come with response) 
+    //    1.a driving my response (throw away the FIFO value)
+
+
     if(req_wr.transfer_type == BLOCKING_WRITE) begin
    
       //Converting transactions into struct data type
