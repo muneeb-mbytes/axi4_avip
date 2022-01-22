@@ -176,26 +176,47 @@ task axi4_master_monitor_proxy::axi4_write_data();
 endtask
 
 task axi4_master_monitor_proxy::axi4_write_response();
-//  forever begin
-//    axi4_write_transfer_char_s struct_write_packet;
-//    axi4_transfer_cfg_s        struct_cfg;
-//
-//    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
-//    axi4_master_mon_bfm_h.axi4_write_response_sampling(struct_write_packet,struct_cfg);
-//    axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
-//  end
+
+  forever begin
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+    axi4_master_tx             axi4_master_tx_clone_packet;
+
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside axi4_write_response"), UVM_NONE); 
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_mon_bfm_h.axi4_write_response_sampling(struct_write_packet,struct_cfg);
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: FROM MASTER MON BFM :: WRITE RESPONSE %p",struct_write_packet), UVM_NONE); 
+    axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+
+    `uvm_info(get_type_name(),$sformatf("Recived pkt from the MASTER_MON_BFM: \n %s",req_wr.sprint()),UVM_HIGH);
+
+    //clone and publish the clone to the analysis port 
+    $cast(axi4_master_tx_clone_packet,req_wr.clone());
+    `uvm_info(get_type_name(),$sformatf("Sending pkt via analysis port of write response: \n %s",
+                                  axi4_master_tx_clone_packet.sprint()),UVM_HIGH);
+    
+    axi4_master_write_response_analysis_port.write(axi4_master_tx_clone_packet);
+  
+  end
 endtask
 
 
 task axi4_master_monitor_proxy::axi4_read_address();
- // forever begin
- //   axi4_read_transfer_char_s struct_read_packet;
- //   axi4_transfer_cfg_s        struct_cfg;
+  forever begin
+    axi4_read_transfer_char_s struct_read_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+    axi4_master_tx             req_rd_clone_packet;
 
- //   axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
- //   axi4_master_mon_bfm_h.axi4_read_address_sampling(struct_read_packet,struct_cfg);
- //   axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
- // end
+    axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
+    axi4_master_mon_bfm_h.axi4_read_address_sampling(struct_read_packet,struct_cfg);
+    axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+    
+    $cast(req_rd_clone_packet,req_rd.clone());
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address is %p",req_rd.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address clone packet is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
+
+    axi4_master_read_address_analysis_port.write(req_rd);
+  end
 endtask
 
 task axi4_master_monitor_proxy::axi4_read_data();

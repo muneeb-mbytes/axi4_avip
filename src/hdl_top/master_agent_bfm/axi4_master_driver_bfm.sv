@@ -241,6 +241,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     data_write_packet.bresp = bresp;
     data_write_packet.buser = buser;
 
+    `uvm_info(name,$sformatf("CHECKING WRITE RESPONSE :: %p",data_write_packet),UVM_HIGH);
     @(posedge aclk);
     bready <= 1'b0;
 
