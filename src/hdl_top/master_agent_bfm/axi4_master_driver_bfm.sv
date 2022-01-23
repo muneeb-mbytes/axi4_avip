@@ -234,7 +234,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
 
-    while(wlast !== 1'b1) begin
+    while(bvalid !== 1'b1) begin
       @(posedge aclk);
       `uvm_info(name,$sformatf("WAITING FOR WLAST :: %0d",wlast),UVM_HIGH);
     end
