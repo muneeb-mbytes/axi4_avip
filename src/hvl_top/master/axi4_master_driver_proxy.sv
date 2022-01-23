@@ -29,12 +29,12 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //Which port to use depends on which export the sequencer provides for connection.
   uvm_analysis_port #(RSP) axi_read_rsp_port;
 
-  //Variable: axi4_master_fifo_h
-  //Declaring handle for uvm_tlm_analysis_fifo
-  uvm_tlm_analysis_fifo #(axi4_master_tx) axi4_master_fifo_h;
+  //Variable: axi4_master_write_fifo_h
+  //Declaring handle for uvm_tlm_analysis_fifo for write task
+  uvm_tlm_analysis_fifo #(axi4_master_tx) axi4_master_write_fifo_h;
   
-  //Variable: axi4_master_fifo_h
-  //Declaring handle for uvm_tlm_analysis_fifo
+  //Variable: axi4_master_read_fifo_h
+  //Declaring handle for uvm_tlm_analysis_fifo for read task
   uvm_tlm_analysis_fifo #(axi4_master_tx) axi4_master_read_fifo_h;
 
   //Variable: req_wr, req_rd
@@ -78,7 +78,7 @@ function axi4_master_driver_proxy::new(string name = "axi4_master_driver_proxy",
   axi_read_seq_item_port  = new("axi_read_seq_item_port",this);
   axi_write_rsp_port      = new("axi_write_rsp_port",this);
   axi_read_rsp_port       = new("axi_read_rsp_port",this);
-  axi4_master_fifo_h      = new("axi4_master_fifo_h",this);
+  axi4_master_write_fifo_h      = new("axi4_master_write_fifo_h",this);
   axi4_master_read_fifo_h = new("axi4_master_read_fifo_h",this);
 endfunction : new
 
@@ -146,7 +146,7 @@ task axi4_master_driver_proxy::axi4_write_task();
     //Converting transactions into struct data type
 
     // MSHA: put the req_wr into a FIFO/queue (depth must be equal to outstanding transfers variable value)
-    axi4_master_fifo_h.write(req_wr);
+    axi4_master_write_fifo_h.write(req_wr);
 
     // MSHA: Throw the error when we reach the limit
     `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type outside if = %s",req_wr.transfer_type),UVM_HIGH); 
@@ -183,7 +183,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           // local_master_tx = axi4_master_fifo_h.peek();
 
           // // TODO(mshariff): if peek is unsuccessful 
-          // MSHA: axi4_master_fifo_h.peek(local_master_addr_tx);
+          // MSHA: axi4_master_write_fifo_h.peek(local_master_addr_tx);
           // MSHA: `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking local master tx = %s",local_master_addr_tx.sprint()),UVM_HIGH); 
           axi4_master_seq_item_converter::from_write_class(req_wr,struct_write_addr_packet);
           `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking write address struct packet = %p",struct_write_addr_packet),UVM_HIGH); 
@@ -200,12 +200,12 @@ task axi4_master_driver_proxy::axi4_write_task();
           axi4_master_tx             local_master_data_tx;
           axi4_write_transfer_char_s struct_write_data_packet;
 
-          `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wdata= %0d",axi4_master_fifo_h.used()),UVM_HIGH); 
-          if(axi4_master_fifo_h.used() != 1)begin
+          `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wdata= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
+          if(axi4_master_write_fifo_h.used() != 1 && axi4_master_write_fifo_h.used() > 'd0)begin
             axi4_master_drv_bfm_h.axi4_wait_task();
           end
           
-          axi4_master_fifo_h.peek(local_master_data_tx);
+          axi4_master_write_fifo_h.peek(local_master_data_tx);
           axi4_master_seq_item_converter::from_write_class(local_master_data_tx,struct_write_data_packet);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking write data struct packet = %p",struct_write_data_packet),UVM_HIGH); 
           axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_data_packet,struct_cfg);
@@ -221,8 +221,8 @@ task axi4_master_driver_proxy::axi4_write_task();
           axi4_master_tx             local_master_response_tx;
           axi4_write_transfer_char_s struct_write_response_packet;
 
-          `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_fifo_h.used()),UVM_HIGH); 
-          axi4_master_fifo_h.peek(local_master_response_tx);
+          `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
+          axi4_master_write_fifo_h.peek(local_master_response_tx);
           axi4_master_seq_item_converter::from_write_class(local_master_response_tx,struct_write_response_packet);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking write response struct packet = %p",struct_write_response_packet),UVM_HIGH); 
           axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_response_packet,struct_cfg);
@@ -230,9 +230,9 @@ task axi4_master_driver_proxy::axi4_write_task();
 
           // MSHA:`uvm_info(get_type_name(),$sformatf("DEBUG_SAHA_AFTER::Received_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
 
-          `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_fifo_h.used()),UVM_HIGH); 
-          axi4_master_fifo_h.get(req_wr);
-          `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_fifo_h.used()),UVM_HIGH); 
+          `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
+          axi4_master_write_fifo_h.get(req_wr);
+          `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
           `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Out of response task"), UVM_NONE); 
         // decrement the out-standing transfers counter
 
