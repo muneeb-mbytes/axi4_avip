@@ -200,7 +200,7 @@ function void axi4_slave_seq_item_converter::to_write_class(input axi4_write_tra
   //output_conv_h.wstrb = input_conv_h.wstrb;
   //`uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wstrb =  %0h",output_conv_h.wstrb),UVM_HIGH);
 
-  foreach(output_conv_h.wdata[i]) begin
+  foreach(input_conv_h.wdata[i]) begin
     output_conv_h.wdata[i] = input_conv_h.wdata[i];
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wdata =  %0p",output_conv_h.wdata),UVM_HIGH);
   end

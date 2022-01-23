@@ -79,6 +79,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   
   reg [3: 0] i = 0;
   reg [3: 0] j = 0;
+  reg [3: 0] a = 0;
 
   initial begin
     `uvm_info("axi4 slave driver bfm",$sformatf("AXI4 SLAVE DRIVER BFM"),UVM_LOW);
@@ -231,10 +232,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       @(posedge aclk);
     end while(wvalid===0);
 
-  //  while(wvalid === 0) begin
-  //    @(posedge aclk);
-  //  end
-
     `uvm_info("SLAVE_DRIVER_WRITE_DATA_PHASE", $sformatf("outside of wvalid"), UVM_NONE); 
 
    // based on the wait_cycles we can choose to drive the wready
@@ -247,50 +244,34 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
     wready <= 1 ;
     
- //  for(int s = 0;s<(awlen+1);s = s+1)begin
- //    `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",awlen),UVM_HIGH)
- //    for(int n = 0;n<(2**awsize);n++)begin
- //      `uvm_info("SLAVE_DEBUG",$sformatf("length = %0d",s),UVM_HIGH)
- //      `uvm_info("SLAVE_DEBUG",$sformatf("mem_size = %0d",awsize),UVM_HIGH)
- //      `uvm_info("SLAVE_DEBUG",$sformatf("mem_strb[%0d] = %0d",n,wstrb[n]),UVM_HIGH)
- //      if(wstrb[n])begin
- //        `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata = %0b",wdata),UVM_HIGH);
- //        data_write_packet.wdata[n]=wdata[8*n+7 -: 8];
- //        `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0b",n,data_write_packet.wdata[n]),UVM_HIGH);
- //      end
- //    end
- //  end
-
-    for(int a=0;a<$size(mem_awid);a++)begin
-      `uvm_info("SLAVE_DEBUG",$sformatf("mem_awid_size = %0d, mem_awid[%0d] = %0d",$size(mem_awid),a,mem_awid[a]),UVM_HIGH)
-      if(mem_wburst[a]==2'b00||mem_wburst[a])begin
-        `uvm_info("SLAVE_DEBUG",$sformatf("mem_wburst = %0d",mem_wburst[a]),UVM_HIGH)
-        for(int s = 0;s<(mem_wlen[a]+1);s = s+1)begin
-          @(posedge aclk);
-          `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",mem_wlen[a]),UVM_HIGH)
-          for(int n = 0;n<(2**mem_wsize[a]);n++)begin
-            `uvm_info("SLAVE_DEBUG",$sformatf("length = %0d",s),UVM_HIGH)
-            `uvm_info("SLAVE_DEBUG",$sformatf("mem_size = %0d",mem_wsize[a]),UVM_HIGH)
-            `uvm_info("SLAVE_DEBUG",$sformatf("mem_strb[%0d] = %0d",n,wstrb[n]),UVM_HIGH)
-           // if(wstrb[n])begin
-              `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata = %0b",wdata),UVM_HIGH);
-              data_write_packet.wdata[n]=wdata[8*n+7 -: 8];
-              `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0b",n,data_write_packet.wdata[n]),UVM_HIGH);
-           // end
-          end
-          if(s == mem_wlen[a]) begin
-            data_write_packet.wlast = wlast;
-            `uvm_info("slave_wlast",$sformatf("slave_wlast = %0b",wlast),UVM_HIGH);
-            `uvm_info("slave_wlast",$sformatf("sampled_slave_wlast = %0b",data_write_packet.wlast),UVM_HIGH);
-            if(!data_write_packet.wlast)begin
-              @(posedge aclk);
-              wready<=0;
-            end
-          end
+    for(int s = 0;s<(mem_wlen[a]+1);s = s+1)begin
+      @(posedge aclk);
+      `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",mem_wlen[a]),UVM_HIGH)
+   //   for(int n = 0;n<(2**mem_wsize[a]);n++)begin
+   //     `uvm_info("SLAVE_DEBUG",$sformatf("length = %0d",s),UVM_HIGH)
+   //     `uvm_info("SLAVE_DEBUG",$sformatf("mem_size = %0d",mem_wsize[a]),UVM_HIGH)
+   //     `uvm_info("SLAVE_DEBUG",$sformatf("mem_strb[%0d] = %0d",n,wstrb[n]),UVM_HIGH)
+   //     if(wstrb[n])begin
+   //       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata = %0d",wdata),UVM_HIGH);
+   //       data_write_packet.wdata[s][n*8+:8]=wdata[8*n+7 -: 8];
+   //       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0d",n,data_write_packet.wdata[s][n*8+:8]),UVM_HIGH);
+   //       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata = %0d",wdata[8*n+7 -: 8]),UVM_HIGH);
+   //     end
+   //   end
+       data_write_packet.wdata[s]=wdata;
+       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0d",s,data_write_packet.wdata[s]),UVM_HIGH);
+        if(s == mem_wlen[a]) begin
+          data_write_packet.wlast = wlast;
+          `uvm_info("slave_wlast",$sformatf("slave_wlast = %0b",wlast),UVM_HIGH);
+          `uvm_info("slave_wlast",$sformatf("sampled_slave_wlast = %0b",data_write_packet.wlast),UVM_HIGH);
         end
       end
-    end
-
+      if(!data_write_packet.wlast)begin
+        @(posedge aclk);
+        wready<=0;
+      end
+      a++;
+  
   endtask : axi4_write_data_phase
 
   //-------------------------------------------------------
