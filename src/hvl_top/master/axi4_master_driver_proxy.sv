@@ -210,6 +210,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking write data struct packet = %p",struct_write_data_packet),UVM_HIGH); 
           axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_data_packet,struct_cfg);
          
+          axi4_master_write_fifo_h.get(local_master_data_tx);
         end
      
         begin : WRITE_RESPONSE_CHANNEL
