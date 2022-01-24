@@ -131,6 +131,29 @@ endtask
 
 task axi4_slave_monitor_proxy::axi4_slave_write_response();
 
+  forever begin
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_transfer_cfg_s        struct_cfg;
+    axi4_slave_tx             axi4_slave_tx_clone_packet;
+
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: Inside axi4_write_response"), UVM_NONE); 
+    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
+    `uvm_info(get_type_name(), $sformatf("converter class of the slave %p",axi4_slave_agent_cfg_h), UVM_NONE); 
+    axi4_slave_mon_bfm_h.axi4_write_response_sampling(struct_write_packet,struct_cfg);
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: FROM SLAVE MON BFM :: WRITE RESPONSE %p",struct_write_packet), UVM_NONE); 
+    axi4_slave_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+
+    `uvm_info(get_type_name(),$sformatf("Recived pkt from the SLAVE_MON_BFM: \n %s",req_wr.sprint()),UVM_HIGH);
+
+    //clone and publish the clone to the analysis port 
+    $cast(axi4_slave_tx_clone_packet,req_wr.clone());
+    `uvm_info(get_type_name(),$sformatf("Sending pkt via analysis port of write response: \n %s",
+                                  axi4_slave_tx_clone_packet.sprint()),UVM_HIGH);
+    
+    axi4_slave_write_response_analysis_port.write(axi4_slave_tx_clone_packet);
+  
+  end
+
 endtask
 
 task axi4_slave_monitor_proxy::axi4_slave_read_address();

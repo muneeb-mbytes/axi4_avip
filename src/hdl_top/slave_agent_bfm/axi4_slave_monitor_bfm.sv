@@ -137,16 +137,24 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
   endtask
   
   task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
-    @(posedge aclk);
+  @(posedge aclk);
     while(bvalid!==1 || bready!==1)begin
+    `uvm_info("FROM SLAVE MON BFM",$sformatf("values :: bvalid=%d & bready=%d",bvalid,bready),UVM_HIGH)
+    //while(bvalid==1 || bready==1)begin
       @(posedge aclk);
-      `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop of the write response"),UVM_HIGH)
+      `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop of write response sample"),UVM_HIGH)
     end    
-    `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop of the write sampling"),UVM_HIGH)
-    req.bid = bid;
-    req.bresp = bresp;
-    req.buser = buser;
-    `uvm_info("FROM SLAVE MON BFM",$sformatf("WRITE RESPONSE SAMPLING: \n %p ",req),UVM_HIGH) 
+    `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop of write response "),UVM_HIGH)
+   
+      @(posedge aclk);
+      req.bid      = bid;
+      req.bresp    = bresp;
+      
+      
+      //`uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
+    `uvm_info("FROM SLAVE MON BFM WRITE RESPONSE",$sformatf("write response packet: \n %p",req),UVM_HIGH)
+
+
   endtask
     
   task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
@@ -154,9 +162,9 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
     @(posedge aclk);
     while(arvalid!==1 || arready!==1)begin
       @(posedge aclk);
-      `uvm_info("FROM SLAVE MON BFM READ ADDR",$sformatf("Inside while loop of read address"),UVM_HIGH)
+      `uvm_info("FROM SLAVE MON BFM READ ADDR",$sformatf("INSIDE WHILE LOOP OF READ ADDRESS"),UVM_HIGH)
     end    
-    `uvm_info("FROM SLAVE MON BFM READ ADDR",$sformatf("after while loop of read address"),UVM_HIGH)
+    `uvm_info("FROM SLAVE MON BFM READ ADDR",$sformatf("AFTER WHILE LOOP OF READ ADDRESS"),UVM_HIGH)
     
     req.arid     = arid;
     req.araddr   = araddr;
