@@ -392,7 +392,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",arlen),UVM_HIGH);
 
       for(int i1=0; i1<mem_rlen[j1] + 1; i1++) begin
-        @(posedge aclk);
+        //@(posedge aclk);
         `uvm_info("RDATA_DEBUG",$sformatf("rid= %0d",rid),UVM_HIGH);
         `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",mem_rlen[j1]),UVM_HIGH);
         `uvm_info("RDATA_DEBUG",$sformatf("i1_arlen= %0d",i1),UVM_HIGH);
@@ -410,21 +410,33 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         ruser<=data_read_packet.ruser;
         
         rvalid<=1'b1;
-      
-      while(rready==0) begin
-        @(posedge aclk);
-        data_read_packet.wait_count_read_data_channel++;
-      end
+       
+        if((mem_rlen[j1]) == i1)begin
+          rlast  <= 1'b1;
+          @(posedge aclk);
+          rlast <= 1'b0;
+          rvalid <= 1'b0;
+        end
 
-      if(mem_rlen[j1] == i1)begin
-        rlast  <= 1'b1;
+
+         do begin
         @(posedge aclk);
-        rlast <= 1'b0;
-        rvalid <= 1'b0;
-      end
+        // MSHA: data_write_packet.wait_count_write_data_channel++;
+      end while(rready===0);
+        
+   //   while(rready==0) begin
+   //     @(posedge aclk);
+   //     data_read_packet.wait_count_read_data_channel++;
+   //   end
+      
+       
+    end
+
+   //   `uvm_info("SLAVE_RLAST_DEBUG",$sformatf("rlast_i1= %0d",i1),UVM_HIGH);
+   //   `uvm_info("SLAVE_RLAST_DEBUG",$sformatf("mem_rlen_rlast= %0d",mem_rlen[j1]),UVM_HIGH);
     end
     j1++;
-  end
+  //end
   
   endtask : axi4_read_data_phase
 

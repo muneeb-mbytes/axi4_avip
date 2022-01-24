@@ -179,10 +179,10 @@ task axi4_slave_driver_proxy::axi4_write_task();
     `uvm_info("DEBUG_SLAVE_WDATA_PROXY_FIFO", $sformatf("AFTER :: Received FIFO packet \n %s",local_slave_addr_tx.sprint()), UVM_HIGH);
     
      // axi4_slave_seq_item_converter::tx_packet(local_slave_addr_tx,local_slave_data_tx,packet);
-      //  `uvm_info("DEBUG_SLAVE_WDATA_PROXY_FIFO", $sformatf("AFTER :: COMBINED packet \n %s",packet.sprint()), UVM_HIGH);
+     //  `uvm_info("DEBUG_SLAVE_WDATA_PROXY_FIFO", $sformatf("AFTER :: COMBINED packet \n %s",packet.sprint()), UVM_HIGH);
 
       // $cast(local_slave_tx,local_slave_tx.clone());
-       //  `uvm_info("DEBUG_SLAVE_WDATA_PROXY_PACKED", $sformatf("AFTER :: Packed Packet \n %s",local_slave_tx.sprint()), UVM_HIGH);
+      //  `uvm_info("DEBUG_SLAVE_WDATA_PROXY_PACKED", $sformatf("AFTER :: Packed Packet \n %s",local_slave_tx.sprint()), UVM_HIGH);
 
     end
   
@@ -235,7 +235,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
  
 
    //read data task
-      axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
+   axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
 
     axi4_slave_read_fifo_h.get(local_slave_tx);
    // fork
