@@ -323,8 +323,8 @@ package axi4_globals_pkg;
     bit                     awvalid;
     bit	                    awready;
     //Write_data_channel
-    bit [DATA_WIDTH-1:0]wdata[$];
-    bit [(DATA_WIDTH/8)-1:0]wstrb[$];
+    bit [DATA_WIDTH-1:0][2**LENGTH:0]wdata;
+    bit [(DATA_WIDTH/8)-1:0][2**LENGTH:0]wstrb;
     bit                      wlast;
     bit                      wuser;
     //Write Response Channel

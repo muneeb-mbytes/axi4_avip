@@ -143,7 +143,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       //write address_task
       axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
     
-      //Converting transactions into struct data type
+      //Converting struct into transaction data type
      axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
 
     `uvm_info("DEBUG_SLAVE_WRITE_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_addr_tx.sprint()), UVM_NONE);
@@ -170,7 +170,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_drv_bfm_h.axi4_write_data_phase(struct_write_packet,struct_cfg);
       `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: sending struct pkt to bfm \n %p",struct_write_packet), UVM_HIGH);
       
-      //Converting transactions into struct data type
+      //Converting struct into transaction data type
       axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_data_tx);
 
      `uvm_info("DEBUG_SLAVE_WDATA_PROXY_TO_CLASS", $sformatf("AFTER TO CLASS :: Received req packet \n %s", local_slave_data_tx.sprint()), UVM_NONE);

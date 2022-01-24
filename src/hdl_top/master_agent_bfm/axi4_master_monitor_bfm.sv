@@ -71,7 +71,7 @@ interface axi4_master_monitor_bfm(input bit aclk,
   // Importing axi4 Global Package master package
   //-------------------------------------------------------
   import axi4_master_pkg::axi4_master_monitor_proxy;
-
+  reg[3:0] i = 0;
   //--------------------------------------------------------------------------------------------
   // Creating handle for virtual Interface
   //--------------------------------------------------------------------------------------------
@@ -120,27 +120,29 @@ interface axi4_master_monitor_bfm(input bit aclk,
  
   task axi4_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s
     cfg);
- 
     @(posedge aclk);
     while(wvalid!==1 || wready!==1)begin
-      @(posedge aclk);
-      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop write data......"),UVM_HIGH)
-    end    
-    `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop write data ......."),UVM_HIGH)
-    req.wdata.push_back(wdata);
-    req.wstrb.push_back(wstrb);
+    @(posedge aclk);
+   `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop write data......"),UVM_HIGH)
+     end
+   `uvm_info("FROM MASTER MON BFM",$sformatf("Inside after loop write data......"),UVM_HIGH)
+  for(int i=0; i<awlen; i++)begin
+    @(posedge aclk)
+    req.wdata[i]=wdata;
+    req.wstrb[i]=wstrb;
     req.wlast = wlast;
     req.wuser = wuser;
-    `uvm_info("FROM MASTER MON BFM write data",$sformatf("datapacket =%p",req),UVM_HIGH)
-  endtask
+    `uvm_info("FROM MASTER MON BFM write data",$sformatf("write datapacket  =%p",req),UVM_HIGH)
+    end
+  endtask 
   
   task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
   @(posedge aclk);
     while(bvalid!==1 || bready!==1)begin
       @(posedge aclk);
-      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop of write response sample"),UVM_HIGH)
+      `uvm_info("FROM MASTER MON BFM",$sformatf("INSIDE WHILE LOOP OF WRITE RESPONSE"),UVM_HIGH)
     end    
-    `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of write response "),UVM_HIGH)
+    `uvm_info("FROM MASTER MON BFM",$sformatf("AFTER WHILE LOOP OF WRITE RESPONSE"),UVM_HIGH)
    
       @(posedge aclk);
       req.bid      = bid;
@@ -148,7 +150,7 @@ interface axi4_master_monitor_bfm(input bit aclk,
       
       
       //`uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
-    `uvm_info("FROM MASTER MON BFM WRITE RESPONSE",$sformatf("write response packet: \n %p",req),UVM_HIGH)
+    `uvm_info("FROM MASTER MON BFM::WRITE RESPONSE",$sformatf("WRITE RESPONSE PACKET: \n %p",req),UVM_HIGH)
 
 
   endtask
@@ -177,7 +179,6 @@ interface axi4_master_monitor_bfm(input bit aclk,
   endtask
   
   task axi4_read_data_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
-    int i;
    @(posedge aclk);
      while(rvalid!==1 || rready!==1)begin
        @(posedge aclk);
@@ -185,18 +186,19 @@ interface axi4_master_monitor_bfm(input bit aclk,
      end    
      `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of read data sample"),UVM_HIGH)
     
-     //for(int i=0; i<arlen + 1; i++) begin
-     do begin
+     while(rlast!=1) begin
        @(posedge aclk);
        req.rid      = rid;
-       req.rdata[i] = rdata[i];
+        `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:MASTER MON RID=%0d",req.rid),UVM_HIGH)
+
+       req.rdata[i] = rdata;
        req.ruser    = ruser;
        req.rresp    = rresp;
        i++;
-     end while(rlast!=1);
-     
+       `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:MASTER MON RDATA[%0d]=%0h",i,rdata),UVM_HIGH)
+       `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:MASTER MON REQ.RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
+     end 
      req.rlast  <= rlast;
-     `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
      `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("Read data packet: %p",req),UVM_HIGH)
   endtask
   
