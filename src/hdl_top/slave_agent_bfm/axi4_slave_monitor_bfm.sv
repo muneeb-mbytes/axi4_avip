@@ -193,7 +193,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
        req.rdata[i] = rdata;
        req.ruser    = ruser;
        req.rresp    = rresp;
-       //i++;
+       i++;
        `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,rdata),UVM_HIGH)
        `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
      end //while(rlast!=1);
