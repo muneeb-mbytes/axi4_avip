@@ -120,19 +120,21 @@ interface axi4_master_monitor_bfm(input bit aclk,
  
   task axi4_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s
     cfg);
- 
     @(posedge aclk);
     while(wvalid!==1 || wready!==1)begin
-      @(posedge aclk);
-      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop write data......"),UVM_HIGH)
-    end    
-    `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop write data ......."),UVM_HIGH)
-    req.wdata.push_back(wdata);
-    req.wstrb.push_back(wstrb);
+    @(posedge aclk);
+   `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop write data......"),UVM_HIGH)
+     end
+   `uvm_info("FROM MASTER MON BFM",$sformatf("Inside after loop write data......"),UVM_HIGH)
+  for(int i=0; i<awlen; i++)begin
+    @(posedge aclk)
+    req.wdata[i]=wdata;
+    req.wstrb[i]=wstrb;
     req.wlast = wlast;
     req.wuser = wuser;
-    `uvm_info("FROM MASTER MON BFM write data",$sformatf("datapacket =%p",req),UVM_HIGH)
-  endtask
+    `uvm_info("FROM MASTER MON BFM write data",$sformatf("write datapacket  =%p",req),UVM_HIGH)
+    end
+  endtask 
   
   task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
   @(posedge aclk);
