@@ -183,17 +183,17 @@ task axi4_master_monitor_proxy::axi4_write_response();
     axi4_transfer_cfg_s        struct_cfg;
     axi4_master_tx             axi4_master_tx_clone_packet;
 
-    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside axi4_write_response"), UVM_NONE); 
+    `uvm_info(get_type_name(), $sformatf("INSIDE AXI4_WRITE_RESPONSE"), UVM_NONE); 
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_response_sampling(struct_write_packet,struct_cfg);
-    `uvm_info(get_type_name(), $sformatf("DEBUG :: FROM MASTER MON BFM :: WRITE RESPONSE %p",struct_write_packet), UVM_NONE); 
+    `uvm_info(get_type_name(), $sformatf("WRITE RESPONSE::AFTER SAMPLING FROM MASTER MON BFM %p",struct_write_packet), UVM_NONE); 
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
 
-    `uvm_info(get_type_name(),$sformatf("Recived pkt from the MASTER_MON_BFM: \n %s",req_wr.sprint()),UVM_HIGH);
+    `uvm_info(get_type_name(),$sformatf("RECEIVED PKT FROM MASTER_MON_BFM::WRITE RESPONSE \n %s",req_wr.sprint()),UVM_HIGH);
 
     //clone and publish the clone to the analysis port 
     $cast(axi4_master_tx_clone_packet,req_wr.clone());
-    `uvm_info(get_type_name(),$sformatf("Sending pkt via analysis port of write response: \n %s",
+    `uvm_info(get_type_name(),$sformatf("WRITE RESPONSE PKT PUT ON ANALYSIS PORT: \n %s",
                                   axi4_master_tx_clone_packet.sprint()),UVM_HIGH);
     
     axi4_master_write_response_analysis_port.write(axi4_master_tx_clone_packet);

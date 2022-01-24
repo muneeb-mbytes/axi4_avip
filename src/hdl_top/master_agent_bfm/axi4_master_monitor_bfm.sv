@@ -138,9 +138,9 @@ interface axi4_master_monitor_bfm(input bit aclk,
   @(posedge aclk);
     while(bvalid!==1 || bready!==1)begin
       @(posedge aclk);
-      `uvm_info("FROM MASTER MON BFM",$sformatf("Inside while loop of write response sample"),UVM_HIGH)
+      `uvm_info("FROM MASTER MON BFM",$sformatf("INSIDE WHILE LOOP OF WRITE RESPONSE"),UVM_HIGH)
     end    
-    `uvm_info("FROM MASTER MON BFM",$sformatf("after while loop of write response "),UVM_HIGH)
+    `uvm_info("FROM MASTER MON BFM",$sformatf("AFTER WHILE LOOP OF WRITE RESPONSE"),UVM_HIGH)
    
       @(posedge aclk);
       req.bid      = bid;
@@ -148,7 +148,7 @@ interface axi4_master_monitor_bfm(input bit aclk,
       
       
       //`uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
-    `uvm_info("FROM MASTER MON BFM WRITE RESPONSE",$sformatf("write response packet: \n %p",req),UVM_HIGH)
+    `uvm_info("FROM MASTER MON BFM::WRITE RESPONSE",$sformatf("WRITE RESPONSE PACKET: \n %p",req),UVM_HIGH)
 
 
   endtask
