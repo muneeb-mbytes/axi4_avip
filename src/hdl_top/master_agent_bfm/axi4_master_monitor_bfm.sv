@@ -194,7 +194,7 @@ interface axi4_master_monitor_bfm(input bit aclk,
        req.rdata[i] = rdata;
        req.ruser    = ruser;
        req.rresp    = rresp;
-     //  i++;
+       //i++;
        `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:MASTER MON REQ.RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
      end 
      req.rlast  <= rlast;
