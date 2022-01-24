@@ -200,15 +200,14 @@ interface axi4_master_monitor_bfm(input bit aclk,
     
      while(rvalid!==1 || rready!==1 || rlast!==1) begin
        @(posedge aclk);
-        `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:MASTER MON RID=%0d",req.rid),UVM_HIGH)
-
        req.rid      = rid;
        req.rdata[i] = rdata;
        req.ruser    = ruser;
        req.rresp    = rresp;
-       i++;
+       `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:MASTER MON RID=%0d",req.rid),UVM_HIGH)
        `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:MASTER MON RDATA[%0d]=%0h",i,rdata),UVM_HIGH)
        `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:MASTER MON REQ.RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
+       i++;
      end 
 
      i = 0;
