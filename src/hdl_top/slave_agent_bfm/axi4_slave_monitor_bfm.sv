@@ -72,6 +72,8 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
   //-------------------------------------------------------
   import axi4_slave_pkg::axi4_slave_monitor_proxy;
 
+  reg[3:0] i = 0;
+
   //--------------------------------------------------------------------------------------------
   // Creating handle for virtual Interface
   //--------------------------------------------------------------------------------------------
@@ -182,19 +184,21 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
      end    
      `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop of read data sample"),UVM_HIGH)
     
-     for(int i=0; i<arlen + 1; i++) begin
+     //for(int i=0; i<arlen + 1; i++) begin
+     //do begin
+   while(rlast!=1) begin
        @(posedge aclk);
        req.rid      = rid;
-       req.rdata[i] = rdata[i];
+       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RID=%0b",req.rid),UVM_HIGH)
+       req.rdata[i] = rdata;
        req.ruser    = ruser;
        req.rresp    = rresp;
-       
-       if(req.arlen == i)begin  
-         req.rlast  <= rlast;
-       end
-       
-       //`uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
-     end
+       //i++;
+       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,rdata),UVM_HIGH)
+       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
+     end //while(rlast!=1);
+     
+     req.rlast  <= rlast;
      `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("Read data packet: %p",req),UVM_HIGH)
 
   endtask
