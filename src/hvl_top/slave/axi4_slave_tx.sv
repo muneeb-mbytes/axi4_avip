@@ -369,45 +369,48 @@ endfunction : do_compare
 //--------------------------------------------------------------------------------------------
 function void axi4_slave_tx::do_print(uvm_printer printer);
   //super.do_print(printer);
+  if(tx_type == WRITE)begin
+    //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
+    printer.print_string("awid",awid.name());
+    printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);
+    printer.print_field("awlen",awlen,$bits(awlen),UVM_DEC);
+    printer.print_string("awsize",awsize.name());
+    printer.print_string("awburst",awburst.name());
+    printer.print_string("awlock",awlock.name());
+    printer.print_string("awcache",awcache.name());
+    printer.print_string("awprot",awprot.name());
+    printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
+    //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
+    foreach(wdata[i])begin
+      printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
+    end
+    foreach(wstrb[i])begin
+      printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_BIN);
+    end
+    //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
+    printer.print_string("bid",bid.name());
+    printer.print_string("bresp",bresp.name());
+  end
+  else if(tx_type == READ) begin
+    //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);
+    printer.print_string("arid",arid.name());
+    printer.print_field("araddr",araddr,$bits(araddr),UVM_HEX);
+    printer.print_field("arlen",arlen,$bits(arlen),UVM_DEC);
+    printer.print_string("arsize",arsize.name());
+    printer.print_string("arburst",arburst.name());
+    printer.print_string("arlock",arlock.name());
+    printer.print_string("arcache",arcache.name());
+    printer.print_string("arprot",arprot.name());
+    printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
+    //`uvm_info("------------------------------------------READ_DATA_CHANNEL","---------------------------------------",UVM_LOW);
+    foreach(rdata[i])begin
+      printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
+    end
+    printer.print_string("rresp",rresp.name());
 
-  //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
-  printer.print_string("awid",awid.name());
-  printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);
-  printer.print_field("awlen",awlen,$bits(awlen),UVM_DEC);
-  printer.print_string("awsize",awsize.name());
-  printer.print_string("awburst",awburst.name());
-  printer.print_string("awlock",awlock.name());
-  printer.print_string("awcache",awcache.name());
-  printer.print_string("awprot",awprot.name());
-  printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
-  //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
-  foreach(wdata[i])begin
-    printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
+    printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_HEX);
+    printer.print_string("TRNASFER_TYPE",transfer_type.name());
   end
-  foreach(wstrb[i])begin
-    printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_BIN);
-  end
-  //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
-  printer.print_string("bid",bid.name());
-  printer.print_string("bresp",bresp.name());
-  //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);
-  printer.print_string("arid",arid.name());
-  printer.print_field("araddr",araddr,$bits(araddr),UVM_HEX);
-  printer.print_field("arlen",arlen,$bits(arlen),UVM_DEC);
-  printer.print_string("arsize",arsize.name());
-  printer.print_string("arburst",arburst.name());
-  printer.print_string("arlock",arlock.name());
-  printer.print_string("arcache",arcache.name());
-  printer.print_string("arprot",arprot.name());
-  printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
-  //`uvm_info("------------------------------------------READ_DATA_CHANNEL","---------------------------------------",UVM_LOW);
-  foreach(rdata[i])begin
-    printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
-  end
-  printer.print_string("rresp",rresp.name());
-
-  printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_HEX);
-  printer.print_string("TRNASFER_TYPE",transfer_type.name());
 endfunction : do_print
 
 `endif
