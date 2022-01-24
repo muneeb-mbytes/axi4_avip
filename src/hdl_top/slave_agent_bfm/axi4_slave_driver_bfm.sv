@@ -270,7 +270,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       end
       if(!data_write_packet.wlast)begin
         @(posedge aclk);
-        wready<=0;
+        //wready<=0;
       end
       a++;
   
