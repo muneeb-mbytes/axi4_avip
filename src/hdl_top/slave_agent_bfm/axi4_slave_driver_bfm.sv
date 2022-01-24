@@ -260,6 +260,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
    //   end
        data_write_packet.wdata[s]=wdata;
        `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0d",s,data_write_packet.wdata[s]),UVM_HIGH);
+       data_write_packet.wstrb[s]=wstrb;
+       `uvm_info("slave_wstrb",$sformatf("sampled_slave_wstrb[%0d] = %0d",s,data_write_packet.wstrb[s]),UVM_HIGH);
         if(s == mem_wlen[a]) begin
           data_write_packet.wlast = wlast;
           `uvm_info("slave_wlast",$sformatf("slave_wlast = %0b",wlast),UVM_HIGH);
@@ -319,14 +321,17 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     // Can make arready to zero 
     arready <= 0;
 
-    while(arvalid === 0) begin
+    do begin
       @(posedge aclk);
-    end
+    end while(arvalid===0);
+  //  while(arvalid === 0) begin
+  //    @(posedge aclk);
+  //  end
 
     `uvm_info("SLAVE_DRIVER_RADDR_PHASE", $sformatf("outside of arvalid"), UVM_NONE); 
      
     // Sample the values
-    if(arvalid)begin
+    //if(arvalid)begin
       mem_arid 	[j]	  = arid  	;	
       `uvm_info("mem_arid",$sformatf("mem_arid[%0d]=%0d",j,mem_arid[j]),UVM_HIGH)
       `uvm_info("mem_arid",$sformatf("arid=%0d",arid),UVM_HIGH)
@@ -347,7 +352,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       data_read_packet.arcache = mem_rcache[j]   ;
       data_read_packet.arprot  = mem_rprot[j]    ;
 	   	j = j+1                   ;
-    end
+  //  end
     `uvm_info(name,$sformatf("struct_pkt_rd_addr_phase = \n %0p",data_read_packet),UVM_HIGH)
 
     // based on the wait_cycles we can choose to drive the awready

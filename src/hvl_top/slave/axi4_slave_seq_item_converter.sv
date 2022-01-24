@@ -222,42 +222,42 @@ function void axi4_slave_seq_item_converter::to_read_class( input axi4_read_tran
 
   output_conv_h = new();
 
-  $cast(input_conv_h.arid,output_conv_h.arid);
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arid =  %b",output_conv_h.arid),UVM_HIGH);
+  $cast(output_conv_h.arid,input_conv_h.arid);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arid =  %b",input_conv_h.arid),UVM_HIGH);
 
-  $cast(input_conv_h.arlen,output_conv_h.arlen);
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arlen =  %b",output_conv_h.arlen),UVM_HIGH);
+  $cast(output_conv_h.arlen,input_conv_h.arlen);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arlen =  %b",input_conv_h.arlen),UVM_HIGH);
 
-  $cast(input_conv_h.arsize,output_conv_h.arsize);
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arsize =  %b",output_conv_h.arsize),UVM_HIGH);
+  $cast(output_conv_h.arsize,input_conv_h.arsize);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arsize =  %b",input_conv_h.arsize),UVM_HIGH);
 
-  $cast(input_conv_h.arburst,output_conv_h.arburst);
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arburst =  %b",output_conv_h.arburst),UVM_HIGH);
+  $cast(output_conv_h.arburst,input_conv_h.arburst);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arburst =  %b",input_conv_h.arburst),UVM_HIGH);
 
-  $cast(input_conv_h.arlock,output_conv_h.arlock);
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arlock =  %b",output_conv_h.arlock),UVM_HIGH);
+  $cast(output_conv_h.arlock,input_conv_h.arlock);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arlock =  %b",input_conv_h.arlock),UVM_HIGH);
 
-  $cast(input_conv_h.arcache,output_conv_h.arcache);
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arcache =  %b",output_conv_h.arcache),UVM_HIGH);
+  $cast(output_conv_h.arcache,input_conv_h.arcache);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arcache =  %b",input_conv_h.arcache),UVM_HIGH);
 
-  $cast(input_conv_h.arprot,output_conv_h.arprot);
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arprot =  %b",output_conv_h.arprot),UVM_HIGH);
+  $cast(output_conv_h.arprot,input_conv_h.arprot);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arprot =  %b",input_conv_h.arprot),UVM_HIGH);
 
-  $cast(input_conv_h.rresp,output_conv_h.rresp);
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize rresp =  %b",output_conv_h.rresp),UVM_HIGH);
+  $cast(output_conv_h.rresp,input_conv_h.rresp);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize rresp =  %b",input_conv_h.rresp),UVM_HIGH);
   
-  input_conv_h.araddr = output_conv_h.araddr;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv_h.araddr),UVM_HIGH);
+  output_conv_h.araddr = input_conv_h.araddr;
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",input_conv_h.araddr),UVM_HIGH);
 
-  input_conv_h.arqos = output_conv_h.arqos;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
+  output_conv_h.arqos = input_conv_h.arqos;
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",input_conv_h.arqos),UVM_HIGH);
 
-  foreach(output_conv_h.rdata[i]) begin
-    input_conv_h.rdata[i] = output_conv_h.rdata[i];
-    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata =  %0p",output_conv_h.rdata),UVM_HIGH);
+  foreach(input_conv_h.rdata[i]) begin
+    output_conv_h.rdata[i] = input_conv_h.rdata[i];
+    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig rdata =  %0p",input_conv_h.rdata),UVM_HIGH);
   end
 
-  input_conv_h.araddr = output_conv_h.araddr;
+  output_conv_h.araddr = input_conv_h.araddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig araddr =  %0h",output_conv_h.araddr),UVM_HIGH);
 
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);

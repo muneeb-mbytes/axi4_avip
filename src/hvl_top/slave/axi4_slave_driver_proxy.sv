@@ -37,6 +37,7 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   //Variable: axi4_master_fifo_h
   //Declaring handle for uvm_tlm_analysis_fifo
   uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_fifo_h;
+  uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_read_fifo_h;
   
 
   //-------------------------------------------------------
@@ -68,6 +69,7 @@ function axi4_slave_driver_proxy::new(string name = "axi4_slave_driver_proxy",
   axi_write_rsp_port         = new("axi_write_rsp_port", this);
   axi_read_rsp_port          = new("axi_read_rsp_port", this);
   axi4_slave_write_fifo_h    = new("axi4_slave_write_fifo_h",this);
+  axi4_slave_read_fifo_h     = new("axi4_slave_read_fifo_h",this);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
@@ -117,17 +119,20 @@ endtask : run_phase
 //--------------------------------------------------------------------------------------------
 task axi4_slave_driver_proxy::axi4_write_task();
 
+  //process addr_tx;
   forever begin
       
+    axi4_slave_tx              local_slave_tx;
     axi4_write_transfer_char_s struct_write_packet;
     axi4_transfer_cfg_s        struct_cfg;
 
     axi_write_seq_item_port.get_next_item(req_wr);
     //`uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_req_wr = \n%s",req_wr.sprint()), UVM_NONE); 
-    
+    //process addr_tx;
     fork
     
     begin
+    //  addr_tx=process::self();
       axi4_slave_tx              local_slave_tx;
       axi4_write_transfer_char_s struct_write_packet;
       axi4_transfer_cfg_s        struct_cfg;
@@ -186,7 +191,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
     
     // write response_task
     axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg);
-
+    axi4_slave_write_fifo_h.get(local_slave_tx);
     #10;
 
 
@@ -201,31 +206,59 @@ endtask : axi4_write_task
 task axi4_slave_driver_proxy::axi4_read_task();
 
   forever begin
+    
+    axi4_slave_tx              local_slave_tx;
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
 
     axi_read_seq_item_port.get_next_item(req_rd);
     
-    fork
-      
-      //Converting transactions into struct data type
-      axi4_slave_seq_item_converter::from_read_class(req_rd,struct_read_packet);
-      `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_HIGH);
-      
-      //Converting configurations into struct config type
-      axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
-      `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg = \n %0p",struct_cfg), UVM_HIGH); 
-      
-      //read address task
-      axi4_slave_drv_bfm_h.axi4_read_address_phase(struct_read_packet,struct_cfg);
-      
-      //read response task
-      axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
+
+    //Converting transactions into struct data type
+    axi4_slave_seq_item_converter::from_read_class(req_rd,struct_read_packet);
+   `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_HIGH); 
+ 
+   //Converting configurations into struct config type
+   axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+   `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
     
-    join_any
-      
-    //Converting struct into transactions
-    axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+    //write address_task
+    axi4_slave_drv_bfm_h.axi4_read_address_phase(struct_read_packet,struct_cfg);
+  
+    //Converting transactions into struct data type
+   axi4_slave_seq_item_converter::to_read_class(struct_read_packet,local_slave_tx);
+ 
+  `uvm_info("DEBUG_SLAVE_READ_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_tx.sprint()), UVM_NONE);
+ 
+   axi4_slave_read_fifo_h.put(local_slave_tx);
+ 
+  `uvm_info("DEBUG_SLAVE_READ_ADDR_FIFO", $sformatf("AFTER :: Received req packet \n %s",local_slave_tx.sprint()), UVM_NONE);
+ 
+
+   //read response task
+      axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
+
+    axi4_slave_read_fifo_h.get(local_slave_tx);
+   // fork
+   //   
+   //   //Converting transactions into struct data type
+   //   axi4_slave_seq_item_converter::from_read_class(req_rd,struct_read_packet);
+   //   `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_HIGH);
+   //   
+   //   //Converting configurations into struct config type
+   //   axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+   //   `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg = \n %0p",struct_cfg), UVM_HIGH); 
+   //   
+   //   //read address task
+   //   axi4_slave_drv_bfm_h.axi4_read_address_phase(struct_read_packet,struct_cfg);
+   //   
+   //   //read response task
+   //   axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
+   // 
+   // join_any
+   //   
+   // //Converting struct into transactions
+   // axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
     //`uvm_info("DEBUG_MSHA", $sformatf("AFTER :: Received req packet \n %s", req_rd.sprint()), UVM_NONE);
   
     #10;
