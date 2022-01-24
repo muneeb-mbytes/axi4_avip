@@ -17,6 +17,7 @@ class axi4_slave_seq_item_converter extends uvm_object;
   extern static function void from_read_class(input axi4_slave_tx input_conv_h, output axi4_read_transfer_char_s output_conv);
   extern static function void to_write_class(input axi4_write_transfer_char_s input_conv_h, output axi4_slave_tx output_conv_h);
   extern static function void to_read_class(input axi4_read_transfer_char_s input_conv_h, output axi4_slave_tx output_conv_h);
+  extern static function void tx_packet(input axi4_slave_tx input_addr_h, input axi4_slave_tx input_data_h,output axi4_slave_tx tx_h);
   extern function void do_print(uvm_printer printer);
 endclass : axi4_slave_seq_item_converter
 //------------------------------------------------------------------------------------------
@@ -262,6 +263,16 @@ function void axi4_slave_seq_item_converter::to_read_class( input axi4_read_tran
 
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
 endfunction : to_read_class
+
+function  void axi4_slave_seq_item_converter::tx_packet(input axi4_slave_tx input_addr_h,input axi4_slave_tx input_data_h,output axi4_slave_tx tx_h);
+  tx_h.awaddr=input_addr_h.awaddr;
+  //$cast(tx.awaddr,addr.awaddr;
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("awaddr=%s",tx_h.awaddr),UVM_HIGH);
+  foreach(tx_h.wdata[i]) begin
+    tx_h.wdata[i] = input_data_h.wdata[i];
+    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writing wdata =  %0p",tx_h.wdata[i]),UVM_HIGH);
+  end
+endfunction : tx_packet
 
 //--------------------------------------------------------------------------------------------
 // Function: do_print method

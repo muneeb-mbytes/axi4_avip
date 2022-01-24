@@ -359,7 +359,7 @@ package axi4_globals_pkg;
     bit        arlock;
     //Read Data Channel
     bit [15:0] rid;
-    bit [DATA_WIDTH:0]rdata[$];
+    bit [DATA_WIDTH-1:0]rdata[$];
     bit rvalid;
     bit rlast;
     bit ruser;

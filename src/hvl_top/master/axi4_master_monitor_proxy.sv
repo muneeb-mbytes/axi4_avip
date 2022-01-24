@@ -166,7 +166,8 @@ task axi4_master_monitor_proxy::axi4_write_data();
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
-  
+   `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling is %p",req_wr.sprint()),UVM_HIGH)
+
     $cast(req_wr_clone_packet,req_wr.clone());
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling is %p",req_wr.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data_sampling clone packet is %p",req_wr_clone_packet.sprint()),UVM_HIGH)
@@ -231,6 +232,7 @@ task axi4_master_monitor_proxy::axi4_read_data();
     axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
     `uvm_info(get_type_name(), $sformatf("DEBUG :: From Master MON BFM :: Read data: %p ",struct_read_packet), UVM_NONE);
     axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
+`uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling is %p",req_rd.sprint()),UVM_HIGH)
 
     $cast(req_rd_clone_packet,req_rd.clone());
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling is %p",req_rd.sprint()),UVM_HIGH)
