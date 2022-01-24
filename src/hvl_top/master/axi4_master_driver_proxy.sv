@@ -173,11 +173,11 @@ task axi4_master_driver_proxy::axi4_write_task();
         begin : WRITE_ADDRESS_CHANNEL 
 
           //Added the waddr_process to keep track of this write address channel thread
-          //waddr_process = process :: self();
 
           axi4_master_tx             local_master_addr_tx;
           axi4_write_transfer_char_s struct_write_addr_packet;
 
+          waddr_process = process::self();
 
           //`uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type inside fork = %s",req_wr.transfer_type),UVM_HIGH); 
           // local_master_tx = axi4_master_fifo_h.peek();
@@ -240,12 +240,14 @@ task axi4_master_driver_proxy::axi4_write_task();
         end
         //local_master_tx = axi4_master_fifo_h.get();
 
+      //join_none
       join_any
 
       // fine-grain control
       //`uvm_info(get_type_name(), $sformatf("DEBUG_NA :: Out of fork_join : waddr.status()=%s ",waddr_process.status()), UVM_NONE); 
-      //waddr_process.await();
-      //`uvm_info(get_type_name(), $sformatf("DEBUG_NA :: Out of fork_join : After await waddr.status()=%s ",waddr_process.status()), UVM_NONE); 
+      `uvm_info(get_type_name(), $sformatf("DEBUG_NA :: Out of fork_join : Before await waddr.status()=%s ",waddr_process.status()), UVM_NONE); 
+      waddr_process.await();
+      `uvm_info(get_type_name(), $sformatf("DEBUG_NA :: Out of fork_join : After await waddr.status()=%s ",waddr_process.status()), UVM_NONE); 
     end
 
 

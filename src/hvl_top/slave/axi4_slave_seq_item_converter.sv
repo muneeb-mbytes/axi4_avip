@@ -265,6 +265,9 @@ function void axi4_slave_seq_item_converter::to_read_class( input axi4_read_tran
 endfunction : to_read_class
 
 function  void axi4_slave_seq_item_converter::tx_packet(input axi4_slave_tx input_addr_h,input axi4_slave_tx input_data_h,output axi4_slave_tx tx_h);
+
+  tx_h = new();
+
   tx_h.awaddr=input_addr_h.awaddr;
   //$cast(tx.awaddr,addr.awaddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("awaddr=%s",tx_h.awaddr),UVM_HIGH);

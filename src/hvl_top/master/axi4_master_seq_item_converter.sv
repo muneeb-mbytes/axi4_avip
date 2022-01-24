@@ -210,8 +210,8 @@ function void axi4_master_seq_item_converter::to_write_class( input axi4_write_t
   $cast(output_conv_h.bresp,input_conv_h.bresp);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize bresp =  %b",output_conv_h.bresp),UVM_HIGH);
 
-  $cast(output_conv_h.tx_type,input_conv_h.tx_type); 
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize tx_type = %b",output_conv_h.tx_type),UVM_HIGH);
+  //$cast(output_conv_h.tx_type,input_conv_h.tx_type); 
+  //`uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize tx_type = %b",output_conv_h.tx_type),UVM_HIGH);
 
   output_conv_h.awaddr = input_conv_h.awaddr;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig awaddr =  %0h",output_conv_h.awaddr),UVM_HIGH);
