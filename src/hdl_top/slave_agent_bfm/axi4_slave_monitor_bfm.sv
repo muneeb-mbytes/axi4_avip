@@ -124,17 +124,22 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
 
   task axi4_slave_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
-    @(posedge aclk);
-    while(wvalid!==1 || wready!==1)begin
-      @(posedge aclk);
-      `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
-    end    
-    `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop ......."),UVM_HIGH)
-   req.wdata.push_back(wdata);
-   req.wstrb.push_back(wstrb);
+  @(posedge aclk);
+   while(wvalid!==1 || wready!==1)begin
+   @(posedge aclk);
+  `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
+  end    
+ `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop ......."),UVM_HIGH)
+  for(int i=0; i<awlen ; i++)begin
+  @(posedge aclk)
+   req.wdata[i]=wdata;
+   req.wstrb[i]=wstrb;
    req.wlast = wlast;
    req.wuser = wuser;
-  endtask
+
+   `uvm_info("FROM SLAVE MON BFM WRITE DATA",$sformatf("write data packet: %p",req),UVM_HIGH)
+  end
+ endtask
   
   task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
     @(posedge aclk);
