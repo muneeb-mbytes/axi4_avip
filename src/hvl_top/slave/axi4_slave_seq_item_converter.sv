@@ -17,7 +17,8 @@ class axi4_slave_seq_item_converter extends uvm_object;
   extern static function void from_read_class(input axi4_slave_tx input_conv_h, output axi4_read_transfer_char_s output_conv);
   extern static function void to_write_class(input axi4_write_transfer_char_s input_conv_h, output axi4_slave_tx output_conv_h);
   extern static function void to_read_class(input axi4_read_transfer_char_s input_conv_h, output axi4_slave_tx output_conv_h);
-  extern static function void tx_packet(input axi4_slave_tx input_addr_h, input axi4_slave_tx input_data_h,output axi4_slave_tx tx_h);
+  extern static function void tx_packet(input axi4_slave_tx input_addr_h, input axi4_slave_tx input_data_h,input axi4_slave_tx input_resp_h,output axi4_slave_tx packet_h);
+
   extern function void do_print(uvm_printer printer);
 endclass : axi4_slave_seq_item_converter
 //------------------------------------------------------------------------------------------
@@ -164,7 +165,7 @@ function void axi4_slave_seq_item_converter::to_write_class(input axi4_write_tra
 
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
   
- // output_conv_h.tx_type = WRITE; 
+  output_conv_h.tx_type = WRITE; 
  
   $cast(output_conv_h.awid,input_conv_h.awid); 
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize awid =  %b",output_conv_h.awid),UVM_HIGH);
@@ -205,17 +206,18 @@ function void axi4_slave_seq_item_converter::to_write_class(input axi4_write_tra
   //output_conv_h.wstrb = input_conv_h.wstrb;
   //`uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wstrb =  %0h",output_conv_h.wstrb),UVM_HIGH);
   
-  foreach(input_conv_h.wdata[i]) begin
-    if(input_conv_h.wdata[i] != 0)begin
+    for(int i=0;i<input_conv_h.awlen+1;i++) begin
+     if(input_conv_h.wdata[i] != 0)begin
       output_conv_h.wdata[i] = input_conv_h.wdata[i];
-      `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wdata[%0d] =  %0h",i,output_conv_h.wdata[i]),UVM_HIGH);
+      `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wdata to class [%0d] =  %0h",i,output_conv_h.wdata[i]),UVM_HIGH);
     end
   end
 
-  foreach(input_conv_h.wstrb[i]) begin
+  //foreach(input_conv_h.wstrb[i]) begin
+    for(int i=0;i<input_conv_h.awlen+1;i++) begin
     if(input_conv_h.wstrb[i] != 0)begin
       output_conv_h.wstrb[i] = input_conv_h.wstrb[i];
-      `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig wstrb = %0d",output_conv_h.wstrb[i]),UVM_HIGH);
+      `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writnig wstrb to class = %0d",output_conv_h.wstrb[i]),UVM_HIGH);
     end
   end
 endfunction : to_write_class
@@ -230,7 +232,7 @@ endfunction : to_write_class
 function void axi4_slave_seq_item_converter::to_read_class( input axi4_read_transfer_char_s input_conv_h, output axi4_slave_tx output_conv_h);
 
   output_conv_h = new();
-
+  //output_cov_h.tx_type=READ;
   $cast(output_conv_h.arid,input_conv_h.arid);
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arid =  %b",output_conv_h.arid),UVM_HIGH);
 
@@ -261,7 +263,8 @@ function void axi4_slave_seq_item_converter::to_read_class( input axi4_read_tran
   output_conv_h.arqos = input_conv_h.arqos;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after reading arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
 
-  foreach(input_conv_h.rdata[i]) begin
+  //foreach(input_conv_h.rdata[i]) begin
+    for(int i=0;i<input_conv_h.arlen+1;i++) begin
     if(input_conv_h.rdata[i] != 0)begin
       output_conv_h.rdata[i] = input_conv_h.rdata[i];
       `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after reading rdata[%0d] =  %0h",i,output_conv_h.rdata[i]),UVM_HIGH);
@@ -274,17 +277,37 @@ function void axi4_slave_seq_item_converter::to_read_class( input axi4_read_tran
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
 endfunction : to_read_class
 
-function  void axi4_slave_seq_item_converter::tx_packet(input axi4_slave_tx input_addr_h,input axi4_slave_tx input_data_h,output axi4_slave_tx tx_h);
+function  void axi4_slave_seq_item_converter::tx_packet(input axi4_slave_tx input_addr_h,input axi4_slave_tx input_data_h,input axi4_slave_tx input_resp_h,output axi4_slave_tx packet_h);
 
-  tx_h = new();
-
-  tx_h.awaddr=input_addr_h.awaddr;
+  packet_h = new();
+  packet_h.tx_type=WRITE;
+  packet_h.awaddr=input_addr_h.awaddr;
+  packet_h.awid=input_addr_h.awid;
+  packet_h.awlen=input_addr_h.awlen;
+  packet_h.awsize=input_addr_h.awsize;
+  packet_h.awburst=input_addr_h.awburst;
+  packet_h.awqos=input_addr_h.awqos;
+  packet_h.awprot=input_addr_h.awprot;
+  packet_h.awlock=input_addr_h.awlock;
+  packet_h.awcache=input_addr_h.awcache;
   //$cast(tx.awaddr,addr.awaddr;
-  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("awaddr=%s",tx_h.awaddr),UVM_HIGH);
-  foreach(tx_h.wdata[i]) begin
-    tx_h.wdata[i] = input_data_h.wdata[i];
-    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after writing wdata =  %0h",tx_h.wdata[i]),UVM_HIGH);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined addr packet=%s",packet_h.sprint),UVM_HIGH);
+//  foreach(input_data_h.wdata[i]) begin
+    for(int i=0;i<input_data_h.awlen+1;i++) begin
+    if(input_data_h.wdata[i] != 0)begin
+    packet_h.wdata[i]= input_data_h.wdata[i];
+    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined data packet after writing wdata= %0p",packet_h.wdata[i]),UVM_HIGH);
   end
+end
+  //foreach(input_data_h.wstrb[i]) begin
+    for(int i=0;i<input_data_h.awlen+1;i++) begin
+    if(input_data_h.wdata[i] != 0)begin
+    packet_h.wstrb[i] = input_data_h.wstrb[i];
+    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined packet for strobe after writing wstrb =  %0p",packet_h.wstrb[i]),UVM_HIGH);
+  end
+end
+  packet_h.wlast=input_data_h.wlast;
+  `uvm_info("DEBUG_COMBINED_PACKET_CLASS",$sformatf("Final packet=%s",packet_h.sprint),UVM_HIGH);
 endfunction : tx_packet
 
 //--------------------------------------------------------------------------------------------
