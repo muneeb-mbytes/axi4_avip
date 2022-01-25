@@ -37,8 +37,9 @@ module tb_master_assertions;
 
   task valid_stable_pos();
     @(posedge aclk)
-    awvalid=$urandom;
-    awready=$urandom;
+    awvalid = $urandom;
+    awready = $urandom;
+    $monitor("awvalid=%0d,awready=%0d",awvalid,awready);
   endtask : valid_stable_pos
 
 

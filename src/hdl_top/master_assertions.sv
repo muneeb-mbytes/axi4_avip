@@ -46,9 +46,27 @@ interface master_assertions (input            aclk,
 //
 
   // Assertion for AXI_WA_VALID_STABLE_CHECK 
+ 
+  // -------------------METHOD 1------------------- //
+  // property axi_wa_valid_stable_check;
+  //   @(posedge aclk)
+  //   awvalid == 1 |-> $stable(awvalid) && $rose(awready);
+  // endproperty : axi_wa_valid_stable_check
+
+  // -------------------METHOD 2------------------- //
+  sequence s1;
+    @(posedge aclk)
+    $stable(awvalid) ##2 $rose(awready);
+  endsequence:s1
+
+ // sequence s2;
+ //   @(posedge aclk)
+ //   awready == 1;
+ // endsequence:s2
+
   property axi_wa_valid_stable_check;
     @(posedge aclk)
-    awvalid == 1 |-> $stable(awvalid) && $rose(awready);
+    s1;
   endproperty : axi_wa_valid_stable_check
 
   AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
