@@ -236,7 +236,7 @@ interface axi4_master_driver_bfm(input bit aclk,
 
     while(bvalid !== 1'b1) begin
       @(posedge aclk);
-      `uvm_info(name,$sformatf("WAITING FOR WLAST :: %0d",wlast),UVM_HIGH);
+      `uvm_info(name,$sformatf("WAITING FOR BAVLID :: %0d",bvalid),UVM_HIGH);
     end
 
     repeat(data_write_packet.no_of_wait_states)begin
