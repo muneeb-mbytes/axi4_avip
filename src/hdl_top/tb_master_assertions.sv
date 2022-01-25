@@ -61,6 +61,14 @@ module tb_master_assertions;
     awsize=$urandom;
   endtask : signal_unknown_pos
   
+
+  task valid_stable_pos();
+    @(posedge aclk)
+    awvalid=$urandom;
+    awready=$urandom;
+  endtask : valid_stable_pos
+
+
   master_assertions M_A (.aclk(aclk),
                          .aresetn(aresetn),
                          .awid(awid),
