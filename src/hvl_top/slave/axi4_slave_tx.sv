@@ -100,7 +100,7 @@ class axi4_slave_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Variable : bid
   //Used to send the response to particular id
-  rand bid_e bid;
+  bid_e bid;
 
   //Variable : bresp
   //Used to send the write response for the transaction
@@ -391,8 +391,9 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
       printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
     end
     foreach(wstrb[i])begin
-      printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_BIN);
+      printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
     end
+    printer.print_field("wlast",wlast,$bits(wlast),UVM_DEC);
     //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
     printer.print_string("bid",bid.name());
     printer.print_string("bresp",bresp.name());

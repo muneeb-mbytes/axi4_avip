@@ -44,9 +44,27 @@ task axi4_master_nbk_write_seq::body();
     if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
                               req.awburst == WRITE_FIXED;
-                              req.transfer_type == NON_BLOCKING_WRITE;}) begin
+                              req.transfer_type == NON_BLOCKING_WRITE;
+                              req.awid == AWID_11;}) begin
+
     `uvm_fatal("axi4","Rand failed");
   end
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  //req.print();
+  finish_item(req);
+  
+  start_item(req);
+  //if(!req.randomize() with {req.tx_type == WRITE;}) begin
+
+    if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
+                              req.tx_type == WRITE;
+                              req.awburst == WRITE_FIXED;
+                              req.transfer_type == NON_BLOCKING_WRITE;
+                              req.awid == AWID_15;}) begin
+
+    `uvm_fatal("axi4","Rand failed");
+  end
+
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
   //req.print();
   finish_item(req);

@@ -281,15 +281,15 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // This task will drive the write response signals
   //-------------------------------------------------------
   
-  task axi4_write_response_phase(axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
+  task axi4_write_response_phase(inout axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
     int j;
     @(posedge aclk);
+    data_write_packet.bid <= mem_awid[j]; 
+    `uvm_info("DEBUG_BRESP",$sformatf("BID = %0d",data_write_packet.bid),UVM_HIGH)
     `uvm_info(name,"INSIDE WRITE RESPONSE PHASE",UVM_LOW)
 
-    //axi4_slave_drv_proxy_h.axi4_bid_task(data_write_packet);
-    @(posedge aclk);
-
       bid  <= mem_awid[j];
+      `uvm_info("DEBUG_BRESP",$sformatf("BID = %0d",bid),UVM_HIGH)
       bresp <= data_write_packet.bresp;
       buser<=data_write_packet.buser;
       bvalid <= 1;
