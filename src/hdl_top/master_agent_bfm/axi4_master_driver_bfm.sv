@@ -295,26 +295,34 @@ interface axi4_master_driver_bfm(input bit aclk,
     arvalid <= 1'b1;
 
     `uvm_info(name,$sformatf("detect_awready = %0d",arready),UVM_HIGH)
-    while(arready === 0) begin
+    do begin
       @(posedge aclk);
       data_read_packet.wait_count_read_address_channel++;
-      `uvm_info(name,$sformatf("inside_detect_awready = %0d",arready),UVM_HIGH)
     end
-    `uvm_info(name,$sformatf("After_loop_of_Detecting_arready = %0d",arready),UVM_HIGH)
+    while(arready !== 1);
 
-    while(arvalid !== 1'b1) begin
-      @(posedge aclk);
-      `uvm_info(name,$sformatf("DEBUG_SAHA:: arready= %0d, arvalid=%0d",arready,arready),UVM_HIGH)
-    end
-     
-    if(arvalid === 1) begin
-      while(arready !== 1)begin
-        `uvm_info(name,$sformatf("DEBUG_SAHA:: arready= %0d",arready),UVM_HIGH)
-        arvalid <= 1'b1;
-        @(posedge aclk);
-      end
-    end
+    `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d, awvalid = %0d",awready,awvalid),UVM_HIGH)
     arvalid <= 1'b0;
+    //while(arready === 0) begin
+    //  @(posedge aclk);
+    //  data_read_packet.wait_count_read_address_channel++;
+    //  `uvm_info(name,$sformatf("inside_detect_awready = %0d",arready),UVM_HIGH)
+    //end
+    //`uvm_info(name,$sformatf("After_loop_of_Detecting_arready = %0d",arready),UVM_HIGH)
+
+    //while(arvalid !== 1'b1) begin
+    //  @(posedge aclk);
+    //  `uvm_info(name,$sformatf("DEBUG_SAHA:: arready= %0d, arvalid=%0d",arready,arready),UVM_HIGH)
+    //end
+    // 
+    //if(arvalid === 1) begin
+    //  while(arready !== 1)begin
+    //    `uvm_info(name,$sformatf("DEBUG_SAHA:: arready= %0d",arready),UVM_HIGH)
+    //    arvalid <= 1'b1;
+    //    @(posedge aclk);
+    //  end
+    //end
+    //arvalid <= 1'b0;
     
     //@(posedge aclk);
     //arvalid <= 1'b0;
