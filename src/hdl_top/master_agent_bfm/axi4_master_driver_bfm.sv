@@ -132,26 +132,34 @@ interface axi4_master_driver_bfm(input bit aclk,
     awvalid <= 1'b1;
     
     `uvm_info(name,$sformatf("detect_awready = %0d",awready),UVM_HIGH)
-    while(awready === 0) begin
+    
+    do begin
       @(posedge aclk);
       data_write_packet.wait_count_write_address_channel++;
-      `uvm_info(name,$sformatf("inside_detect_awready = %0d",awready),UVM_HIGH)
     end
+    while(awready !== 1);
+
     `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d, awvalid = %0d",awready,awvalid),UVM_HIGH)
-    
-    while(awvalid !== 1'b1) begin
-      @(posedge aclk);
-      `uvm_info(name,$sformatf("DEBUG_SAHA:: awready= %0d, awvalid=%0d",awready,awready),UVM_HIGH)
-    end
-     
-    if(awvalid === 1) begin
-      while(awready !== 1)begin
-        `uvm_info(name,$sformatf("DEBUG_SAHA:: awready= %0d",awready),UVM_HIGH)
-        awvalid <= 1'b1;
-        @(posedge aclk);
-      end
-    end
     awvalid <= 1'b0;
+    //begin
+      //@(posedge aclk);
+      //data_write_packet.wait_count_write_address_channel++;
+      //`uvm_info(name,$sformatf("inside_detect_awready = %0d",awready),UVM_HIGH)
+    //end
+    //
+    //while(awvalid !== 1'b1) begin
+    //  @(posedge aclk);
+    //  `uvm_info(name,$sformatf("DEBUG_SAHA:: awready= %0d, awvalid=%0d",awready,awready),UVM_HIGH)
+    //end
+    // 
+    //if(awvalid === 1) begin
+    //  while(awready !== 1)begin
+    //    `uvm_info(name,$sformatf("DEBUG_SAHA:: awready= %0d",awready),UVM_HIGH)
+    //    awvalid <= 1'b1;
+    //    @(posedge aclk);
+    //  end
+    //end
+    //@(posedge aclk);
     //end
     //@(posedge aclk);
     //awvalid <= 1'b0;
@@ -202,6 +210,10 @@ interface axi4_master_driver_bfm(input bit aclk,
        
     end
 
+    wlast <= 1'b0;
+    wvalid<= 1'b0;
+
+    `uvm_info(name,$sformatf("WRITE_DATA_COMP data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     //while(wvalid !== 1'b1) begin
     //  @(posedge aclk);
     //  `uvm_info(name,$sformatf("DEBUG_SAHA:: wready= %0d, wvalid=%0d",wready,wready),UVM_HIGH)
@@ -218,10 +230,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     //wlast  <= 1'b0;
 
     //@(posedge aclk);
-    wlast <= 1'b0;
-    wvalid<= 1'b0;
 
-    `uvm_info(name,$sformatf("WRITE_DATA_COMP data_write_packet=\n%p",data_write_packet),UVM_HIGH)
   endtask : axi4_write_data_channel_task
 
   //-------------------------------------------------------
@@ -229,15 +238,19 @@ interface axi4_master_driver_bfm(input bit aclk,
   // This task will drive the write response signals
   //-------------------------------------------------------
   task axi4_write_response_channel_task (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
-    @(posedge aclk);
+
+    //@(posedge aclk);
     `uvm_info(name,$sformatf("WRITE_RESP data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
-
-    while(bvalid !== 1'b1) begin
+    
+    do begin
       @(posedge aclk);
-      `uvm_info(name,$sformatf("WAITING FOR WLAST :: %0d",wlast),UVM_HIGH);
-    end
+    end while(bvalid !== 1'b1); 
+    //begin
+    //  @(posedge aclk);
+    //  `uvm_info(name,$sformatf("WAITING FOR WLAST :: %0d",wlast),UVM_HIGH);
+    //end
 
     repeat(data_write_packet.no_of_wait_states)begin
       `uvm_info(name,$sformatf("DRIVING WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
