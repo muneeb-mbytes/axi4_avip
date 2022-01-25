@@ -116,7 +116,21 @@ module axi4_master_agent_bfm #(parameter int MASTER_ID = 0)(axi4_if intf);
     uvm_config_db#(virtual axi4_master_driver_bfm)::set(null,"*", "axi4_master_driver_bfm", axi4_master_drv_bfm_h); 
     uvm_config_db#(virtual axi4_master_monitor_bfm)::set(null,"*", "axi4_master_monitor_bfm", axi4_master_mon_bfm_h);
   end
-  
+ 
+  bind intf master_assertions M_A ( .aclk(aclk),
+                                    .areset(areset),
+                                    .awid(awid),
+                                    .awaddr(awaddr),
+                                    .awlen(awlen),
+                                    .awsize(awsize),
+                                    .awburst(awburst),
+                                    .awlock(awlock),
+                                    .awcache(aecache),
+                                    .awprot(awprot),
+                                    .awvalid(awvalid),
+                                    .awready(awready));
+
+
   //Printing axi4 master agent bfm
   initial begin
     `uvm_info("axi4 master agent bfm",$sformatf("AXI4 MASTER AGENT BFM"),UVM_LOW);
