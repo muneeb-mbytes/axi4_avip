@@ -23,16 +23,57 @@ module tb_master_assertions;
   always #10 aclk = ~aclk;
 
   initial begin
-   // signal_unknown_pos();
-    valid_stable_pos();
+    //Include this to verify if signals are stable
+    if_addr_signals_are_stable();
+    signal_unknown_pos();
   end
+
+   task if_addr_signals_are_stable();
+      logic     [3: 0] awid_data     ;
+      logic     [ADDRESS_WIDTH-1: 0] awaddr_data ;
+      logic     [3: 0] awlen_data     ;
+      logic     [2: 0] awsize_data    ;
+
+    // random address data
+    awid_data = $urandom;
+    awaddr_data = $urandom;
+    awlen_data = $urandom;
+    awsize_data = $urandom;
+    
+    //Driving address signals data
+    while(awvalid == 1'b1) begin
+      @(posedge aclk);
+      awid = awid_data;
+      awaddr = awaddr_data;
+      awlen = awlen_data;
+      awsize = awsize_data;
+    end
+
+  endtask 
+
+
+
   task signal_unknown_pos();
-    @(posedge aclk)
-    awid=$urandom;
-    awaddr=$urandom;
-    awlen=$urandom;
-    awsize=$urandom;
-  endtask : signal_unknown_pos
+    logic     [3: 0] awid_data     ;
+    logic     [ADDRESS_WIDTH-1: 0] awaddr_data ;
+    logic     [3: 0] awlen_data     ;
+    logic     [2: 0] awsize_data    ; 
+    
+    
+    awid_data = $urandom;
+    awaddr_data = $urandom;
+    awlen_data = $urandom;
+    awsize_data = $urandom;
+    
+    //Driving address signals data
+    while(awvalid == 1'b1) begin
+      @(posedge aclk);
+      awid = awid_data;
+      awaddr = awaddr_data;
+      awlen = awlen_data;
+      awsize = awsize_data;
+    end
+endtask : signal_unknown_pos
   
 
   task valid_stable_pos();
