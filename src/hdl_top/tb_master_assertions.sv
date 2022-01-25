@@ -23,10 +23,18 @@ module tb_master_assertions;
   always #10 aclk = ~aclk;
 
   initial begin
+    signal_unknown_pos();
   end
+  task signal_unknown_pos();
+    @(posedge aclk)
+    awid=$urandom;
+    awaddr=$urandom;
+    awlen=$urandom;
+    awsize=$urandom;
+  endtask : signal_unknown_pos
   
   master_assertions M_A (.aclk(aclk),
-                         .areset(areset),
+                         .aresetn(aresetn),
                          .awid(awid),
                          .awaddr(awaddr),
                          .awlen(awlen),

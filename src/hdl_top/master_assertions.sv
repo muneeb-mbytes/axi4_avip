@@ -38,6 +38,13 @@ interface master_assertions (input            aclk,
 
   // Assertion for AXI_WA_UNKNOWN_SIGNALS_CHECK
 
+  // Assertion for AXI_WA_UNKNOWN_SIGNALS_CHECK, the signal should not be unknown when awvalid is high
+  AXI_AWADDR_X : assert property(@(posedge aclk) awvalid -> (!$isunknown(awaddr)));
+  AXI_AWLEN_X  : assert property(@(posedge aclk) awvalid -> (!$isunknown(awlen)));
+  AXI_AWSIZE_X : assert property(@(posedge aclk) awvalid -> (!$isunknown(awsize)));
+  AXI_AWID_X   : assert property(@(posedge aclk) awvalid -> (!$isunknown(awid)));
+
+
   // Assertion for AXI_WA_VALID_STABLE_CHECK 
   property axi_wa_valid_stable_check;
     @(posedge aclk) disable iff(!areset)
