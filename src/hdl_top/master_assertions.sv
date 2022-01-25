@@ -36,11 +36,18 @@ interface master_assertions (input            aclk,
   
   // Assertion for AXI_WA_STABLE_SIGNALS_CHECK
 
-
   // Assertion for AXI_WA_UNKNOWN_SIGNALS_CHECK
 
   // Assertion for AXI_WA_VALID_STABLE_CHECK 
- 
+  property axi_wa_valid_stable_check;
+    @(posedge aclk) disable iff(!areset)
+    awvalid == 1 |-> $stable(awvalid) && $rose(awready);
+  endproperty : axi_wa_valid_stable_check
+
+  AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
+
+
+
 endinterface : master_assertions
 
 `endif
