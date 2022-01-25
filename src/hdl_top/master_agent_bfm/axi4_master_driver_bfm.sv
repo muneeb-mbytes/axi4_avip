@@ -352,7 +352,7 @@ interface axi4_master_driver_bfm(input bit aclk,
     end
    
     @(posedge aclk);
-    rready <= 1'b0;
+   // rready <= 1'b0;
 
   endtask : axi4_read_data_channel_task
 

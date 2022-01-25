@@ -319,14 +319,20 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     // Ready can be HIGH even before we start to check 
     // based on wait_cycles variable
     // Can make arready to zero 
-    arready <= 0;
+     arready <= 0;
 
-    do begin
+   // do begin
+   //   @(posedge aclk);
+   // end while(arvalid===0);
+    while(arvalid === 0) begin
       @(posedge aclk);
-    end while(arvalid===0);
-  //  while(arvalid === 0) begin
-  //    @(posedge aclk);
-  //  end
+    end
+   
+    repeat(data_read_packet.no_of_wait_states)begin
+      `uvm_info(name,$sformatf("DRIVING_READ_ADDRS_WAIT_STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
+      @(posedge aclk);
+      arready<=0;
+    end
 
     `uvm_info("SLAVE_DRIVER_RADDR_PHASE", $sformatf("outside of arvalid"), UVM_NONE); 
      
@@ -342,6 +348,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 	   	mem_rlock	[j] 	= arlock	;	
 	   	mem_rcache[j] 	= arcache ;	
 	   	mem_rprot	[j] 	= arprot	;	
+     arready <= 1;
 
       data_read_packet.arid    = mem_arid[j]     ;
       data_read_packet.araddr  = mem_raddr[j]    ;
@@ -357,12 +364,9 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
     // based on the wait_cycles we can choose to drive the awready
     `uvm_info(name,$sformatf("Before DRIVING READ ADDRS WAIT STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
-    repeat(data_read_packet.no_of_wait_states)begin
-      `uvm_info(name,$sformatf("DRIVING_READ_ADDRS_WAIT_STATES :: %0d",data_read_packet.no_of_wait_states),UVM_HIGH);
-      @(posedge aclk);
-      arready<=0;
-    end
-    arready <= 1;
+
+    @(posedge aclk);
+    arready <= 0;
    
   //  data_read_packet.arid=arid;
   //  data_read_packet.araddr=araddr;
@@ -386,7 +390,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("INSIDE READ DATA CHANNEL"),UVM_LOW);
 
-    if(arready) begin
+   // if(arready) begin
     //if(std::randomize(rid_local) with {rid_local ==  mem_arid[j1];})
     
       `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",arlen),UVM_HIGH);
@@ -434,7 +438,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
    //   `uvm_info("SLAVE_RLAST_DEBUG",$sformatf("rlast_i1= %0d",i1),UVM_HIGH);
    //   `uvm_info("SLAVE_RLAST_DEBUG",$sformatf("mem_rlen_rlast= %0d",mem_rlen[j1]),UVM_HIGH);
-    end
+    //end
     j1++;
   //end
   
