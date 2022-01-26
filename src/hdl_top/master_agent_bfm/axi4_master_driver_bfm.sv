@@ -358,7 +358,7 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
       end while(rvalid === 1'b0);
 
       data_read_packet.rid      = rid;
-      data_read_packet.rdata[i] = rdata[i];
+      data_read_packet.rdata[i] = rdata;
       data_read_packet.ruser    = ruser;
       data_read_packet.rresp    = rresp;
       `uvm_info(name,$sformatf("DEBUG_NA:RDATA[%0d]=%0h",i,data_read_packet.rdata[i]),UVM_HIGH)
