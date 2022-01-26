@@ -28,6 +28,23 @@ package axi4_master_seq_pkg;
   `include "axi4_master_bk_read_seq.sv"
   `include "axi4_master_nbk_write_seq.sv"
   `include "axi4_master_nbk_read_seq.sv"
+  `include "axi4_master_bk_read_incr_burst_seq.sv"
+  `include "axi4_master_bk_read_wrap_burst_seq.sv"
+  `include "axi4_master_bk_read_8b_transfer_seq.sv"
+  `include "axi4_master_bk_read_16b_transfer_seq.sv"
+  `include "axi4_master_bk_read_32b_transfer_seq.sv"
+  `include "axi4_master_bk_read_64b_transfer_seq.sv"
+  `include "axi4_master_bk_read_okay_resp_seq.sv"
+  `include "axi4_master_bk_read_ex_okay_resp_seq.sv"
+  `include "axi4_master_nbk_read_incr_burst_seq.sv"
+  `include "axi4_master_nbk_read_wrap_burst_seq.sv"
+  `include "axi4_master_nbk_read_wrap_burst_seq.sv"
+  `include "axi4_master_nbk_read_8b_transfer_seq.sv"
+  `include "axi4_master_nbk_read_16b_transfer_seq.sv"
+  `include "axi4_master_nbk_read_32b_transfer_seq.sv"
+  `include "axi4_master_nbk_read_64b_transfer_seq.sv"
+  `include "axi4_master_nbk_read_okay_resp_seq.sv"
+  `include "axi4_master_nbk_read_ex_okay_resp_seq.sv"
 
 endpackage : axi4_master_seq_pkg
 
