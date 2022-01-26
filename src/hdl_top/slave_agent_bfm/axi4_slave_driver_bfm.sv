@@ -79,7 +79,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   
   reg [3: 0] i = 0;
   reg [3: 0] j = 0;
-  reg [3: 0] a = 0;
+  reg [7: 0] a = 0;
 
   initial begin
     `uvm_info("axi4 slave driver bfm",$sformatf("AXI4 SLAVE DRIVER BFM"),UVM_LOW);
@@ -171,9 +171,9 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 	 mem_waddr	[i] 	= awaddr	;
 	 mem_wlen 	[i]	  = awlen	  ;	
 	 mem_wsize	[i] 	= awsize	;	
-	 mem_wburst[i] 	= awburst ;	
+	 mem_wburst [i]   = awburst ;	
 	 mem_wlock	[i] 	= awlock	;	
-	 mem_wcache[i] 	= awcache ;	
+	 mem_wcache [i]   = awcache ;	
 	 mem_wprot	[i] 	= awprot	;	
    
    data_write_packet.awid    = mem_awid   [i] ;
@@ -190,15 +190,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
    `uvm_info("struct_pkt_debug",$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
 
-   //  data_write_packet.awid = awid;
-   //  data_write_packet.awaddr = awaddr;
-   //  data_write_packet.awlen = awlen;
-   //  data_write_packet.awsize = awsize;
-   //  data_write_packet.awburst = awburst;
-   //  data_write_packet.awlock = awlock;
-   //  data_write_packet.awcache = awcache;
-   //  data_write_packet.awprot = awprot;
-    
    // based on the wait_cycles we can choose to drive the awready
     `uvm_info(name,$sformatf("Before DRIVING WRITE ADDRS WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
     repeat(data_write_packet.no_of_wait_states)begin
@@ -221,7 +212,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // This task will sample the write data signals
   //-------------------------------------------------------
   task axi4_write_data_phase (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
-  //  @(posedge aclk);
     `uvm_info(name,$sformatf("data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("INSIDE WRITE DATA CHANNEL"),UVM_HIGH)
@@ -235,12 +225,12 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info("SLAVE_DRIVER_WRITE_DATA_PHASE", $sformatf("outside of wvalid"), UVM_NONE); 
 
    // based on the wait_cycles we can choose to drive the wready
-   // `uvm_info(name,$sformatf("Before DRIVING WRITE DATA WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
-   // repeat(data_write_packet.no_of_wait_states)begin
-   //   `uvm_info(name,$sformatf("DRIVING_WRITE_DATA_WAIT_STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
-   //   @(posedge aclk);
-   //   wready<=0;
-   // end
+    `uvm_info("SLAVE_BFM_WDATA_PHASE",$sformatf("Before DRIVING WRITE DATA WAIT STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+    repeat(data_write_packet.no_of_wait_states)begin
+      `uvm_info(name,$sformatf("DRIVING_WRITE_DATA_WAIT_STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
+      @(posedge aclk);
+      wready<=0;
+    end
 
     wready <= 1 ;
     
@@ -259,20 +249,25 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
    //     end
    //   end
        data_write_packet.wdata[s]=wdata;
-       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0d",s,data_write_packet.wdata[s]),UVM_HIGH);
+       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0h",s,data_write_packet.wdata[s]),UVM_HIGH);
        data_write_packet.wstrb[s]=wstrb;
        `uvm_info("slave_wstrb",$sformatf("sampled_slave_wstrb[%0d] = %0d",s,data_write_packet.wstrb[s]),UVM_HIGH);
         if(s == mem_wlen[a]) begin
           data_write_packet.wlast = wlast;
+          if(!wlast)begin
+            //@(posedge aclk);
+            //wready<=0;
+            break;
+          end
           `uvm_info("slave_wlast",$sformatf("slave_wlast = %0b",wlast),UVM_HIGH);
           `uvm_info("slave_wlast",$sformatf("sampled_slave_wlast = %0b",data_write_packet.wlast),UVM_HIGH);
         end
       end
-      if(!data_write_packet.wlast)begin
-        @(posedge aclk);
-        //wready<=0;
-      end
+      `uvm_info(name,$sformatf("OUTSIDE WRITE DATA CHANNEL"),UVM_HIGH)
       a++;
+
+      @(posedge aclk);
+      wready <= 0;
   
   endtask : axi4_write_data_phase
 
@@ -391,7 +386,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("INSIDE READ DATA CHANNEL"),UVM_LOW);
 
-   // if(arready) begin
+    //if(arvalid&&arready) begin
     //if(std::randomize(rid_local) with {rid_local ==  mem_arid[j1];})
     
       `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",arlen),UVM_HIGH);
