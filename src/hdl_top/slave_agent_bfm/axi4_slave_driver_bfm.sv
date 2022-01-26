@@ -386,6 +386,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   task axi4_read_data_phase (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
     int j1;
     @(posedge aclk);
+    data_read_packet.rid <= mem_arid[j1];
     `uvm_info(name,$sformatf("data_read_packet=\n%p",data_read_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH);
     `uvm_info(name,$sformatf("INSIDE READ DATA CHANNEL"),UVM_LOW);

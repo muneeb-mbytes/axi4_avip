@@ -320,15 +320,16 @@ begin
    `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
    //read data task
    axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
-  
+   `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %p",struct_read_packet), UVM_HIGH);
+
    axi4_slave_seq_item_converter::to_read_class(struct_read_packet,local_slave_rdata_tx);
+   `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %s",local_slave_rdata_tx.sprint()), UVM_HIGH);
 
    axi4_slave_read_addr_fifo_h.get(local_slave_raddr_tx);
   
    axi4_slave_seq_item_converter::tx_read_packet(local_slave_raddr_tx,local_slave_rdata_tx,packet);
    
-   `uvm_info("DEBUG_SLAVE_RDATA_PROXY_FIFO", $sformatf("AFTER :: COMBINED READ CHANNEL PACKET \n %s",packet.sprint()), UVM_HIGH);
-
+   `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: COMBINED READ CHANNEL PACKET \n %s",packet.sprint()), UVM_HIGH);
 
    semaphore_read_key.put(1);
  end

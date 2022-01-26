@@ -339,11 +339,13 @@ function  void axi4_slave_seq_item_converter::tx_read_packet(input axi4_slave_tx
   //$cast(tx.awaddr,addr.awaddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined read addr packet=\n%s",packet_h.sprint),UVM_FULL);
 //  foreach(input_data_h.wdata[i]) begin
-  //  for(int i=0;i<input_data_h.awlen+1;i++) begin
-while(input_data_h.rdata[i]!==0) begin
+  //for(int i=0;i<input_addr_h.arlen+1;i++) begin
+  while(i<(input_addr_h.arlen+1))begin
     packet_h.rdata[i]= input_data_h.rdata[i];
     i++;
-end
+  end
+//end while(input_addr_h.arlen);
+
     `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined read data packet after reading rdata= %0p",packet_h.rdata[i]),UVM_FULL);
 
    //packet_h.rid=input_resp_h.rid;
