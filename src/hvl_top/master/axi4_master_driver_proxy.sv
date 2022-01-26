@@ -53,7 +53,8 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //Declaring handle for axi4 driver bfm
   virtual axi4_master_driver_bfm axi4_master_drv_bfm_h;
 
-  semaphore write_channel_key;
+  semaphore write_data_channel_key;
+  semaphore write_response_channel_key;
   semaphore read_channel_key;
   
   //-------------------------------------------------------
@@ -83,7 +84,8 @@ function axi4_master_driver_proxy::new(string name = "axi4_master_driver_proxy",
   axi_read_rsp_port       = new("axi_read_rsp_port",this);
   axi4_master_write_fifo_h= new("axi4_master_write_fifo_h",this);
   axi4_master_read_fifo_h = new("axi4_master_read_fifo_h",this);
-  write_channel_key   = new(1);
+  write_data_channel_key   = new(1);
+  write_response_channel_key   = new(1);
   read_channel_key    = new(1);
 endfunction : new
 
@@ -204,7 +206,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           axi4_master_tx             local_master_data_tx;
           axi4_write_transfer_char_s struct_write_data_packet;
 
-          write_channel_key.get(1);
+          write_data_channel_key.get(1);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wdata= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
           //if(axi4_master_write_fifo_h.used() != 1 && axi4_master_write_fifo_h.used() > 'd0)begin
           //  axi4_master_drv_bfm_h.axi4_wait_task();
@@ -216,7 +218,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_data_packet,struct_cfg);
          
           //axi4_master_write_fifo_h.get(local_master_data_tx);
-          write_channel_key.put(1);
+          write_data_channel_key.put(1);
         end
      
         begin : WRITE_RESPONSE_CHANNEL
@@ -228,7 +230,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           axi4_master_tx             local_master_response_tx;
           axi4_write_transfer_char_s struct_write_response_packet;
 
-          write_channel_key.get(1);
+          write_response_channel_key.get(1);
 
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
           axi4_master_write_fifo_h.peek(local_master_response_tx);
@@ -238,7 +240,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           // MSHA:axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
 
           // MSHA:`uvm_info(get_type_name(),$sformatf("DEBUG_SAHA_AFTER::Received_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
-          write_channel_key.put(1);
+          write_response_channel_key.put(1);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
           axi4_master_write_fifo_h.get(req_wr);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
@@ -350,7 +352,7 @@ task axi4_master_driver_proxy::axi4_read_task();
 
       join_any
 
-      read_data_process.await();
+      read_addr_process.await();
 
     end
 

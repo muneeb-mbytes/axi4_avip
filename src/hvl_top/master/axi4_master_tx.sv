@@ -119,12 +119,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //Variable : arid
   //Used to send the read address id
   rand arid_e arid;
- //-------------------------------------------------------
-  // READ DATA CHANNEL SIGNALS
-  //-------------------------------------------------------
-  //Variable : rid
-  //Used to send the read address id
-  rand rid_e rid;
  
   //Variable : araddr
   //Used to send the read address
@@ -177,6 +171,11 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   // READ DATA CHANNEL SIGNALS 
   //-------------------------------------------------------
+
+  //Variable : rid
+  //Used to send the read address id
+  rid_e rid;
+  
   //Variable : rdata
   //Used to randomise read data
   //varaible[$] gives a unbounded queue
