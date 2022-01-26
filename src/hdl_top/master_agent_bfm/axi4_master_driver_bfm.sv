@@ -141,28 +141,7 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
 
     `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d, awvalid = %0d",awready,awvalid),UVM_HIGH)
     awvalid <= 1'b0;
-    //begin
-      //@(posedge aclk);
-      //data_write_packet.wait_count_write_address_channel++;
-      //`uvm_info(name,$sformatf("inside_detect_awready = %0d",awready),UVM_HIGH)
-    //end
-    //
-    //while(awvalid !== 1'b1) begin
-    //  @(posedge aclk);
-    //  `uvm_info(name,$sformatf("DEBUG_SAHA:: awready= %0d, awvalid=%0d",awready,awready),UVM_HIGH)
-    //end
-    // 
-    //if(awvalid === 1) begin
-    //  while(awready !== 1)begin
-    //    `uvm_info(name,$sformatf("DEBUG_SAHA:: awready= %0d",awready),UVM_HIGH)
-    //    awvalid <= 1'b1;
-    //    @(posedge aclk);
-    //  end
-    //end
-    //@(posedge aclk);
-    //end
-    //@(posedge aclk);
-    //awvalid <= 1'b0;
+
 
   endtask : axi4_write_address_channel_task
 
@@ -214,22 +193,6 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
     wvalid<= 1'b0;
 
     `uvm_info(name,$sformatf("WRITE_DATA_COMP data_write_packet=\n%p",data_write_packet),UVM_HIGH)
-    //while(wvalid !== 1'b1) begin
-    //  @(posedge aclk);
-    //  `uvm_info(name,$sformatf("DEBUG_SAHA:: wready= %0d, wvalid=%0d",wready,wready),UVM_HIGH)
-    //end
-    // 
-    //if(wvalid === 1) begin
-    //  while(wready !== 1)begin
-    //    `uvm_info(name,$sformatf("DEBUG_SAHA:: wready= %0d",wready),UVM_HIGH)
-    //    wvalid <= 1'b1;
-    //    @(posedge aclk);
-    //  end
-    //end
-    //wvalid <= 1'b0;
-    //wlast  <= 1'b0;
-
-    //@(posedge aclk);
 
   endtask : axi4_write_data_channel_task
 
@@ -239,7 +202,6 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
   //-------------------------------------------------------
   task axi4_write_response_channel_task (inout axi4_write_transfer_char_s data_write_packet, input axi4_transfer_cfg_s cfg_packet);
 
-    //@(posedge aclk);
     `uvm_info(name,$sformatf("WRITE_RESP data_write_packet=\n%p",data_write_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("DRIVE TO WRITE RESPONSE CHANNEL"),UVM_HIGH)
@@ -299,29 +261,6 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
 
     `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d, awvalid = %0d",awready,awvalid),UVM_HIGH)
     arvalid <= 1'b0;
-    //while(arready === 0) begin
-    //  @(posedge aclk);
-    //  data_read_packet.wait_count_read_address_channel++;
-    //  `uvm_info(name,$sformatf("inside_detect_awready = %0d",arready),UVM_HIGH)
-    //end
-    //`uvm_info(name,$sformatf("After_loop_of_Detecting_arready = %0d",arready),UVM_HIGH)
-
-    //while(arvalid !== 1'b1) begin
-    //  @(posedge aclk);
-    //  `uvm_info(name,$sformatf("DEBUG_SAHA:: arready= %0d, arvalid=%0d",arready,arready),UVM_HIGH)
-    //end
-    // 
-    //if(arvalid === 1) begin
-    //  while(arready !== 1)begin
-    //    `uvm_info(name,$sformatf("DEBUG_SAHA:: arready= %0d",arready),UVM_HIGH)
-    //    arvalid <= 1'b1;
-    //    @(posedge aclk);
-    //  end
-    //end
-    //arvalid <= 1'b0;
-    
-    //@(posedge aclk);
-    //arvalid <= 1'b0;
 
   endtask : axi4_read_address_channel_task
 
