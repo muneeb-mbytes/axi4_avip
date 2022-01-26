@@ -61,6 +61,23 @@ package axi4_test_pkg;
   `include "axi4_non_blocking_64b_data_read_test.sv"
   `include "axi4_non_blocking_okay_response_read_test.sv"
   `include "axi4_non_blocking_exokay_response_read_test.sv"
+  
+  `include "axi4_blocking_8b_write_read_test.sv"
+  `include "axi4_blocking_16b_write_read_test.sv"
+  `include "axi4_blocking_32b_write_read_test.sv"
+  `include "axi4_blocking_64b_write_read_test.sv"
+  `include "axi4_blocking_okay_response_write_read_test.sv"
+  
+  `include "axi4_non_blocking_8b_write_read_test.sv"
+  `include "axi4_non_blocking_16b_write_read_test.sv"
+  `include "axi4_non_blocking_32b_write_read_test.sv"
+  `include "axi4_non_blocking_64b_write_read_test.sv"
+  `include "axi4_blocking_incr_burst_write_read_test.sv"
+  `include "axi4_non_blocking_incr_burst_write_read_test.sv"
+  `include "axi4_blocking_wrap_burst_write_read_test.sv"
+  `include "axi4_non_blocking_wrap_burst_write_read_test.sv"
+  `include "axi4_non_blocking_okay_response_write_read_test.sv"
+  
 
 endpackage : axi4_test_pkg
 

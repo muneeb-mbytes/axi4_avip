@@ -61,7 +61,7 @@ usage:
 	echo "make regression testlist_name=<regression_testlist_name.list>";
 	echo "";
 	echo "Example:":
-	echo "make regression testlist_name=axi4_simple_fd_regression.list";
+	echo "make regression testlist_name=axi4_transfers_regression.list";
 	echo "";
 	echo "-----------------------------------------------------------------";
 	echo "-----------------------------------------------------------------";
@@ -101,9 +101,6 @@ override uvm_verbosity = UVM_MEDIUM
 endif
 
 
-ifndef axi4_type
-override  axi4_type= axi4
-endif
 
 ## For randomized seed
 # TODO(mshariff): 
@@ -127,7 +124,6 @@ simulate:
 	-assertdebug \
 	+UVM_TESTNAME=$(test) \
 	+UVM_VERBOSITY=$(uvm_verbosity) \
-	+define+$(axi4_type) \
 	-l $(test_folder)/$(test).log \
 	-sva \
   -coverage \
