@@ -52,6 +52,9 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //Variable: axi4_master_drv_bfm_h
   //Declaring handle for axi4 driver bfm
   virtual axi4_master_driver_bfm axi4_master_drv_bfm_h;
+
+  semaphore write_channel_key;
+  semaphore read_channel_key;
   
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -78,8 +81,10 @@ function axi4_master_driver_proxy::new(string name = "axi4_master_driver_proxy",
   axi_read_seq_item_port  = new("axi_read_seq_item_port",this);
   axi_write_rsp_port      = new("axi_write_rsp_port",this);
   axi_read_rsp_port       = new("axi_read_rsp_port",this);
-  axi4_master_write_fifo_h      = new("axi4_master_write_fifo_h",this);
+  axi4_master_write_fifo_h= new("axi4_master_write_fifo_h",this);
   axi4_master_read_fifo_h = new("axi4_master_read_fifo_h",this);
+  write_channel_key   = new(1);
+  read_channel_key    = new(1);
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
@@ -167,18 +172,17 @@ task axi4_master_driver_proxy::axi4_write_task();
       process wdata_process;
       process wresponse_process;
 
-      //waddr_process = new();      
+          
 
       fork
         begin : WRITE_ADDRESS_CHANNEL 
 
-          //Added the waddr_process to keep track of this write address channel thread
-
           axi4_master_tx             local_master_addr_tx;
           axi4_write_transfer_char_s struct_write_addr_packet;
 
+          //Added the waddr_process to keep track of this write address channel thread
           waddr_process = process::self();
-
+          
           //`uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type inside fork = %s",req_wr.transfer_type),UVM_HIGH); 
           // local_master_tx = axi4_master_fifo_h.peek();
 
@@ -200,17 +204,19 @@ task axi4_master_driver_proxy::axi4_write_task();
           axi4_master_tx             local_master_data_tx;
           axi4_write_transfer_char_s struct_write_data_packet;
 
+          write_channel_key.get(1);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wdata= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
-          if(axi4_master_write_fifo_h.used() != 1 && axi4_master_write_fifo_h.used() > 'd0)begin
-            axi4_master_drv_bfm_h.axi4_wait_task();
-          end
+          //if(axi4_master_write_fifo_h.used() != 1 && axi4_master_write_fifo_h.used() > 'd0)begin
+          //  axi4_master_drv_bfm_h.axi4_wait_task();
+          //end
           
           axi4_master_write_fifo_h.peek(local_master_data_tx);
           axi4_master_seq_item_converter::from_write_class(local_master_data_tx,struct_write_data_packet);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking write data struct packet = %p",struct_write_data_packet),UVM_HIGH); 
           axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_data_packet,struct_cfg);
          
-          axi4_master_write_fifo_h.get(local_master_data_tx);
+          //axi4_master_write_fifo_h.get(local_master_data_tx);
+          write_channel_key.put(1);
         end
      
         begin : WRITE_RESPONSE_CHANNEL
@@ -222,6 +228,8 @@ task axi4_master_driver_proxy::axi4_write_task();
           axi4_master_tx             local_master_response_tx;
           axi4_write_transfer_char_s struct_write_response_packet;
 
+          write_channel_key.get(1);
+
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
           axi4_master_write_fifo_h.peek(local_master_response_tx);
           axi4_master_seq_item_converter::from_write_class(local_master_response_tx,struct_write_response_packet);
@@ -230,7 +238,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           // MSHA:axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
 
           // MSHA:`uvm_info(get_type_name(),$sformatf("DEBUG_SAHA_AFTER::Received_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
-
+          write_channel_key.put(1);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
           axi4_master_write_fifo_h.get(req_wr);
           `uvm_info(get_type_name(),$sformatf("DEBUG_NA::Checking fifo size used in wresp= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
@@ -250,28 +258,6 @@ task axi4_master_driver_proxy::axi4_write_task();
       `uvm_info(get_type_name(), $sformatf("DEBUG_NA :: Out of fork_join : After await waddr.status()=%s ",waddr_process.status()), UVM_NONE); 
     end
 
-
-    // MSHA:     // struct_packet_local = FIFO.peek();
-    // MSHA:     ADD(struct_packet)
-    // MSHA:     // struct_packet_local = FIFO.peek();
-    // MSHA:     DATA(struct_packet)
-    // MSHA:     // struct_packet_local = FIFO.peek();
-    // MSHA:     RES(struct_packet)
-    // MSHA:     //pop the element and display the current outstanding value
-    // MSHA:   join_any
-    // MSHA: end
-
-    //Calling 3 write tasks from axi4_master_drv_bfm in HDL side
-    // axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
-     //axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
-    //    axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
-  
-    // MSHA: fork
-    // MSHA:   axi4_master_drv_bfm_h.axi4_write_address_channel_task(struct_write_packet,struct_cfg);
-    // MSHA:   axi4_master_drv_bfm_h.axi4_write_data_channel_task(struct_write_packet,struct_cfg);
-    // MSHA:   axi4_master_drv_bfm_h.axi4_write_response_channel_task(struct_write_packet,struct_cfg);
-    // MSHA: join_any
-    
     //Converting transactions into struct data type
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
 
@@ -317,29 +303,55 @@ task axi4_master_driver_proxy::axi4_read_task();
     end
 
     else if(req_rd.transfer_type ==  NON_BLOCKING_READ) begin
+
+      process read_addr_process;
+      process read_data_process;
+
       fork
         begin : READ_ADDRESS_CHANNEL  
+          
           axi4_read_transfer_char_s struct_read_address_packet;
+
+          read_addr_process = process::self();
+
           `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking transfer type inside fork = %s",req_rd.transfer_type),UVM_HIGH); 
-          //local_master_tx = axi4_master_fifo_h.peek();
-          axi4_master_read_fifo_h.peek(req_rd);
+
+          //axi4_master_read_fifo_h.peek(req_rd);
           `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking req_rd = %s",req_rd.sprint()),UVM_HIGH); 
+          
           axi4_master_seq_item_converter::from_read_class(req_rd,struct_read_address_packet);
           `uvm_info(get_type_name(),$sformatf("DEBUG_SHW::Checking struct packet = %p",struct_read_address_packet),UVM_HIGH); 
+          
           axi4_master_drv_bfm_h.axi4_read_address_channel_task(struct_read_address_packet,struct_cfg);
+
         end
 
         begin : READ_DATA_CHANNEL
+
           axi4_master_tx local_master_read_data_tx;
           axi4_read_transfer_char_s struct_read_data_packet;
-          //local_master_tx = axi4_master_fifo_h.peek();
+          
+          read_data_process = process::self();
+          
+          read_channel_key.get(1);
+
           axi4_master_read_fifo_h.peek(local_master_read_data_tx);
+
           axi4_master_seq_item_converter::from_read_class(local_master_read_data_tx,struct_read_data_packet);
+          
+          `uvm_info(get_type_name(),$sformatf("DEBUG_READ_RSP::Checking struct packet = %p",struct_read_data_packet),UVM_HIGH); 
           axi4_master_drv_bfm_h.axi4_read_data_channel_task(struct_read_data_packet,struct_cfg);
+          
+          read_channel_key.put(1);
+          
           axi4_master_read_fifo_h.get(req_rd);
+
         end
 
       join_any
+
+      read_data_process.await();
+
     end
 
     

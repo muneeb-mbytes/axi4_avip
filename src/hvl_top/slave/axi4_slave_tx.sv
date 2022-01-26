@@ -175,7 +175,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : rlast
   //Used to represent the last byte of the transaction
-  rand bit rlast;
+  bit rlast;
 
   //Variable : rready
   //Used to accept the valid data
