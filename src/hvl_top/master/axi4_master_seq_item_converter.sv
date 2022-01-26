@@ -157,6 +157,9 @@ function void axi4_master_seq_item_converter::from_read_class( input axi4_master
   output_conv_h.arregion = input_conv_h.arregion;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig arregion =  %0h",output_conv_h.arregion),UVM_HIGH);
 
+  $cast(output_conv_h.rid,input_conv_h.rid);
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize rid =  %b",output_conv_h.rid),UVM_HIGH);
+
   foreach(input_conv_h.rdata[i]) begin
     if(input_conv_h.rdata[i] != 0)begin
       output_conv_h.rdata[i] = input_conv_h.rdata[i];
@@ -292,6 +295,9 @@ function void axi4_master_seq_item_converter::to_read_class( input axi4_read_tra
 
   output_conv_h.arqos = input_conv_h.arqos;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("after writnig arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
+
+  $cast(output_conv_h.rid,input_conv_h.rid);
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After randomize rid =  %b",output_conv_h.rid),UVM_HIGH);
 
   //foreach(input_conv_h.rdata[i]) begin
     for(int i=0;i<input_conv_h.arlen+1;i++) begin

@@ -119,7 +119,13 @@ class axi4_master_tx extends uvm_sequence_item;
   //Variable : arid
   //Used to send the read address id
   rand arid_e arid;
-
+ //-------------------------------------------------------
+  // READ DATA CHANNEL SIGNALS
+  //-------------------------------------------------------
+  //Variable : rid
+  //Used to send the read address id
+  rand rid_e rid;
+ 
   //Variable : araddr
   //Used to send the read address
   rand bit [ADDRESS_WIDTH-1:0] araddr;
@@ -450,6 +456,7 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   arqos   = axi4_master_tx_copy_obj.arqos;
   
   //READ DATA CHANNEL
+  rid    = axi4_master_tx_copy_obj.rid;
   rdata = axi4_master_tx_copy_obj.rdata;
   rresp = axi4_master_tx_copy_obj.rresp;
 endfunction : do_copy
@@ -501,6 +508,7 @@ function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   arqos   == axi4_master_tx_compare_obj.arqos   &&
 
   //READ DATA CHANNEL
+  rid   == axi4_master_tx_compare_obj.rid   &&
   rdata == axi4_master_tx_compare_obj.rdata &&
   rresp == axi4_master_tx_compare_obj.rresp;
 endfunction : do_compare
@@ -527,6 +535,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("awprot",awprot.name());
     printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
     //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
+
     foreach(wdata[i])begin
       printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
     end
@@ -555,6 +564,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
       printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
     end
     //printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
+    printer.print_string("rid",rid.name());
     printer.print_string("rresp",rresp.name());
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
   end
