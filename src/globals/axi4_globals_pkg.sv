@@ -311,7 +311,7 @@ package axi4_globals_pkg;
   //This struct datatype consists of all write signals which are used for seq item conversion
   typedef struct {
     //Write_address_channel
-    bit [15:0]              awid;
+    bit [3:0]               awid;
     bit [ADDRESS_WIDTH-1:0] awaddr;
     bit [7:0]               awlen;
     bit [2:0]               awsize;
@@ -330,7 +330,7 @@ package axi4_globals_pkg;
     bit [2**LENGTH:0] wuser;
 
     //Write Response Channel
-    bit [15:0] bid;
+    bit [3:0] bid;
     bit bvalid;
     bit [1:0]  bresp;
     bit buser;
@@ -348,7 +348,7 @@ package axi4_globals_pkg;
   //This struct datatype consists of all read signals which are used for seq item conversion
   typedef struct {
     //Read Address Channel
-    bit [15:0] arid;
+    bit [3:0] arid;
     bit [ADDRESS_WIDTH-1:0] araddr;
     bit [7:0]  arlen;
     bit [2:0]  arsize;
@@ -360,7 +360,7 @@ package axi4_globals_pkg;
     bit [3:0]  aruser;
     bit        arlock;
     //Read Data Channel
-    bit [2**LENGTH:0][3:0] rid;
+    bit [3:0] rid;
     bit [2**LENGTH:0][DATA_WIDTH-1:0]rdata;
     bit [2**LENGTH:0][1:0] rresp; 
     bit [2**LENGTH:0][3:0] ruser;

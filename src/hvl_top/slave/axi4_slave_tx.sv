@@ -410,13 +410,14 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
     printer.print_string("arprot",arprot.name());
     printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
     //`uvm_info("------------------------------------------READ_DATA_CHANNEL","---------------------------------------",UVM_LOW);
+    printer.print_string("rid",rid.name());
     foreach(rdata[i])begin
       printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
     end
     printer.print_string("rresp",rresp.name());
 
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_HEX);
-    printer.print_string("TRNASFER_TYPE",transfer_type.name());
+    //printer.print_string("TRNASFER_TYPE",transfer_type.name());
   end
 endfunction : do_print
 

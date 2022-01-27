@@ -32,14 +32,15 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   //Declaring handle for axi4 driver bfm
   virtual axi4_slave_driver_bfm axi4_slave_drv_bfm_h;
 
-  //Variable: axi4_master_fifo_h
-  //Declaring handle for uvm_tlm_analysis_fifo
+  //Declaring handle for uvm_tlm_analysis_fifo's for all the five channels
   uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_addr_fifo_h;
   uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_data_in_fifo_h;
   uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_response_fifo_h;
   uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_data_out_fifo_h;
   uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_read_addr_fifo_h;
   uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_read_data_in_fifo_h;
+
+  //Declaring Semaphore handles for writes and reads
   semaphore semaphore_write_key;
   semaphore semaphore_read_key;
   
@@ -128,7 +129,7 @@ endtask : run_phase
 // task axi4 write task
 //--------------------------------------------------------------------------------------------
 task axi4_slave_driver_proxy::axi4_write_task();
-
+  
   forever begin
     
     process addr_tx;
@@ -139,34 +140,38 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
     axi4_slave_write_data_in_fifo_h.put(req_wr);
     axi4_slave_write_response_fifo_h.put(req_wr);
+    
     fork
-    begin
+    begin : WRITE_ADDRESS_CHANNEL
       
       axi4_slave_tx              local_slave_addr_tx;
       axi4_write_transfer_char_s struct_write_packet;
       axi4_transfer_cfg_s        struct_cfg;
     
       addr_tx=process::self();
+      
       //Converting transactions into struct data type
       axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
-     `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
+      `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
 
      //Converting configurations into struct config type
      axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
      `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
-      
-      //write address_task
-      axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
-    
-      //Converting struct into transaction data type
+     
+     //write address_task
+     axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
+     
+     //Converting struct into transaction data type
      axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
+     
+     `uvm_info("DEBUG_SLAVE_WRITE_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_addr_tx.sprint()), UVM_NONE);
+     
+     axi4_slave_write_addr_fifo_h.put(local_slave_addr_tx);
+   
+   end
+ 
+  begin : WRITE_DATA_CHANNEL
 
-    `uvm_info("DEBUG_SLAVE_WRITE_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_addr_tx.sprint()), UVM_NONE);
-    
-    axi4_slave_write_addr_fifo_h.put(local_slave_addr_tx);
-
-    end 
-   begin
       axi4_slave_tx              local_slave_data_tx;
       axi4_write_transfer_char_s struct_write_packet;
       axi4_transfer_cfg_s        struct_cfg;
@@ -196,9 +201,10 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_write_data_out_fifo_h.put(local_slave_data_tx);
 
       semaphore_write_key.put(1);
-
+    
     end
-  begin
+  
+  begin : WRITE_RESPONSE_CHANNEL
 
       axi4_slave_tx              local_slave_addr_tx;
       axi4_slave_tx              local_slave_data_tx;
@@ -232,32 +238,31 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_write_data_out_fifo_h.get(local_slave_data_tx);
 
      axi4_slave_seq_item_converter::tx_write_packet(local_slave_addr_tx,local_slave_data_tx,local_slave_response_tx,packet);
-      `uvm_info("DEBUG_SLAVE_WDATA_PROXY_FIFO", $sformatf("AFTER :: COMBINED packet \n %s",packet.sprint()), UVM_HIGH);
+     `uvm_info("DEBUG_SLAVE_WDATA_PROXY_FIFO", $sformatf("AFTER :: COMBINED packet \n %s",packet.sprint()), UVM_HIGH);
 
       semaphore_write_key.put(1);
     end
+  
   join_any
 
   addr_tx.await();
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_ADDRESS_CHANNEL_STATUS = \n %s",addr_tx.status()),UVM_MEDIUM)
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_WDATA_CHANNEL_STATUS = \n %s",data_tx.status()),UVM_MEDIUM)
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_WRESP_CHANNEL_STATUS = \n %s",response_tx.status()),UVM_MEDIUM)
-
-    #10;
-
-
-    axi_write_seq_item_port.item_done();
-  end
-
-endtask : axi4_write_task
+  
+   axi_write_seq_item_port.item_done();
+ end
+ 
+ endtask : axi4_write_task
 
 //-------------------------------------------------------
 // task axi4 read task
 //-------------------------------------------------------
 task axi4_slave_driver_proxy::axi4_read_task();
-
+  
   forever begin
-
+    
+    //Declaring the process for read address channel and read data channel for status check 
     process rd_addr;
     process rd_data;
 
@@ -266,79 +271,78 @@ task axi4_slave_driver_proxy::axi4_read_task();
     axi4_slave_read_data_in_fifo_h.put(req_rd);
 
     fork
+    begin : READ_ADDRESS_CHANNEL
+      
+      axi4_slave_tx              local_slave_tx;
+      axi4_read_transfer_char_s struct_read_packet;
+      axi4_transfer_cfg_s       struct_cfg;
+      
+      rd_addr = process::self();
+      
+      //Converting transactions into struct data type
+      axi4_slave_seq_item_converter::from_read_class(req_rd,struct_read_packet);
+      `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_HIGH); 
+      
+      //Converting configurations into struct config type
+      axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+      `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
+      
+      //read address_task
+      axi4_slave_drv_bfm_h.axi4_read_address_phase(struct_read_packet,struct_cfg);
+      
+      //Converting struct into transaction data type
+      axi4_slave_seq_item_converter::to_read_class(struct_read_packet,local_slave_tx);
+      `uvm_info("DEBUG_SLAVE_READ_ADDR_PROXY", $sformatf(" to_class_raddr_phase_slave_proxy  \n %p",struct_read_packet), UVM_NONE);
+      
+      axi4_slave_read_addr_fifo_h.put(local_slave_tx);
+      `uvm_info("DEBUG_SLAVE_READ_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_tx.sprint()), UVM_NONE);
     
-    begin
-    axi4_slave_tx              local_slave_tx;
-    axi4_read_transfer_char_s struct_read_packet;
-    axi4_transfer_cfg_s       struct_cfg;
-
-    rd_addr = process::self();
-
-    //Converting transactions into struct data type
-    axi4_slave_seq_item_converter::from_read_class(req_rd,struct_read_packet);
-   `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_HIGH); 
- 
-   //Converting configurations into struct config type
-   axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
-   `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
-    
-    //read address_task
-    axi4_slave_drv_bfm_h.axi4_read_address_phase(struct_read_packet,struct_cfg);
+    end
   
-    //Converting struct into transaction data type
-   axi4_slave_seq_item_converter::to_read_class(struct_read_packet,local_slave_tx);
-   `uvm_info("DEBUG_SLAVE_READ_ADDR_PROXY", $sformatf(" to_class_raddr_phase_slave_proxy  \n %p",struct_read_packet), UVM_NONE);
-
-   axi4_slave_read_addr_fifo_h.put(local_slave_tx);
- 
-  `uvm_info("DEBUG_SLAVE_READ_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_tx.sprint()), UVM_NONE);
-end
- 
-begin
+   begin : READ_DATA_CHANNEL
     
-    axi4_slave_tx              local_slave_rdata_tx;
-    axi4_slave_tx              local_slave_raddr_tx;
-    axi4_slave_tx              packet;
-    axi4_read_transfer_char_s struct_read_packet;
-    axi4_transfer_cfg_s       struct_cfg;
+     axi4_slave_tx              local_slave_rdata_tx;
+     axi4_slave_tx              local_slave_raddr_tx;
+     axi4_slave_tx              packet;
+     axi4_read_transfer_char_s struct_read_packet;
+     axi4_transfer_cfg_s       struct_cfg;
 
-    rd_data = process::self();
+     rd_data = process::self();
 
-    semaphore_read_key.get(1);
-    rd_addr.await();
+     semaphore_read_key.get(1);
+     rd_addr.await();
 
-    axi4_slave_read_data_in_fifo_h.get(local_slave_rdata_tx);
+     axi4_slave_read_data_in_fifo_h.get(local_slave_rdata_tx);
 
-    //Converting transactions into struct data type
-    axi4_slave_seq_item_converter::from_read_class(local_slave_rdata_tx,struct_read_packet);
-   `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_HIGH); 
+     //Converting transactions into struct data type
+     axi4_slave_seq_item_converter::from_read_class(local_slave_rdata_tx,struct_read_packet);
+     `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_read_packet = \n %0p",struct_read_packet), UVM_HIGH); 
  
-   //Converting configurations into struct config type
-   axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
-   `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
-   //read data task
-   axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
-   `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %p",struct_read_packet), UVM_HIGH);
+     //Converting configurations into struct config type
+     axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
+     `uvm_info(get_type_name(), $sformatf("from_read_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
+     
+     //read data task
+     axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
+     `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %p",struct_read_packet), UVM_HIGH);
 
-   axi4_slave_seq_item_converter::to_read_class(struct_read_packet,local_slave_rdata_tx);
-   `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %s",local_slave_rdata_tx.sprint()), UVM_HIGH);
+     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,local_slave_rdata_tx);
+     `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %s",local_slave_rdata_tx.sprint()), UVM_HIGH);
 
-   axi4_slave_read_addr_fifo_h.get(local_slave_raddr_tx);
-  
-   axi4_slave_seq_item_converter::tx_read_packet(local_slave_raddr_tx,local_slave_rdata_tx,packet);
-   
-   `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: COMBINED READ CHANNEL PACKET \n %s",packet.sprint()), UVM_HIGH);
-   
-   semaphore_read_key.put(1);
- end
- join_any
-
-   rd_addr.await();
+     axi4_slave_read_addr_fifo_h.get(local_slave_raddr_tx);
+    
+     axi4_slave_seq_item_converter::tx_read_packet(local_slave_raddr_tx,local_slave_rdata_tx,packet);
+     `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: COMBINED READ CHANNEL PACKET \n %s",packet.sprint()), UVM_HIGH);
+     
+     semaphore_read_key.put(1);
+   end
+  join_any
+ 
+  rd_addr.await();
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_READ_CHANNEL_STATUS = \n %s",rd_addr.status()),UVM_MEDIUM)
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_RDATA_CHANNEL_STATUS = \n %s",rd_data.status()),UVM_MEDIUM)
-
-    axi_read_seq_item_port.item_done();
-  end
+  axi_read_seq_item_port.item_done();
+end
 
 endtask : axi4_read_task
 

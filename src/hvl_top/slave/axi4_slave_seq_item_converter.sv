@@ -240,6 +240,9 @@ function void axi4_slave_seq_item_converter::to_read_class( input axi4_read_tran
   //output_cov_h.tx_type=READ;
   $cast(output_conv_h.arid,input_conv_h.arid);
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arid =  %b",output_conv_h.arid),UVM_FULL);
+  
+  $cast(output_conv_h.rid,input_conv_h.rid);
+  `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize rid =  %b",output_conv_h.rid),UVM_FULL);
 
   $cast(output_conv_h.arlen,input_conv_h.arlen);
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After randomize arlen =  %b",output_conv_h.arlen),UVM_FULL);
@@ -323,7 +326,9 @@ for(int i=0;i<input_data_h.wdata[i];i++) begin
 endfunction : tx_write_packet
 
 
-function  void axi4_slave_seq_item_converter::tx_read_packet(input axi4_slave_tx input_addr_h,input axi4_slave_tx input_data_h,output axi4_slave_tx packet_h);
+function  void axi4_slave_seq_item_converter::tx_read_packet(input axi4_slave_tx input_addr_h,
+input axi4_slave_tx input_data_h,output axi4_slave_tx packet_h);
+
  int i;
   packet_h = new();
   //packet_h.tx_type=READ;
@@ -338,6 +343,8 @@ function  void axi4_slave_seq_item_converter::tx_read_packet(input axi4_slave_tx
   packet_h.arcache=input_addr_h.arcache;
   //$cast(tx.awaddr,addr.awaddr;
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined read addr packet=\n%s",packet_h.sprint),UVM_FULL);
+  
+  packet_h.rid=input_data_h.rid;
 //  foreach(input_data_h.wdata[i]) begin
   //for(int i=0;i<input_addr_h.arlen+1;i++) begin
   while(i<(input_addr_h.arlen+1))begin
@@ -348,7 +355,6 @@ function  void axi4_slave_seq_item_converter::tx_read_packet(input axi4_slave_tx
 
     `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined read data packet after reading rdata= %0p",packet_h.rdata[i]),UVM_FULL);
 
-   //packet_h.rid=input_resp_h.rid;
    packet_h.rresp=input_data_h.rresp;
    packet_h.rlast=input_data_h.rlast;
 
