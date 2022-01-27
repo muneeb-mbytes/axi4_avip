@@ -141,7 +141,7 @@ task axi4_master_monitor_proxy::axi4_write_address();
     // Clone and publish the cloned item to the subscribers
     $cast(req_wr_clone_packet,req_wr.clone());
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_address clone packet is \n %s",req_wr_clone_packet.sprint()),UVM_HIGH)
-    axi4_master_read_address_analysis_port.write(req_wr_clone_packet);
+    axi4_master_write_address_analysis_port.write(req_wr_clone_packet);
   end
 endtask
 

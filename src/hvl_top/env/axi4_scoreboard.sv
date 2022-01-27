@@ -8,6 +8,14 @@
 class axi4_scoreboard extends uvm_scoreboard;
   `uvm_component_utils(axi4_scoreboard)
 
+  // Declaring handles for master tx and slave tx
+  axi4_master_tx axi4_master_tx_h1;
+  axi4_master_tx axi4_master_tx_h2;
+  axi4_master_tx axi4_master_tx_h3;
+  axi4_master_tx axi4_master_tx_h4;
+  axi4_master_tx axi4_master_tx_h5;
+  axi4_slave_tx  axi4_slave_tx_h;
+
   //Variable : axi4_master_analysis_fifo
   //Used to store the axi4_master_data
   uvm_tlm_analysis_fifo#(axi4_master_tx) axi4_master_read_address_analysis_fifo;
@@ -117,15 +125,29 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_scoreboard::run_phase(uvm_phase phase);
 
- // phase.raise_objection(this, "axi4_scoreboard");
+  super.run_phase(phase);
 
- // super.run_phase(phase);
+  forever begin
+    `uvm_info(get_type_name(),$sformatf("calling analysis fifo in scoreboard"),UVM_HIGH);
+    axi4_master_write_address_analysis_fifo.get(axi4_master_tx_h1);
+    axi4_master_write_data_analysis_fifo.get(axi4_master_tx_h2);
+    axi4_master_write_response_analysis_fifo.get(axi4_master_tx_h3);
+    axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
+    axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
 
- // // Work here
- // // ...
+    //-------------------------------------------------------
+    // Printing data from all fifo's
+    //-------------------------------------------------------
 
- // phase.drop_objection(this);
+    // `uvm_info(get_type_name(),$sformatf("checking fifo used is %d",axi4_master_write_address_analysis_fifo.used()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address \n%s",axi4_master_tx_h1.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data \n%s",axi4_master_tx_h2.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("after printing all fifo's data in scoreboard"),UVM_HIGH);
 
+  end
 endtask : run_phase
 
 `endif
