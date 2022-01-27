@@ -6,7 +6,7 @@
 //  
 //  Monitor is written by extending uvm_monitor,uvm_monitor is inherited from uvm_component, 
 //  A monitor is a passive entity that samples the DUT signals through virtual interface and 
-//  converts the signal level activity to transaction level,monitor samples DUT signals but does not drive them.
+//  converts the signal level activity to transaction level,monitor samples DUT signals but cannot drive them.
 //  Monitor should have analysis port (TLM port) and virtual interface handle that points to DUT signal
 //--------------------------------------------------------------------------------------------
 class axi4_master_monitor_proxy extends uvm_component;
@@ -16,6 +16,7 @@ class axi4_master_monitor_proxy extends uvm_component;
   // Declaring handle for axi4_master agent config class 
   axi4_master_agent_config axi4_master_agent_cfg_h;
 
+  // Declaring handles for master transaction
   axi4_master_tx req_rd;
   axi4_master_tx req_wr;
 
@@ -122,6 +123,11 @@ task axi4_master_monitor_proxy::run_phase(uvm_phase phase);
 
 endtask : run_phase
 
+//--------------------------------------------------------------------------------------------
+// Task: axi4_write_address
+//  Gets the struct packet samples the data, convert it to req and drives to analysis port
+//--------------------------------------------------------------------------------------------
+
 task axi4_master_monitor_proxy::axi4_write_address();
   forever begin
     axi4_write_transfer_char_s struct_write_packet;
@@ -131,15 +137,18 @@ task axi4_master_monitor_proxy::axi4_write_address();
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_address_sampling(struct_write_packet,struct_cfg);
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
-    `uvm_info(get_type_name(),$sformatf("WR_ADDR :: Packet received from axi4_write_address_sampling is %p",struct_write_packet),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("WR_ADDR :: Packet received from axi4_write_address_sampling is %s",req_wr.sprint()),UVM_HIGH)
     
     // Clone and publish the cloned item to the subscribers
     $cast(req_wr_clone_packet,req_wr.clone());
-    `uvm_info(get_type_name(),$sformatf("WR_ADDR :: Packet received from axi4_write_address_sampling clone packet is %s",req_wr_clone_packet.sprint()),UVM_HIGH)
-    axi4_master_read_address_analysis_port.write(req_wr);
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_address clone packet is \n %s",req_wr_clone_packet.sprint()),UVM_HIGH)
+    axi4_master_read_address_analysis_port.write(req_wr_clone_packet);
   end
 endtask
+
+//--------------------------------------------------------------------------------------------
+// Task: axi4_write_data
+//  Gets the struct packet samples the data, convert it to req and drives to analysis port
+//--------------------------------------------------------------------------------------------
 
 task axi4_master_monitor_proxy::axi4_write_data();
   forever begin
@@ -150,15 +159,18 @@ task axi4_master_monitor_proxy::axi4_write_data();
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
-   `uvm_info(get_type_name(),$sformatf("WR_DATA :: Packet received from axi4_write_data_sampling is %s",req_wr.sprint()),UVM_HIGH)
     
    // Clone and publish the cloned item to the subscribers
     $cast(req_wr_clone_packet,req_wr.clone());
-    `uvm_info(get_type_name(),$sformatf("WR_DATA :: Packet received from axi4_write_data_sampling clone packet is %s",req_wr_clone_packet.sprint()),UVM_HIGH)   
-    axi4_master_write_data_analysis_port.write(req_wr);
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data clone packet is \n %s",req_wr_clone_packet.sprint()),UVM_HIGH)   
+    axi4_master_write_data_analysis_port.write(req_wr_clone_packet);
   end
-
 endtask
+
+//--------------------------------------------------------------------------------------------
+// Task: axi4_write_response
+// Gets the struct packet samples the data, convert it to req and drives to analysis port
+//--------------------------------------------------------------------------------------------
 
 task axi4_master_monitor_proxy::axi4_write_response();
   forever begin
@@ -169,16 +181,18 @@ task axi4_master_monitor_proxy::axi4_write_response();
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_response_sampling(struct_write_packet,struct_cfg);
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
-    `uvm_info(get_type_name(), $sformatf("WRITE RESPONSE::AFTER SAMPLING FROM MASTER MON BFM %p",struct_write_packet), UVM_NONE); 
-    `uvm_info(get_type_name(),$sformatf("RECEIVED PKT FROM MASTER_MON_BFM::WRITE RESPONSE \n %s",req_wr.sprint()),UVM_HIGH);
 
     //clone and publish the clone to the analysis port 
     $cast(axi4_master_tx_clone_packet,req_wr.clone());
-    `uvm_info(get_type_name(),$sformatf("WRITE RESPONSE PKT PUT ON ANALYSIS PORT: \n %s",axi4_master_tx_clone_packet.sprint()),UVM_HIGH);
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_response clone packet is \n %s",axi4_master_tx_clone_packet.sprint()),UVM_HIGH);
     axi4_master_write_response_analysis_port.write(axi4_master_tx_clone_packet);
   end
 endtask
 
+//--------------------------------------------------------------------------------------------
+// Task: axi4_read_address
+//  Gets the struct packet samples the data, convert it to req and drives to analysis port
+//--------------------------------------------------------------------------------------------
 
 task axi4_master_monitor_proxy::axi4_read_address();
   forever begin
@@ -189,16 +203,18 @@ task axi4_master_monitor_proxy::axi4_read_address();
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_read_address_sampling(struct_read_packet,struct_cfg);
     axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
-    `uvm_info(get_type_name(), $sformatf("DEBUG::From Master MON BFM:Read Address: %p ",struct_read_packet), UVM_NONE);
-    `uvm_info(get_type_name(),$sformatf("After to_class::Master Mon Proxy:Read Address: %s",req_rd.sprint()),UVM_HIGH)
     
     //clone and publish the clone to the analysis port 
     $cast(req_rd_clone_packet,req_rd.clone());
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address is %p",req_rd.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address clone packet is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address clone packet is \n %s",req_rd_clone_packet.sprint()),UVM_HIGH)
     axi4_master_read_address_analysis_port.write(req_rd_clone_packet);
   end
 endtask
+
+//--------------------------------------------------------------------------------------------
+// Task: axi4_read_data
+//  Gets the struct packet samples the data, convert it to req and drives to analysis port
+//--------------------------------------------------------------------------------------------
 
 task axi4_master_monitor_proxy::axi4_read_data();
   forever begin
@@ -210,12 +226,9 @@ task axi4_master_monitor_proxy::axi4_read_data();
     axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
     axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
     
-    `uvm_info(get_type_name(), $sformatf("DEBUG::From Master MON BFM:Read data: %p ",struct_read_packet), UVM_NONE);
-    `uvm_info(get_type_name(),$sformatf("RD_DATA :: Before cloning : axi4_read_data_sampling is %p",req_rd.sprint()),UVM_HIGH)
-
     //clone and publish the clone to the analysis port 
     $cast(req_rd_clone_packet,req_rd.clone());
-    `uvm_info(get_type_name(),$sformatf("RD_DATA :: After cloning  : axi4_read_data_sampling is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data clone packet is \n %s",req_rd_clone_packet.sprint()),UVM_HIGH)
     axi4_master_read_data_analysis_port.write(req_rd_clone_packet);
   end
 endtask
