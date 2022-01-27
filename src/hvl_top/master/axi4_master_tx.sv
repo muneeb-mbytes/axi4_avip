@@ -334,6 +334,7 @@ function void axi4_master_tx::post_randomize();
     `uvm_info("DEBUG_NAD", $sformatf("wdata[%0d]=%0h",i,wdata[i]),UVM_HIGH);
     //if(wdata[i] != 0) begin
       if(!std::randomize(wstrb) with {wstrb.size() == awlen + 1; 
+                                      wstrb[i] != 0;
                                       if(awsize == WRITE_1_BYTE)  
                                         $countones(wstrb[i]) == 1;
                                         //wstrb[i] == 'd1 || wstrb[i] == 'd2 || wstrb[i] == 'd4 || wstrb[i] == 'd8;
@@ -458,6 +459,9 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   rid    = axi4_master_tx_copy_obj.rid;
   rdata = axi4_master_tx_copy_obj.rdata;
   rresp = axi4_master_tx_copy_obj.rresp;
+
+  tx_type = axi4_master_tx_copy_obj.tx_type;
+  transfer_type = axi4_master_tx_copy_obj.transfer_type;
 endfunction : do_copy
 
 //--------------------------------------------------------------------------------------------
