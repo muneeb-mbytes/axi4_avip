@@ -31,6 +31,7 @@ module tb_master_assertions;
     `uvm_info(name,$sformatf("TEST_BENCH FOR ASSERTIONS"),UVM_HIGH);
     //Include this to verify if signals are stable
     //if_addr_signals_are_stable_positive();
+    //if_addr_signals_are_stable_negative();
     //signal_unknown_positive();
     //signal_unknown_negative_1();
     //signal_unknown_negative_2();
@@ -75,6 +76,35 @@ module tb_master_assertions;
     end
 
   endtask 
+
+   task if_addr_signals_are_stable_negative();
+      bit     [3: 0] awid_data     ;
+      bit     [ADDRESS_WIDTH-1: 0] awaddr_data ;
+      bit     [3: 0] awlen_data     ;
+      bit     [2: 0] awsize_data    ;
+      `uvm_info(name,$sformatf("INSIDE TASK"),UVM_HIGH);
+      awvalid = 1'b1;
+      awready = 1'b0;
+
+    //Driving address signals data
+    while(awvalid == 1'b1 && !awready) begin
+      @(posedge aclk);
+      awid_data = $urandom;
+      awaddr_data = $urandom;
+      awlen_data = $urandom;
+      awsize_data = $urandom;
+
+      `uvm_info(name,$sformatf("INSIDE WHILE LOOP"),UVM_HIGH);
+      awid = awid_data;
+      awaddr = awaddr_data;
+      awlen = awlen_data;
+      awsize = awsize_data;
+    end
+
+  endtask 
+
+
+
 
 
 
