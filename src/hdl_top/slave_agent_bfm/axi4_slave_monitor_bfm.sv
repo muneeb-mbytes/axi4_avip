@@ -158,7 +158,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
       req.bresp    = bresp;
       
       
-      //`uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
+      //`uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
     `uvm_info("FROM SLAVE MON BFM WRITE RESPONSE",$sformatf("write response packet: \n %p",req),UVM_HIGH)
 
 
@@ -190,30 +190,35 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
   endtask
  
   task axi4_read_data_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
-   @(posedge aclk);
-     while(rvalid!==1 || rready!==1)begin
-       @(posedge aclk);
-       `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop of read data sample"),UVM_HIGH)
-     end    
-     `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop of read data sample"),UVM_HIGH)
+    static reg[7:0] i = 0;
     
-     //for(int i=0; i<arlen + 1; i++) begin
-     //do begin
-   while(rlast!=1) begin
-       @(posedge aclk);
-       req.rid      = rid;
-       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RID=%0b",req.rid),UVM_HIGH)
-       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,rdata),UVM_HIGH)
-       req.rdata[i] = rdata;
-       req.ruser    = ruser;
-       req.rresp    = rresp;
-       //i++;
-       `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON REQ.RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
-     end //while(rlast!=1);
-     
-     req.rlast  <= rlast;
-     `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("Read data packet: %p",req),UVM_HIGH)
+    forever begin
+      
+      // Wait for valid and ready to be high
+      do begin
+        @(posedge aclk);
+      end while((rvalid!==1 || rready!==1));
+  
+      `uvm_info("FROM SLAVE MON BFM",$sformatf("after do_while loop of read data sample"),UVM_HIGH)
 
+      req.rid      = rid;
+      req.rdata[i] = rdata;
+      req.ruser    = ruser;
+      req.rresp    = rresp;
+      req.rlast    = rlast;
+
+      `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON REQ.RID=%0d",req.rid),UVM_HIGH)
+      `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON RDATA[%0d]=%0h",i,rdata),UVM_HIGH)
+      `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON REQ.RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
+      i++;
+      
+      if(req.rlast == 1) begin
+       `uvm_info("FROM SLAVE MON BFM write data",$sformatf("Inside RLAST Read Data Packet  =%p",req),UVM_HIGH)
+       i = 0;
+       break;
+      end 
+      `uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("Read data packet: %p",req),UVM_HIGH)
+   end
   endtask
 
 endinterface : axi4_slave_monitor_bfm
