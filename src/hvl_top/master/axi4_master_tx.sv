@@ -439,10 +439,12 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   //WRITE DATA CHANNEL
   wdata = axi4_master_tx_copy_obj.wdata;
   wstrb = axi4_master_tx_copy_obj.wstrb;
+  wuser = axi4_master_tx_copy_obj.wuser;
   
   //WRITE RESPONSE CHANNEL
   bid   = axi4_master_tx_copy_obj.bid;
   bresp = axi4_master_tx_copy_obj.bresp;
+  buser = axi4_master_tx_copy_obj.buser;
   
   //READ ADDRESS CHANNEL
   arid    = axi4_master_tx_copy_obj.arid;
@@ -454,11 +456,14 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   arcache = axi4_master_tx_copy_obj.arcache;
   arprot  = axi4_master_tx_copy_obj.arprot;
   arqos   = axi4_master_tx_copy_obj.arqos;
+  arregion = axi4_master_tx_copy_obj.arregion;
+  aruser  = axi4_master_tx_copy_obj.aruser;
   
   //READ DATA CHANNEL
   rid    = axi4_master_tx_copy_obj.rid;
   rdata = axi4_master_tx_copy_obj.rdata;
   rresp = axi4_master_tx_copy_obj.rresp;
+  ruser = axi4_master_tx_copy_obj.ruser;
 
   tx_type = axi4_master_tx_copy_obj.tx_type;
   transfer_type = axi4_master_tx_copy_obj.transfer_type;
