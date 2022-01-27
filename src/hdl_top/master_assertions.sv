@@ -60,28 +60,26 @@ interface master_assertions (input            aclk,
 
   // -------------------METHOD 2------------------- //
   
- // sequence s1;
- //  @(posedge aclk)
- //  awvalid == 1;
- // endsequence:s1
- // 
- // sequence s2;
- //   @(posedge aclk)
- //   $stable(awvalid);
- // endsequence:s2
+  //sequence s1;
+  //  @(posedge aclk)
+  //  //$stable(awvalid);
+  //  awvalid == 1;
+  //endsequence:s1
 
- // sequence s3;
- //   @(posedge aclk)
- //   awready == 1;
- // endsequence:s3
+  //sequence s2;
+  //  @(posedge aclk)
+  //  awready == 1;
+  //endsequence:s2
 
- // property axi_wa_valid_stable_check;
- //   @(posedge aclk)
- //   s1 ##0 s2 ## [0:15]s3;
- // endproperty : axi_wa_valid_stable_check
+  //property axi_wa_valid_stable_check;
+  //  @(posedge aclk)
+  //  s1 ## [0:15]s2
+  //endproperty : axi_wa_valid_stable_check
 
-  AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
+  //AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
 
+  //AXI_WA_VALID : assert property(@(posedge aclk) awvalid == 1);
+  //AXI_WA_READY : assert property(@(posedge aclk) awvalid ##[1:15]awready);
 
 
 endinterface : master_assertions
