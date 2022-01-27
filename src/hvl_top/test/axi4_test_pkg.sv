@@ -23,7 +23,7 @@ package axi4_test_pkg;
 
   //including base_test for testing
   `include "axi4_base_test.sv"
- // `include "assertion_base_test.sv"
+  `include "assertion_base_test.sv"
   `include "axi4_write_test.sv"
   `include "axi4_read_test.sv"
   `include "axi4_write_read_test.sv"

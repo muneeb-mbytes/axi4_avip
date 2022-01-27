@@ -215,18 +215,6 @@ interface axi4_master_monitor_bfm(input bit aclk,
      `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("Read data packet: %p",req),UVM_HIGH)
   endtask
 
-  bind axi4_master_monitor_bfm master_assertions master_assertions_h (.aclk(aclk),
-                                                                      .aresetn(aresetn),
-                                                                      .awid(awid),
-                                                                      .awaddr(awaddr),
-                                                                      .awlen(awlen),
-                                                                      .awsize(awsize),
-                                                                      .awburst(awburst),
-                                                                      .awlock(awlock),
-                                                                      .awcache(aecache),
-                                                                      .awprot(awprot),
-                                                                      .awvalid(awvalid),
-                                                                      .awready(awready));
 
 
 
