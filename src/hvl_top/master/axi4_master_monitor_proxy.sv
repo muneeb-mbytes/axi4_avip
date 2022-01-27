@@ -138,11 +138,10 @@ task axi4_master_monitor_proxy::axi4_write_address();
     axi4_master_mon_bfm_h.axi4_write_address_sampling(struct_write_packet,struct_cfg);
     axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
     
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_address packet is \n %s",req_wr.sprint()),UVM_HIGH)
     // Clone and publish the cloned item to the subscribers
     $cast(req_wr_clone_packet,req_wr.clone());
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_address clone packet is \n %s",req_wr_clone_packet.sprint()),UVM_HIGH)
-    axi4_master_read_address_analysis_port.write(req_wr);
+    axi4_master_read_address_analysis_port.write(req_wr_clone_packet);
   end
 endtask
 
@@ -163,9 +162,8 @@ task axi4_master_monitor_proxy::axi4_write_data();
     
    // Clone and publish the cloned item to the subscribers
     $cast(req_wr_clone_packet,req_wr.clone());
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data packet is \n %s",req_wr.sprint()),UVM_HIGH)   
-    // `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data clone packet is \n %s",req_wr_clone_packet.sprint()),UVM_HIGH)   
-    axi4_master_write_data_analysis_port.write(req_wr);
+    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_data clone packet is \n %s",req_wr_clone_packet.sprint()),UVM_HIGH)   
+    axi4_master_write_data_analysis_port.write(req_wr_clone_packet);
   end
 endtask
 
@@ -186,7 +184,6 @@ task axi4_master_monitor_proxy::axi4_write_response();
 
     //clone and publish the clone to the analysis port 
     $cast(axi4_master_tx_clone_packet,req_wr.clone());
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_response packet is \n %s",req_wr.sprint()),UVM_HIGH);
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_write_response clone packet is \n %s",axi4_master_tx_clone_packet.sprint()),UVM_HIGH);
     axi4_master_write_response_analysis_port.write(axi4_master_tx_clone_packet);
   end
@@ -210,8 +207,7 @@ task axi4_master_monitor_proxy::axi4_read_address();
     //clone and publish the clone to the analysis port 
     $cast(req_rd_clone_packet,req_rd.clone());
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address clone packet is \n %s",req_rd_clone_packet.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_address packet is \n %s",req_rd.sprint()),UVM_HIGH)
-    axi4_master_read_address_analysis_port.write(req_rd);
+    axi4_master_read_address_analysis_port.write(req_rd_clone_packet);
   end
 endtask
 
@@ -232,9 +228,8 @@ task axi4_master_monitor_proxy::axi4_read_data();
     
     //clone and publish the clone to the analysis port 
     $cast(req_rd_clone_packet,req_rd.clone());
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data packet is \n %s",req_rd.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data clone packet is \n %s",req_rd_clone_packet.sprint()),UVM_HIGH)
-    axi4_master_read_data_analysis_port.write(req_rd);
+    axi4_master_read_data_analysis_port.write(req_rd_clone_packet);
   end
 endtask
 
