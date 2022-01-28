@@ -273,9 +273,10 @@ function void axi4_slave_seq_item_converter::to_read_class( input axi4_read_tran
 
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after reading arlength = \n %0d",input_conv_h.arlen),UVM_FULL);
 
-  //while(input_conv_h.rdata[i] != 0)begin
-  for(int j=0;j<input_conv_h.arlen+1;j++) begin
-      output_conv_h.rdata[j] = input_conv_h.rdata[j];
+  while(input_conv_h.rdata[i] != 0)begin
+  //for(int j=0;j<input_conv_h.arlen+1;j++) begin
+      output_conv_h.rdata[i] = input_conv_h.rdata[i];
+      i++;
     end
     `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("after reading rdata = \n %0s",output_conv_h.sprint()),UVM_FULL);
 
