@@ -189,8 +189,8 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to store the read response
   rand rresp_e rresp ;
 
-  //transfer_type_e transfer_type;
-
+  //Variable : tx_type
+  //Used to determine the transaction type
   tx_type_e tx_type;
 
   //Variable : no_of_wait_states
@@ -305,6 +305,10 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   rresp = axi_slave_tx_copy_obj.rresp;
   //rready  = axi_slave_tx_copy.obj.rready;
   //rvalid  = axi_slave_tx_copy.obj.rvalid;
+  
+  tx_type = axi_slave_tx_copy_obj.tx_type;
+  transfer_type = axi_slave_tx_copy_obj.transfer_type;
+
 endfunction : do_copy
 
 //--------------------------------------------------------------------------------------------
@@ -375,6 +379,7 @@ endfunction : do_compare
 //--------------------------------------------------------------------------------------------
 function void axi4_slave_tx::do_print(uvm_printer printer);
   //super.do_print(printer);
+  printer.print_string("tx_type",tx_type.name());
   if(tx_type == WRITE)begin
     //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
     printer.print_string("awid",awid.name());
