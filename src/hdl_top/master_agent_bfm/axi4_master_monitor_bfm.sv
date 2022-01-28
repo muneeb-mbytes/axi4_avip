@@ -138,8 +138,10 @@ interface axi4_master_monitor_bfm(input bit aclk,
     req.wuser[i] = wuser;
     req.wlast    = wlast;
 
+  `uvm_info("FROM MASTER MON BFM write data",$sformatf("write datapacket wdata[%0d] = 'h%0x",i,req.wdata[i]),UVM_HIGH)
+  `uvm_info("FROM MASTER MON BFM write data",$sformatf("write datapacket wstrb[%0d] = 'h%0x",i,req.wstrb[i]),UVM_HIGH)
     if(req.wlast == 1) begin
-      `uvm_info("FROM MASTER MON BFM write data",$sformatf("Inside WLAST write datapacket  =%p",req),UVM_HIGH)
+      `uvm_info("FROM MASTER MON BFM write data",$sformatf("Inside wlast write datapacket  =%p",req),UVM_HIGH)
       i = 0;
       break;
      end
