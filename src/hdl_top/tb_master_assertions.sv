@@ -30,29 +30,63 @@ module tb_master_assertions;
   logic                     awvalid;
   logic                     awready;
   
-  //-------------------------------------------------------
-  // Clock Generation
-  //-------------------------------------------------------
-  always #10 aclk = ~aclk;
-
   //Variable: Master_assertions_TB
   //Declaring Master_assertions_TB as string 'name'
   string name = "Master_assertions_TB";
 
-  //Including all the tasks for verification of various scenarios
+  //-------------------------------------------------------
+  // Including all the tasks for verification of various scenarios
+  //-------------------------------------------------------
   initial begin
     `uvm_info(name,$sformatf("TEST_BENCH_FOR_ASSERTIONS"),UVM_HIGH);
     
-    //Include these tasks to verify positive scenarios for the assertion 
+    //Include these tasks to verify positive scenarios for the assertions in testbench
     //if_wa_channel_signals_are_stable_positive_case();
     //if_wa_channel_signals_are_unknown_positive_case();
     //if_wa_channel_valid_stable_positive_case();
+    
+    //if_wd_channel_signals_are_stable_positive_case();
+    //if_wd_channel_signals_are_unknown_positive_case();
+    //if_wd_channel_valid_stable_positive_case();
 
-    //Include these tasks to verify negative scenarios for the assertion 
+    //if_wr_channel_signals_are_stable_positive_case();
+    //if_wr_channel_signals_are_unknown_positive_case();
+    //if_wr_channel_valid_stable_positive_case();
+
+    //if_ra_channel_signals_are_stable_positive_case();
+    //if_ra_channel_signals_are_unknown_positive_case();
+    //if_ra_channel_valid_stable_positive_case();
+
+    //if_rd_channel_signals_are_stable_positive_case();
+    //if_rd_channel_signals_are_unknown_positive_case();
+    //if_rd_channel_valid_stable_positive_case();
+
+    //Include these tasks to verify negative scenarios for the assertions in testbench
     //if_wa_channel_signals_are_stable_negative_case();
     //if_wa_channel_signals_are_unknown_negative_case();
-    if_wa_channel_valid_stable_negative_case();
+    //if_wa_channel_valid_stable_negative_case();
+
+    //if_wd_channel_signals_are_stable_negative_case();
+    //if_wd_channel_signals_are_unknown_negative_case();
+    //if_wd_channel_valid_stable_negative_case();
+    
+    //if_wr_channel_signals_are_stable_negative_case();
+    //if_wr_channel_signals_are_unknown_negative_case();
+    //if_wr_channel_valid_stable_negative_case();
+    
+    //if_ra_channel_signals_are_stable_negative_case();
+    //if_ra_channel_signals_are_unknown_negative_case();
+    //if_ra_channel_valid_stable_negative_case();
+    
+    //if_rd_channel_signals_are_stable_negative_case();
+    //if_rd_channel_signals_are_unknown_negative_case();
+    //if_rd_channel_valid_stable_negative_case();
   end
+
+  //-------------------------------------------------------
+  // Clock Generation
+  //-------------------------------------------------------
+  always #10 aclk = ~aclk;
 
   //-------------------------------------------------------
   // Task: Generating aresetn initially
@@ -66,6 +100,9 @@ module tb_master_assertions;
     `uvm_info(name,$sformatf("Generating_aresetn"),UVM_HIGH);
   endtask : aresetn_gen
 
+  //--------------------------------------------------------------------------------------------
+  // Tasks written to verify assertions for write_address_channel
+  //--------------------------------------------------------------------------------------------
   //-------------------------------------------------------
   // Task: if_wa_channel_signals_are_stable_positive_case
   //-------------------------------------------------------
@@ -79,10 +116,9 @@ module tb_master_assertions;
     bit               [3:0] awcache_data;
     bit               [2:0] awprot_data;
     
-    `uvm_info(name,$sformatf("if_wa_channel_signals_are_stable_positive_case::INSIDE TASK"),UVM_HIGH);
-   
     //Calling task aresetn_gen()
     aresetn_gen();
+    
     //Randomizing the signals
     @(posedge aclk);
     awid_data    = $urandom;
@@ -93,9 +129,8 @@ module tb_master_assertions;
     awlock_data  = $urandom;
     awcache_data = $urandom;
     awprot_data  = $urandom;
-    
-    awvalid = 1'b1;
-    awready = 1'b0;
+    awvalid      = 1'b1;
+    awready      = 1'b0;
 
     //Driving address signals data
     while(awvalid==1 && awready==0) begin
@@ -125,10 +160,9 @@ module tb_master_assertions;
     bit               [3:0] awcache_data;
     bit               [2:0] awprot_data;
     
-    `uvm_info(name,$sformatf("if_wa_channel_signals_are_stable_negative_case::INSIDE TASK"),UVM_HIGH);
-    
     //Calling task aresetn_gen()
     aresetn_gen();
+   
     //Randomizing the signals
     @(posedge aclk);
     awvalid = 1'b1;
@@ -146,15 +180,14 @@ module tb_master_assertions;
       awlock_data  = $urandom;
       awcache_data = $urandom;
       awprot_data  = $urandom;
-      
-      awid    = awid_data;
-      awaddr  = awaddr_data;
-      awlen   = awlen_data;
-      awsize  = awsize_data;
-      awburst = awburst_data;
-      awlock  = awlock_data;
-      awcache = awcache_data;
-      awprot  = awprot_data;
+      awid         = awid_data;
+      awaddr       = awaddr_data;
+      awlen        = awlen_data;
+      awsize       = awsize_data;
+      awburst      = awburst_data;
+      awlock       = awlock_data;
+      awcache      = awcache_data;
+      awprot       = awprot_data;
     end
   endtask : if_wa_channel_signals_are_stable_negative_case
 
@@ -171,10 +204,9 @@ module tb_master_assertions;
     bit               [3:0] awcache_data;
     bit               [2:0] awprot_data;
     
-    `uvm_info(name,$sformatf("if_wa_channel_signals_are_unknown_positive_case::INSIDE TASK"),UVM_HIGH);
-    
     //Calling task aresetn_gen()
     aresetn_gen();
+    
     //Randomizing the signals
     @(posedge aclk);
     awvalid = 1'b1;
@@ -191,15 +223,14 @@ module tb_master_assertions;
       awlock_data  = $urandom;
       awcache_data = $urandom;
       awprot_data  = $urandom;
-      
-      awid    = awid_data;
-      awaddr  = awaddr_data;
-      awlen   = awlen_data;
-      awsize  = awsize_data;
-      awburst = awburst_data;
-      awlock  = awlock_data;
-      awcache = awcache_data;
-      awprot  = awprot_data;
+      awid         = awid_data;
+      awaddr       = awaddr_data;
+      awlen        = awlen_data;
+      awsize       = awsize_data;
+      awburst      = awburst_data;
+      awlock       = awlock_data;
+      awcache      = awcache_data;
+      awprot       = awprot_data;
     end
   endtask : if_wa_channel_signals_are_unknown_positive_case
 
@@ -216,10 +247,9 @@ module tb_master_assertions;
     bit               [3:0] awcache_data;
     bit               [2:0] awprot_data;
     
-    `uvm_info(name,$sformatf("if_wa_channel_signals_are_unknown_negative_case::INSIDE TASK"),UVM_HIGH);
-    
     //Calling task aresetn_gen()
     aresetn_gen();
+    
     //Randomizing the signals
     @(posedge aclk);
     awid_data    = $urandom;
@@ -276,6 +306,84 @@ module tb_master_assertions;
     `uvm_info(name,$sformatf("awvalid=%0d,awready=%0d",awvalid,awready),UVM_HIGH);
   endtask : if_wa_channel_valid_stable_negative_case
 
+  
+  //--------------------------------------------------------------------------------------------
+  // Tasks written to verify assertions for write_data_channel
+  //--------------------------------------------------------------------------------------------
+    //task if_wd_channel_signals_are_stable_positive_case();
+    //endtask : if_wd_channel_signals_are_stable_positive_case
+    //task if_wd_channel_signals_are_stable_negative_case();
+    //endtask : if_wd_channel_signals_are_stable_negative_case
+    
+    //task if_wd_channel_signals_are_unknown_positive_case();
+    //endtask : if_wd_channel_signals_are_unknown_positive_case
+    //task if_wd_channel_signals_are_unknown_negative_case();
+    //endtask : if_wd_channel_signals_are_unknown_negative_case
+    
+    //task if_wd_channel_valid_stable_positive_case();
+    //endtask : if_wd_channel_valid_stable_positive_case
+    //task if_wd_channel_valid_stable_negative_case();
+    //endtask : if_wd_channel_valid_stable_negative_case
+    
+
+  //--------------------------------------------------------------------------------------------
+  // Tasks written to verify assertions for write_response_channel
+  //--------------------------------------------------------------------------------------------
+    //task if_wr_channel_signals_are_stable_positive_case();
+    //endtask : if_wr_channel_signals_are_stable_positive_case
+    //task if_wr_channel_signals_are_stable_negative_case();
+    //endtask : if_wr_channel_signals_are_stable_negative_case
+    
+    //task if_wr_channel_signals_are_unknown_positive_case();
+    //endtask : if_wr_channel_signals_are_unknown_positive_case
+    //task if_wr_channel_signals_are_unknown_negative_case();
+    //endtask : if_wr_channel_signals_are_unknown_negative_case
+    
+    //task if_wr_channel_valid_stable_positive_case();
+    //endtask : if_wr_channel_valid_stable_positive_case
+    //task if_wr_channel_valid_stable_negative_case();
+    //endtask : if_wr_channel_valid_stable_negative_case
+    
+
+  //--------------------------------------------------------------------------------------------
+  // Tasks written to verify assertions for read_address_channel
+  //--------------------------------------------------------------------------------------------
+    //task if_ra_channel_signals_are_stable_positive_case();
+    //endtask : if_ra_channel_signals_are_stable_positive_case
+    //task if_ra_channel_signals_are_stable_negative_case();
+    //endtask : if_ra_channel_signals_are_stable_negative_case
+    
+    //task if_ra_channel_signals_are_unknown_positive_case();
+    //endtask : if_ra_channel_signals_are_unknown_positive_case
+    //task if_ra_channel_signals_are_unknown_negative_case();
+    //endtask : if_ra_channel_signals_are_unknown_negative_case
+    
+    //task if_ra_channel_valid_stable_positive_case();
+    //endtask : if_ra_channel_valid_stable_positive_case
+    //task if_ra_channel_valid_stable_negative_case();
+    //endtask : if_ra_channel_valid_stable_negative_case
+    
+
+  //--------------------------------------------------------------------------------------------
+  // Tasks written to verify assertions for read_data_channel
+  //--------------------------------------------------------------------------------------------
+    //task if_rd_channel_signals_are_stable_positive_case();
+    //endtask : if_rd_channel_signals_are_stable_positive_case
+    //task if_rd_channel_signals_are_stable_negative_case();
+    //endtask : if_rd_channel_signals_are_stable_negative_case
+    
+    //task if_rd_channel_signals_are_unknown_positive_case();
+    //endtask : if_rd_channel_signals_are_unknown_positive_case
+    //task if_rd_channel_signals_are_unknown_negative_case();
+    //endtask : if_rd_channel_signals_are_unknown_negative_case
+    
+    //task if_rd_channel_valid_stable_positive_case();
+    //endtask : if_rd_channel_valid_stable_positive_case
+    //task if_rd_channel_valid_stable_negative_case();
+    //endtask : if_rd_channel_valid_stable_negative_case
+
+  
+  //Instantiation of assertions
   master_assertions M_A (.aclk(aclk),
                          .aresetn(aresetn),
                          .awid(awid),

@@ -1,7 +1,3 @@
-//--------------------------------------------------------------------------------------------
-// Module : Master Assertions
-// Used to write the assertion checks needed for the master
-//--------------------------------------------------------------------------------------------
 `ifndef MASTER_ASSERTIONS_INCLUDED_
 `define MASTER_ASSERTIONS_INCLUDED_
 
@@ -10,6 +6,10 @@
 //-------------------------------------------------------
 import axi4_globals_pkg::*;
 
+//--------------------------------------------------------------------------------------------
+// Interface : master_assertions
+// Used to write the assertion checks required for the master checks
+//--------------------------------------------------------------------------------------------
 interface master_assertions (input                     aclk,
                              input                     aresetn,
                              //Write_address_channel
@@ -34,7 +34,11 @@ interface master_assertions (input                     aclk,
     `uvm_info("MASTER_ASSERTIONS","MASTER ASSERTIONS",UVM_LOW);
   end
   
-  //Assertion_0: AXI_WA_STABLE_SIGNALS_CHECK
+  //--------------------------------------------------------------------------------------------
+  // Assertion properties written for various checks in write address channel
+  //--------------------------------------------------------------------------------------------
+  
+  //Assertion: AXI_WA_STABLE_SIGNALS_CHECK
   //Description: All signals must remain stable after AWVALID is asserted until AWREADY IS LOW
   property if_write_address_channel_signals_are_stable(logic awid, logic awaddr, logic awlen, logic awsize,
                                                        logic awburst, logic awlock, logic awcache, logic awprot);
@@ -45,7 +49,7 @@ interface master_assertions (input                     aclk,
   AXI_WA_STABLE_SIGNALS_CHECK: assert property (if_write_address_channel_signals_are_stable(awid,awaddr,awlen,awsize,
                                                                                             awburst,awlock,awcache,awprot));
  
-  //Assertion_1: AXI_WA_UNKNOWN_SIGNALS_CHECK
+  //Assertion: AXI_WA_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when AWVALID is HIGH
   property if_write_address_channel_signals_are_unknown(logic awid, logic awaddr, logic awlen, logic awsize,
                                                        logic awburst, logic awlock, logic awcache, logic awprot);
@@ -56,25 +60,69 @@ interface master_assertions (input                     aclk,
   AXI_WA_UNKNOWN_SIGNALS_CHECK: assert property (if_write_address_channel_signals_are_unknown(awid,awaddr,awlen,awsize,
                                                                                               awburst,awlock,awcache,awprot));
 
-  //Assertion_3: AXI_WA_VALID_STABLE_CHECK
+  //Assertion: AXI_WA_VALID_STABLE_CHECK
   //When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
- // property axi_wa_valid_stable_check;
- //    @(posedge aclk)
- //    awvalid |-> 
- //    if (awready)
- //      ##1 (awvalid == 0)
- //    else 
- //      (awvalid == 1);
- //  endproperty : axi_wa_valid_stable_check
- //  AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
+  property axi_wa_valid_stable_check;
+    @(posedge aclk) disable iff (!aresetn)
+    $rose(awvalid) |-> awvalid s_until_with awready;
+  endproperty : axi_wa_valid_stable_check
+  AXI_WA_VALID_STABLE_CHECK : assert property (axi_wa_valid_stable_check);
 
- property axi_wa_valid_stable_check;
-   @(posedge aclk) disable iff (!aresetn)
-   $rose(awvalid) |-> awvalid s_until_with awready;
- endproperty : axi_wa_valid_stable_check
 
- AXI_WA_VALID_STABLE_CHECK : assert property (axi_wa_valid_stable_check);
+  //--------------------------------------------------------------------------------------------
+  // Assertion properties written for various checks in write data channel
+  //--------------------------------------------------------------------------------------------
+  
+  //Assertion: AXI_WD_STABLE_SIGNALS_CHECK
+  //Description: All signals must remain stable after AWVALID is asserted until AWREADY IS LOW
+ 
+  //Assertion: AXI_WD_UNKNOWN_SIGNALS_CHECK
+  //Description: A value of X on signals is not permitted when AWVALID is HIGH
 
+  //Assertion: AXI_WD_VALID_STABLE_CHECK
+  //When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
+  
+  
+  //--------------------------------------------------------------------------------------------
+  // Assertion properties written for various checks in write response channel
+  //--------------------------------------------------------------------------------------------
+  
+  //Assertion: AXI_WR_STABLE_SIGNALS_CHECK
+  //Description: All signals must remain stable after AWVALID is asserted until AWREADY IS LOW
+ 
+  //Assertion: AXI_WR_UNKNOWN_SIGNALS_CHECK
+  //Description: A value of X on signals is not permitted when AWVALID is HIGH
+
+  //Assertion: AXI_WR_VALID_STABLE_CHECK
+  //When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
+
+  
+  //--------------------------------------------------------------------------------------------
+  // Assertion properties written for various checks in read address channel
+  //--------------------------------------------------------------------------------------------
+  
+  //Assertion: AXI_RA_STABLE_SIGNALS_CHECK
+  //Description: All signals must remain stable after AWVALID is asserted until AWREADY IS LOW
+ 
+  //Assertion: AXI_RA_UNKNOWN_SIGNALS_CHECK
+  //Description: A value of X on signals is not permitted when AWVALID is HIGH
+
+  //Assertion: AXI_RA_VALID_STABLE_CHECK
+  //When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
+  
+  
+  //--------------------------------------------------------------------------------------------
+  // Assertion properties written for various checks in read data channel
+  //--------------------------------------------------------------------------------------------
+  
+  //Assertion: AXI_RD_STABLE_SIGNALS_CHECK
+  //Description: All signals must remain stable after AWVALID is asserted until AWREADY IS LOW
+ 
+  //Assertion: AXI_RD_UNKNOWN_SIGNALS_CHECK
+  //Description: A value of X on signals is not permitted when AWVALID is HIGH
+
+  //Assertion: AXI_RD_VALID_STABLE_CHECK
+  //When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
 
 endinterface : master_assertions
 
