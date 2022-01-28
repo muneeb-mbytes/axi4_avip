@@ -345,8 +345,15 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       `uvm_info("RDATA_DEBUG",$sformatf("i1_arlen= %0d",i1),UVM_HIGH);
       
       rid  <= mem_arid[j1];
-      rdata<=data_read_packet.rdata[i1];
-      `uvm_info("SLAVE_RDATA_DEBUG",$sformatf("rdata= %0d",rdata),UVM_HIGH);
+      for(int l1=0; l1<(2**mem_rsize[j1]); l1++) begin
+        `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize= %0d",mem_rsize[j1]),UVM_HIGH);
+        `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize_l1= %0d",l1),UVM_HIGH);
+        rdata[8*l1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
+        `uvm_info("RDATA_DEBUG",$sformatf("RDATA[%0d]=%0h",i1,data_read_packet.rdata[i1]),UVM_HIGH)
+        `uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*l1+7 -: 8]),UVM_HIGH)
+      end
+      //rdata<=data_read_packet.rdata[i1];
+      //`uvm_info("SLAVE_RDATA_DEBUG",$sformatf("rdata= %0d",rdata),UVM_HIGH);
       
       rresp<=data_read_packet.rresp;
       ruser<=data_read_packet.ruser;
@@ -365,13 +372,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     end
     j1++;
     
-    //for(int l1=0; l1<(2**mem_rsize[j1]); l1++) begin
-    //  `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize= %0d",mem_rsize[j1]),UVM_HIGH);
-    //  `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize_l1= %0d",l1),UVM_HIGH);
-    // rdata[8*l1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
-    // `uvm_info("RDATA_DEBUG",$sformatf("RDATA[%0d]=%0h",i1,data_read_packet.rdata[i1]),UVM_HIGH)
-    //`uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*l1+7 -: 8]),UVM_HIGH)
-    // end
        
   endtask : axi4_read_data_phase
 
