@@ -104,7 +104,8 @@ function void axi4_master_agent::connect_phase(uvm_phase phase);
   end
 
   if(axi4_master_agent_cfg_h.has_coverage) begin
-    axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;    
+    axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;   
+     // Connecting monitor_proxy port to coverage export
     axi4_master_mon_proxy_h.axi4_master_read_address_analysis_port.connect(axi4_master_cov_h.analysis_export);
     axi4_master_mon_proxy_h.axi4_master_read_data_analysis_port.connect(axi4_master_cov_h.analysis_export);
     axi4_master_mon_proxy_h.axi4_master_write_address_analysis_port.connect(axi4_master_cov_h.analysis_export);
