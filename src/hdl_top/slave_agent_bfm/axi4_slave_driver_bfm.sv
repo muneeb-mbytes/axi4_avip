@@ -93,6 +93,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   reg [	7 : 0]	            mem_wlen	  [OUTSTANDING_FIFO_DEPTH];
   reg [	2 : 0]	            mem_wsize	  [OUTSTANDING_FIFO_DEPTH];
   reg [ 1	: 0]	            mem_wburst  [OUTSTANDING_FIFO_DEPTH];
+  bit                       mem_wlast   [OUTSTANDING_FIFO_DEPTH];
   
   reg [	15: 0]	            mem_arid	  [OUTSTANDING_FIFO_DEPTH];
   reg [	ADDRESS_WIDTH-1: 0]	mem_raddr	  [OUTSTANDING_FIFO_DEPTH];
@@ -218,8 +219,11 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
        data_write_packet.wstrb[s]=wstrb;
        `uvm_info("slave_wstrb",$sformatf("sampled_slave_wstrb[%0d] = %0d",s,data_write_packet.wstrb[s]),UVM_HIGH);
         if(s == mem_wlen[a]) begin
+          mem_wlast[a] <= wlast;
           data_write_packet.wlast = wlast;
-          if(!wlast)begin
+          if(!data_write_packet.wlast)begin
+            @(posedge aclk);
+            wready<=0;
             break;
           end
           `uvm_info("slave_wlast",$sformatf("slave_wlast = %0b",wlast),UVM_HIGH);
@@ -260,7 +264,16 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info(name,"INSIDE WRITE_RESPONSE_PHASE",UVM_LOW)
     
     bid  <= mem_awid[j];
-    bresp <= data_write_packet.bresp;
+    `uvm_info("DEBUG_BRESP_WLAST",$sformatf("wlast = %0d",mem_wlast[j]),UVM_HIGH)
+    if(mem_wlast[j]==1) begin
+      bresp <= WRITE_OKAY;
+      data_write_packet.bresp <= bresp;
+    end
+    else begin
+      data_write_packet.bresp <= WRITE_SLVERR;
+      bresp <= WRITE_SLVERR;
+    end
+      
     buser<=data_write_packet.buser;
     bvalid <= 1;
     j++;

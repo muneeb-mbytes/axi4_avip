@@ -215,8 +215,8 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Constraint : bresp
   //Adding constraint to select the type of write response
-  constraint bresp_c1 {soft bresp == WRITE_OKAY;
-                      }
+  //constraint bresp_c1 {soft bresp == WRITE_OKAY;
+  //                    }
 
   //Constraint : rresp
   //Adding constraint to select the type of read response
