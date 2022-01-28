@@ -13,7 +13,7 @@ import axi4_globals_pkg::*;
 import uvm_pkg::*;
 
 //--------------------------------------------------------------------------------------------
-// Module : Master Assertions_TB
+// Module : tb_master_assertions
 // Used to write the assertion checks testbench required for the master assertion
 //--------------------------------------------------------------------------------------------
 module tb_master_assertions;
@@ -30,15 +30,15 @@ module tb_master_assertions;
   logic                     awvalid;
   logic                     awready;
   
-  //Variable: Master_assertions_TB
-  //Declaring Master_assertions_TB as string 'name'
-  string name = "Master_assertions_TB";
+  //Variable: MASTER_ASSERTIONS_TB
+  //Declaring MASTER_ASSERTIONS_TB as string 'name'
+  string name = "MASTER_ASSERTIONS_TB";
 
   //-------------------------------------------------------
   // Including all the tasks for verification of various scenarios
   //-------------------------------------------------------
   initial begin
-    `uvm_info(name,$sformatf("TEST_BENCH_FOR_ASSERTIONS"),UVM_HIGH);
+    `uvm_info(name,$sformatf("TEST_BENCH_FOR_MASTER_ASSERTIONS"),UVM_LOW);
     
     //Include these tasks to verify positive scenarios for the assertions in testbench
     //if_wa_channel_signals_are_stable_positive_case();

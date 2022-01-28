@@ -31,7 +31,7 @@ interface master_assertions (input                     aclk,
   `include "uvm_macros.svh";
 
   initial begin
-    `uvm_info("MASTER_ASSERTIONS","MASTER ASSERTIONS",UVM_LOW);
+    `uvm_info("MASTER_ASSERTIONS","MASTER_ASSERTIONS",UVM_LOW);
   end
   
   //--------------------------------------------------------------------------------------------
