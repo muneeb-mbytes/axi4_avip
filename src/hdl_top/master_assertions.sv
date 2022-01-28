@@ -6,23 +6,23 @@
 `define MASTER_ASSERTIONS_INCLUDED_
 
 //-------------------------------------------------------
-// Importing Uvm Package
+// Importing Global Package
 //-------------------------------------------------------
 import axi4_globals_pkg::*;
 
-interface master_assertions (input            aclk,
-                             input            aresetn,
+interface master_assertions (input                     aclk,
+                             input                     aresetn,
                              //Write_address_channel
-                             input     [3: 0] awid     ,
-                             input     [ADDRESS_WIDTH-1: 0] awaddr ,
-                             input     [3: 0] awlen     ,
-                             input     [2: 0] awsize    ,
-                             input     [1: 0] awburst   ,
-                             input     [1: 0] awlock    ,
-                             //input     [3: 0] awcache   ,
-                             input     [2: 0] awprot    ,
-                             input            awvalid   ,
-                             input		        awready   );
+                             input               [3:0] awid,
+                             input [ADDRESS_WIDTH-1:0] awaddr ,
+                             input               [3:0] awlen,
+                             input               [2:0] awsize,
+                             input               [1:0] awburst,
+                             input               [1:0] awlock,
+                             input               [3:0] awcache,
+                             input               [2:0] awprot,
+                             input                     awvalid,
+                             input                     awready);
 
   //-------------------------------------------------------
   // Importing Uvm Package
@@ -34,54 +34,41 @@ interface master_assertions (input            aclk,
     `uvm_info("MASTER_ASSERTIONS","MASTER ASSERTIONS",UVM_LOW);
   end
   
-  // Assertion for AXI_WA_STABLE_SIGNALS_CHECK
-  // the signals should be stable when awvalid is high
-  //property if_addr_signals_are_stable(logic awid, logic awaddr, logic awlen, logic awsize);
-  //  @(posedge aclk)
-  //  awvalid == 1 && awready == 0 |-> $stable(awid) && $stable(awaddr) && $stable(awlen) && $stable(awsize);
-  //endproperty : if_addr_signals_are_stable
-
-  //AXI_WA_STABLE_SIGNALS_CHECK: assert property (if_addr_signals_are_stable(awid,awaddr,awlen,awsize));
-  
-  // Assertion for AXI_WA_UNKNOWN_SIGNALS_CHECK, the signal should not be unknown when awvalid is high
-  //AXI_AWADDR_X : assert property(@(posedge aclk) awvalid |-> (!$isunknown(awaddr)));
-  //AXI_AWLEN_X  : assert property(@(posedge aclk) awvalid |-> (!$isunknown(awlen)));
-  //AXI_AWSIZE_X : assert property(@(posedge aclk) awvalid |-> (!$isunknown(awsize)));
-  //AXI_AWID_X   : assert property(@(posedge aclk) awvalid |-> (!$isunknown(awid)));
-
-
-  // Assertion for AXI_WA_VALID_STABLE_CHECK 
+  //Assertion_0: AXI_WA_STABLE_SIGNALS_CHECK
+  //Description: All signals must remain stable after AWVALID is asserted until AWREADY IS LOW
+  property if_write_address_channel_signals_are_stable(logic awid, logic awaddr, logic awlen, logic awsize,
+                                                       logic awburst, logic awlock, logic awcache, logic awprot);
+    @(posedge aclk) disable iff (!aresetn)
+    (awvalid==1 && awready==0) |-> ($stable(awid) && $stable(awaddr) && $stable(awlen) && $stable(awsize) && 
+                                    $stable(awburst) && $stable(awlock) && $stable(awcache) && $stable(awprot));
+  endproperty : if_write_address_channel_signals_are_stable
+  AXI_WA_STABLE_SIGNALS_CHECK: assert property (if_write_address_channel_signals_are_stable(awid,awaddr,awlen,awsize,
+                                                                                            awburst,awlock,awcache,awprot));
  
-  // -------------------METHOD 1------------------- //
-   property axi_wa_valid_stable_check;
+  //Assertion_1: AXI_WA_UNKNOWN_SIGNALS_CHECK
+  //Description: A value of X on signals is not permitted when AWVALID is HIGH
+  property if_write_address_channel_signals_are_unknown(logic awid, logic awaddr, logic awlen, logic awsize,
+                                                       logic awburst, logic awlock, logic awcache, logic awprot);
+    @(posedge aclk) disable iff (!aresetn)
+    (awvalid==1) |-> (!($isunknown(awid)) && !($isunknown(awaddr)) && !($isunknown(awlen)) && !($isunknown(awsize))
+                     && !($isunknown(awburst)) && !($isunknown(awlock)) && !($isunknown(awcache)) && !($isunknown(awprot)));
+  endproperty : if_write_address_channel_signals_are_unknown
+  AXI_WA_UNKNOWN_SIGNALS_CHECK: assert property (if_write_address_channel_signals_are_unknown(awid,awaddr,awlen,awsize,
+                                                                                              awburst,awlock,awcache,awprot));
+
+  //Assertion_3: AXI_WA_VALID_STABLE_CHECK
+  //When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
+  property axi_wa_valid_stable_check;
      @(posedge aclk)
-     awvalid == 1 |-> $stable(awvalid) ##[0:15]awready;
+     awvalid |-> 
+     if (awready)
+       ##1 (awvalid == 0)
+     else 
+       (awvalid == 1);
    endproperty : axi_wa_valid_stable_check
-
-  // -------------------METHOD 2------------------- //
-  
-  //sequence s1;
-  //  @(posedge aclk)
-  //  //$stable(awvalid);
-  //  awvalid == 1;
-  //endsequence:s1
-
-  //sequence s2;
-  //  @(posedge aclk)
-  //  awready == 1;
-  //endsequence:s2
-
-  //property axi_wa_valid_stable_check;
-  //  @(posedge aclk)
-  //  s1 ## [0:15]s2
-  //endproperty : axi_wa_valid_stable_check
-
-  //AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
-
-  //AXI_WA_VALID : assert property(@(posedge aclk) awvalid == 1);
-  //AXI_WA_READY : assert property(@(posedge aclk) awvalid ##[1:15]awready);
-
+   AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
 
 endinterface : master_assertions
 
 `endif
+
