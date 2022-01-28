@@ -85,7 +85,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : wlast
   //Used to represent the last byte of the transaction
-  //bit wlast;
+  bit wlast;
 
   //Variable : wready
   //Used to accept the valid data
@@ -200,6 +200,12 @@ class axi4_slave_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   // Constraints
   //-------------------------------------------------------
+  
+  //Constraint : wdata_c1
+  //Adding constraint to restrict the write data based on awlength
+  //constraint wdata_c1 { wdata.size() == awlen + 1;
+  //                      wdata.size()!=0;} 
+  
   //Constraint : rdata_c1
   //Adding constraint to restrict the read data based on awlength
   constraint rdata_c1 { rdata.size() == arlen+1; 
