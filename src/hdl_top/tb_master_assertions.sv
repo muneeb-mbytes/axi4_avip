@@ -253,9 +253,11 @@ module tb_master_assertions;
   task if_wa_channel_valid_stable_positive_case();
     @(posedge aclk);
     awvalid = 1'b1;
+    awready = 1'b0;
+    `uvm_info(name,$sformatf("awvalid=%0d,awready=%0d",awvalid,awready),UVM_HIGH);
+    #60;
     awready = 1'b1;
-    #1;
-    awvalid = 1'b0;
+    `uvm_info(name,$sformatf("awvalid=%0d,awready=%0d",awvalid,awready),UVM_HIGH);
   endtask : if_wa_channel_valid_stable_positive_case
 
   //-------------------------------------------------------
@@ -264,9 +266,14 @@ module tb_master_assertions;
   task if_wa_channel_valid_stable_negative_case();
     @(posedge aclk);
     awvalid = 1'b1;
+    awready = 1'b0;
+    `uvm_info(name,$sformatf("awvalid=%0d,awready=%0d",awvalid,awready),UVM_HIGH);
+    #60;
+    awvalid = 1'b0;
+    `uvm_info(name,$sformatf("awvalid=%0d,awready=%0d",awvalid,awready),UVM_HIGH);
+    #30;
     awready = 1'b1;
-    #1;
-    awvalid = 1'b1;
+    `uvm_info(name,$sformatf("awvalid=%0d,awready=%0d",awvalid,awready),UVM_HIGH);
   endtask : if_wa_channel_valid_stable_negative_case
 
   master_assertions M_A (.aclk(aclk),

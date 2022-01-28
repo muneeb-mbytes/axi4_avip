@@ -58,15 +58,23 @@ interface master_assertions (input                     aclk,
 
   //Assertion_3: AXI_WA_VALID_STABLE_CHECK
   //When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
-  property axi_wa_valid_stable_check;
-     @(posedge aclk)
-     awvalid |-> 
-     if (awready)
-       ##1 (awvalid == 0)
-     else 
-       (awvalid == 1);
-   endproperty : axi_wa_valid_stable_check
-   AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
+ // property axi_wa_valid_stable_check;
+ //    @(posedge aclk)
+ //    awvalid |-> 
+ //    if (awready)
+ //      ##1 (awvalid == 0)
+ //    else 
+ //      (awvalid == 1);
+ //  endproperty : axi_wa_valid_stable_check
+ //  AXI_WA_VALID_STABLE_CHECK : assert property(axi_wa_valid_stable_check);
+
+ property axi_wa_valid_stable_check;
+   @(posedge aclk) disable iff (!aresetn)
+   $rose(awvalid) |-> awvalid s_until_with awready;
+ endproperty : axi_wa_valid_stable_check
+
+ AXI_WA_VALID_STABLE_CHECK : assert property (axi_wa_valid_stable_check);
+
 
 endinterface : master_assertions
 
