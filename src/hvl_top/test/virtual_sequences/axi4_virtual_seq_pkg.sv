@@ -75,6 +75,8 @@ package axi4_virtual_seq_pkg;
   `include "axi4_virtual_nbk_incr_burst_write_read_seq.sv"
   `include "axi4_virtual_bk_wrap_burst_write_read_seq.sv"
   `include "axi4_virtual_nbk_wrap_burst_write_read_seq.sv"
+  `include "axi4_virtual_nbk_fixed_burst_write_read_seq.sv"
+  
   `include "axi4_virtual_nbk_okay_response_write_read_seq.sv"
 
 endpackage : axi4_virtual_seq_pkg
