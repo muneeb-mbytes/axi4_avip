@@ -80,9 +80,6 @@ function void axi4_master_agent::build_phase(uvm_phase phase);
    axi4_master_cov_h = axi4_master_coverage ::type_id::create("axi4_master_cov_h",this);
   end
 
-  if(axi4_master_agent_cfg_h.has_coverage) begin
-    axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
-  end
 
 endfunction : build_phase
 
@@ -100,16 +97,20 @@ function void axi4_master_agent::connect_phase(uvm_phase phase);
     axi4_master_write_seqr_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
     axi4_master_read_seqr_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
     axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
-
+  
     //Connecting the ports
     axi4_master_drv_proxy_h.axi_write_seq_item_port.connect(axi4_master_write_seqr_h.seq_item_export);
     axi4_master_drv_proxy_h.axi_read_seq_item_port.connect(axi4_master_read_seqr_h.seq_item_export);
+  end
 
-    axi4_master_mon_proxy_h.axi4_master_read_address_analysis_port.connect(axi4_master_cov_h.axi4_master_read_address_analysis_port);
-    axi4_master_mon_proxy_h.axi4_master_read_data_analysis_port.connect(axi4_master_cov_h.axi4_master_read_data_analysis_port);
-    axi4_master_mon_proxy_h.axi4_master_write_address_analysis_port.connect(axi4_master_cov_h.axi4_master_write_address_analysis_port);
-    axi4_master_mon_proxy_h.axi4_master_write_data_analysis_port.connect(axi4_master_cov_h.axi4_master_write_data_analysis_port);
-    axi4_master_mon_proxy_h.axi4_master_write_response_analysis_port.connect(axi4_master_cov_h.axi4_master_write_response_analysis_port);
+  if(axi4_master_agent_cfg_h.has_coverage) begin
+    axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;   
+     // Connecting monitor_proxy port to coverage export
+    axi4_master_mon_proxy_h.axi4_master_read_address_analysis_port.connect(axi4_master_cov_h.analysis_export);
+    axi4_master_mon_proxy_h.axi4_master_read_data_analysis_port.connect(axi4_master_cov_h.analysis_export);
+    axi4_master_mon_proxy_h.axi4_master_write_address_analysis_port.connect(axi4_master_cov_h.analysis_export);
+    axi4_master_mon_proxy_h.axi4_master_write_data_analysis_port.connect(axi4_master_cov_h.analysis_export);
+    axi4_master_mon_proxy_h.axi4_master_write_response_analysis_port.connect(axi4_master_cov_h.analysis_export);
   end
   
   axi4_master_mon_proxy_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;
