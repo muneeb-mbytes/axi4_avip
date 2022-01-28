@@ -126,7 +126,25 @@ task axi4_slave_monitor_proxy::axi4_slave_write_address();
 endtask
 
 task axi4_slave_monitor_proxy::axi4_slave_write_data();
+  forever begin
+    axi4_write_transfer_char_s struct_write_packet;
+    axi4_transfer_cfg_s       struct_cfg;
+    axi4_slave_tx             req_wr_clone_packet; 
 
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: Inside axi4_write_data"), UVM_NONE);
+    
+    axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
+    axi4_slave_mon_bfm_h.axi4_slave_write_data_sampling(struct_write_packet,struct_cfg);
+    axi4_slave_seq_item_converter::to_write_class(struct_write_packet,req_wr);
+    
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: From Slave MON BFM :: write data: %p",struct_write_packet), UVM_NONE);
+    `uvm_info(get_type_name(),$sformatf("SLAVE_MON_WR_DATA :: Before cloning : axi4_slave_write_data_sampling is %p",req_wr.sprint()),UVM_HIGH)
+    
+    //clone and publish the clone to the analysis port 
+    $cast(req_wr_clone_packet,req_wr.clone());
+    `uvm_info(get_type_name(),$sformatf("SLAVE_MON_WR_DATA :: After cloning : axi4_slave_write_data_sampling is %p",req_wr_clone_packet.sprint()),UVM_HIGH)
+  end
+    axi4_slave_write_data_analysis_port.write(req_wr);
 endtask
 
 task axi4_slave_monitor_proxy::axi4_slave_write_response();
