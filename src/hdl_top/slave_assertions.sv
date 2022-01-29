@@ -25,6 +25,11 @@ interface slave_assertions (input                     aclk,
                             input                     awready,
                             //Write Data Channel Signals
                             //Write Response Channel Signals
+                            input     [3: 0] bid       ,
+                            input     [1: 0] bresp     ,
+                            input     [3: 0] buser     ,
+                            input            bvalid    ,
+                            input            bready    ,
                             //Read Address Channel Signals
                             input               [3:0] arid,     
                             input [ADDRESS_WIDTH-1:0] araddr,  
@@ -111,13 +116,27 @@ interface slave_assertions (input                     aclk,
   //--------------------------------------------------------------------------------------------
   //Assertion:   AXI_WR_STABLE_SIGNALS_CHECK
   //Description: All signals must remain stable after BVALID is asserted until BREADY IS LOW
- 
+  property if_write_response_channel_signals_are_stable(logic bid, logic buser);
+    @(posedge aclk) disable iff(!aresetn)
+    bvalid==1 && bready==0 |-> $stable(bid) && $stable(buser); 
+  endproperty : if_write_response_channel_signals_are_stable
+  AXI_WR_STABLE_SIGNALS_CHECK: assert property (if_write_response_channel_signals_are_stable(bid,buser));
+
   //Assertion:   AXI_WR_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when BVALID is HIGH
+  property if_write_response_channel_signals_are_unknown(logic bid, logic buser);
+    @(posedge aclk) disable iff(!aresetn)
+    bvalid==1 |-> ($stable(bid) && $stable(buser));  
+  endproperty : if_write_response_channel_signals_are_unknown
+  AXI_WR_UNKNOWN_SIGNALS_CHECK: assert property (if_write_response_channel_signals_are_unknown(bid,buser));
 
   //Assertion:   AXI_WR_VALID_STABLE_CHECK
   //Description: When BVALID is asserted, then it must remain asserted until BREADY is HIGH
-
+  property axi_write_response_channel_valid_stable_check;
+    @(posedge aclk) disable iff(!aresetn)
+    $rose(bvalid) |-> bvalid s_until_with bready;
+  endproperty : axi_write_response_channel_valid_stable_check
+  AXI_WR_VALID_STABLE_CHECK : assert property (axi_write_response_channel_valid_stable_check);
   
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in read address channel

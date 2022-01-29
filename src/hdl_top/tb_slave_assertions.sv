@@ -32,6 +32,11 @@ module tb_slave_assertions;
   logic                     awready;
   //Write Data Channel Signals
   //Write Response Channel Signals
+  logic     [3: 0] bid       ;
+  logic     [1: 0] bresp     ;
+  logic     [3: 0] buser     ;
+  logic            bvalid    ;
+  logic            bready    ;
   //Read Address Channel
   logic              [3: 0] arid;
   logic [ADDRESS_WIDTH-1:0] araddr;
@@ -764,6 +769,11 @@ module tb_slave_assertions;
                          .awprot(awprot),
                          .awvalid(awvalid),
                          .awready(awready),
+                         .bid(bid),
+                         .buser(buser),
+                         .bvalid(bvalid),
+                         .bready(bready),
+                         .bresp(bresp),
                          .arid(arid),
                          .araddr(araddr),  
                          .arlen(arlen),   
