@@ -19,6 +19,7 @@ import uvm_pkg::*;
 module tb_slave_assertions;
   bit                       aclk;
   bit                       aresetn;
+  //Write Address Channel Signals
   logic               [3:0] awid;
   logic [ADDRESS_WIDTH-1:0] awaddr ;
   logic               [3:0] awlen;
@@ -29,6 +30,8 @@ module tb_slave_assertions;
   logic               [2:0] awprot;
   logic                     awvalid;
   logic                     awready;
+  //Write Data Channel Signals
+  //Write Response Channel Signals
   //Read Address Channel
   logic              [3: 0] arid;
   logic [ADDRESS_WIDTH-1:0] araddr;
@@ -43,7 +46,14 @@ module tb_slave_assertions;
   logic               [3:0] aruser;
   logic                     arvalid;
  	logic	                    arready;
-
+  //Read Data Channel Signals
+  logic            [3:0] rid;
+  logic [DATA_WIDTH-1:0] rdata;
+  logic            [1:0] rresp;
+  logic                  rlast;
+  logic            [3:0] ruser;
+  logic                  rvalid;
+  logic                  rready;
 
   
   //Variable: SLAVE_ASSERTIONS_TB
@@ -515,7 +525,7 @@ module tb_slave_assertions;
     arburst_data = $urandom;
     arlock_data  = $urandom;
     arcache_data = $urandom;
-     arprot_data  = $urandom;
+    arprot_data  = $urandom;
     arvalid      = 1'b1;
       
     //Driving address signals data
@@ -565,20 +575,180 @@ module tb_slave_assertions;
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for read_data_channel
   //--------------------------------------------------------------------------------------------
-    //task if_rd_channel_signals_are_stable_positive_case();
-    //endtask : if_rd_channel_signals_are_stable_positive_case
-    //task if_rd_channel_signals_are_stable_negative_case();
-    //endtask : if_rd_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  // Task: if_rd_channel_signals_are_stable_positive_case
+  //-------------------------------------------------------
+  task if_rd_channel_signals_are_stable_positive_case();
+    bit            [3:0] rid_data;
+    bit [DATA_WIDTH-1:0] rdata_data;
+    bit            [1:0] rresp_data;
+    bit                  rlast_data;
+    bit            [3:0] ruser_data;
+    bit                  rvalid_data;
+    bit                  rready_data;
     
-    //task if_rd_channel_signals_are_unknown_positive_case();
-    //endtask : if_rd_channel_signals_are_unknown_positive_case
-    //task if_rd_channel_signals_are_unknown_negative_case();
-    //endtask : if_rd_channel_signals_are_unknown_negative_case
+    //Calling task aresetn_gen()
+    aresetn_gen();
     
-    //task if_rd_channel_valid_stable_positive_case();
-    //endtask : if_rd_channel_valid_stable_positive_case
-    //task if_rd_channel_valid_stable_negative_case();
-    //endtask : if_rd_channel_valid_stable_negative_case
+    //Randomizing the signals
+    @(posedge aclk);
+    rid_data   = $urandom; 
+    rdata_data = $urandom; 
+    rresp_data = $urandom; 
+    rlast_data = $urandom; 
+    ruser_data = $urandom; 
+    rvalid     = 1'b1;
+    rready     = 1'b0;
+
+    //Driving address signals data
+    while(rvalid==1 && rready==0) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_rd_channel_signals_are_stable_positive_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      rid   = rid_data; 
+      rdata = rdata_data; 
+      rresp = rresp_data; 
+      rlast = rlast_data; 
+      ruser = ruser_data; 
+    end
+  endtask : if_rd_channel_signals_are_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_rd_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  task if_rd_channel_signals_are_stable_negative_case();
+    bit            [3:0] rid_data;
+    bit [DATA_WIDTH-1:0] rdata_data;
+    bit            [1:0] rresp_data;
+    bit                  rlast_data;
+    bit            [3:0] ruser_data;
+    bit                  rvalid_data;
+    bit                  rready_data;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+   
+    //Randomizing the signals
+    @(posedge aclk);
+    rvalid = 1'b1;
+    rready = 1'b0;
+
+    //Driving address signals data
+    while(rvalid==1 && rready==0) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_rd_channel_signals_are_stable_negative_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      rid_data   = $urandom; 
+      rdata_data = $urandom; 
+      rresp_data = $urandom; 
+      rlast_data = $urandom; 
+      ruser_data = $urandom; 
+      rid        = rid_data; 
+      rdata      = rdata_data; 
+      rresp      = rresp_data; 
+      rlast      = rlast_data; 
+      ruser      = ruser_data; 
+    end
+  endtask : if_rd_channel_signals_are_stable_negative_case
+
+  //-------------------------------------------------------
+  // Task: if_rd_channel_signals_are_unknown_positive_case
+  //-------------------------------------------------------
+  task if_rd_channel_signals_are_unknown_positive_case();
+    bit            [3:0] rid_data;
+    bit [DATA_WIDTH-1:0] rdata_data;
+    bit            [1:0] rresp_data;
+    bit                  rlast_data;
+    bit            [3:0] ruser_data;
+    bit                  rvalid_data;
+    bit                  rready_data;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+    
+    //Randomizing the signals
+    @(posedge aclk);
+    rvalid = 1'b1;
+
+    //Driving address signals data
+    while(rvalid==1) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_rd_channel_signals_are_unknown_positive_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      rid_data   = $urandom; 
+      rdata_data = $urandom; 
+      rresp_data = $urandom; 
+      rlast_data = $urandom; 
+      ruser_data = $urandom; 
+      rid        = rid_data; 
+      rdata      = rdata_data; 
+      rresp      = rresp_data; 
+      rlast      = rlast_data; 
+      ruser      = ruser_data; 
+    end
+  endtask : if_rd_channel_signals_are_unknown_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_rd_channel_signals_are_unknown_negative_case
+  //-------------------------------------------------------
+  task if_rd_channel_signals_are_unknown_negative_case();
+    bit            [3:0] rid_data;
+    bit [DATA_WIDTH-1:0] rdata_data;
+    bit            [1:0] rresp_data;
+    bit                  rlast_data;
+    bit            [3:0] ruser_data;
+    bit                  rvalid_data;
+    bit                  rready_data;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+    
+    //Randomizing the signals
+    @(posedge aclk);
+    rid_data   = $urandom; 
+    rdata_data = $urandom; 
+    rresp_data = $urandom; 
+    rlast_data = $urandom; 
+    ruser_data = $urandom; 
+    rvalid     = 1'b1;
+      
+    //Driving address signals data
+    while(rvalid==1) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_rd_channel_signals_are_unknown_negative_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      rid   = 1'bx; 
+      rdata = 1'bx; 
+      rresp = 1'bx; 
+      rlast = 1'bx; 
+      ruser = 1'bx; 
+    end
+  endtask : if_rd_channel_signals_are_unknown_negative_case
+
+  //-------------------------------------------------------
+  // Task: if_rd_channel_valid_stable_positive_case
+  //-------------------------------------------------------
+  task if_rd_channel_valid_stable_positive_case();
+    @(posedge aclk);
+    rvalid = 1'b1;
+    rready = 1'b0;
+    `uvm_info(name,$sformatf("rvalid=%0d,rready=%0d",rvalid,rready),UVM_HIGH);
+    #60;
+    rready = 1'b1;
+    `uvm_info(name,$sformatf("rvalid=%0d,rready=%0d",rvalid,rready),UVM_HIGH);
+  endtask : if_rd_channel_valid_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_rd_channel_valid_stable_negative_case
+  //-------------------------------------------------------
+  task if_rd_channel_valid_stable_negative_case();
+    @(posedge aclk);
+    rvalid = 1'b1;
+    rready = 1'b0;
+    `uvm_info(name,$sformatf("rvalid=%0d,rready=%0d",rvalid,rready),UVM_HIGH);
+    #60;
+    rvalid = 1'b0;
+    `uvm_info(name,$sformatf("rvalid=%0d,rready=%0d",rvalid,rready),UVM_HIGH);
+    #30;
+    rready = 1'b1;
+    `uvm_info(name,$sformatf("rvalid=%0d,rready=%0d",rvalid,rready),UVM_HIGH);
+  endtask : if_rd_channel_valid_stable_negative_case
 
   
   //Instantiation of assertions
@@ -606,7 +776,15 @@ module tb_slave_assertions;
                          .arregion(arregion), 
                          .aruser(aruser),  
                          .arvalid(arvalid), 
-                         .arready(arready));
+                         .arready(arready),
+                         .rid(rid),
+                         .rdata(rdata),
+                         .rresp(rresp),
+                         .rlast(rlast),
+                         .ruser(ruser),
+                         .rvalid(rvalid),
+                         .rready(rready)
+                       );
 
 endmodule : tb_slave_assertions
 
