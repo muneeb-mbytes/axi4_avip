@@ -238,7 +238,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_write_data_out_fifo_h.get(local_slave_data_tx);
 
      axi4_slave_seq_item_converter::tx_write_packet(local_slave_addr_tx,local_slave_data_tx,local_slave_response_tx,packet);
-     `uvm_info("DEBUG_SLAVE_WDATA_PROXY_FIFO", $sformatf("AFTER :: COMBINED packet \n %s",packet.sprint()), UVM_HIGH);
+     `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: COMBINED WRITE CHANNEL PACKET \n %s",packet.sprint()), UVM_HIGH);
 
      task_memory_write(packet);
 

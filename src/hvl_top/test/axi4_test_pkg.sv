@@ -82,6 +82,9 @@ package axi4_test_pkg;
   `include "axi4_non_blocking_maximum_transfer_write_read_test.sv"
   `include "axi4_non_blocking_cross_write_read_test.sv"
   `include "axi4_non_blocking_slave_error_write_read_test.sv"
+
+  `include "axi4_non_blocking_write_read_rand_test.sv"
+  `include "axi4_blocking_write_read_rand_test.sv"
   
 
 endpackage : axi4_test_pkg
