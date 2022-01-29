@@ -47,6 +47,10 @@ package axi4_slave_seq_pkg;
   `include "axi4_slave_nbk_write_32b_transfer_seq.sv"
   `include "axi4_slave_nbk_write_64b_transfer_seq.sv"
   `include "axi4_slave_bk_read_incr_burst_seq.sv"
+  `include "axi4_slave_nbk_write_outstanding_transfer_seq.sv"
+  `include "axi4_slave_nbk_write_maximum_transfer_seq.sv"
+  `include "axi4_slave_nbk_write_cross_seq.sv"
+  `include "axi4_slave_nbk_write_slave_error_seq.sv"
   
   `include "axi4_slave_bk_read_wrap_burst_seq.sv"
   `include "axi4_slave_bk_read_8b_transfer_seq.sv"
@@ -64,6 +68,10 @@ package axi4_slave_seq_pkg;
   `include "axi4_slave_nbk_read_64b_transfer_seq.sv"
   `include "axi4_slave_nbk_read_okay_resp_seq.sv"
   `include "axi4_slave_nbk_read_ex_okay_resp_seq.sv"
+  `include "axi4_slave_nbk_read_outstanding_transfer_seq.sv"
+  `include "axi4_slave_nbk_read_maximum_transfer_seq.sv"
+  `include "axi4_slave_nbk_read_cross_seq.sv"
+  `include "axi4_slave_nbk_read_slave_error_seq.sv"
 
 
 
