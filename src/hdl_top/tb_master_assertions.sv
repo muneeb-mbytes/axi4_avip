@@ -29,6 +29,21 @@ module tb_master_assertions;
   logic               [2:0] awprot;
   logic                     awvalid;
   logic                     awready;
+  //Read Address Channel
+  logic              [3: 0] arid;
+  logic [ADDRESS_WIDTH-1:0] araddr;
+  logic               [7:0] arlen;
+  logic               [2:0] arsize;
+  logic               [1:0] arburst;
+  logic               [1:0] arlock;
+  logic               [3:0] arcache;
+  logic               [2:0] arprot;
+  logic               [3:0] arqos;
+  logic               [3:0] arregion;
+  logic               [3:0] aruser;
+  logic                     arvalid;
+ 	logic	                    arready;
+
   
   //Variable: MASTER_ASSERTIONS_TB
   //Declaring MASTER_ASSERTIONS_TB as string 'name'
@@ -278,7 +293,7 @@ module tb_master_assertions;
   endtask : if_wa_channel_signals_are_unknown_negative_case
 
   //-------------------------------------------------------
-  // Task: wa_channel_valid_stable_positive_case
+  // Task: if_wa_channel_valid_stable_positive_case
   //-------------------------------------------------------
   task if_wa_channel_valid_stable_positive_case();
     @(posedge aclk);
@@ -291,7 +306,7 @@ module tb_master_assertions;
   endtask : if_wa_channel_valid_stable_positive_case
 
   //-------------------------------------------------------
-  // Task: wa_channel_valid_stable_negative_case
+  // Task: if_wa_channel_valid_stable_negative_case
   //-------------------------------------------------------
   task if_wa_channel_valid_stable_negative_case();
     @(posedge aclk);
@@ -348,21 +363,209 @@ module tb_master_assertions;
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for read_address_channel
   //--------------------------------------------------------------------------------------------
-    //task if_ra_channel_signals_are_stable_positive_case();
-    //endtask : if_ra_channel_signals_are_stable_positive_case
-    //task if_ra_channel_signals_are_stable_negative_case();
-    //endtask : if_ra_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  // Task: if_ra_channel_signals_are_stable_positive_case
+  //-------------------------------------------------------
+  task if_ra_channel_signals_are_stable_positive_case();
+    bit               [3:0] arid_data;
+    bit [ADDRESS_WIDTH-1:0] araddr_data;
+    bit               [3:0] arlen_data;
+    bit               [2:0] arsize_data;
+    bit               [1:0] arburst_data;
+    bit               [1:0] arlock_data;
+    bit               [3:0] arcache_data;
+    bit               [2:0] arprot_data;
     
-    //task if_ra_channel_signals_are_unknown_positive_case();
-    //endtask : if_ra_channel_signals_are_unknown_positive_case
-    //task if_ra_channel_signals_are_unknown_negative_case();
-    //endtask : if_ra_channel_signals_are_unknown_negative_case
+    //Calling task aresetn_gen()
+    aresetn_gen();
     
-    //task if_ra_channel_valid_stable_positive_case();
-    //endtask : if_ra_channel_valid_stable_positive_case
-    //task if_ra_channel_valid_stable_negative_case();
-    //endtask : if_ra_channel_valid_stable_negative_case
+    //Randomizing the signals
+    @(posedge aclk);
+    arid_data    = $urandom;
+    araddr_data  = $urandom;
+    arlen_data   = $urandom;
+    arsize_data  = $urandom;
+    arburst_data = $urandom;
+    arlock_data  = $urandom;
+    arcache_data = $urandom;
+    arprot_data  = $urandom;
+    arvalid      = 1'b1;
+    arready      = 1'b0;
+
+    //Driving address signals data
+    while(arvalid==1 && arready==0) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_ra_channel_signals_are_stable_positive_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      arid    = arid_data;
+      araddr  = araddr_data;
+      arlen   = arlen_data;
+      arsize  = arsize_data;
+      arburst = arburst_data;
+      arlock  = arlock_data;
+      arcache = arcache_data;
+      arprot  = arprot_data;
+    end
+  endtask : if_ra_channel_signals_are_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_ra_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  task if_ra_channel_signals_are_stable_negative_case();
+    bit               [3:0] arid_data;
+    bit [ADDRESS_WIDTH-1:0] araddr_data;
+    bit               [3:0] arlen_data;
+    bit               [2:0] arsize_data;
+    bit               [1:0] arburst_data;
+    bit               [1:0] arlock_data;
+    bit               [3:0] arcache_data;
+    bit               [2:0] arprot_data;
     
+    //Calling task aresetn_gen()
+    aresetn_gen();
+   
+    //Randomizing the signals
+    @(posedge aclk);
+    arvalid = 1'b1;
+    arready = 1'b0;
+
+    //Driving address signals data
+    while(arvalid==1 && arready==0) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_ra_channel_signals_are_stable_negative_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      arid_data    = $urandom;
+      araddr_data  = $urandom;
+      arlen_data   = $urandom;
+      arsize_data  = $urandom;
+      arburst_data = $urandom;
+      arlock_data  = $urandom;
+      arcache_data = $urandom;
+      arprot_data  = $urandom;
+      arid         = arid_data;
+      araddr       = araddr_data;
+      arlen        = arlen_data;
+      arsize       = arsize_data;
+      arburst      = arburst_data;
+      arlock       = arlock_data;
+      arcache      = arcache_data;
+      arprot       = arprot_data;
+    end
+  endtask : if_ra_channel_signals_are_stable_negative_case
+
+  //-------------------------------------------------------
+  // Task: if_ra_channel_signals_are_unknown_positive_case
+  //-------------------------------------------------------
+  task if_ra_channel_signals_are_unknown_positive_case();
+    bit               [3:0] arid_data;
+    bit [ADDRESS_WIDTH-1:0] araddr_data;
+    bit               [3:0] arlen_data;
+    bit               [2:0] arsize_data;
+    bit               [1:0] arburst_data;
+    bit               [1:0] arlock_data;
+    bit               [3:0] arcache_data;
+    bit               [2:0] arprot_data;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+    
+    //Randomizing the signals
+    @(posedge aclk);
+    arvalid = 1'b1;
+
+    //Driving address signals data
+    while(arvalid==1) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_ra_channel_signals_are_unknown_positive_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      arid_data    = $urandom;
+      araddr_data  = $urandom;
+      arlen_data   = $urandom;
+      arsize_data  = $urandom;
+      arburst_data = $urandom;
+      arlock_data  = $urandom;
+      arcache_data = $urandom;
+      arprot_data  = $urandom;
+      arid         = arid_data;
+      araddr       = araddr_data;
+      arlen        = arlen_data;
+      arsize       = arsize_data;
+      arburst      = arburst_data;
+      arlock       = arlock_data;
+      arcache      = arcache_data;
+      arprot       = arprot_data;
+    end
+  endtask : if_ra_channel_signals_are_unknown_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_ra_channel_signals_are_unknown_negative_case
+  //-------------------------------------------------------
+  task if_ra_channel_signals_are_unknown_negative_case();
+    bit               [3:0] arid_data;
+    bit [ADDRESS_WIDTH-1:0] araddr_data;
+    bit               [3:0] arlen_data;
+    bit               [2:0] arsize_data;
+    bit               [1:0] arburst_data;
+    bit               [1:0] arlock_data;
+    bit               [3:0] arcache_data;
+    bit               [2:0] arprot_data;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+    
+    //Randomizing the signals
+    @(posedge aclk);
+    arid_data    = $urandom;
+    araddr_data  = $urandom;
+    arlen_data   = $urandom;
+    arsize_data  = $urandom;
+    arburst_data = $urandom;
+    arlock_data  = $urandom;
+    arcache_data = $urandom;
+    arprot_data  = $urandom;
+    arvalid      = 1'b1;
+      
+    //Driving address signals data
+    while(arvalid==1) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_ra_channel_signals_are_unknown_negative_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      arid    = 1'bx; 
+      araddr  = 1'bx; 
+      arlen   = 1'bx; 
+      arsize  = 1'bx; 
+      arburst = 1'bx; 
+      arlock  = 1'bx; 
+      arcache = 1'bx; 
+      arprot  = 1'bx; 
+    end
+  endtask : if_ra_channel_signals_are_unknown_negative_case
+
+  //-------------------------------------------------------
+  // Task: if_ra_channel_valid_stable_positive_case
+  //-------------------------------------------------------
+  task if_ra_channel_valid_stable_positive_case();
+    @(posedge aclk);
+    arvalid = 1'b1;
+    arready = 1'b0;
+    `uvm_info(name,$sformatf("arvalid=%0d,arready=%0d",arvalid,arready),UVM_HIGH);
+    #60;
+    arready = 1'b1;
+    `uvm_info(name,$sformatf("arvalid=%0d,arready=%0d",arvalid,arready),UVM_HIGH);
+  endtask : if_ra_channel_valid_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_ra_channel_valid_stable_negative_case
+  //-------------------------------------------------------
+  task if_ra_channel_valid_stable_negative_case();
+    @(posedge aclk);
+    arvalid = 1'b1;
+    arready = 1'b0;
+    `uvm_info(name,$sformatf("arvalid=%0d,arready=%0d",arvalid,arready),UVM_HIGH);
+    #60;
+    arvalid = 1'b0;
+    `uvm_info(name,$sformatf("arvalid=%0d,arready=%0d",arvalid,arready),UVM_HIGH);
+    #30;
+    arready = 1'b1;
+    `uvm_info(name,$sformatf("arvalid=%0d,arready=%0d",arvalid,arready),UVM_HIGH);
+  endtask : if_ra_channel_valid_stable_negative_case
+
 
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for read_data_channel
@@ -395,7 +598,20 @@ module tb_master_assertions;
                          .awcache(awcache),
                          .awprot(awprot),
                          .awvalid(awvalid),
-                         .awready(awready));
+                         .awready(awready),
+                         .arid(arid),
+                         .araddr(araddr),  
+                         .arlen(arlen),   
+                         .arsize(arsize), 
+                         .arburst(arburst), 
+                         .arlock(arlock),  
+                         .arcache(arcache), 
+                         .arprot(arprot),
+                         .arqos(arqos),   
+                         .arregion(arregion), 
+                         .aruser(aruser),  
+                         .arvalid(arvalid), 
+                         .arready(arready));
 
 endmodule : tb_master_assertions
 

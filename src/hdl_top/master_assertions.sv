@@ -22,7 +22,21 @@ interface master_assertions (input                     aclk,
                              input               [3:0] awcache,
                              input               [2:0] awprot,
                              input                     awvalid,
-                             input                     awready);
+                             input                     awready,
+                              //Read Address Channel
+                             input              [3: 0] arid,     
+                             input [ADDRESS_WIDTH-1:0] araddr,  
+                             input               [7:0] arlen,      
+                             input               [2:0] arsize,     
+                             input               [1:0] arburst,    
+                             input               [1:0] arlock,     
+                             input               [3:0] arcache,    
+                             input               [2:0] arprot,     
+                             input               [3:0] arqos,      
+                             input               [3:0] arregion,   
+                             input               [3:0] aruser,     
+                             input                     arvalid,    
+ 	                           input	                   arready);
 
   //-------------------------------------------------------
   // Importing Uvm Package
@@ -102,15 +116,35 @@ interface master_assertions (input                     aclk,
   //--------------------------------------------------------------------------------------------
   
   //Assertion: AXI_RA_STABLE_SIGNALS_CHECK
-  //Description: All signals must remain stable after AWVALID is asserted until AWREADY IS LOW
+  //Description: All signals must remain stable after ARVALID is asserted until ARREADY IS LOW
+  property if_read_address_channel_signals_are_stable(logic arid, logic araddr, logic arlen, logic arsize,
+                                                       logic arburst, logic arlock, logic arcache, logic arprot);
+    @(posedge aclk) disable iff (!aresetn)
+    (arvalid==1 && arready==0) |-> ($stable(arid) && $stable(araddr) && $stable(arlen) && $stable(arsize) && 
+                                    $stable(arburst) && $stable(arlock) && $stable(arcache) && $stable(arprot));
+  endproperty : if_read_address_channel_signals_are_stable
+  AXI_RA_STABLE_SIGNALS_CHECK: assert property (if_read_address_channel_signals_are_stable(arid,araddr,arlen,arsize,
+                                                                                            arburst,arlock,arcache,arprot));
  
   //Assertion: AXI_RA_UNKNOWN_SIGNALS_CHECK
-  //Description: A value of X on signals is not permitted when AWVALID is HIGH
+  //Description: A value of X on signals is not permitted when ARVALID is HIGH
+  property if_read_address_channel_signals_are_unknown(logic arid, logic araddr, logic arlen, logic arsize,
+                                                       logic arburst, logic arlock, logic arcache, logic arprot);
+    @(posedge aclk) disable iff (!aresetn)
+    (arvalid==1) |-> (!($isunknown(arid)) && !($isunknown(araddr)) && !($isunknown(arlen)) && !($isunknown(arsize))
+                     && !($isunknown(arburst)) && !($isunknown(arlock)) && !($isunknown(arcache)) && !($isunknown(arprot)));
+  endproperty : if_read_address_channel_signals_are_unknown
+  AXI_RA_UNKNOWN_SIGNALS_CHECK: assert property (if_read_address_channel_signals_are_unknown(arid,araddr,arlen,arsize,
+                                                                                              arburst,arlock,arcache,arprot));
 
   //Assertion: AXI_RA_VALID_STABLE_CHECK
-  //When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
-  
-  
+  //When ARVALID is asserted, then it must remain asserted until ARREADY is HIGH
+  property axi_ra_valid_stable_check;
+    @(posedge aclk) disable iff (!aresetn)
+    $rose(arvalid) |-> arvalid s_until_with arready;
+  endproperty : axi_ra_valid_stable_check
+  AXI_RA_VALID_STABLE_CHECK : assert property (axi_ra_valid_stable_check);
+
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in read data channel
   //--------------------------------------------------------------------------------------------
