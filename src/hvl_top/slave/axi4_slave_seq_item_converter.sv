@@ -346,13 +346,15 @@ input axi4_slave_tx input_data_h,output axi4_slave_tx packet_h);
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined read addr packet=\n%s",packet_h.sprint),UVM_FULL);
   
   packet_h.rid=input_data_h.rid;
-//  foreach(input_data_h.wdata[i]) begin
-  //for(int i=0;i<input_addr_h.arlen+1;i++) begin
+  
   while(i<(input_addr_h.arlen+1))begin
-    packet_h.rdata[i]= input_data_h.rdata[i];
+    //for(int j=0;j<(2**(input_addr_h.arsize));j++)begin
+      //packet_h.rdata[8*j+7 -: 8]= input_data_h.rdata[j*8+:8];
+      //packet_h.rdata[i][j*8+:8]= input_data_h.rdata[i][j*8+:8];
+    //end
+    packet_h.rdata[i] = input_data_h.rdata[i];
     i++;
   end
-//end while(input_addr_h.arlen);
 
     `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined read data packet after reading rdata= %0p",packet_h.rdata[i]),UVM_FULL);
 
