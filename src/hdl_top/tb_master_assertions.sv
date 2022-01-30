@@ -360,112 +360,185 @@ module tb_master_assertions;
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for write_response_channel
   //--------------------------------------------------------------------------------------------
-    task if_wr_channel_signals_are_stable_positive_case();
-         
-      bit [3:0]bid_local;
-      bit [2:0]buser_local;
-      bit [5:0]delay_local;
 
-      //Calling task aresetn_gen()
-      aresetn_gen();
-     
-      fork
-        begin
-          repeat(6) begin
-            //Randomizing the signals
-            @(posedge aclk);
-            delay_local = $urandom;
-            #delay_local;
-            bid_local      = $urandom;
-            buser_local    = $urandom;
-            bvalid         = 1'b1;
-            bready         = 1'b0;
-            #delay_local;
-            bvalid         = 1'b1;
-            bready         = 1'b1;
-            #delay_local;
-            bvalid         = 1'b0;
-            bready         = 1'b0;
-          end
-        end
-        begin
-          //Driving address signals data
-          `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_positive_case"),UVM_HIGH);
-
-          forever begin
-
-            while(bvalid !==1 || bready !==0 )begin
-              @(posedge aclk);
-            end
-
-            while(bvalid==1 && bready==0) begin
-              @(posedge aclk);
-              `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_positive_case::INSIDE WHILE LOOP"),UVM_HIGH);
-              `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_positive_case::INSIDE WHILE LOOP bid=%0d, buser=%0d",bid,buser),UVM_HIGH);
-              bid      = bid_local;
-              buser    = buser_local;
-            end
-            `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_positive_case"),UVM_HIGH);
-          end        end
-      join
-
-    endtask : if_wr_channel_signals_are_stable_positive_case
-
-    task if_wr_channel_signals_are_stable_negative_case();
-      bit [5:0]delay_local;
-
-      //Calling task aresetn_gen()
-      aresetn_gen();
-     
-      fork
-        begin
-          `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_negative_case"),UVM_HIGH);
-          repeat(6) begin
-            //Randomizing the signals
-            //@(posedge aclk);
-            delay_local = $urandom;
-            #delay_local;
-            bvalid         = 1'b1;
-            bready         = 1'b0;
-            #delay_local;
-            bvalid         = 1'b1;
-            bready         = 1'b1;
-            #delay_local;
-            bvalid         = 1'b0;
-            bready         = 1'b0;
-          end
-          `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_negative_case"),UVM_HIGH);
-        end
-        begin
-          //Driving address signals data
-          `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_negative_case"),UVM_HIGH);
-
-          forever begin
-            while(bvalid !==1 || bready !==0 )begin
-              @(posedge aclk);
-            end
-            while(bvalid==1 && bready==0) begin
-              @(posedge aclk);
-              `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_negative_case::INSIDE WHILE LOOP"),UVM_HIGH);
-              bid      = $urandom;
-              buser    = $urandom;
-            end
-            `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_negative_case"),UVM_HIGH);
-          end
-        end
-      join
-
-    endtask : if_wr_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  // Task: if_wr_channel_signals_are_stable_positive_case
+  //-------------------------------------------------------
+  task if_wr_channel_signals_are_stable_positive_case();
+       
+    bit [3:0]bid_local;
+    bit [2:0]buser_local;
+    bit [2:0]bresp_local;
+    bit [1:0]delay_local;
     
-    //task if_wr_channel_signals_are_unknown_positive_case();
-    //endtask : if_wr_channel_signals_are_unknown_positive_case
-    //task if_wr_channel_signals_are_unknown_negative_case();
-    //endtask : if_wr_channel_signals_are_unknown_negative_case
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      delay_local = $urandom;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      @(posedge aclk);
+      //Randomizing the signals
+      bid_local      = $urandom;
+      buser_local    = $urandom;
+      bresp_local    = $urandom;
+
+      bid            <= bid_local;
+      buser          <= buser_local;
+      bresp          <= bresp_local;
+      bvalid         <= 1'b1;
+      bready         <= 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         <= 1'b1;
+      bready         <= 1'b1;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         <= 1'b0;
+      bready         <= 1'b0;
+      `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_positive_case-- INSIDE REPEAT"),UVM_HIGH);
+    end
+
+  endtask : if_wr_channel_signals_are_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wr_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  task if_wr_channel_signals_are_stable_negative_case();
+
+    bit [3:0]bid_local;
+    bit [2:0]buser_local;
+    bit [2:0]bresp_local;
+    bit [1:0]delay_local;
     
-    //task if_wr_channel_valid_stable_positive_case();
-    //endtask : if_wr_channel_valid_stable_positive_case
-    //task if_wr_channel_valid_stable_negative_case();
-    //endtask : if_wr_channel_valid_stable_negative_case
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      delay_local = $urandom;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bid            = $urandom;
+      buser          = $urandom;
+      bresp          = $urandom;
+      bvalid         = 1'b1;
+      bready         = 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+        bid            = $urandom;
+        buser          = $urandom;
+        bresp          = $urandom;
+      end
+
+      bvalid         = 1'b1;
+      bready         = 1'b1;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         = 1'b0;
+      bready         = 1'b0;
+      `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_negative_case-- INSIDE REPEAT"),UVM_HIGH);
+
+    end
+  endtask : if_wr_channel_signals_are_stable_negative_case
+    
+  //-------------------------------------------------------
+  // Task: if_wr_channel_signals_are_unknown_positive_case
+  //-------------------------------------------------------
+  task if_wr_channel_signals_are_unknown_positive_case();
+
+    bit [3:0]bid_local;
+    bit [2:0]buser_local;
+    bit [2:0]bresp_local;
+    bit [1:0]delay_local;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      @(posedge aclk);
+      delay_local = $urandom;
+      bvalid         = 1'b0;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      
+      bid            = $urandom;
+      buser          = $urandom;
+      bresp          = $urandom;
+      bvalid         = 1'b1;
+
+      `uvm_info(name,$sformatf("if_wr_channel_signals_are_unknown_positive_case-- INSIDE REPEAT"),UVM_HIGH);
+
+    end
+
+  endtask : if_wr_channel_signals_are_unknown_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wr_channel_signals_are_unknown_negative_case
+  //-------------------------------------------------------
+  task if_wr_channel_signals_are_unknown_negative_case();
+
+    bit [3:0]bid_local;
+    bit [2:0]buser_local;
+    bit [2:0]bresp_local;
+    bit [1:0]delay_local;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      @(posedge aclk);
+      delay_local = $urandom;
+      bvalid         = 1'b0;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      
+      bid            = 'bx;
+      buser          = 'bx;
+      bresp          = 'bz;
+      bvalid         = 1'b1;
+
+      `uvm_info(name,$sformatf("if_wr_channel_signals_are_unknown_negative_case-- INSIDE REPEAT"),UVM_HIGH);
+
+    end
+
+  endtask : if_wr_channel_signals_are_unknown_negative_case
+  
+  //-------------------------------------------------------
+  // Task: if_wr_channel_valid_stable_positive_case
+  //-------------------------------------------------------
+  //task if_wr_channel_valid_stable_positive_case();
+  //endtask : if_wr_channel_valid_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wr_channel_valid_stable_negative_case
+  //-------------------------------------------------------
+  //task if_wr_channel_valid_stable_negative_case();
+  //endtask : if_wr_channel_valid_stable_negative_case
     
 
   //--------------------------------------------------------------------------------------------
