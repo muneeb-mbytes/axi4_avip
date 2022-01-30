@@ -153,6 +153,7 @@ task axi4_master_driver_proxy::axi4_write_task();
     //Converting transactions into struct data type
 
     // MSHA: put the req_wr into a FIFO/queue (depth must be equal to outstanding transfers variable value)
+    // MSHA: Throw the error when we reach the limit
     if(!axi4_master_write_fifo_h.is_full()) begin
       axi4_master_write_fifo_h.write(req_wr);
     end
@@ -160,7 +161,6 @@ task axi4_master_driver_proxy::axi4_write_task();
       `uvm_error(get_type_name(),$sformatf("WRITE_TASK::Cannot write into FIFO as WRITE_FIFO IS FULL"));
     end
 
-    // MSHA: Throw the error when we reach the limit
     `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Checking transfer type outside if = %s",req_wr.transfer_type),UVM_HIGH); 
     
     if(req_wr.transfer_type == BLOCKING_WRITE) begin
@@ -244,7 +244,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           `uvm_info(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Checking fifo size used = %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
          
           if(!axi4_master_write_fifo_h.is_empty()) begin
-            axi4_master_write_fifo_h.peek(local_master_response_tx);
+            axi4_master_write_fifo_h.get(local_master_response_tx);
           end
           else begin
             `uvm_error(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Cannot peek into FIFO as WRITE_FIFO IS EMPTY"));
@@ -264,22 +264,21 @@ task axi4_master_driver_proxy::axi4_write_task();
           `uvm_info(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Checking fifo size used= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
 
           //axi4_master_write_fifo_h.get(req_wr);
+          //if(!axi4_master_write_fifo_h.is_empty()) begin
+          //  axi4_master_write_fifo_h.get(req_wr);
+          //end
+          //else begin
+          //  `uvm_error(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Cannot get from FIFO as WRITE_FIFO IS EMPTY"));
+          //end
 
-          if(!axi4_master_write_fifo_h.is_empty()) begin
-            axi4_master_write_fifo_h.get(req_wr);
-          end
-          else begin
-            `uvm_error(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Cannot get from FIFO as WRITE_FIFO IS EMPTY"));
-          end
-
-          `uvm_info(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Checking fifo size used= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
+          //`uvm_info(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Checking fifo size used= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
           `uvm_info(get_type_name(), $sformatf("WRITE_RESPONSE_THREAD :: Out of response task"), UVM_HIGH); 
           //decrement the out-standing transfers counter
 
         end
 
-      //join_none
       join_any
+      //join_none
 
       // fine-grain control
       //`uvm_info(get_type_name(), $sformatf("DEBUG_NA :: Out of fork_join : waddr.status()=%s ",waddr_process.status()), UVM_NONE); 
@@ -383,7 +382,7 @@ task axi4_master_driver_proxy::axi4_read_task();
           read_channel_key.get(1);
 
           if(!axi4_master_read_fifo_h.is_empty()) begin
-            axi4_master_read_fifo_h.peek(local_master_read_data_tx);
+            axi4_master_read_fifo_h.get(local_master_read_data_tx);
           end
           else begin
             `uvm_error(get_type_name(),$sformatf("READ_DATA_THREAD::Cannot read from read fifo, as it is empty"));
@@ -392,24 +391,25 @@ task axi4_master_driver_proxy::axi4_read_task();
           axi4_master_seq_item_converter::from_read_class(local_master_read_data_tx,struct_read_data_packet);
           
           `uvm_info(get_type_name(),$sformatf("READ_DATA_THREAD::Checking struct packet = %p",struct_read_data_packet),UVM_HIGH); 
+          
           axi4_master_drv_bfm_h.axi4_read_data_channel_task(struct_read_data_packet,struct_cfg);
           `uvm_info(get_type_name(),$sformatf("READ_DATA_THREAD::Checking response struct packet = %p",struct_read_data_packet),UVM_HIGH); 
           
           read_channel_key.put(1);
           
-          //axi4_master_read_fifo_h.get(req_rd);
-
-          if(!axi4_master_read_fifo_h.is_empty()) begin
-            axi4_master_read_fifo_h.get(req_rd);
-          end
-          else begin
-            `uvm_error(get_type_name(),$sformatf("READ_DATA_THREAD::Cannot read from read fifo, as it is empty"));
-          end 
-
           //Converting transactions into struct data type
           axi4_master_seq_item_converter::to_read_class(struct_read_data_packet,req_rd);
 
           `uvm_info(get_type_name(),$sformatf("READ_DATA_THREAD::Response_received_req_read_packet = \n %s",req_rd.sprint()),UVM_HIGH);
+
+          //axi4_master_read_fifo_h.get(req_rd);
+
+          //if(!axi4_master_read_fifo_h.is_empty()) begin
+          //  axi4_master_read_fifo_h.get(req_rd);
+          //end
+          //else begin
+          //  `uvm_error(get_type_name(),$sformatf("READ_DATA_THREAD::Cannot read from read fifo, as it is empty"));
+          //end 
 
         end
 
