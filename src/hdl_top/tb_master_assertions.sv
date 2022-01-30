@@ -71,7 +71,10 @@ module tb_master_assertions;
   initial begin
     `uvm_info(name,$sformatf("TEST_BENCH_FOR_MASTER_ASSERTIONS"),UVM_LOW);
     
-    //Include these tasks to verify positive scenarios for the assertions in testbench
+    //-------------------------------------------------------
+    // Include these tasks to verify positive scenarios 
+    // for the assertions in testbench
+    //-------------------------------------------------------
     //if_wa_channel_signals_are_stable_positive_case();
     //if_wa_channel_signals_are_unknown_positive_case();
     //if_wa_channel_valid_stable_positive_case();
@@ -91,8 +94,11 @@ module tb_master_assertions;
     //if_rd_channel_signals_are_stable_positive_case();
     //if_rd_channel_signals_are_unknown_positive_case();
     //if_rd_channel_valid_stable_positive_case();
-
-    //Include these tasks to verify negative scenarios for the assertions in testbench
+    
+    //-------------------------------------------------------
+    // Include these tasks to verify negative scenarios 
+    // for the assertions in testbench
+    //-------------------------------------------------------
     //if_wa_channel_signals_are_stable_negative_case();
     //if_wa_channel_signals_are_unknown_negative_case();
     //if_wa_channel_valid_stable_negative_case();
@@ -531,16 +537,90 @@ module tb_master_assertions;
   //-------------------------------------------------------
   // Task: if_wr_channel_valid_stable_positive_case
   //-------------------------------------------------------
-  //task if_wr_channel_valid_stable_positive_case();
-  //endtask : if_wr_channel_valid_stable_positive_case
+  task if_wr_channel_valid_stable_positive_case();
+
+    bit [1:0]delay_local;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      @(posedge aclk);
+      delay_local     = $urandom;
+      bvalid         <= 1'b0;
+      bready         <= 1'b0;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      
+      bvalid         <= 1'b1;
+      bready         <= 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         <= 1'b1;
+      bready         <= 1'b1;
+
+      //@(posedge aclk);
+      //bvalid         <= 1'b0;
+      //bready         <= 1'b0;
+
+      `uvm_info(name,$sformatf("if_wr_channel_valid_stable_positive_case-- INSIDE REPEAT"),UVM_HIGH);
+    end
+
+  endtask : if_wr_channel_valid_stable_positive_case
 
   //-------------------------------------------------------
   // Task: if_wr_channel_valid_stable_negative_case
   //-------------------------------------------------------
-  //task if_wr_channel_valid_stable_negative_case();
-  //endtask : if_wr_channel_valid_stable_negative_case
-    
+  task if_wr_channel_valid_stable_negative_case();
 
+    bit [1:0]delay_local;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      @(posedge aclk);
+      delay_local     = $urandom;
+      bvalid         <= 1'b0;
+      bready         <= 1'b0;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      
+      bvalid         <= 1'b1;
+      bready         <= 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         <= 1'b0;
+      bready         <= 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      bvalid         <= 1'b0;
+      bready         <= 1'b1;
+
+      @(posedge aclk);
+      bvalid        <= 1'b0;
+      bready        <= 1'b0;
+
+      `uvm_info(name,$sformatf("if_wr_channel_valid_stable_negative_case-- INSIDE REPEAT"),UVM_HIGH);
+    
+    end
+
+  endtask : if_wr_channel_valid_stable_negative_case
+    
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for read_address_channel
   //--------------------------------------------------------------------------------------------

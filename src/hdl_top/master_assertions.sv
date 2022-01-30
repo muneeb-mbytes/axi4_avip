@@ -72,7 +72,7 @@ interface master_assertions (input                     aclk,
   property if_write_address_channel_signals_are_stable(logic awid, logic awaddr, logic awlen, logic awsize,
                                                        logic awburst, logic awlock, logic awcache, logic awprot);
     @(posedge aclk) disable iff (!aresetn)
-    (awvalid==1 && awready==0) |-> ($stable(awid) && $stable(awaddr) && $stable(awlen) && $stable(awsize) && 
+    (awvalid==1 && awready==0) |=> ($stable(awid) && $stable(awaddr) && $stable(awlen) && $stable(awsize) && 
                                     $stable(awburst) && $stable(awlock) && $stable(awcache) && $stable(awprot));
   endproperty : if_write_address_channel_signals_are_stable
   AXI_WA_STABLE_SIGNALS_CHECK: assert property (if_write_address_channel_signals_are_stable(awid,awaddr,awlen,awsize,
@@ -120,7 +120,7 @@ interface master_assertions (input                     aclk,
     @(posedge aclk) disable iff(!aresetn)
     bvalid==1 && bready==0 |=> $stable(bid) && $stable(buser) && $stable(bresp); 
   endproperty : if_write_response_channel_signals_are_stable
-  //AXI_WR_STABLE_SIGNALS_CHECK: assert property (if_write_response_channel_signals_are_stable(bid,buser,bresp));
+  AXI_WR_STABLE_SIGNALS_CHECK: assert property (if_write_response_channel_signals_are_stable(bid,buser,bresp));
 
   //Assertion:   AXI_WR_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when BVALID is HIGH
@@ -132,11 +132,11 @@ interface master_assertions (input                     aclk,
 
   //Assertion:   AXI_WR_VALID_STABLE_CHECK
   //Description: When BVALID is asserted, then it must remain asserted until BREADY is HIGH
-  //property axi_write_response_channel_valid_stable_check;
-  //  @(posedge aclk) disable iff(!aresetn)
-  //  $rose(bvalid) |-> bvalid s_until_with bready;
-  //endproperty : axi_write_response_channel_valid_stable_check
-  //AXI_WR_VALID_STABLE_CHECK : assert property (axi_write_response_channel_valid_stable_check);
+  property axi_write_response_channel_valid_stable_check;
+    @(posedge aclk) disable iff(!aresetn)
+    $rose(bvalid) |-> bvalid s_until_with bready;
+  endproperty : axi_write_response_channel_valid_stable_check
+  AXI_WR_VALID_STABLE_CHECK : assert property (axi_write_response_channel_valid_stable_check);
   
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in read address channel
@@ -146,7 +146,7 @@ interface master_assertions (input                     aclk,
   property if_read_address_channel_signals_are_stable(logic arid, logic araddr, logic arlen, logic arsize,
                                                       logic arburst, logic arlock, logic arcache, logic arprot);
     @(posedge aclk) disable iff (!aresetn)
-    (arvalid==1 && arready==0) |-> ($stable(arid) && $stable(araddr) && $stable(arlen) && $stable(arsize) && 
+    (arvalid==1 && arready==0) |=> ($stable(arid) && $stable(araddr) && $stable(arlen) && $stable(arsize) && 
                                     $stable(arburst) && $stable(arlock) && $stable(arcache) && $stable(arprot));
   endproperty : if_read_address_channel_signals_are_stable
   AXI_RA_STABLE_SIGNALS_CHECK: assert property (if_read_address_channel_signals_are_stable(arid,araddr,arlen,arsize,
@@ -179,7 +179,7 @@ interface master_assertions (input                     aclk,
   //Description: All signals must remain stable after RVALID is asserted until RREADY IS LOW
   property if_read_data_channel_signals_are_stable(logic rid, logic rdata, logic rresp, logic rlast, logic ruser);
     @(posedge aclk) disable iff (!aresetn)
-    (rvalid==1 && rready==0) |-> ($stable(rid) && $stable(rdata) && $stable(rresp) && $stable(rlast) && $stable(ruser));
+    (rvalid==1 && rready==0) |=> ($stable(rid) && $stable(rdata) && $stable(rresp) && $stable(rlast) && $stable(ruser));
   endproperty : if_read_data_channel_signals_are_stable
   AXI_RD_STABLE_SIGNALS_CHECK: assert property (if_read_data_channel_signals_are_stable(rid,rdata,rresp,rlast,ruser));
  
