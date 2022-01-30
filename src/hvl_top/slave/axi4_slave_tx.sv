@@ -305,6 +305,9 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   rresp = axi_slave_tx_copy_obj.rresp;
   //rready  = axi_slave_tx_copy.obj.rready;
   //rvalid  = axi_slave_tx_copy.obj.rvalid;
+
+  tx_type = axi_slave_tx_copy_obj.tx_type;
+  transfer_type = axi_slave_tx_copy_obj.transfer_type;
 endfunction : do_copy
 
 //--------------------------------------------------------------------------------------------
