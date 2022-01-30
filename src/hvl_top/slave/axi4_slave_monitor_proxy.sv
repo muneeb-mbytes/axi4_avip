@@ -186,14 +186,14 @@ forever begin
     
     axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
     axi4_slave_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
-    `uvm_info(get_type_name(), $sformatf("DEBUG :: From Slave MON BFM :: Read data: %p ",struct_read_packet), UVM_NONE);
     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);
-    `uvm_info(get_type_name(),$sformatf("After to class :: Packet received from axi4_read_data_sampling is /n  %p",req_rd.sprint()),UVM_HIGH)
     
+    `uvm_info(get_type_name(), $sformatf("DEBUG :: From Slave MON BFM :: Read data: %p ",struct_read_packet), UVM_NONE);
+    `uvm_info(get_type_name(),$sformatf("SLAVE_MON_RD_DATA :: Before cloning : axi4_read_data_sampling is %p",req_rd.sprint()),UVM_HIGH)
     
+    //clone and publish the clone to the analysis port 
     $cast(req_rd_clone_packet,req_rd.clone());
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling is %p",req_rd.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data_sampling clone packet is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("SLAVE_MON_RD_DATA :: After cloning : axi4_read_data_sampling is %p",req_rd_clone_packet.sprint()),UVM_HIGH)
 
     axi4_slave_read_data_analysis_port.write(req_rd);
   end

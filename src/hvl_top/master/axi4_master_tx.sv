@@ -119,7 +119,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //Variable : arid
   //Used to send the read address id
   rand arid_e arid;
-
+ 
   //Variable : araddr
   //Used to send the read address
   rand bit [ADDRESS_WIDTH-1:0] araddr;
@@ -171,6 +171,11 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   // READ DATA CHANNEL SIGNALS 
   //-------------------------------------------------------
+
+  //Variable : rid
+  //Used to send the read address id
+  rid_e rid;
+  
   //Variable : rdata
   //Used to randomise read data
   //varaible[$] gives a unbounded queue
@@ -329,6 +334,7 @@ function void axi4_master_tx::post_randomize();
     `uvm_info("DEBUG_NAD", $sformatf("wdata[%0d]=%0h",i,wdata[i]),UVM_HIGH);
     //if(wdata[i] != 0) begin
       if(!std::randomize(wstrb) with {wstrb.size() == awlen + 1; 
+                                      wstrb[i] != 0;
                                       if(awsize == WRITE_1_BYTE)  
                                         $countones(wstrb[i]) == 1;
                                         //wstrb[i] == 'd1 || wstrb[i] == 'd2 || wstrb[i] == 'd4 || wstrb[i] == 'd8;
@@ -433,10 +439,12 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   //WRITE DATA CHANNEL
   wdata = axi4_master_tx_copy_obj.wdata;
   wstrb = axi4_master_tx_copy_obj.wstrb;
+  wuser = axi4_master_tx_copy_obj.wuser;
   
   //WRITE RESPONSE CHANNEL
   bid   = axi4_master_tx_copy_obj.bid;
   bresp = axi4_master_tx_copy_obj.bresp;
+  buser = axi4_master_tx_copy_obj.buser;
   
   //READ ADDRESS CHANNEL
   arid    = axi4_master_tx_copy_obj.arid;
@@ -448,10 +456,17 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   arcache = axi4_master_tx_copy_obj.arcache;
   arprot  = axi4_master_tx_copy_obj.arprot;
   arqos   = axi4_master_tx_copy_obj.arqos;
+  arregion = axi4_master_tx_copy_obj.arregion;
+  aruser  = axi4_master_tx_copy_obj.aruser;
   
   //READ DATA CHANNEL
+  rid    = axi4_master_tx_copy_obj.rid;
   rdata = axi4_master_tx_copy_obj.rdata;
   rresp = axi4_master_tx_copy_obj.rresp;
+  ruser = axi4_master_tx_copy_obj.ruser;
+
+  tx_type = axi4_master_tx_copy_obj.tx_type;
+  transfer_type = axi4_master_tx_copy_obj.transfer_type;
 endfunction : do_copy
 
 //--------------------------------------------------------------------------------------------
@@ -501,6 +516,7 @@ function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   arqos   == axi4_master_tx_compare_obj.arqos   &&
 
   //READ DATA CHANNEL
+  rid   == axi4_master_tx_compare_obj.rid   &&
   rdata == axi4_master_tx_compare_obj.rdata &&
   rresp == axi4_master_tx_compare_obj.rresp;
 endfunction : do_compare
@@ -527,6 +543,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("awprot",awprot.name());
     printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
     //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
+
     foreach(wdata[i])begin
       printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
     end
@@ -555,6 +572,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
       printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
     end
     //printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
+    printer.print_string("rid",rid.name());
     printer.print_string("rresp",rresp.name());
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
   end
