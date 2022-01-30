@@ -118,6 +118,46 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
                                                .rready   (intf.rready)   
                                                );
 
+  bind axi4_slave_driver_bfm slave_assertions S_A (.aclk(aclk),
+                                                   .aresetn(aresetn),
+                                                   .awid(awid),
+                                                   .awaddr(awaddr),
+                                                   .awlen(awlen),
+                                                   .awsize(awsize),
+                                                   .awburst(awburst),
+                                                   .awlock(awlock),
+                                                   .awcache(awcache),
+                                                   .awprot(awprot),
+                                                   .awvalid(awvalid),
+                                                   .awready(awready),
+                                                   .bid(bid),
+                                                   .buser(buser),
+                                                   .bvalid(bvalid),
+                                                   .bready(bready),
+                                                   .bresp(bresp),
+                                                   .arid(arid),
+                                                   .araddr(araddr),  
+                                                   .arlen(arlen),   
+                                                   .arsize(arsize), 
+                                                   .arburst(arburst), 
+                                                   .arlock(arlock),  
+                                                   .arcache(arcache), 
+                                                   .arprot(arprot),
+                                                   .arqos(arqos),   
+                                                   .arregion(arregion), 
+                                                   .aruser(aruser),  
+                                                   .arvalid(arvalid), 
+                                                   .arready(arready),
+                                                   .rid(rid),
+                                                   .rdata(rdata),
+                                                   .rresp(rresp),
+                                                   .rlast(rlast),
+                                                   .ruser(ruser),
+                                                   .rvalid(rvalid),
+                                                   .rready(rready)
+                                                  );
+
+
   //-------------------------------------------------------
   // Setting the virtual handle of BMFs into config_db
   //-------------------------------------------------------

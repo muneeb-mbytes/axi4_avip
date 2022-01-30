@@ -360,20 +360,261 @@ module tb_slave_assertions;
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for write_response_channel
   //--------------------------------------------------------------------------------------------
-    //task if_wr_channel_signals_are_stable_positive_case();
-    //endtask : if_wr_channel_signals_are_stable_positive_case
-    //task if_wr_channel_signals_are_stable_negative_case();
-    //endtask : if_wr_channel_signals_are_stable_negative_case
+
+  //-------------------------------------------------------
+  // Task: if_wr_channel_signals_are_stable_positive_case
+  //-------------------------------------------------------
+  task if_wr_channel_signals_are_stable_positive_case();
+       
+    bit [3:0]bid_local;
+    bit [2:0]buser_local;
+    bit [2:0]bresp_local;
+    bit [1:0]delay_local;
     
-    //task if_wr_channel_signals_are_unknown_positive_case();
-    //endtask : if_wr_channel_signals_are_unknown_positive_case
-    //task if_wr_channel_signals_are_unknown_negative_case();
-    //endtask : if_wr_channel_signals_are_unknown_negative_case
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      delay_local = $urandom;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      @(posedge aclk);
+      //Randomizing the signals
+      bid_local      = $urandom;
+      buser_local    = $urandom;
+      bresp_local    = $urandom;
+
+      bid            <= bid_local;
+      buser          <= buser_local;
+      bresp          <= bresp_local;
+      bvalid         <= 1'b1;
+      bready         <= 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         <= 1'b1;
+      bready         <= 1'b1;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         <= 1'b0;
+      bready         <= 1'b0;
+      `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_positive_case-- INSIDE REPEAT"),UVM_HIGH);
+    end
+
+  endtask : if_wr_channel_signals_are_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wr_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  task if_wr_channel_signals_are_stable_negative_case();
+
+    bit [3:0]bid_local;
+    bit [2:0]buser_local;
+    bit [2:0]bresp_local;
+    bit [1:0]delay_local;
     
-    //task if_wr_channel_valid_stable_positive_case();
-    //endtask : if_wr_channel_valid_stable_positive_case
-    //task if_wr_channel_valid_stable_negative_case();
-    //endtask : if_wr_channel_valid_stable_negative_case
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      delay_local = $urandom;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bid            = $urandom;
+      buser          = $urandom;
+      bresp          = $urandom;
+      bvalid         = 1'b1;
+      bready         = 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+        bid            = $urandom;
+        buser          = $urandom;
+        bresp          = $urandom;
+      end
+
+      bvalid         = 1'b1;
+      bready         = 1'b1;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         = 1'b0;
+      bready         = 1'b0;
+      `uvm_info(name,$sformatf("if_wr_channel_signals_are_stable_negative_case-- INSIDE REPEAT"),UVM_HIGH);
+
+    end
+  endtask : if_wr_channel_signals_are_stable_negative_case
+    
+  //-------------------------------------------------------
+  // Task: if_wr_channel_signals_are_unknown_positive_case
+  //-------------------------------------------------------
+  task if_wr_channel_signals_are_unknown_positive_case();
+
+    bit [3:0]bid_local;
+    bit [2:0]buser_local;
+    bit [2:0]bresp_local;
+    bit [1:0]delay_local;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      @(posedge aclk);
+      delay_local = $urandom;
+      bvalid         = 1'b0;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      
+      bid            = $urandom;
+      buser          = $urandom;
+      bresp          = $urandom;
+      bvalid         = 1'b1;
+
+      `uvm_info(name,$sformatf("if_wr_channel_signals_are_unknown_positive_case-- INSIDE REPEAT"),UVM_HIGH);
+
+    end
+
+  endtask : if_wr_channel_signals_are_unknown_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wr_channel_signals_are_unknown_negative_case
+  //-------------------------------------------------------
+  task if_wr_channel_signals_are_unknown_negative_case();
+
+    bit [3:0]bid_local;
+    bit [2:0]buser_local;
+    bit [2:0]bresp_local;
+    bit [1:0]delay_local;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      @(posedge aclk);
+      delay_local = $urandom;
+      bvalid         = 1'b0;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      
+      bid            = 'bx;
+      buser          = 'bx;
+      bresp          = 'bz;
+      bvalid         = 1'b1;
+
+      `uvm_info(name,$sformatf("if_wr_channel_signals_are_unknown_negative_case-- INSIDE REPEAT"),UVM_HIGH);
+
+    end
+
+  endtask : if_wr_channel_signals_are_unknown_negative_case
+  
+  //-------------------------------------------------------
+  // Task: if_wr_channel_valid_stable_positive_case
+  //-------------------------------------------------------
+  task if_wr_channel_valid_stable_positive_case();
+
+    bit [1:0]delay_local;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      @(posedge aclk);
+      delay_local     = $urandom;
+      bvalid         <= 1'b0;
+      bready         <= 1'b0;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      
+      bvalid         <= 1'b1;
+      bready         <= 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         <= 1'b1;
+      bready         <= 1'b1;
+
+      //@(posedge aclk);
+      //bvalid         <= 1'b0;
+      //bready         <= 1'b0;
+
+      `uvm_info(name,$sformatf("if_wr_channel_valid_stable_positive_case-- INSIDE REPEAT"),UVM_HIGH);
+    end
+
+  endtask : if_wr_channel_valid_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wr_channel_valid_stable_negative_case
+  //-------------------------------------------------------
+  task if_wr_channel_valid_stable_negative_case();
+
+    bit [1:0]delay_local;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+     
+    repeat(6) begin
+
+      @(posedge aclk);
+      delay_local     = $urandom;
+      bvalid         <= 1'b0;
+      bready         <= 1'b0;
+  
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      
+      bvalid         <= 1'b1;
+      bready         <= 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+
+      bvalid         <= 1'b0;
+      bready         <= 1'b0;
+
+      repeat(delay_local) begin
+        @(posedge aclk);
+      end
+      bvalid         <= 1'b0;
+      bready         <= 1'b1;
+
+      @(posedge aclk);
+      bvalid        <= 1'b0;
+      bready        <= 1'b0;
+
+      `uvm_info(name,$sformatf("if_wr_channel_valid_stable_negative_case-- INSIDE REPEAT"),UVM_HIGH);
+    
+    end
+
+  endtask : if_wr_channel_valid_stable_negative_case
+    
     
 
   //--------------------------------------------------------------------------------------------
@@ -757,44 +998,44 @@ module tb_slave_assertions;
 
   
   //Instantiation of assertions
-  slave_assertions S_A (.aclk(aclk),
-                         .aresetn(aresetn),
-                         .awid(awid),
-                         .awaddr(awaddr),
-                         .awlen(awlen),
-                         .awsize(awsize),
-                         .awburst(awburst),
-                         .awlock(awlock),
-                         .awcache(awcache),
-                         .awprot(awprot),
-                         .awvalid(awvalid),
-                         .awready(awready),
-                         .bid(bid),
-                         .buser(buser),
-                         .bvalid(bvalid),
-                         .bready(bready),
-                         .bresp(bresp),
-                         .arid(arid),
-                         .araddr(araddr),  
-                         .arlen(arlen),   
-                         .arsize(arsize), 
-                         .arburst(arburst), 
-                         .arlock(arlock),  
-                         .arcache(arcache), 
-                         .arprot(arprot),
-                         .arqos(arqos),   
-                         .arregion(arregion), 
-                         .aruser(aruser),  
-                         .arvalid(arvalid), 
-                         .arready(arready),
-                         .rid(rid),
-                         .rdata(rdata),
-                         .rresp(rresp),
-                         .rlast(rlast),
-                         .ruser(ruser),
-                         .rvalid(rvalid),
-                         .rready(rready)
-                       );
+  //slave_assertions S_A (.aclk(aclk),
+  //                       .aresetn(aresetn),
+  //                       .awid(awid),
+  //                       .awaddr(awaddr),
+  //                       .awlen(awlen),
+  //                       .awsize(awsize),
+  //                       .awburst(awburst),
+  //                       .awlock(awlock),
+  //                       .awcache(awcache),
+  //                       .awprot(awprot),
+  //                       .awvalid(awvalid),
+  //                       .awready(awready),
+  //                       .bid(bid),
+  //                       .buser(buser),
+  //                       .bvalid(bvalid),
+  //                       .bready(bready),
+  //                       .bresp(bresp),
+  //                       .arid(arid),
+  //                       .araddr(araddr),  
+  //                       .arlen(arlen),   
+  //                       .arsize(arsize), 
+  //                       .arburst(arburst), 
+  //                       .arlock(arlock),  
+  //                       .arcache(arcache), 
+  //                       .arprot(arprot),
+  //                       .arqos(arqos),   
+  //                       .arregion(arregion), 
+  //                       .aruser(aruser),  
+  //                       .arvalid(arvalid), 
+  //                       .arready(arready),
+  //                       .rid(rid),
+  //                       .rdata(rdata),
+  //                       .rresp(rresp),
+  //                       .rlast(rlast),
+  //                       .ruser(ruser),
+  //                       .rvalid(rvalid),
+  //                       .rready(rready)
+  //                     );
 
 endmodule : tb_slave_assertions
 
