@@ -34,14 +34,14 @@ task axi4_master_nbk_read_outstanding_transfer_seq::body();
   super.body();
   
   start_item(req);
-  if(!req.randomize() with {req.arsize == READ_8_BYTES;
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arburst == READ_INCR;
                             req.transfer_type == NON_BLOCKING_READ;}) begin
 
     `uvm_fatal("axi4","Rand failed");
   end
-  req.print();
+  `uvm_info("OUTSTANDING_SEQ",$sformatf("req = \n %s",req.sprint()),UVM_HIGH);
   finish_item(req);
 
 endtask : body

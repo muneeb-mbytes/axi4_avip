@@ -37,7 +37,7 @@ task axi4_master_nbk_write_outstanding_transfer_seq::body();
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_nbk_write_outstanding_transfer_seq"), UVM_NONE); 
 
   start_item(req);
-  if(!req.randomize() with {req.awsize == WRITE_8_BYTES;
+  if(!req.randomize() with {req.awsize == WRITE_4_BYTES;
                               req.tx_type == WRITE;
                               req.awburst == WRITE_FIXED;
                               req.transfer_type == NON_BLOCKING_WRITE;}) begin

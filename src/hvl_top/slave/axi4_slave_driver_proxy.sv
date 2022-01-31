@@ -33,12 +33,12 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   virtual axi4_slave_driver_bfm axi4_slave_drv_bfm_h;
 
   //Declaring handle for uvm_tlm_analysis_fifo's for all the five channels
-  uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_addr_fifo_h;
-  uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_data_in_fifo_h;
-  uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_response_fifo_h;
-  uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_write_data_out_fifo_h;
-  uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_read_addr_fifo_h;
-  uvm_tlm_analysis_fifo #(axi4_slave_tx) axi4_slave_read_data_in_fifo_h;
+  uvm_tlm_fifo #(axi4_slave_tx) axi4_slave_write_addr_fifo_h;
+  uvm_tlm_fifo #(axi4_slave_tx) axi4_slave_write_data_in_fifo_h;
+  uvm_tlm_fifo #(axi4_slave_tx) axi4_slave_write_response_fifo_h;
+  uvm_tlm_fifo #(axi4_slave_tx) axi4_slave_write_data_out_fifo_h;
+  uvm_tlm_fifo #(axi4_slave_tx) axi4_slave_read_addr_fifo_h;
+  uvm_tlm_fifo #(axi4_slave_tx) axi4_slave_read_data_in_fifo_h;
 
   //Declaring Semaphore handles for writes and reads
   semaphore semaphore_write_key;
@@ -72,12 +72,12 @@ function axi4_slave_driver_proxy::new(string name = "axi4_slave_driver_proxy",
   axi_read_seq_item_port                    = new("axi_read_seq_item_port", this);
   axi_write_rsp_port                        = new("axi_write_rsp_port", this);
   axi_read_rsp_port                         = new("axi_read_rsp_port", this);
-  axi4_slave_write_addr_fifo_h              = new("axi4_slave_write_addr_fifo_h",this);
-  axi4_slave_write_data_in_fifo_h           = new("axi4_slave_write_data_in_fifo_h",this);
-  axi4_slave_write_response_fifo_h          = new("axi4_slave_write_response_fifo_h",this);
-  axi4_slave_write_data_out_fifo_h          = new("axi4_slave_write_data_out_fifo_h",this);
-  axi4_slave_read_addr_fifo_h               = new("axi4_slave_read_addr_fifo_h",this);
-  axi4_slave_read_data_in_fifo_h            = new("axi4_slave_read_data_in_fifo_h",this);
+  axi4_slave_write_addr_fifo_h              = new("axi4_slave_write_addr_fifo_h",this,16);
+  axi4_slave_write_data_in_fifo_h           = new("axi4_slave_write_data_in_fifo_h",this,16);
+  axi4_slave_write_response_fifo_h          = new("axi4_slave_write_response_fifo_h",this,16);
+  axi4_slave_write_data_out_fifo_h          = new("axi4_slave_write_data_out_fifo_h",this,16);
+  axi4_slave_read_addr_fifo_h               = new("axi4_slave_read_addr_fifo_h",this,16);
+  axi4_slave_read_data_in_fifo_h            = new("axi4_slave_read_data_in_fifo_h",this,16);
   semaphore_write_key                       = new(1);
   semaphore_read_key                        = new(1);
 endfunction : new
@@ -166,7 +166,12 @@ task axi4_slave_driver_proxy::axi4_write_task();
      
      `uvm_info("DEBUG_SLAVE_WRITE_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_addr_tx.sprint()), UVM_NONE);
      
-     axi4_slave_write_addr_fifo_h.put(local_slave_addr_tx);
+     if(axi4_slave_write_addr_fifo_h.is_full) begin
+       `uvm_error(get_type_name(),$sformatf("WRITE_ADDR_THREAD::Cannot put into FIFO as WRITE_FIFO is FULL"));
+     end
+     else begin
+       axi4_slave_write_addr_fifo_h.put(local_slave_addr_tx);
+     end
    
    end
  
@@ -233,8 +238,16 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_response_tx);
 
      `uvm_info("DEBUG_SLAVE_WDATA_PROXY_TO_CLASS", $sformatf("AFTER TO CLASS :: Received req packet \n %s", local_slave_response_tx.sprint()), UVM_NONE);
-
+     
+     if(axi4_slave_write_addr_fifo_h.is_empty) begin
+       `uvm_error(get_type_name(),$sformatf("WRITE_RESP_THREAD::Cannot get write addr data from FIFO as WRITE_ADDR_FIFO is EMPTY"));
+     end
+     else begin
       axi4_slave_write_addr_fifo_h.get(local_slave_addr_tx);
+      `uvm_info("DEBUG_FIFO",$sformatf("fifo_size = %0d",axi4_slave_write_addr_fifo_h.size()),UVM_HIGH)
+      `uvm_info("DEBUG_FIFO",$sformatf("fifo_used = %0d",axi4_slave_write_addr_fifo_h.used()),UVM_HIGH)
+    end
+
       axi4_slave_write_data_out_fifo_h.get(local_slave_data_tx);
 
      axi4_slave_seq_item_converter::tx_write_packet(local_slave_addr_tx,local_slave_data_tx,local_slave_response_tx,packet);
@@ -251,7 +264,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_ADDRESS_CHANNEL_STATUS = \n %s",addr_tx.status()),UVM_MEDIUM)
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_WDATA_CHANNEL_STATUS = \n %s",data_tx.status()),UVM_MEDIUM)
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_WRESP_CHANNEL_STATUS = \n %s",response_tx.status()),UVM_MEDIUM)
-  
+   
    axi_write_seq_item_port.item_done();
  end
  

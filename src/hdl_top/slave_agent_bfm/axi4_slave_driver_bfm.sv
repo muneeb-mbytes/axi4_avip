@@ -76,8 +76,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   //Creating the handle for proxy driver
   axi4_slave_driver_proxy axi4_slave_drv_proxy_h;
   
-  reg [3: 0] i = 0;
-  reg [3: 0] j = 0;
+  reg [7: 0] i = 0;
+  reg [7: 0] j = 0;
   reg [7: 0] a = 0;
 
   initial begin
@@ -88,18 +88,18 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
   // Creating Memories for each signal to store each transaction attributes
 
-  reg [	15: 0]	            mem_awid	  [OUTSTANDING_FIFO_DEPTH];
-  reg [	ADDRESS_WIDTH-1: 0]	mem_waddr	  [OUTSTANDING_FIFO_DEPTH];
-  reg [	7 : 0]	            mem_wlen	  [OUTSTANDING_FIFO_DEPTH];
-  reg [	2 : 0]	            mem_wsize	  [OUTSTANDING_FIFO_DEPTH];
-  reg [ 1	: 0]	            mem_wburst  [OUTSTANDING_FIFO_DEPTH];
-  bit                       mem_wlast   [OUTSTANDING_FIFO_DEPTH];
+  reg [	3 : 0] 	            mem_awid	  [2**LENGTH];
+  reg [	ADDRESS_WIDTH-1: 0]	mem_waddr	  [2**LENGTH];
+  reg [	7 : 0]	            mem_wlen	  [2**LENGTH];
+  reg [	2 : 0]	            mem_wsize	  [2**LENGTH];
+  reg [ 1	: 0]	            mem_wburst  [2**LENGTH];
+  bit                       mem_wlast   [2**LENGTH];
   
-  reg [	15: 0]	            mem_arid	  [OUTSTANDING_FIFO_DEPTH];
-  reg [	ADDRESS_WIDTH-1: 0]	mem_raddr	  [OUTSTANDING_FIFO_DEPTH];
-  reg [	7	: 0]	            mem_rlen	  [OUTSTANDING_FIFO_DEPTH];
-  reg [	2	: 0]	            mem_rsize	  [OUTSTANDING_FIFO_DEPTH];
-  reg [ 1	: 0]	            mem_rburst  [OUTSTANDING_FIFO_DEPTH];
+  reg [	3 : 0]	            mem_arid	  [2**LENGTH];
+  reg [	ADDRESS_WIDTH-1: 0]	mem_raddr	  [2**LENGTH];
+  reg [	7	: 0]	            mem_rlen	  [2**LENGTH];
+  reg [	2	: 0]	            mem_rsize	  [2**LENGTH];
+  reg [ 1	: 0]	            mem_rburst  [2**LENGTH];
   
   //-------------------------------------------------------
   // Task: wait_for_system_reset
@@ -145,7 +145,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     end while(awvalid===0);
 
     `uvm_info("SLAVE_DRIVER_WADDR_PHASE", $sformatf("outside of awvalid"), UVM_MEDIUM); 
-     
+      
    // Sample the values
    
    mem_awid 	[i]	  = awid  	;	
@@ -160,10 +160,17 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
    data_write_packet.awsize  = mem_wsize  [i] ;
    data_write_packet.awburst = mem_wburst [i] ;
    
+   if(axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
+      `uvm_info("UVM_TLM_FIFO","FIFO is now FULL!",UVM_MEDIUM)
+      @(posedge aclk);
+      awready<=0;
+    end 
+
    i = i+1                   ;
     
    `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
    `uvm_info("mem_awid",$sformatf("awid=%0d",awid),UVM_HIGH)
+   `uvm_info("i_SLAVE_ADDR_BFM",$sformatf("no_of reqs=%0d",i),UVM_HIGH)
 
    `uvm_info("struct_pkt_debug",$sformatf("struct_pkt_wr_addr_phase = \n %0p",data_write_packet),UVM_HIGH)
 
@@ -175,13 +182,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       awready<=0;
     end
     awready <= 1;
-
-    if(i == OUTSTANDING_FIFO_DEPTH)begin
-      `uvm_info(name,$sformatf("REACHED OUTSTANDING_FIFO_DEPTH"),UVM_MEDIUM)
-      @(posedge aclk);
-      awready <= 0;
-    end
-
+        
   endtask: axi4_write_address_phase 
 
   //-------------------------------------------------------
@@ -235,6 +236,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
       @(posedge aclk);
       wready <= 0;
+
+
    
       //   for(int n = 0;n<(2**mem_wsize[a]);n++)begin
       //     `uvm_info("SLAVE_DEBUG",$sformatf("length = %0d",s),UVM_HIGH)
@@ -262,16 +265,18 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     data_write_packet.bid <= mem_awid[j]; 
     `uvm_info("DEBUG_BRESP",$sformatf("BID = %0d",data_write_packet.bid),UVM_HIGH)
     `uvm_info(name,"INSIDE WRITE_RESPONSE_PHASE",UVM_LOW)
-    
+
     bid  <= mem_awid[j];
+    `uvm_info("DEBUG_BRESP",$sformatf("MEM_BID[%0d] = %0d",j,mem_awid[j]),UVM_HIGH)
     `uvm_info("DEBUG_BRESP_WLAST",$sformatf("wlast = %0d",mem_wlast[j]),UVM_HIGH)
-    if(mem_wlast[j]==1) begin
+
+    if(mem_wlast[j]==1 && mem_wsize[j]<= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH && !axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
       bresp <= WRITE_OKAY;
-      data_write_packet.bresp <= bresp;
+      data_write_packet.bresp <= WRITE_OKAY;
     end
     else begin
-      data_write_packet.bresp <= WRITE_SLVERR;
       bresp <= WRITE_SLVERR;
+      data_write_packet.bresp <= WRITE_SLVERR;
     end
       
     buser<=data_write_packet.buser;
@@ -367,8 +372,15 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       end
      // rdata<=data_read_packet.rdata[i1];
      // `uvm_info("SLAVE_RDATA_DEBUG",$sformatf("rdata= %0d",rdata),UVM_HIGH);
-      
-      rresp<=data_read_packet.rresp;
+     
+     if(mem_rsize[j1]<=DATA_WIDTH/OUTSTANDING_FIFO_DEPTH) begin
+       rresp<=data_read_packet.rresp;
+     end
+     else begin
+       rresp <= READ_SLVERR;
+       data_read_packet.rresp <= READ_SLVERR;
+     end
+
       ruser<=data_read_packet.ruser;
       rvalid<=1'b1;
       

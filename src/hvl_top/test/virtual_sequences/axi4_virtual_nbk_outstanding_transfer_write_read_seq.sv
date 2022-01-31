@@ -71,7 +71,7 @@ task axi4_virtual_nbk_outstanding_transfer_write_read_seq::body();
       end
     end
     begin: T2_READ
-      repeat(5) begin
+      repeat(7) begin
         axi4_master_nbk_read_outstanding_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
      // axi4_master_nnbk_read_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
       end
