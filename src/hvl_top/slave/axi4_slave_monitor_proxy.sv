@@ -92,6 +92,8 @@ endfunction : end_of_elaboration_phase
 //--------------------------------------------------------------------------------------------
 task axi4_slave_monitor_proxy::run_phase(uvm_phase phase);
 
+  axi4_slave_mon_bfm_h.wait_for_aresetn();
+
   fork 
     axi4_slave_write_address();
     axi4_slave_write_data();
@@ -112,7 +114,6 @@ task axi4_slave_monitor_proxy::axi4_slave_write_address();
     axi4_slave_tx              req_wr_clone_packet;
 
 
-    axi4_slave_mon_bfm_h.wait_for_aresetn();
     axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
     axi4_slave_mon_bfm_h.axi4_slave_write_address_sampling(struct_write_packet,struct_cfg);
     axi4_slave_seq_item_converter::to_write_class(struct_write_packet,req_wr);
@@ -182,7 +183,6 @@ task axi4_slave_monitor_proxy::axi4_slave_read_address();
     axi4_transfer_cfg_s        struct_cfg;
     axi4_slave_tx             req_rd_clone_packet;
 
-    axi4_slave_mon_bfm_h.wait_for_aresetn();
     axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h, struct_cfg);
     axi4_slave_mon_bfm_h.axi4_read_address_sampling(struct_read_packet,struct_cfg);
     axi4_slave_seq_item_converter::to_read_class(struct_read_packet,req_rd);

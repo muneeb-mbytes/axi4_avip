@@ -108,10 +108,13 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
   task axi4_slave_write_address_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
     @(posedge aclk);
+    `uvm_info("FROM SLAVE MON BFM",$sformatf("from axi4_slave_write_address_sampling "),UVM_HIGH)
+
     while(awvalid!==1 || awready!==1)begin
       @(posedge aclk);
-      `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
+      `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop from axi4_slave_write_address_sampling"),UVM_HIGH)
     end    
+    
     `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop from axi4_slave_write_address_sampling "),UVM_HIGH)
    
     req.awid = awid;
@@ -122,6 +125,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
     req.awlock = awlock;
     req.awcache = awcache;
     req.awprot = awprot;  
+    `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop from axi4_slave_write_address_sampling req=%p ",req),UVM_HIGH)
   endtask
 
   task axi4_slave_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
