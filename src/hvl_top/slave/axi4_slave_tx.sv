@@ -87,6 +87,10 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to represent the last byte of the transaction
   bit wlast;
 
+  //Variable : wuser
+  //Used to represent the user type
+  bit wuser;
+
   //Variable : wready
   //Used to accept the valid data
   //bit wready;
@@ -399,6 +403,7 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
       printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
     end
     printer.print_field("wlast",wlast,$bits(wlast),UVM_DEC);
+    printer.print_field("wuser",wuser,$bits(wuser),UVM_DEC);
     //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
     printer.print_string("bid",bid.name());
     printer.print_string("bresp",bresp.name());

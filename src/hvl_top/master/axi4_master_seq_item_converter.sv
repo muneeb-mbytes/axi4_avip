@@ -87,8 +87,8 @@ function void axi4_master_seq_item_converter::from_write_class( input axi4_maste
     end
   end
 
-  foreach(input_conv_h.wstrb[i]) begin
-    if(input_conv_h.wstrb[i] != 0)begin
+  foreach(input_conv_h.wdata[i]) begin
+    if(input_conv_h.wdata[i] != 0)begin
       output_conv_h.wstrb[i] = input_conv_h.wstrb[i];
       `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wstrb = %0p",output_conv_h.wstrb[i]),UVM_HIGH);
     end
@@ -231,8 +231,8 @@ function void axi4_master_seq_item_converter::to_write_class( input axi4_write_t
     end
   end
 
-  foreach(input_conv_h.wstrb[i]) begin
-    if(input_conv_h.wstrb[i] != 0)begin
+  foreach(input_conv_h.wdata[i]) begin
+    if(input_conv_h.wdata[i] != 0)begin
       output_conv_h.wstrb.push_front(input_conv_h.wstrb[i]);
       `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wstrb[%0d] =  %0d",i,output_conv_h.wstrb[i]),UVM_HIGH);
     end
