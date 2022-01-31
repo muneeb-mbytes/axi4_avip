@@ -32,21 +32,20 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_okay_resp_seq::body();
   super.body();
-  //req.transfer_type=BLOCKING_WRITE;
   // MSHA: req.type = this.type;
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_bk_write_okay_resp_seq"), UVM_NONE); 
 
   start_item(req);
-    if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
+  if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_FIXED;}) begin
     `uvm_fatal("axi4","Rand failed");
   end
+  
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
-  //req.print();
   finish_item(req);
-    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_bk_write_okay_resp_seq"), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_bk_write_okay_resp_seq"), UVM_NONE); 
 
 endtask : body
 

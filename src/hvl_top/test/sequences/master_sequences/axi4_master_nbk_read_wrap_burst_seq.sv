@@ -1,5 +1,5 @@
-`ifndef AXI4_MASTER_NBK_read_wrap_burst_SEQ_INCLUDED_
-`define AXI4_MASTER_NBK_read_wrap_burst_SEQ_INCLUDED_ 
+`ifndef AXI4_MASTER_NBK_READ_WRAP_BURST_SEQ_INCLUDED_
+`define AXI4_MASTER_NBK_READ_WRAP_BURST_SEQ_INCLUDED_ 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_master_nbk_read_wrap_burst_seq
 // Extends the axi4_master_nbk_base_seq and randomises the req item
@@ -31,9 +31,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_read_wrap_burst_seq::body();
   super.body();
-//  req.transfer_type=BLOCKING_READ;
-//  req = axi4_master_nbk_tx::type_id::create("req");
-  //req.axi4_master_nbk_agent_cfg_h = p_sequencer.axi4_master_nbk_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
@@ -45,6 +42,7 @@ task axi4_master_nbk_read_wrap_burst_seq::body();
   end
   req.print();
   finish_item(req);
+
 endtask : body
 
 `endif

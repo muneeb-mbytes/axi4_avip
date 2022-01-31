@@ -32,9 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_rand_seq::body();
   super.body();
- // req.transfer_type=BLOCKING_READ;
-//  req = axi4_master_bk_tx::type_id::create("req");
-  //req.axi4_master_bk_agent_cfg_h = p_sequencer.axi4_master_bk_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize() with { req.tx_type == WRITE;
@@ -43,8 +40,10 @@ task axi4_master_bk_write_rand_seq::body();
 
     `uvm_fatal("axi4","Rand failed");
   end
+  
   req.print();
   finish_item(req);
+
 endtask : body
 
 `endif

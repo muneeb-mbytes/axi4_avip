@@ -33,15 +33,9 @@ endfunction : new
 task axi4_slave_nbk_read_16b_transfer_seq::body();
   super.body();
   req.transfer_type=NON_BLOCKING_READ;
-//  req = axi4_slave_nbk_tx::type_id::create("req");
-  //req.axi4_slave_nbk_agent_cfg_h = p_sequencer.axi4_slave_nbk_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_1_BYTE;})begin
- //                           req.tx_type == READ;
- //                           req.arburst == READ_INCR;
- //                           req.transfer_type == BLOCKING_READ;}) begin
-
     `uvm_fatal("axi4","Rand failed");
   end
   req.print();

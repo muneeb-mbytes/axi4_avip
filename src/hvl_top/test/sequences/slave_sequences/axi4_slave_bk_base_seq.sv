@@ -29,13 +29,16 @@ function axi4_slave_bk_base_seq::new(string name = "axi4_slave_bk_base_seq");
   super.new(name);
 endfunction : new
 
+//-----------------------------------------------------------------------------
+// Task : body
+// based on the request from driver task will drive the transactions
+//-----------------------------------------------------------------------------
 task axi4_slave_bk_base_seq::body();
-//  if(!$cast(p_sequencer,m_sequencer))begin
-//    `uvm_error(get_full_name(),"slave_agent_config pointer cast failed")
-//  end
   req = axi4_slave_tx::type_id::create("req");
+  
   req.transfer_type=BLOCKING_WRITE;
   req.transfer_type=BLOCKING_READ;
-endtask
+
+endtask : body
 
 `endif

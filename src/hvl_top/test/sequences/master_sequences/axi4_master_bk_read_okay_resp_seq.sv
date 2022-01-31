@@ -33,8 +33,6 @@ endfunction : new
 task axi4_master_bk_read_okay_resp_seq::body();
   super.body();
   req.transfer_type=BLOCKING_READ;
-//  req = axi4_master_bk_tx::type_id::create("req");
-  //req.axi4_master_bk_agent_cfg_h = p_sequencer.axi4_master_bk_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;

@@ -33,7 +33,6 @@ endfunction : new
 task axi4_master_read_seq::body();
   //super.body();
   req = axi4_master_tx::type_id::create("req");
-  //req.axi4_master_agent_cfg_h = p_sequencer.axi4_master_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
@@ -43,6 +42,7 @@ task axi4_master_read_seq::body();
   end
   req.print();
   finish_item(req);
+
 endtask : body
 
 `endif

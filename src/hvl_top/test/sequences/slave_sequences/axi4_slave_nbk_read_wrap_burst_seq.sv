@@ -33,8 +33,6 @@ endfunction : new
 task axi4_slave_nbk_read_wrap_burst_seq::body();
   super.body();
   req.transfer_type=NON_BLOCKING_READ;
-//  req = axi4_slave_nbk_tx::type_id::create("req");
-  //req.axi4_slave_nbk_agent_cfg_h = p_sequencer.axi4_slave_nbk_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize())begin

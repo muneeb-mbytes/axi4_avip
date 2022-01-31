@@ -33,8 +33,6 @@ endfunction : new
 task axi4_master_nbk_read_incr_burst_seq::body();
   super.body();
   req.transfer_type=NON_BLOCKING_READ;
-//  req = axi4_master_nbk_tx::type_id::create("req");
-  //req.axi4_master_nbk_agent_cfg_h = p_sequencer.axi4_master_nbk_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
@@ -46,6 +44,7 @@ task axi4_master_nbk_read_incr_burst_seq::body();
   end
   req.print();
   finish_item(req);
+
 endtask : body
 
 `endif

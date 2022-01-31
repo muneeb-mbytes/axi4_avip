@@ -1,5 +1,5 @@
-`ifndef AXI4_MASTER_NBK_READ_16B_transfer_SEQ_INCLUDED_
-`define AXI4_MASTER_NBK_READ_16B_transfer_SEQ_INCLUDED_
+`ifndef AXI4_MASTER_NBK_READ_16B_TRANSFER_SEQ_INCLUDED_
+`define AXI4_MASTER_NBK_READ_16B_TRANSFER_SEQ_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_master_nbk_read_16b_transfer_seq
@@ -32,9 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_read_16b_transfer_seq::body();
   super.body();
- // req.transfer_type=BLOCKING_READ;
-//  req = axi4_master_nbk_tx::type_id::create("req");
-  //req.axi4_master_nbk_agent_cfg_h = p_sequencer.axi4_master_nbk_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_2_BYTES;
@@ -46,6 +43,7 @@ task axi4_master_nbk_read_16b_transfer_seq::body();
   end
   req.print();
   finish_item(req);
+
 endtask : body
 
 `endif

@@ -33,8 +33,6 @@ endfunction : new
 task axi4_slave_nbk_read_seq::body();
   super.body();
   req.transfer_type=NON_BLOCKING_READ;
-  //req = axi4_slave_tx::type_id::create("req");
-  //req.axi4_slave_agent_cfg_h = p_sequencer.axi4_slave_agent_cfg_h;
   
   start_item(req);
   if(!req.randomize())begin
@@ -42,6 +40,7 @@ task axi4_slave_nbk_read_seq::body();
   end
   `uvm_info("SLAVE_READ_NBK_SEQ", $sformatf("slave_seq = \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
+
 endtask : body
 
 `endif

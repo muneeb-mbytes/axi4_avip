@@ -36,14 +36,13 @@ task axi4_slave_nbk_write_slave_error_seq::body();
   //req = axi4_slave_tx::type_id::create("req");
   // MSHA: req.type = this.type;
   //req.axi4_slave_agent_cfg_h = p_sequencer.axi4_slave_agent_cfg_h;
-    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_slave_nbk_write_slave_error_seq"), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_slave_nbk_write_slave_error_seq"), UVM_NONE); 
 
   start_item(req);
-    if(!req.randomize())begin
-      `uvm_fatal("axi4","Rand failed");
+  if(!req.randomize())begin
+    `uvm_fatal("axi4","Rand failed");
   end
   `uvm_info("SLAVE_WRITE_NBK_SEQ", $sformatf("slave_seq = \n%s",req.sprint()), UVM_NONE); 
-  //req.print();
   finish_item(req);
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_slave_nbk_write_slave_error_seq"), UVM_NONE); 
 

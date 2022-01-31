@@ -6,6 +6,7 @@
 // creating axi4_slave_base_seq class extends from uvm_sequence
 //--------------------------------------------------------------------------------------------
 class axi4_slave_base_seq extends uvm_sequence #(axi4_slave_tx);
+ 
   //factory registration
   `uvm_object_utils(axi4_slave_base_seq)
 

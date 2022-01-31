@@ -6,6 +6,7 @@
 // creating axi4_master_base_seq class extends from uvm_sequence
 //--------------------------------------------------------------------------------------------
 class axi4_master_base_seq extends uvm_sequence #(axi4_master_tx);
+
   //factory registration
   `uvm_object_utils(axi4_master_base_seq)
   //`uvm_declare_p_sequencer(axi4_master_write_sequencer)
@@ -15,7 +16,7 @@ class axi4_master_base_seq extends uvm_sequence #(axi4_master_tx);
   // Externally defined Function
   //-------------------------------------------------------
   extern function new(string name = "axi4_master_base_seq");
-//  extern task body();
+
 endclass : axi4_master_base_seq
 
 //-----------------------------------------------------------------------------
@@ -28,11 +29,5 @@ endclass : axi4_master_base_seq
 function axi4_master_base_seq::new(string name = "axi4_master_base_seq");
   super.new(name);
 endfunction : new
-
-//task axi4_master_base_seq::body();
-//  if(!$cast(p_sequencer,m_sequencer))begin
-//    `uvm_error(get_full_name(),"master_agent_config pointer cast failed")
-//  end
-//endtask
 
 `endif
