@@ -161,7 +161,7 @@ endfunction: setup_axi4_slave_agent_cfg
 //--------------------------------------------------------------------------------------------
 function void axi4_base_test::end_of_elaboration_phase(uvm_phase phase);
   uvm_top.print_topology();
-  uvm_test_done.set_drain_time(this,1000ns);
+  uvm_test_done.set_drain_time(this,3000ns);
 endfunction : end_of_elaboration_phase
 
 //--------------------------------------------------------------------------------------------
