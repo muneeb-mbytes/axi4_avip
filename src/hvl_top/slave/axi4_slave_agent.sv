@@ -99,13 +99,16 @@ function void axi4_slave_agent::connect_phase(uvm_phase phase);
     // Connecting the ports
     axi4_slave_drv_proxy_h.axi_write_seq_item_port.connect(axi4_slave_write_seqr_h.seq_item_export);
     axi4_slave_drv_proxy_h.axi_read_seq_item_port.connect(axi4_slave_read_seqr_h.seq_item_export);
+  end
 
+  if(axi4_slave_agent_cfg_h.has_coverage) begin
+    axi4_slave_cov_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h; 
     // Connecting monitor_proxy port to coverage export
-     axi4_slave_mon_proxy_h.axi4_slave_read_address_analysis_port.connect(axi4_slave_cov_h.axi4_slave_read_address_analysis_port);
-    axi4_slave_mon_proxy_h.axi4_slave_read_data_analysis_port.connect(axi4_slave_cov_h.axi4_slave_read_data_analysis_port);
-    axi4_slave_mon_proxy_h.axi4_slave_write_address_analysis_port.connect(axi4_slave_cov_h.axi4_slave_write_address_analysis_port);
-    axi4_slave_mon_proxy_h.axi4_slave_write_data_analysis_port.connect(axi4_slave_cov_h.axi4_slave_write_data_analysis_port);
-    axi4_slave_mon_proxy_h.axi4_slave_write_response_analysis_port.connect(axi4_slave_cov_h.axi4_slave_write_response_analysis_port);
+    axi4_slave_mon_proxy_h.axi4_slave_read_address_analysis_port.connect(axi4_slave_cov_h.analysis_export);
+    axi4_slave_mon_proxy_h.axi4_slave_read_data_analysis_port.connect(axi4_slave_cov_h.analysis_export);
+    axi4_slave_mon_proxy_h.axi4_slave_write_address_analysis_port.connect(axi4_slave_cov_h.analysis_export);
+    axi4_slave_mon_proxy_h.axi4_slave_write_data_analysis_port.connect(axi4_slave_cov_h.analysis_export);
+    axi4_slave_mon_proxy_h.axi4_slave_write_response_analysis_port.connect(axi4_slave_cov_h.analysis_export);
   end
 
   axi4_slave_mon_proxy_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;

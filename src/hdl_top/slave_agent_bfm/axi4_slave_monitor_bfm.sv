@@ -108,10 +108,13 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
   task axi4_slave_write_address_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
     @(posedge aclk);
+    `uvm_info("FROM SLAVE MON BFM",$sformatf("from axi4_slave_write_address_sampling "),UVM_HIGH)
+
     while(awvalid!==1 || awready!==1)begin
       @(posedge aclk);
-      `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
+      `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop from axi4_slave_write_address_sampling"),UVM_HIGH)
     end    
+    
     `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop from axi4_slave_write_address_sampling "),UVM_HIGH)
    
     req.awid = awid;
@@ -122,24 +125,38 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
     req.awlock = awlock;
     req.awcache = awcache;
     req.awprot = awprot;  
+    `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop from axi4_slave_write_address_sampling req=%p ",req),UVM_HIGH)
   endtask
 
   task axi4_slave_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
+  
+  forever begin
 
+  // wait for valid and ready to be high
+  do begin
   @(posedge aclk);
-   while(wvalid!==1 || wready!==1)begin
-   @(posedge aclk);
+  end while(wvalid!==1 || wready!==1);
+   //@(posedge aclk);
   `uvm_info("FROM SLAVE MON BFM",$sformatf("Inside while loop......"),UVM_HIGH)
-  end    
- `uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop ......."),UVM_HIGH)
-  for(int i=0; i<awlen ; i++)begin
-  @(posedge aclk)
-   req.wdata[i]=wdata;
-   req.wstrb[i]=wstrb;
+  //end    
+ //`uvm_info("FROM SLAVE MON BFM",$sformatf("after while loop ......."),UVM_HIGH)
+ // for(int i=0; i<awlen ; i++)begin
+   req.wdata[i] = wdata;
+   req.wstrb[i] = wstrb;
    req.wlast = wlast;
-   req.wuser = wuser;
+   req.wuser[i] = wuser;
 
-   `uvm_info("FROM SLAVE MON BFM WRITE DATA",$sformatf("write data packet: %p",req),UVM_HIGH)
+  
+  //`uvm_info("FROM SLAVE MON BFM READ DATA",$sformatf("DEBUG:SLAVE MON REQ.RDATA[%0d]=%0h",i,req.wdata[i]),UVM_HIGH)
+  `uvm_info("FROM SLAVE MON BFM write data",$sformatf("write datapacket wdata[%0d] = 'h%0x",i,req.wdata[i]),UVM_HIGH)
+  `uvm_info("FROM SLAVE MON BFM write data",$sformatf("write datapacket wstrb[%0d] = 'h%0x",i,req.wstrb[i]),UVM_HIGH)
+  if(req.wlast == 1)begin
+  `uvm_info("FROM SLAVE MON BFM write data",$sformatf("Inside wlast write datapacket: %p",req),UVM_HIGH)
+  i = 0;
+  break;
+  end
+ 
+  i++;
   end
  endtask
   
@@ -213,7 +230,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
       i++;
       
       if(req.rlast == 1) begin
-       `uvm_info("FROM SLAVE MON BFM write data",$sformatf("Inside RLAST Read Data Packet  =%p",req),UVM_HIGH)
+       `uvm_info("FROM SLAVE MON BFM read data",$sformatf("Inside RLAST Read Data Packet  =%p",req),UVM_HIGH)
        i = 0;
        break;
       end 

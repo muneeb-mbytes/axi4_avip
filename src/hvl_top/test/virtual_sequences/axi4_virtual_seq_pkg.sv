@@ -66,6 +66,7 @@ package axi4_virtual_seq_pkg;
   `include "axi4_virtual_bk_32b_write_read_seq.sv"
   `include "axi4_virtual_bk_64b_write_read_seq.sv"
   `include "axi4_virtual_bk_okay_response_write_read_seq.sv"
+  `include "axi4_virtual_bk_write_read_rand_seq.sv"
   
   `include "axi4_virtual_nbk_8b_write_read_seq.sv"
   `include "axi4_virtual_nbk_16b_write_read_seq.sv"
@@ -75,7 +76,15 @@ package axi4_virtual_seq_pkg;
   `include "axi4_virtual_nbk_incr_burst_write_read_seq.sv"
   `include "axi4_virtual_bk_wrap_burst_write_read_seq.sv"
   `include "axi4_virtual_nbk_wrap_burst_write_read_seq.sv"
+  `include "axi4_virtual_nbk_fixed_burst_write_read_seq.sv"
+  `include "axi4_virtual_nbk_outstanding_transfer_write_read_seq.sv"
+  `include "axi4_virtual_nbk_maximum_transfer_write_read_seq.sv"
+  `include "axi4_virtual_nbk_cross_write_read_seq.sv"
+  `include "axi4_virtual_nbk_slave_error_write_read_seq.sv"
+  
   `include "axi4_virtual_nbk_okay_response_write_read_seq.sv"
+
+  `include "axi4_virtual_nbk_write_read_rand_seq.sv"
 
 endpackage : axi4_virtual_seq_pkg
 

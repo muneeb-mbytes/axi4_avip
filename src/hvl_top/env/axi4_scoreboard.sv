@@ -14,7 +14,6 @@ class axi4_scoreboard extends uvm_scoreboard;
   axi4_master_tx axi4_master_tx_h3;
   axi4_master_tx axi4_master_tx_h4;
   axi4_master_tx axi4_master_tx_h5;
-  
 
   axi4_slave_tx axi4_slave_tx_h1;
   axi4_slave_tx axi4_slave_tx_h2;
@@ -38,10 +37,6 @@ class axi4_scoreboard extends uvm_scoreboard;
   uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_data_analysis_fifo;
   uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_response_analysis_fifo;
 
-  //Variable : axi4_slave_analysis_fifo
-  //Used to store the axi4_slave_data
-  uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_analysis_fifo;
-  
   int byte_data_cmp_verified_awaddr_count;
 
   //-------------------------------------------------------
@@ -166,6 +161,7 @@ task axi4_scoreboard::run_phase(uvm_phase phase);
     
     axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
     axi4_slave_read_data_analysis_fifo.get(axi4_slave_tx_h5);
+
     //-------------------------------------------------------
     // Printing data from all fifo's
     //-------------------------------------------------------
@@ -176,6 +172,22 @@ task axi4_scoreboard::run_phase(uvm_phase phase);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("after printing all fifo's data in scoreboard"),UVM_HIGH);
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address \n%s",axi4_slave_tx_h1.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
+
+    // Checking data for address in both master and slave
+    foreach(axi4_master_tx_h1.awaddr[i])
+    if(axi4_master_tx_h1.awaddr[i]!=axi4_slave_tx_h1.awaddr[i])
+    begin
+       `uvm_error("Scoreboard awaddr mismatch",$sformatf("awaddr[%0d] = %0h",i,axi4_master_tx_h1.awaddr[i]));;
+    end
+    else
+    begin
+      `uvm_info (get_type_name(), $sformatf ("scoreboard awaddr matched"),UVM_HIGH);
+    end
 
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
@@ -185,4 +197,5 @@ task axi4_scoreboard::run_phase(uvm_phase phase);
 endtask : run_phase
 
 `endif
+
 
