@@ -1,28 +1,28 @@
-`ifndef AXI4_SLAVE_NBK_WRITE_WRAP_BURST_SEQ_INCLUDED_
-`define AXI4_SLAVE_NBK_WRITE_WRAP_BURST_SEQ_INCLUDED_
+`ifndef AXI4_SLAVE_NBK_WRITE_FIXED_BURST_SEQ_INCLUDED_
+`define AXI4_SLAVE_NBK_WRITE_FIXED_BURST_SEQ_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// Class: axi4_slave_nbk_write_wrap_burst_seq
+// Class: axi4_slave_nbk_write_fixed_burst_seq
 // Extends the axi4_slave_base_seq and randomises the req item
 //--------------------------------------------------------------------------------------------
-class axi4_slave_nbk_write_wrap_burst_seq extends axi4_slave_bk_base_seq;
-  `uvm_object_utils(axi4_slave_nbk_write_wrap_burst_seq)
+class axi4_slave_nbk_write_fixed_burst_seq extends axi4_slave_bk_base_seq;
+  `uvm_object_utils(axi4_slave_nbk_write_fixed_burst_seq)
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
-  extern function new(string name = "axi4_slave_nbk_write_wrap_burst_seq");
+  extern function new(string name = "axi4_slave_nbk_write_fixed_burst_seq");
   extern task body();
-endclass : axi4_slave_nbk_write_wrap_burst_seq
+endclass : axi4_slave_nbk_write_fixed_burst_seq
 
 //--------------------------------------------------------------------------------------------
 // Construct: new
 // Initializes new memory for the object
 //
 // Parameters:
-//  name - axi4_slave_nbk_write_wrap_burst_seq
+//  name - axi4_slave_nbk_write_fixed_burst_seq
 //--------------------------------------------------------------------------------------------
-function axi4_slave_nbk_write_wrap_burst_seq::new(string name = "axi4_slave_nbk_write_wrap_burst_seq");
+function axi4_slave_nbk_write_fixed_burst_seq::new(string name = "axi4_slave_nbk_write_fixed_burst_seq");
   super.new(name);
 endfunction : new
 
@@ -30,11 +30,11 @@ endfunction : new
 // Task: body
 // Creates the req of type slave transaction and randomises the req
 //--------------------------------------------------------------------------------------------
-task axi4_slave_nbk_write_wrap_burst_seq::body();
+task axi4_slave_nbk_write_fixed_burst_seq::body();
   super.body();
   req.transfer_type=NON_BLOCKING_WRITE;
     // MSHA: req.type = this.type;
-    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_slave_nbk_write_wrap_burst_seq"), UVM_NONE); 
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_slave_nbk_write_fixed_burst_seq"), UVM_NONE); 
 
   start_item(req);
     if(!req.randomize)begin
@@ -43,7 +43,7 @@ task axi4_slave_nbk_write_wrap_burst_seq::body();
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: slave_seq \n%s",req.sprint()), UVM_NONE); 
     //req.print();
     finish_item(req);
-    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_slave_nbk_write_wrap_burst_seq"), UVM_NONE); 
+    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_slave_nbk_write_fixed_burst_seq"), UVM_NONE); 
 
 endtask : body
 

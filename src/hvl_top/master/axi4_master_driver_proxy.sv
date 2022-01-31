@@ -264,6 +264,7 @@ task axi4_master_driver_proxy::axi4_write_task();
           `uvm_info(get_type_name(),$sformatf("WRITE_RESPONSE_THREAD::Checking fifo size used= %0d",axi4_master_write_fifo_h.used()),UVM_HIGH); 
 
           //axi4_master_write_fifo_h.get(req_wr);
+
           //if(!axi4_master_write_fifo_h.is_empty()) begin
           //  axi4_master_write_fifo_h.get(req_wr);
           //end
