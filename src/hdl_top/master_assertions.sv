@@ -25,7 +25,7 @@ interface master_assertions (input                     aclk,
                              input                     awready,
                              //Write Data Channel Signals
                              input    [DATA_WIDTH-1:0]wdata,
-                             input              [31:0]wstrb,
+                             input    [(DATA_WIDTH/8)-1:0]wstrb,
                              input                    wlast,
                              input               [3:0]wuser,
                              input                    wvalid,
