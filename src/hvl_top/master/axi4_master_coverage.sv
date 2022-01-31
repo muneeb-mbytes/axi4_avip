@@ -31,7 +31,9 @@ class axi4_master_coverage extends uvm_subscriber #(axi4_master_tx);
 
     AWBURST_CP : coverpoint packet.awburst {
       option.comment = "awburst";
-      bins AWBURST[]={[0:$]};
+      bins READ_FIXED={0};
+      bins WRITE_INCR ={1}; 
+      bins READ_WRAP={2};     
     }
 
     AWSIZE_CP : coverpoint packet.awsize {
@@ -76,7 +78,9 @@ class axi4_master_coverage extends uvm_subscriber #(axi4_master_tx);
 
     ARBURST_CP : coverpoint packet.arburst {
       option.comment = "arburst";
-      bins ARBURST[]={[0:$]};
+      bins READ_FIXED={0};
+      bins WRITE_INCR ={1}; 
+      bins READ_WRAP={2};     
     }
 
     ARSIZE_CP : coverpoint packet.arsize {

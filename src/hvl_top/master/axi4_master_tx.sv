@@ -88,7 +88,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to store the write last transfer
   bit wlast;
 
-  bit wuser;
+  rand bit wuser;
 
   //Variable : wvalid
   //Used to send the write valid
@@ -549,7 +549,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     end
     foreach(wstrb[i])begin
       // MSHA: printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
-      printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_DEC);
+      printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
     end
     //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
