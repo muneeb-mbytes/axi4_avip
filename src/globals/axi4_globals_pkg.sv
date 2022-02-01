@@ -319,6 +319,8 @@ package axi4_globals_pkg;
     bit                     awlock;
     bit [3:0]               awcache;
     bit [3:0]               awqos;
+    bit [3:0]               awregion;
+    bit                     awuser;
     bit [2:0]               awprot;
     bit                     awvalid;
     bit	                    awready;

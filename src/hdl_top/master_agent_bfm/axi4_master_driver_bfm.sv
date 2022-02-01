@@ -23,6 +23,9 @@ interface axi4_master_driver_bfm(input bit aclk,
                                  output reg               [1:0]awlock,
                                  output reg               [3:0]awcache,
                                  output reg               [2:0]awprot,
+                                 output reg               [3:0]awqos,
+                                 output reg               [3:0]awregion,
+                                 output reg                    awuser,
                                  output reg                    awvalid,
                                  input    	                   awready,
 
@@ -129,6 +132,9 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
     awlock  <= data_write_packet.awlock;
     awcache <= data_write_packet.awcache;
     awprot  <= data_write_packet.awprot;
+    awqos   <= data_write_packet.awqos;
+    awregion<= data_write_packet.awregion;
+    awuser  <= data_write_packet.awuser;
     awvalid <= 1'b1;
     
     `uvm_info(name,$sformatf("detect_awready = %0d",awready),UVM_HIGH)

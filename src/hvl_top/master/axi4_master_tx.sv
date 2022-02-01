@@ -47,7 +47,15 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : awqos
   //Used to send the write address quality of service
-  rand bit awqos;
+  rand bit [3:0]awqos;
+
+  //Variable : awregion
+  //Used to send the write address region selected
+  rand bit [3:0]awregion;
+
+  //Variable : awuser
+  //Used to send the write address user
+  rand bit awuser;
 
   //Variable : awvalid
   //Used to send the write address valid
@@ -57,16 +65,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to send the write address ready
   //bit awready;
   
-  int wait_count_write_address_channel;
-  int wait_count_write_data_channel;
-  int wait_count_write_response_channel;
-  int wait_count_read_address_channel;
-  int wait_count_read_data_channel;
-  
-  int outstanding_write_tx;
-  int outstanding_read_tx;
-  rand int no_of_wait_states;
-
   //-------------------------------------------------------
   // WRITE DATA CHANNEL SIGNALS
   //-------------------------------------------------------
@@ -212,7 +210,15 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to the determine the type of the transfer
   rand transfer_type_e transfer_type;
 
-
+  int wait_count_write_address_channel;
+  int wait_count_write_data_channel;
+  int wait_count_write_response_channel;
+  int wait_count_read_address_channel;
+  int wait_count_read_data_channel;
+  
+  int outstanding_write_tx;
+  int outstanding_read_tx;
+  rand int no_of_wait_states;
   //-------------------------------------------------------
   // WRITE ADDRESS Constraints
   //-------------------------------------------------------

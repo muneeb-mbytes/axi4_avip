@@ -23,13 +23,16 @@ interface axi4_if(input aclk, input aresetn);
   logic     [1: 0] awlock    ;
   logic     [3: 0] awcache   ;
   logic     [2: 0] awprot    ;
+  logic     [3:0] awqos     ;
+  logic     [3:0] awregion  ;
+  logic           awuser    ;
   logic            awvalid   ;
   logic		         awready   ;
   //Write_data_channel
   logic     [DATA_WIDTH-1: 0] wdata     ;
   logic     [(DATA_WIDTH/8)-1: 0] wstrb ;
   logic            wlast     ;
-  logic     [3: 0] wuser     ;
+  logic      [3:0] wuser     ;
   logic            wvalid    ;
  	logic            wready    ;
   //Write Response Channel
