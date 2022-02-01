@@ -10,8 +10,8 @@ import axi4_globals_pkg::*;
 // Interface : slave_assertions
 // Used to write the assertion checks required for the slave checks
 //--------------------------------------------------------------------------------------------
-interface slave_assertions (input                     aclk,
-                            input                     aresetn,
+interface slave_assertions (input aclk,
+                            input aresetn,
                             //Write Address Channel Signals
                             input               [3:0] awid,
                             input [ADDRESS_WIDTH-1:0] awaddr,
@@ -24,12 +24,18 @@ interface slave_assertions (input                     aclk,
                             input                     awvalid,
                             input                     awready,
                             //Write Data Channel Signals
+                            input     [DATA_WIDTH-1:0] wdata,
+                            input [(DATA_WIDTH/8)-1:0] wstrb,
+                            input                      wlast,
+                            input                [3:0] wuser,
+                            input                      wvalid,
+                            input                      wready,
                             //Write Response Channel Signals
-                            input     [3: 0] bid       ,
-                            input     [1: 0] bresp     ,
-                            input     [3: 0] buser     ,
-                            input            bvalid    ,
-                            input            bready    ,
+                            input [3:0] bid,
+                            input [1:0] bresp,
+                            input [3:0] buser,
+                            input       bvalid,
+                            input       bready,
                             //Read Address Channel Signals
                             input               [3:0] arid,     
                             input [ADDRESS_WIDTH-1:0] araddr,  
@@ -101,16 +107,31 @@ interface slave_assertions (input                     aclk,
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in write data channel
   //--------------------------------------------------------------------------------------------
-  //Assertion:   AXI_WD_STABLE_SIGNALS_CHECK
+   //Assertion:   AXI_WD_STABLE_SIGNALS_CHECK
   //Description: All signals must remain stable after WVALID is asserted until WREADY IS LOW
+  property if_write_data_channel_signals_are_stable(logic wdata, logic wstrb, logic wlast, logic wuser);
+    @(posedge aclk) disable iff (!aresetn)
+    (wvalid==1 && wready==0) |=> ($stable(wdata) && $stable(wstrb) && $stable(wlast) && $stable(wuser));
+  endproperty : if_write_data_channel_signals_are_stable
+  AXI_WD_STABLE_SIGNALS_CHECK: assert property (if_write_data_channel_signals_are_stable(wdata,wstrb,wlast,wuser));
  
   //Assertion:   AXI_WD_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when WVALID is HIGH
+  property if_write_data_channel_signals_are_unknown(logic wdata, logic wstrb, logic wlast, logic wuser);
+    @(posedge aclk) disable iff (!aresetn)
+    (wvalid == 1) |-> (!($isunknown(wdata)) && !($isunknown(wstrb)) && !($isunknown(wlast)) && !($isunknown(wuser)));
+  endproperty : if_write_data_channel_signals_are_unknown
+  AXI_WD_UNKNOWN_SIGNALS_CHECK: assert property (if_write_data_channel_signals_are_unknown(wdata,wstrb,wlast,wuser));
 
   //Assertion:   AXI_WD_VALID_STABLE_CHECK
   //Description: When WVALID is asserted, then it must remain asserted until WREADY is HIGH
+  property axi_write_data_channel_valid_stable_check;
+    @(posedge aclk) disable iff (!aresetn)
+    $rose(wvalid) |-> wvalid s_until_with wready;
+  endproperty : axi_write_data_channel_valid_stable_check
+  AXI_WD_VALID_STABLE_CHECK : assert property (axi_write_data_channel_valid_stable_check);
   
-  
+ 
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in write response channel
   //--------------------------------------------------------------------------------------------
@@ -137,7 +158,8 @@ interface slave_assertions (input                     aclk,
     $rose(bvalid) |-> bvalid s_until_with bready;
   endproperty : axi_write_response_channel_valid_stable_check
   AXI_WR_VALID_STABLE_CHECK : assert property (axi_write_response_channel_valid_stable_check);
-  
+ 
+
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in read address channel
   //--------------------------------------------------------------------------------------------

@@ -31,6 +31,12 @@ module tb_slave_assertions;
   logic                     awvalid;
   logic                     awready;
   //Write Data Channel Signals
+  logic [DATA_WIDTH-1:0] wdata;
+  logic           [31:0] wstrb;
+  logic                  wlast;
+  logic            [3:0] wuser;
+  logic                  wvalid;
+  logic                  wready;
   //Write Response Channel Signals
   logic     [3: 0] bid       ;
   logic     [1: 0] bresp     ;
@@ -341,26 +347,173 @@ module tb_slave_assertions;
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for write_data_channel
   //--------------------------------------------------------------------------------------------
-    //task if_wd_channel_signals_are_stable_positive_case();
-    //endtask : if_wd_channel_signals_are_stable_positive_case
-    //task if_wd_channel_signals_are_stable_negative_case();
-    //endtask : if_wd_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  // Task: if_wd_channel_signals_are_stable_positive_case
+  //-------------------------------------------------------
+  task if_wd_channel_signals_are_stable_positive_case();
+    bit [DATA_WIDTH-1:0] wdata_data;
+    bit            [1:0] wstrb_data;
+    bit                  wlast_data;
+    bit            [3:0] wuser_data;
+    bit                  wvalid_data;
+    bit                  wready_data;
     
-    //task if_wd_channel_signals_are_unknown_positive_case();
-    //endtask : if_wd_channel_signals_are_unknown_positive_case
-    //task if_wd_channel_signals_are_unknown_negative_case();
-    //endtask : if_wd_channel_signals_are_unknown_negative_case
+    //Calling task aresetn_gen()
+    aresetn_gen();
     
-    //task if_wd_channel_valid_stable_positive_case();
-    //endtask : if_wd_channel_valid_stable_positive_case
-    //task if_wd_channel_valid_stable_negative_case();
-    //endtask : if_wd_channel_valid_stable_negative_case
+    //Randomizing the signals
+    @(posedge aclk);
+    wdata_data = $urandom; 
+    wstrb_data = $urandom; 
+    wlast_data = $urandom; 
+    wuser_data = $urandom; 
+    wvalid     = 1'b1;
+    wready     = 1'b0;
+
+    //Driving address signals data
+    while(wvalid==1 && wready==0) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_wd_channel_signals_are_stable_positive_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      wdata = wdata_data; 
+      wstrb = wstrb_data; 
+      wlast = wlast_data; 
+      wuser = wuser_data; 
+    end
+  endtask : if_wd_channel_signals_are_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wd_channel_signals_are_stable_negative_case
+  //-------------------------------------------------------
+  task if_wd_channel_signals_are_stable_negative_case();
+    bit [DATA_WIDTH-1:0] wdata_data;
+    bit           [31:0] wstrb_data;
+    bit                  wlast_data;
+    bit            [3:0] wuser_data;
+    bit                  wvalid_data;
+    bit                  wready_data;
     
+    //Calling task aresetn_gen()
+    aresetn_gen();
+   
+    //Randomizing the signals
+    @(posedge aclk);
+    wvalid = 1'b1;
+    wready = 1'b0;
+
+    //Driving address signals data
+    while(wvalid==1 && wready==0) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_wd_channel_signals_are_stable_negative_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      wdata_data = $urandom; 
+      wstrb_data = $urandom; 
+      wlast_data = $urandom; 
+      wuser_data = $urandom; 
+      wdata      = wdata_data; 
+      wstrb      = wstrb_data; 
+      wlast      = wlast_data; 
+      wuser      = wuser_data; 
+    end
+  endtask : if_wd_channel_signals_are_stable_negative_case
+    
+  //-------------------------------------------------------
+  // Task: if_wd_channel_signals_are_unknown_positive_case
+  //-------------------------------------------------------
+  task if_wd_channel_signals_are_unknown_positive_case();
+    bit [DATA_WIDTH-1:0] wdata_data;
+    bit            [1:0] wstrb_data;
+    bit                  wlast_data;
+    bit            [3:0] wuser_data;
+    bit                  wvalid_data;
+    bit                  wready_data;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+    
+    //Randomizing the signals
+    @(posedge aclk);
+    wvalid = 1'b1;
+
+    //Driving address signals data
+    while(wvalid == 1) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_wd_channel_signals_are_unknown_positive_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      wdata_data = $urandom; 
+      wstrb_data = $urandom; 
+      wlast_data = $urandom; 
+      wuser_data = $urandom; 
+      wdata      = wdata_data; 
+      wstrb      = wstrb_data; 
+      wlast      = wlast_data; 
+      wuser      = wuser_data; 
+    end
+  endtask : if_wd_channel_signals_are_unknown_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wd_channel_signals_are_unknown_negative_case
+  //-------------------------------------------------------
+  task if_wd_channel_signals_are_unknown_negative_case();
+    bit [DATA_WIDTH-1:0] wdata_data;
+    bit            [1:0] wstrb_data;
+    bit                  wlast_data;
+    bit            [3:0] wuser_data;
+    bit                  wvalid_data;
+    bit                  wready_data;
+    
+    //Calling task aresetn_gen()
+    aresetn_gen();
+    
+    //Randomizing the signals
+    @(posedge aclk);
+    wdata_data = $urandom; 
+    wstrb_data = $urandom; 
+    wlast_data = $urandom; 
+    wuser_data = $urandom; 
+    wvalid     = 1'b1;
+      
+    //Driving address signals data
+    while(wvalid == 1) begin
+      @(posedge aclk);
+      `uvm_info(name,$sformatf("if_wd_channel_signals_are_unknown_negative_case::INSIDE WHILE LOOP"),UVM_HIGH);
+      wdata = 1'bx; 
+      wstrb = 1'bx; 
+      wlast = 1'bx; 
+      wuser = 1'bx; 
+    end
+  endtask : if_wd_channel_signals_are_unknown_negative_case
+    
+  //-------------------------------------------------------
+  // Task: if_wd_channel_valid_stable_positive_case
+  //-------------------------------------------------------
+  task if_wd_channel_valid_stable_positive_case();
+    @(posedge aclk);
+    wvalid = 1'b1;
+    wready = 1'b0;
+    `uvm_info(name,$sformatf("wvalid=%0d,wready=%0d",wvalid,wready),UVM_HIGH);
+    #60;
+    wready = 1'b1;
+    `uvm_info(name,$sformatf("wvalid=%0d,wready=%0d",wvalid,wready),UVM_HIGH);
+  endtask : if_wd_channel_valid_stable_positive_case
+
+  //-------------------------------------------------------
+  // Task: if_wd_channel_valid_stable_negative_case
+  //-------------------------------------------------------
+  task if_wd_channel_valid_stable_negative_case();
+    @(posedge aclk);
+    rvalid = 1'b1;
+    rready = 1'b0;
+    `uvm_info(name,$sformatf("wvalid=%0d,wready=%0d",wvalid,wready),UVM_HIGH);
+    #60;
+    wvalid = 1'b0;
+    `uvm_info(name,$sformatf("wvalid=%0d,wready=%0d",wvalid,wready),UVM_HIGH);
+    #30;
+    wready = 1'b1;
+    `uvm_info(name,$sformatf("wvalid=%0d,wready=%0d",wvalid,wready),UVM_HIGH);
+  endtask : if_wd_channel_valid_stable_negative_case
+
 
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for write_response_channel
   //--------------------------------------------------------------------------------------------
-
   //-------------------------------------------------------
   // Task: if_wr_channel_signals_are_stable_positive_case
   //-------------------------------------------------------
@@ -616,7 +769,6 @@ module tb_slave_assertions;
   endtask : if_wr_channel_valid_stable_negative_case
     
     
-
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for read_address_channel
   //--------------------------------------------------------------------------------------------
@@ -817,6 +969,7 @@ module tb_slave_assertions;
     arready = 1'b1;
     `uvm_info(name,$sformatf("arvalid=%0d,arready=%0d",arvalid,arready),UVM_HIGH);
   endtask : if_ra_channel_valid_stable_negative_case
+
 
   //--------------------------------------------------------------------------------------------
   // Tasks written to verify assertions for read_data_channel
