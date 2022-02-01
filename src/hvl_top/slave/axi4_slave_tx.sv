@@ -89,7 +89,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : wuser
   //Used to represent the user type
-  bit wuser;
+  bit [3:0]wuser;
 
   //Variable : wready
   //Used to accept the valid data
@@ -109,6 +109,10 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Variable : bresp
   //Used to send the write response for the transaction
   rand bresp_e bresp;
+
+  //Variable : buser
+  //Used to send the user signal for the transaction
+  rand bit [3:0]buser;
 
   //Variable : bready
   //Used to accept write response are  valid data
@@ -287,6 +291,7 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   //WRITE RESPONSE CHANNEL
   bid     = axi_slave_tx_copy_obj.bid;
   bresp   = axi_slave_tx_copy_obj.bresp;
+  buser   = axi_slave_tx_copy_obj.buser;
   //bvalid  = axi_slave_tx_copy_obj.bvalid;
   //bready  = axi_slave_tx_copy_obj.bready;
   
@@ -353,6 +358,7 @@ function bit axi4_slave_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   //WRITE RESPONSE CHANNEL
   bid   == axi_slave_tx_compare_obj.bid    &&
   bresp == axi_slave_tx_compare_obj.bresp  &&
+  buser == axi_slave_tx_compare_obj.buser  &&
   //bvalid  == axi_slave_tx_compare_obj.bvalid &&
   //bready  == axi_slave_tx_compare_obj.bready &&
 
@@ -407,6 +413,7 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
     //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
     printer.print_string("bid",bid.name());
     printer.print_string("bresp",bresp.name());
+    printer.print_field("buser",buser,$bits(buser),UVM_DEC);
   end
   else if(tx_type == READ) begin
     //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);

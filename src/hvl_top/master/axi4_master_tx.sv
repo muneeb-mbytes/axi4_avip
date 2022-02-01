@@ -88,7 +88,9 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to store the write last transfer
   bit wlast;
 
-  rand bit wuser;
+  //Variable : wuser
+  //Used to send the user bit value
+  rand bit [3:0]wuser;
 
   //Variable : wvalid
   //Used to send the write valid
