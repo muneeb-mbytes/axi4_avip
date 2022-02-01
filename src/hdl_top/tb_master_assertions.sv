@@ -32,7 +32,7 @@ module tb_master_assertions;
   logic                     awready;
   //Write Data Channel Signals
   logic [DATA_WIDTH-1:0] wdata;
-  logic           [31:0] wstrb;
+  logic [(DATA_WIDTH/8)-1:0]wstrb;
   logic                  wlast;
   logic            [3:0] wuser;
   logic                  wvalid;
@@ -1215,50 +1215,50 @@ module tb_master_assertions;
 
   
  //Instantiation of assertions
-  master_assertions M_A (.aclk(aclk),
-                         .aresetn(aresetn),
-                         .awid(awid),
-                         .awaddr(awaddr),
-                         .awlen(awlen),
-                         .awsize(awsize),
-                         .awburst(awburst),
-                         .awlock(awlock),
-                         .awcache(awcache),
-                         .awprot(awprot),
-                         .awvalid(awvalid),
-                         .awready(awready),
-                         .wdata(wdata),
-                         .wstrb(wstrb),
-                         .wlast(wlast),
-                         .wuser(wuser),
-                         .wvalid(wvalid),
-                         .wready(wready),
-                         .bid(bid),
-                         .buser(buser),
-                         .bvalid(bvalid),
-                         .bready(bready),
-                         .bresp(bresp),
-                         .arid(arid),
-                         .araddr(araddr),  
-                         .arlen(arlen),   
-                         .arsize(arsize), 
-                         .arburst(arburst), 
-                         .arlock(arlock),  
-                         .arcache(arcache), 
-                         .arprot(arprot),
-                         .arqos(arqos),   
-                         .arregion(arregion), 
-                         .aruser(aruser),  
-                         .arvalid(arvalid), 
-                         .arready(arready),
-                         .rid(rid),
-                         .rdata(rdata),
-                         .rresp(rresp),
-                         .rlast(rlast),
-                         .ruser(ruser),
-                         .rvalid(rvalid),
-                         .rready(rready)
-                       );
+ // master_assertions M_A (.aclk(aclk),
+ //                        .aresetn(aresetn),
+ //                        .awid(awid),
+ //                        .awaddr(awaddr),
+ //                        .awlen(awlen),
+ //                        .awsize(awsize),
+ //                        .awburst(awburst),
+ //                        .awlock(awlock),
+ //                        .awcache(awcache),
+ //                        .awprot(awprot),
+ //                        .awvalid(awvalid),
+ //                        .awready(awready),
+ //                        .wdata(wdata),
+ //                        .wstrb(wstrb),
+ //                        .wlast(wlast),
+ //                        .wuser(wuser),
+ //                        .wvalid(wvalid),
+ //                        .wready(wready),
+ //                        .bid(bid),
+ //                        .buser(buser),
+ //                        .bvalid(bvalid),
+ //                        .bready(bready),
+ //                        .bresp(bresp),
+ //                        .arid(arid),
+ //                        .araddr(araddr),  
+ //                        .arlen(arlen),   
+ //                        .arsize(arsize), 
+ //                        .arburst(arburst), 
+ //                        .arlock(arlock),  
+ //                        .arcache(arcache), 
+ //                        .arprot(arprot),
+ //                        .arqos(arqos),   
+ //                        .arregion(arregion), 
+ //                        .aruser(aruser),  
+ //                        .arvalid(arvalid), 
+ //                        .arready(arready),
+ //                        .rid(rid),
+ //                        .rdata(rdata),
+ //                        .rresp(rresp),
+ //                        .rlast(rlast),
+ //                        .ruser(ruser),
+ //                        .rvalid(rvalid),
+ //                        .rready(rready)
+ //                      );
 
 endmodule : tb_master_assertions
 
