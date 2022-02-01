@@ -53,8 +53,22 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //Declaring handle for axi4 driver bfm
   virtual axi4_master_driver_bfm axi4_master_drv_bfm_h;
 
+  //Vaiaable : write_data_channel_key
+  //Used to assign keys to this semaphore and 
+  //to take keys from the semaphore
+  //Used to block the process from happening until the key is put
   semaphore write_data_channel_key;
+  
+  //Vaiaable : write_response_channel_key
+  //Used to assign keys to this semaphore and 
+  //to take keys from the semaphore
+  //Used to block the process from happening until the key is put
   semaphore write_response_channel_key;
+
+  //Vaiaable : write_response_channel_key
+  //Used to assign keys to this semaphore and 
+  //to take keys from the semaphore
+  //Used to block the process from happening until the key is put
   semaphore read_channel_key;
   
   //-------------------------------------------------------
