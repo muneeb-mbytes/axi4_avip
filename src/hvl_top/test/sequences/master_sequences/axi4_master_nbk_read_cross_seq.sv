@@ -31,10 +31,11 @@ endfunction : new
 // Creates the req of type master_nbk transaction and randomises the req
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_read_cross_seq::body();
-  super.body();
-  
+  super.body(); 
+begin
   start_item(req);
-  if(!req.randomize() with {req.arsize == READ_8_BYTES;
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+                            req.arlen  == 4; 
                             req.tx_type == READ;
                             req.arburst == READ_INCR;
                             req.transfer_type == NON_BLOCKING_READ;}) begin
@@ -44,6 +45,20 @@ task axi4_master_nbk_read_cross_seq::body();
   req.print();
   finish_item(req);
 
+
+  start_item(req);
+  if(!req.randomize() with {req.arsize == READ_2_BYTES;
+                            req.arlen  == 10; 
+                            req.tx_type == READ;
+                            req.arburst == READ_FIXED;
+                            req.transfer_type == NON_BLOCKING_READ;}) begin
+
+    `uvm_fatal("axi4","Rand failed");
+  end
+  req.print();
+  finish_item(req);
+
+end
 endtask : body
 
 `endif

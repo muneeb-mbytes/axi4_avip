@@ -66,12 +66,12 @@ task axi4_virtual_nbk_cross_write_read_seq::body();
 
   fork 
     begin: T1_WRITE
-      repeat(2) begin
+      repeat(1) begin
         axi4_master_nbk_write_cross_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
       end
     end
     begin: T2_READ
-      repeat(3) begin
+      repeat(1) begin
         axi4_master_nbk_read_cross_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
      // axi4_master_nnbk_read_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
       end

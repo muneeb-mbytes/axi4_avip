@@ -32,6 +32,7 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_slave_nbk_write_cross_seq::body();
   super.body();
+begin 
   req.transfer_type = NON_BLOCKING_WRITE;
   //req = axi4_slave_tx::type_id::create("req");
   // MSHA: req.type = this.type;
@@ -44,8 +45,9 @@ task axi4_slave_nbk_write_cross_seq::body();
   end
   `uvm_info("SLAVE_WRITE_NBK_SEQ", $sformatf("slave_seq = \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_slave_nbk_write_cross_seq"), UVM_NONE); 
 
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_slave_nbk_write_cross_seq"), UVM_NONE); 
+end
 endtask : body
 
 `endif

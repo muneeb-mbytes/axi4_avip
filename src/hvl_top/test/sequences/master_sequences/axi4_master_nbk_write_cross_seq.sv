@@ -32,12 +32,14 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_write_cross_seq::body();
   super.body();
-  req.transfer_type=NON_BLOCKING_WRITE;
+begin
+  //req.transfer_type=NON_BLOCKING_WRITE;
   // MSHA: req.type = this.type;
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_nbk_write_cross_seq"), UVM_NONE); 
 
   start_item(req);
-  if(!req.randomize() with {req.awsize == WRITE_8_BYTES;
+  if(!req.randomize() with {  req.awsize == WRITE_2_BYTES;
+                              req.awlen == 10;
                               req.tx_type == WRITE;
                               req.awburst == WRITE_FIXED;
                               req.transfer_type == NON_BLOCKING_WRITE;}) begin
@@ -46,6 +48,33 @@ task axi4_master_nbk_write_cross_seq::body();
   
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
+
+
+  start_item(req);
+  if(!req.randomize() with {  req.awsize == WRITE_4_BYTES;
+                              req.awlen == 14;
+                              req.tx_type == WRITE;
+                              req.awburst == WRITE_INCR;
+                              req.transfer_type == NON_BLOCKING_WRITE;}) begin
+    `uvm_fatal("axi4","Rand failed");
+  end
+  
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  finish_item(req);
+
+  start_item(req);
+  if(!req.randomize() with {  req.awsize == WRITE_2_BYTES;
+                              req.awlen == 15;
+                              req.tx_type == WRITE;
+                              req.awburst == WRITE_WRAP;
+                              req.transfer_type == NON_BLOCKING_WRITE;}) begin
+    `uvm_fatal("axi4","Rand failed");
+  end
+  
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  finish_item(req);
+end
+
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_nbk_write_cross_seq"), UVM_NONE); 
 
 endtask : body

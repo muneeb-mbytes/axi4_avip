@@ -40,6 +40,7 @@ task axi4_slave_nbk_read_cross_seq::body();
   end
   req.print();
   finish_item(req);
+
 endtask : body
 
 `endif

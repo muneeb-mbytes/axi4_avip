@@ -68,3 +68,6 @@ axi4_non_blocking_unaligned_addr_write_read_test.sv
 
 # Non Blocking Rand testcase
 axi4_non_blocking_write_read_rand_test.sv
+
+# Non Blocking Cross testcase
+axi4_non_blocking_cross_write_read_test.sv
