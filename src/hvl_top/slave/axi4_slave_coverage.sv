@@ -169,7 +169,7 @@ endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Function: write
-// sampiling is done
+// sampling is done
 //--------------------------------------------------------------------------------------------
 function void axi4_slave_coverage::write(axi4_slave_tx t);
  `uvm_info(get_type_name(),$sformatf("Before calling SAMPLE METHOD"),UVM_HIGH);

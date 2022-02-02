@@ -37,7 +37,7 @@ class axi4_scoreboard extends uvm_scoreboard;
   uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_data_analysis_fifo;
   uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_response_analysis_fifo;
 
-  //Signals used to declare verified count
+  // Signals used to declare verified count
   int byte_data_cmp_verified_awid_count;
   int byte_data_cmp_verified_awaddr_count;
   int byte_data_cmp_verified_awsize_count;
@@ -71,7 +71,7 @@ class axi4_scoreboard extends uvm_scoreboard;
   int byte_data_cmp_verified_rresp_count;
   int byte_data_cmp_verified_ruser_count;
 
-  //Signals used to declare failed count
+  // Signals used to declare failed count
   int byte_data_cmp_failed_awid_count;
   int byte_data_cmp_failed_awaddr_count;
   int byte_data_cmp_failed_awsize_count;
@@ -194,8 +194,7 @@ endfunction : start_of_simulation_phase
 
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
-// <Description_here>
-//
+// All the comparision are done
 // Parameters:
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
@@ -217,7 +216,6 @@ task axi4_scoreboard::run_phase(uvm_phase phase);
     axi4_slave_write_data_analysis_fifo.get(axi4_slave_tx_h2);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data_channel \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
     axi4_write_data_comparision(axi4_master_tx_h2,axi4_slave_tx_h2);
-
 
     axi4_master_write_response_analysis_fifo.get(axi4_master_tx_h3);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
@@ -242,32 +240,18 @@ task axi4_scoreboard::run_phase(uvm_phase phase);
     //-------------------------------------------------------
 
     // `uvm_info(get_type_name(),$sformatf("checking fifo used is %d",axi4_master_write_address_analysis_fifo.used()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("printing all fifo's data in scoreboard"),UVM_HIGH);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data \n%s",axi4_master_tx_h2.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("after printing all fifo's data in scoreboard"),UVM_HIGH);
+    // Printing Slave data
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address \n%s",axi4_slave_tx_h1.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
-
-    // Checking data for address in both master and slave
-    foreach(axi4_master_tx_h1.awaddr[i])
-    if(axi4_master_tx_h1.awaddr[i]!=axi4_slave_tx_h1.awaddr[i])
-    begin
-       `uvm_error("Scoreboard awaddr mismatch",$sformatf("awaddr[%0d] = %0h",i,axi4_master_tx_h1.awaddr[i]));;
-    end
-    else
-    begin
-      `uvm_info (get_type_name(), $sformatf ("scoreboard awaddr matched"),UVM_HIGH);
-    end
-
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("after printing all fifo's data in scoreboard"),UVM_HIGH);
   end
 endtask : run_phase
 
@@ -603,6 +587,8 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
   //--------------------------------------------------------------------------------------------
   // 1.Check if the comparisions counter is NON-zero
   //   A non-zero value indicates that the comparisions never happened and throw error
+  // 2.Initial count of the failed count is zero
+  //   If the failed count is more than 0 it means comparision is failed and gives error  
   //--------------------------------------------------------------------------------------------
 
   //-------------------------------------------------------
