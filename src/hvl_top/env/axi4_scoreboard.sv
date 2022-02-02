@@ -602,16 +602,16 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
   //-------------------------------------------------------
   // Write_Address_Channel comparision
   //-------------------------------------------------------
-//  if ((byte_data_cmp_verified_master_pwdata_count != 0)&&(byte_data_cmp_failed_master_pwdata_count == 0)) begin
-//	  `uvm_info (get_type_name(), $sformatf ("all master_pwdata comparisions are succesful"),UVM_HIGH);
-//  end
-//  else begin
-//    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_master_pwdata_count :%0d",
-//                                            byte_data_cmp_verified_master_pwdata_count),UVM_HIGH);
-//	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_master_pwdata_count : %0d", 
-//                                            byte_data_cmp_failed_master_pwdata_count),UVM_HIGH);
-//    `uvm_error (get_type_name(), $sformatf ("comparisions of master_pwdata not happened"));
-//  end
+  if ((byte_data_cmp_verified_awid_count != 0) && (byte_data_cmp_failed_awid_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("awid count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_awid_count :%0d",
+                                            byte_data_cmp_verified_awid_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_awid_count : %0d", 
+                                            byte_data_cmp_failed_awid_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("awid count comparisions are failed"));
+  end
 
   //-------------------------------------------------------
   // Write_Data_Channel comparision
