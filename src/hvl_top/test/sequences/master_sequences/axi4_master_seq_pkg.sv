@@ -37,6 +37,8 @@ package axi4_master_seq_pkg;
   `include "axi4_master_bk_write_okay_resp_seq.sv"
   `include "axi4_master_bk_write_exokay_resp_seq.sv"
   `include "axi4_master_bk_write_rand_seq.sv"
+  `include "axi4_master_bk_write_slave_error_seq.sv"
+  `include "axi4_master_bk_write_unaligned_addr_seq.sv"
 
   `include "axi4_master_nbk_write_8b_transfer_seq.sv"
   `include "axi4_master_nbk_write_16b_transfer_seq.sv"
@@ -62,6 +64,8 @@ package axi4_master_seq_pkg;
   `include "axi4_master_bk_read_okay_resp_seq.sv"
   `include "axi4_master_bk_read_ex_okay_resp_seq.sv"
   `include "axi4_master_bk_read_rand_seq.sv"
+  `include "axi4_master_bk_read_slave_error_seq.sv"
+  `include "axi4_master_bk_read_unaligned_addr_seq.sv"
 
   `include "axi4_master_nbk_read_incr_burst_seq.sv"
   `include "axi4_master_nbk_read_wrap_burst_seq.sv"

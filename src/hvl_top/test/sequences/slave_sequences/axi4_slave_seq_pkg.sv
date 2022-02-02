@@ -37,6 +37,8 @@ package axi4_slave_seq_pkg;
   `include "axi4_slave_bk_write_okay_resp_seq.sv"
   `include "axi4_slave_bk_write_exokay_resp_seq.sv"
   `include "axi4_slave_bk_write_rand_seq.sv"
+  `include "axi4_slave_bk_write_slave_error_seq.sv"
+  `include "axi4_slave_bk_write_unaligned_addr_seq.sv"
 
   `include "axi4_slave_nbk_write_incr_burst_seq.sv"
   `include "axi4_slave_nbk_write_fixed_burst_seq.sv"
@@ -64,6 +66,8 @@ package axi4_slave_seq_pkg;
   `include "axi4_slave_bk_read_okay_resp_seq.sv"
   `include "axi4_slave_bk_read_ex_okay_resp_seq.sv"
   `include "axi4_slave_bk_read_rand_seq.sv"
+  `include "axi4_slave_bk_read_slave_error_seq.sv"
+  `include "axi4_slave_bk_read_unaligned_addr_seq.sv"
 
 
   `include "axi4_slave_nbk_read_incr_burst_seq.sv"
