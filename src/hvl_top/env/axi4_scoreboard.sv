@@ -570,7 +570,6 @@ task axi4_scoreboard::axi4_read_data_comparision(input axi4_master_tx axi4_maste
 
 endtask : axi4_read_data_comparision
 
-<<<<<<< HEAD
 
 function void axi4_scoreboard::report_phase(uvm_phase phase);
   super.report_phase(phase);
@@ -661,9 +660,6 @@ function void axi4_scoreboard::report_phase(uvm_phase phase);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise ruser comparisions:%0d",byte_data_cmp_verified_ruser_count ),UVM_HIGH);
 
 endfunction : report_phase
-`endif
-=======
->>>>>>> 9f318795caaf6f8e5e2f086c9836fe3a4080fe68
 
 //--------------------------------------------------------------------------------------------
 // Function: check_phase
