@@ -178,4 +178,6 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
   end
    
 endmodule : axi4_slave_agent_bfm
+
 `endif
+
