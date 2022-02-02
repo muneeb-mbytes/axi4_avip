@@ -275,8 +275,6 @@ endtask : run_phase
 // Task : axi4_write_address_comparision
 //-------------------------------------------------------
 task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_master_tx_h1,input axi4_slave_tx axi4_slave_tx_h1);
-
-  
   //$display("---------------------------------------------------------------------------------");
   //$display("SCOREBOARD WRITE ADDRESS CHANNEL COMPARISIONS";
   //$display("---------------------------------------------------------------------------------");
@@ -288,6 +286,7 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_awid from master and slave is  not equal"),UVM_HIGH);
     `uvm_info("SB_AWID_NOT_MATCHED", $sformatf("Master AWID = 'h%0x and Slave AWID = 'h%0x",axi4_master_tx_h1.awid,axi4_slave_tx_h1.awid), UVM_HIGH);             
+    byte_data_cmp_failed_awid_count++;
   end
   
   if(axi4_master_tx_h1.awaddr == axi4_slave_tx_h1.awaddr)begin
@@ -298,6 +297,7 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_awaddr from master and slave is  not equal"),UVM_HIGH);
     `uvm_info("SB_AWADDR_NOT_MATCHED", $sformatf("Master AWADDR = 'h%0x and Slave AWADDR = 'h%0x",axi4_master_tx_h1.awaddr,axi4_slave_tx_h1.awaddr), UVM_HIGH);             
+    byte_data_cmp_failed_awaddr_count++;
   end
 
   if(axi4_master_tx_h1.awlen == axi4_slave_tx_h1.awlen)begin
@@ -308,6 +308,7 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_awlen from master and slave is  not equal"),UVM_HIGH);
     `uvm_info("SB_awlen_NOT_MATCHED", $sformatf("Master awlen = 'h%0x and Slave awlen = 'h%0x",axi4_master_tx_h1.awlen,axi4_slave_tx_h1.awlen), UVM_HIGH);             
+    byte_data_cmp_failed_awlen_count++;
   end
 
   if(axi4_master_tx_h1.awsize == axi4_slave_tx_h1.awsize)begin
@@ -318,6 +319,7 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_awsize from master and slave is  not equal"),UVM_HIGH);
     `uvm_info("SB_awsize_NOT_MATCHED", $sformatf("Master awsize = 'h%0x and Slave awsize = 'h%0x",axi4_master_tx_h1.awsize,axi4_slave_tx_h1.awsize), UVM_HIGH);             
+    byte_data_cmp_failed_awsize_count++;
   end
 
   if(axi4_master_tx_h1.awburst == axi4_slave_tx_h1.awburst)begin
@@ -328,6 +330,7 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_awburst from master and slave is  not equal"),UVM_HIGH);
     `uvm_info("SB_awburst_NOT_MATCHED", $sformatf("Master awburst = 'h%0x and Slave awburst = 'h%0x",axi4_master_tx_h1.awburst,axi4_slave_tx_h1.awburst), UVM_HIGH);             
+    byte_data_cmp_failed_awburst_count++;
   end
 
   if(axi4_master_tx_h1.awlock == axi4_slave_tx_h1.awlock)begin
@@ -338,6 +341,7 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_awlock from master and slave is  not equal"),UVM_HIGH);
     `uvm_info("SB_awlock_NOT_MATCHED", $sformatf("Master awlock = 'h%0x and Slave awlock = 'h%0x",axi4_master_tx_h1.awlock,axi4_slave_tx_h1.awlock), UVM_HIGH);             
+    byte_data_cmp_failed_awlock_count++;
   end
 
   if(axi4_master_tx_h1.awcache == axi4_slave_tx_h1.awcache)begin
@@ -348,6 +352,7 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_awcache from master and slave is  not equal"),UVM_HIGH);
     `uvm_info("SB_awcache_NOT_MATCHED", $sformatf("Master awcache = 'h%0x and Slave awcache = 'h%0x",axi4_master_tx_h1.awcache,axi4_slave_tx_h1.awcache), UVM_HIGH);             
+    byte_data_cmp_failed_awcache_count++;
   end
 
   if(axi4_master_tx_h1.awprot == axi4_slave_tx_h1.awprot)begin
@@ -357,7 +362,8 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
   end
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_awprot from master and slave is  not equal"),UVM_HIGH);
-    `uvm_info("SB_awprot_NOT_MATCHED", $sformatf("Master awprot = 'h%0x and Slave awprot = 'h%0x",axi4_master_tx_h1.awprot,axi4_slave_tx_h1.awprot), UVM_HIGH);             
+    `uvm_info("SB_awprot_NOT_MATCHED", $sformatf("Master awprot = 'h%0x and Slave awprot = 'h%0x",axi4_master_tx_h1.awprot,axi4_slave_tx_h1.awprot), UVM_HIGH);
+    byte_data_cmp_failed_awprot_count++;
   end
 
 endtask : axi4_write_address_comparision
@@ -613,6 +619,83 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
     `uvm_error (get_type_name(), $sformatf ("awid count comparisions are failed"));
   end
 
+  if ((byte_data_cmp_verified_awaddr_count != 0) && (byte_data_cmp_failed_awaddr_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("awaddr count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_awaddr_count :%0d",
+                                            byte_data_cmp_verified_awaddr_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_awaddr_count : %0d", 
+                                            byte_data_cmp_failed_awaddr_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("awaddr count comparisions are failed"));
+  end
+
+  if ((byte_data_cmp_verified_awsize_count != 0) && (byte_data_cmp_failed_awsize_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("awsize count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_awsize_count :%0d",
+                                            byte_data_cmp_verified_awsize_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_awsize_count : %0d", 
+                                            byte_data_cmp_failed_awsize_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("awsize count comparisions are failed"));
+  end
+
+  if ((byte_data_cmp_verified_awlen_count != 0) && (byte_data_cmp_failed_awlen_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("awlen count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_awlen_count :%0d",
+                                            byte_data_cmp_verified_awlen_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_awlen_count : %0d", 
+                                            byte_data_cmp_failed_awlen_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("awlen count comparisions are failed"));
+  end
+  
+  if ((byte_data_cmp_verified_awburst_count != 0) && (byte_data_cmp_failed_awburst_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("awburst count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_awburst_count :%0d",
+                                            byte_data_cmp_verified_awburst_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_awburst_count : %0d", 
+                                            byte_data_cmp_failed_awburst_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("awburst count comparisions are failed"));
+  end
+  
+  if ((byte_data_cmp_verified_awcache_count != 0) && (byte_data_cmp_failed_awcache_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("awcache count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_awcache_count :%0d",
+                                            byte_data_cmp_verified_awcache_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_awcache_count : %0d", 
+                                            byte_data_cmp_failed_awcache_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("awcache count comparisions are failed"));
+  end
+  
+  if ((byte_data_cmp_verified_awlock_count != 0) && (byte_data_cmp_failed_awlock_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("awlock count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_awlock_count :%0d",
+                                            byte_data_cmp_verified_awlock_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_awlock_count : %0d", 
+                                            byte_data_cmp_failed_awlock_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("awlock count comparisions are failed"));
+  end
+  
+  if ((byte_data_cmp_verified_awprot_count != 0) && (byte_data_cmp_failed_awprot_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("awprot count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_awprot_count :%0d",
+                                            byte_data_cmp_verified_awprot_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_awprot_count : %0d", 
+                                            byte_data_cmp_failed_awprot_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("awprot count comparisions are failed"));
+  end
+  
   //-------------------------------------------------------
   // Write_Data_Channel comparision
   //-------------------------------------------------------
