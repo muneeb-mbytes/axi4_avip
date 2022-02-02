@@ -26,7 +26,7 @@ class axi4_slave_coverage extends uvm_subscriber#(axi4_slave_tx);
 
     AWLEN_CP : coverpoint packet.awlen {
       option.comment = "awlen";
-      bins AW_LEN[16]={[0:$]}; 
+      bins AW_LEN[1]={[0:$]}; 
     }
 
     AWBURST_CP : coverpoint packet.awburst {
@@ -73,7 +73,7 @@ class axi4_slave_coverage extends uvm_subscriber#(axi4_slave_tx);
 
     ARLEN_CP : coverpoint packet.arlen {
       option.comment = "arlen";
-      bins AR_LEN[16]={[0:$]}; 
+      bins AR_LEN[1]={[0:$]}; 
     }
 
 
