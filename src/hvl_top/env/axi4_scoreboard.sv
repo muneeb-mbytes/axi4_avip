@@ -121,6 +121,7 @@ class axi4_scoreboard extends uvm_scoreboard;
   extern virtual function void connect_phase(uvm_phase phase);
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual function void start_of_simulation_phase(uvm_phase phase);
+  extern virtual function void report_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
   extern virtual function void check_phase (uvm_phase phase);
   //extern virtual function void report_phase(uvm_phase phase);
@@ -576,6 +577,96 @@ task axi4_scoreboard::axi4_read_data_comparision(input axi4_master_tx axi4_maste
 
 endtask : axi4_read_data_comparision
 
+
+function void axi4_scoreboard::report_phase(uvm_phase phase);
+  super.report_phase(phase);
+  
+  $display(" ");
+  $display("-------------------------------------------- ");
+  $display("SCOREBOARD REPORT PHASE");
+  $display("-------------------------------------------- ");
+  $display(" ");
+
+  //Number of awid comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise awid comparisions:%0d",byte_data_cmp_verified_awid_count ),UVM_HIGH);
+  
+  //Number of awaddr comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise awaddr comparisions:%0d",byte_data_cmp_verified_awaddr_count ),UVM_HIGH);
+
+  //Number of awsize comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise awsize comparisions:%0d",byte_data_cmp_verified_awsize_count ),UVM_HIGH);
+  //Number of awlen comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise awlen comparisions:%0d" ,byte_data_cmp_verified_awlen_count ),UVM_HIGH);
+
+  //Number of awburst comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise awburst comparisions:%0d",byte_data_cmp_verified_awburst_count ),UVM_HIGH);
+
+  //Number of awcache comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise awcache comparisions:%0d",byte_data_cmp_verified_awcache_count ),UVM_HIGH);
+
+  //Number of awlock comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise awlock comparisions:%0d",byte_data_cmp_verified_awlock_count ),UVM_HIGH);
+
+  //Number of awprot comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise awprot comparisions:%0d",byte_data_cmp_verified_awprot_count ),UVM_HIGH);
+
+  //Number of wdata comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise wdata comparisions:%0d",byte_data_cmp_verified_wdata_count ),UVM_HIGH);
+
+  //Number of wstrb comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise wstrb comparisions:%0d",byte_data_cmp_verified_wstrb_count ),UVM_HIGH);
+
+  //Number of wuser comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise wuser comparisions:%0d",byte_data_cmp_verified_wuser_count ),UVM_HIGH);
+
+  //Number of bid comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise bid comparisions:%0d",byte_data_cmp_verified_bid_count ),UVM_HIGH);
+
+  //Number of bresp comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise bresp comparisions:%0d",byte_data_cmp_verified_bresp_count ),UVM_HIGH);
+
+  //Number of arid comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arid comparisions:%0d",byte_data_cmp_verified_arid_count ),UVM_HIGH);
+
+  //Number of araddr comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise araddr comparisions:%0d",byte_data_cmp_verified_araddr_count ),UVM_HIGH);
+
+  //Number of arsize comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arsize comparisions:%0d",byte_data_cmp_verified_arsize_count ),UVM_HIGH);
+
+  //Number of arlen comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arlen comparisions:%0d",byte_data_cmp_verified_arlen_count ),UVM_HIGH);
+  //Number of arburst comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arburst comparisions:%0d",byte_data_cmp_verified_arburst_count ),UVM_HIGH);
+  
+  //Number of arcache comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arcache comparisions:%0d",byte_data_cmp_verified_arcache_count ),UVM_HIGH);
+  
+  //Number of arlock comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arlock comparisions:%0d",byte_data_cmp_verified_arlock_count ),UVM_HIGH);
+  
+  //Number of arprot comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arprot  comparisions:%0d",byte_data_cmp_verified_arprot_count ),UVM_HIGH);
+
+  //Number of arregiont comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arregion comparisions:%0d",byte_data_cmp_verified_arregion_count ),UVM_HIGH);
+  
+  //Number of arqos comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arqos comparisions:%0d",byte_data_cmp_verified_arqos_count ),UVM_HIGH);
+  
+  //Number of rid comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise rid comparisions:%0d",byte_data_cmp_verified_rid_count ),UVM_HIGH);
+  
+  //Number of rdata comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise rdata comparisions:%0d",byte_data_cmp_verified_rdata_count ),UVM_HIGH);
+  
+  //Number of rresp comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise rresp comparisions:%0d",byte_data_cmp_verified_rresp_count ),UVM_HIGH);
+  
+  //Number of ruser comparisoins done
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise ruser comparisions:%0d",byte_data_cmp_verified_ruser_count ),UVM_HIGH);
+
+endfunction : report_phase
 
 //--------------------------------------------------------------------------------------------
 // Function: check_phase
