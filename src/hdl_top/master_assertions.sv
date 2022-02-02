@@ -10,8 +10,8 @@ import axi4_globals_pkg::*;
 // Interface : master_assertions
 // Used to write the assertion checks required for the master checks
 //--------------------------------------------------------------------------------------------
-interface master_assertions (input aclk,
-                             input aresetn,
+interface master_assertions (input                     aclk,
+                             input                     aresetn,
                              //Write Address Channel Signals
                              input               [3:0] awid,
                              input [ADDRESS_WIDTH-1:0] awaddr,
@@ -121,7 +121,8 @@ interface master_assertions (input aclk,
     @(posedge aclk) disable iff (!aresetn)
     (wvalid == 1) |-> (!($isunknown(wdata)) && !($isunknown(wstrb)) && !($isunknown(wlast)) && !($isunknown(wuser)));
   endproperty : if_write_data_channel_signals_are_unknown
-  AXI_WD_UNKNOWN_SIGNALS_CHECK: assert property (if_write_data_channel_signals_are_unknown(wdata,wstrb,wlast,wuser));
+  AXI_WD_UNKNOWN_SIGNALS_CHECK: assert property
+  (if_write_data_channel_signals_are_unknown(wdata,wstrb,wlast,wuser));
 
   //Assertion:   AXI_WD_VALID_STABLE_CHECK
   //Description: When WVALID is asserted, then it must remain asserted until WREADY is HIGH
