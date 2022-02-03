@@ -582,6 +582,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     //printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
     printer.print_string("rid",rid.name());
     printer.print_string("rresp",rresp.name());
+    printer.print_field("ruser",ruser,$bits(ruser),UVM_HEX);
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
   end
   printer.print_string("transfer_type",transfer_type.name());

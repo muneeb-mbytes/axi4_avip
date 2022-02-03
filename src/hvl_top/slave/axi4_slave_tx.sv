@@ -197,6 +197,10 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to store the read response
   rand rresp_e rresp ;
 
+  //Variable : ruser
+  //Used to store the read user
+  rand bit [3:0]ruser;
+
   //Variable : tx_type
   //Used to determine the transaction type
   tx_type_e tx_type;
@@ -378,7 +382,8 @@ function bit axi4_slave_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   //READ DATA CHANNEL
   rid   == axi_slave_tx_compare_obj.rid  &&  
   rdata == axi_slave_tx_compare_obj.rdata && 
-  rresp == axi_slave_tx_compare_obj.rresp;
+  rresp == axi_slave_tx_compare_obj.rresp &&
+  ruser == axi_slave_tx_compare_obj.ruser;
   //rready == axi_slave_tx_compare.obj.rready &&
   //rvalid == axi_slave_tx_compare.obj.rvalid ;
 endfunction : do_compare
@@ -432,6 +437,7 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
       printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
     end
     printer.print_string("rresp",rresp.name());
+    printer.print_field("ruser",ruser,$bits(ruser),UVM_HEX);
 
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_HEX);
     //printer.print_string("TRNASFER_TYPE",transfer_type.name());

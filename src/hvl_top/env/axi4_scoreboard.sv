@@ -70,9 +70,9 @@ class axi4_scoreboard extends uvm_scoreboard;
   int byte_data_cmp_verified_rdata_count;
   int byte_data_cmp_verified_rresp_count;
   int byte_data_cmp_verified_ruser_count;
-  int byte_data_cmp_verified_rlast_count;
-  int byte_data_cmp_verified_rvalid_count;
-  int byte_data_cmp_verified_rready_count;
+  //int byte_data_cmp_verified_rlast_count;
+  //int byte_data_cmp_verified_rvalid_count;
+  //int byte_data_cmp_verified_rready_count;
 
 
   // Signals used to declare failed count
@@ -108,9 +108,9 @@ class axi4_scoreboard extends uvm_scoreboard;
   int byte_data_cmp_failed_rdata_count;
   int byte_data_cmp_failed_rresp_count;
   int byte_data_cmp_failed_ruser_count;
-  int byte_data_cmp_failed_rlast_count;
-  int byte_data_cmp_failed_rvalid_count;
-  int byte_data_cmp_failed_rready_count;
+  //int byte_data_cmp_failed_rlast_count;
+  //int byte_data_cmp_failed_rvalid_count;
+  //int byte_data_cmp_failed_rready_count;
 
 
   //-------------------------------------------------------
@@ -808,16 +808,16 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
     `uvm_error (get_type_name(), $sformatf ("rresp count comparisions are failed"));
   end
 
-   if ((byte_data_cmp_verified_rlast_count != 0) && (byte_data_cmp_failed_rlast_count == 0)) begin
-	  `uvm_info (get_type_name(), $sformatf ("rlast count comparisions are succesful"),UVM_HIGH);
-  end
-  else begin
-    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rlast_count :%0d",
-                                            byte_data_cmp_verified_rlast_count),UVM_HIGH);
-	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rlast_count : %0d", 
-                                            byte_data_cmp_failed_rlast_count),UVM_HIGH);
-    `uvm_error (get_type_name(), $sformatf ("rlast count comparisions are failed"));
-  end
+  // if ((byte_data_cmp_verified_rlast_count != 0) && (byte_data_cmp_failed_rlast_count == 0)) begin
+	//  `uvm_info (get_type_name(), $sformatf ("rlast count comparisions are succesful"),UVM_HIGH);
+  //end
+  //else begin
+  //  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rlast_count :%0d",
+  //                                          byte_data_cmp_verified_rlast_count),UVM_HIGH);
+	//  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rlast_count : %0d", 
+  //                                          byte_data_cmp_failed_rlast_count),UVM_HIGH);
+  //  `uvm_error (get_type_name(), $sformatf ("rlast count comparisions are failed"));
+  //end
 
    if ((byte_data_cmp_verified_ruser_count != 0) && (byte_data_cmp_failed_ruser_count == 0)) begin
 	  `uvm_info (get_type_name(), $sformatf ("ruser count comparisions are succesful"),UVM_HIGH);
@@ -830,27 +830,27 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
     `uvm_error (get_type_name(), $sformatf ("ruser count comparisions are failed"));
   end
 
-   if ((byte_data_cmp_verified_rvalid_count != 0) && (byte_data_cmp_failed_rvalid_count == 0)) begin
-	  `uvm_info (get_type_name(), $sformatf ("rvalid count comparisions are succesful"),UVM_HIGH);
-  end
-  else begin
-    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rvalid_count :%0d",
-                                            byte_data_cmp_verified_rvalid_count),UVM_HIGH);
-	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rdata_rvalid : %0d", 
-                                            byte_data_cmp_failed_rvalid_count),UVM_HIGH);
-    `uvm_error (get_type_name(), $sformatf ("rvalid count comparisions are failed"));
-  end
+  // if ((byte_data_cmp_verified_rvalid_count != 0) && (byte_data_cmp_failed_rvalid_count == 0)) begin
+	//  `uvm_info (get_type_name(), $sformatf ("rvalid count comparisions are succesful"),UVM_HIGH);
+  //end
+  //else begin
+  //  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rvalid_count :%0d",
+  //                                          byte_data_cmp_verified_rvalid_count),UVM_HIGH);
+	//  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rdata_rvalid : %0d", 
+  //                                          byte_data_cmp_failed_rvalid_count),UVM_HIGH);
+  //  `uvm_error (get_type_name(), $sformatf ("rvalid count comparisions are failed"));
+  //end
 
-   if ((byte_data_cmp_verified_rready_count != 0) && (byte_data_cmp_failed_rready_count == 0)) begin
-	  `uvm_info (get_type_name(), $sformatf ("rready count comparisions are succesful"),UVM_HIGH);
-  end
-  else begin
-    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rready_count :%0d",
-                                            byte_data_cmp_verified_rready_count),UVM_HIGH);
-	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rready_count : %0d", 
-                                            byte_data_cmp_failed_rready_count),UVM_HIGH);
-    `uvm_error (get_type_name(), $sformatf ("rready count comparisions are failed"));
-  end
+  // if ((byte_data_cmp_verified_rready_count != 0) && (byte_data_cmp_failed_rready_count == 0)) begin
+	//  `uvm_info (get_type_name(), $sformatf ("rready count comparisions are succesful"),UVM_HIGH);
+  //end
+  //else begin
+  //  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rready_count :%0d",
+  //                                          byte_data_cmp_verified_rready_count),UVM_HIGH);
+	//  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rready_count : %0d", 
+  //                                          byte_data_cmp_failed_rready_count),UVM_HIGH);
+  //  `uvm_error (get_type_name(), $sformatf ("rready count comparisions are failed"));
+  //end
 
   //--------------------------------------------------------------------------------------------
   // 2.Check if master packets received are same as slave packets received
