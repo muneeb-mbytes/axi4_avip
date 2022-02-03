@@ -479,12 +479,18 @@ function void axi4_slave_seq_item_converter::to_read_addr_data_class(input axi4_
   output_conv_h.araddr = raddr_packet.araddr;
   output_conv_h.arqos = raddr_packet.arqos;
   $cast(output_conv_h.rid,input_conv_h.rid);
-  foreach(input_conv_h.rdata[i]) begin
-    if(input_conv_h.rdata[i] != 'h0)begin
-      output_conv_h.rdata.push_front(input_conv_h.rdata[i]);
-      //`uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After converting read_addr_data_packet =  %0h",output_conv_h.rdata[i]),UVM_HIGH);
+
+  
+    for(int i=0;i<raddr_packet.arlen+1;i++)begin
+        output_conv_h.rdata[i] = input_conv_h.rdata[i];
+    `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("combined read data packet after reading rdata= %0p",output_conv_h.rdata[i]),UVM_FULL);
     end
-  end
+  ////foreach(input_conv_h.rdata[i]) begin
+  //  if(input_conv_h.rdata[i] != 'h0)begin
+  //    output_conv_h.rdata.push_front(input_conv_h.rdata[i]);
+  //    //`uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After converting read_addr_data_packet =  %0h",output_conv_h.rdata[i]),UVM_HIGH);
+  //  end
+  //end
   $cast(output_conv_h.rresp,input_conv_h.rresp);
   
   `uvm_info("axi4_slave_seq_item_conv_class",$sformatf("After converting read_addr_data_packet =  %s",output_conv_h.sprint()),UVM_HIGH);
