@@ -3,13 +3,13 @@
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_non_blocking_32b_write_read_test
-// Extends the base test and starts the virtual sequenceof write
+// Extends the base test and starts the virtual sequence of 32bit write and read sequences
 //--------------------------------------------------------------------------------------------
 class axi4_non_blocking_32b_write_read_test extends axi4_base_test;
   `uvm_component_utils(axi4_non_blocking_32b_write_read_test)
 
-  //Variable : axi4_virtual_write_seq_h
-  //Instatiation of axi4_virtual_write_seq
+  //Variable : axi4_virtual_nbk_32b_write_read_seq_h
+  //Instatiation of axi4_virtual_nbk_32b_write_read_seq
   axi4_virtual_nbk_32b_write_read_seq axi4_virtual_nbk_32b_write_read_seq_h;
   
   //-------------------------------------------------------
@@ -34,7 +34,7 @@ endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
-// Creates the axi4_virtual_32b_write_read_seq sequence and starts the write virtual sequences
+// Creates the axi4_virtual_32b_write_read_seq sequence and starts the write and read virtual sequences
 //
 // Parameters:
 //  phase - uvm phase

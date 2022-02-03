@@ -3,13 +3,13 @@
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_blocking_write_read_rand_test
-// Extends the base test and starts the virtual sequenceof write
+// Extends the base test and starts the virtual sequence of random  write and read sequences
 //--------------------------------------------------------------------------------------------
 class axi4_blocking_write_read_rand_test extends axi4_base_test;
   `uvm_component_utils(axi4_blocking_write_read_rand_test)
 
-  //Variable : axi4_virtual_write_seq_h
-  //Instatiation of axi4_virtual_write_seq
+  //Variable : axi4_virtual_bk_write_read_rand_seq_h
+  //Instatiation of axi4_virtual_bk_write_read_rand_seq
   axi4_virtual_bk_write_read_rand_seq axi4_virtual_bk_write_read_rand_seq_h;
   
   //-------------------------------------------------------
@@ -34,7 +34,7 @@ endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
-// Creates the axi4_virtual_32b_write_read_seq sequence and starts the write virtual sequences
+// Creates the axi4_virtual_32b_write_read_seq sequence and starts the write and read virtual sequences
 //
 // Parameters:
 //  phase - uvm phase

@@ -71,6 +71,7 @@ package axi4_virtual_seq_pkg;
   `include "axi4_virtual_bk_unaligned_addr_write_read_seq.sv"
   `include "axi4_virtual_bk_fixed_burst_write_read_seq.sv"
   `include "axi4_virtual_bk_outstanding_transfer_write_read_seq.sv"
+  `include "axi4_virtual_bk_cross_write_read_seq.sv"
   
   `include "axi4_virtual_nbk_8b_write_read_seq.sv"
   `include "axi4_virtual_nbk_16b_write_read_seq.sv"

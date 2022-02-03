@@ -53,6 +53,9 @@ axi4_blocking_fixed_burst_write_read_test.sv
 # Blocking Rand testcase
 axi4_blocking_write_read_rand_test.sv
 
+# Blocking Rand testcase
+axi4_blocking_cross_write_read_test.sv
+
 # Non Blocking Write Read Transfers
 axi4_non_blocking_8b_write_read_test.sv
 axi4_non_blocking_16b_write_read_test.sv
