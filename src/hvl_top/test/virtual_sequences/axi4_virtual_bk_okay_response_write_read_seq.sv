@@ -11,11 +11,17 @@ class axi4_virtual_bk_okay_response_write_read_seq extends axi4_virtual_base_seq
   //Variable: axi4_master_write_okay_response_seq_h
   //Instantiation of axi4_master_write_okay_response_seq handle
   axi4_master_bk_write_okay_resp_seq axi4_master_bk_write_okay_resp_seq_h;
+  
+  //Variable: axi4_master_read_okay_response_seq_h
+  //Instantiation of axi4_master_read_okay_response_seq handle
   axi4_master_bk_read_okay_resp_seq axi4_master_bk_read_okay_resp_seq_h;
 
   //Variable: axi4_slave_write_okay_resp_seq_h
   //Instantiation of axi4_slave_write_okay_resp_seq handle
   axi4_slave_bk_write_okay_resp_seq axi4_slave_bk_write_okay_resp_seq_h;
+  
+  //Variable: axi4_slave_read_okay_resp_seq_h
+  //Instantiation of axi4_slave_read_okay_resp_seq handle
   axi4_slave_bk_read_okay_resp_seq axi4_slave_bk_read_okay_resp_seq_h;
 
   //-------------------------------------------------------

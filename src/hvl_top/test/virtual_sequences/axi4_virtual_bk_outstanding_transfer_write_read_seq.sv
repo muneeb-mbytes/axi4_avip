@@ -11,11 +11,17 @@ class axi4_virtual_bk_outstanding_transfer_write_read_seq extends axi4_virtual_b
   //Variable: axi4_master_write_outstanding_transfer_seq_h
   //Instantiation of axi4_master_write_outstanding_transfer_seq handle
   axi4_master_bk_write_outstanding_transfer_seq axi4_master_bk_write_outstanding_transfer_seq_h;
+  
+  //Variable: axi4_master_read_outstanding_transfer_seq_h
+  //Instantiation of axi4_master_read_outstanding_transfer_seq handle
   axi4_master_bk_read_outstanding_transfer_seq axi4_master_bk_read_outstanding_transfer_seq_h;
 
   //Variable: axi4_slave_write_outstanding_transfer_seq_h
   //Instantiation of axi4_slave_write_outstanding_transfer_seq handle
   axi4_slave_bk_write_outstanding_transfer_seq axi4_slave_bk_write_outstanding_transfer_seq_h;
+  
+  //Variable: axi4_slave_read_outstanding_transfer_seq_h
+  //Instantiation of axi4_slave_read_outstanding_transfer_seq handle
   axi4_slave_bk_read_outstanding_transfer_seq axi4_slave_bk_read_outstanding_transfer_seq_h;
 
   //-------------------------------------------------------

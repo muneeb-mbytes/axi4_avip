@@ -11,11 +11,17 @@ class axi4_virtual_bk_unaligned_addr_write_read_seq extends axi4_virtual_base_se
   //Variable: axi4_master_write_unaligned_addr_seq_h
   //Instantiation of axi4_master_write_unaligned_addr_seq handle
   axi4_master_bk_write_unaligned_addr_seq axi4_master_bk_write_unaligned_addr_seq_h;
+  
+  //Variable: axi4_master_read_unaligned_addr_seq_h
+  //Instantiation of axi4_master_read_unaligned_addr_seq handle
   axi4_master_bk_read_unaligned_addr_seq axi4_master_bk_read_unaligned_addr_seq_h;
 
   //Variable: axi4_slave_write_unaligned_addr_seq_h
   //Instantiation of axi4_slave_write_unaligned_addr_seq handle
   axi4_slave_bk_write_unaligned_addr_seq axi4_slave_bk_write_unaligned_addr_seq_h;
+  
+  //Variable: axi4_slave_read_unaligned_addr_seq_h
+  //Instantiation of axi4_slave_read_unaligned_addr_seq handle
   axi4_slave_bk_read_unaligned_addr_seq axi4_slave_bk_read_unaligned_addr_seq_h;
 
   //-------------------------------------------------------

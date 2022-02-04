@@ -8,14 +8,20 @@
 class axi4_virtual_bk_fixed_burst_write_read_seq extends axi4_virtual_base_seq;
   `uvm_object_utils(axi4_virtual_bk_fixed_burst_write_read_seq)
 
-  //Variable: axi4_master_write_read_fixed_burst_seq_h
-  //Instantiation of axi4_master_write_read_fixed_burst_seq handle
+  //Variable: axi4_master_write_fixed_burst_seq_h
+  //Instantiation of axi4_master_write_fixed_burst_seq handle
   axi4_master_bk_write_fixed_burst_seq axi4_master_bk_write_fixed_burst_seq_h;
+  
+  //Variable: axi4_master_read_fixed_burst_seq_h
+  //Instantiation of axi4_master_read_fixed_burst_seq handle
   axi4_master_bk_read_fixed_burst_seq axi4_master_bk_read_fixed_burst_seq_h;
 
-  //Variable: axi4_slave_write_read_fixed_burst_seq_h
-  //Instantiation of axi4_slave_write_read_fixed_burst_seq handle
+  //Variable: axi4_slave_write_fixed_burst_seq_h
+  //Instantiation of axi4_slave_write_fixed_burst_seq handle
   axi4_slave_bk_write_fixed_burst_seq axi4_slave_bk_write_fixed_burst_seq_h;
+  
+  //Variable: axi4_slave_read_fixed_burst_seq_h
+  //Instantiation of axi4_slave_read_fixed_burst_seq handle
   axi4_slave_bk_read_fixed_burst_seq axi4_slave_bk_read_fixed_burst_seq_h;
 
   //-------------------------------------------------------

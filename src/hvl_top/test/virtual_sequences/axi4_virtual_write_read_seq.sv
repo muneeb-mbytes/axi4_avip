@@ -8,15 +8,15 @@
 class axi4_virtual_write_read_seq extends axi4_virtual_base_seq;
   `uvm_object_utils(axi4_virtual_write_read_seq)
 
-  //Variable: axi4_master_write_seq_h
-  //Instantiation of axi4_master_write_seq handle
+  //Variable: axi4_master seq
+  //Instantiation of axi4_master seq handles
   axi4_master_bk_write_seq axi4_master_bk_write_seq_h;
   axi4_master_nbk_write_seq axi4_master_nbk_write_seq_h;
   axi4_master_bk_read_seq axi4_master_bk_read_seq_h;
   axi4_master_nbk_read_seq axi4_master_nbk_read_seq_h;
 
-  //Variable: axi4_slave_write_seq_h
-  //Instantiation of axi4_slave_write_seq handle
+  //Variable: axi4_slave seq's
+  //Instantiation of axi4_slave seq handles
   axi4_slave_bk_write_seq axi4_slave_bk_write_seq_h;
   axi4_slave_nbk_write_seq axi4_slave_nbk_write_seq_h;
   axi4_slave_bk_read_seq axi4_slave_bk_read_seq_h;

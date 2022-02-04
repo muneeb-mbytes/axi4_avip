@@ -11,11 +11,15 @@ class axi4_virtual_bk_16b_write_read_seq extends axi4_virtual_base_seq;
   //Variable: axi4_master_write_16b_transfer_seq_h
   //Instantiation of axi4_master_write_16b_transfer_seq handle
   axi4_master_bk_write_16b_transfer_seq axi4_master_bk_write_16b_transfer_seq_h;
+  //Variable: axi4_master_read_16b_transfer_seq_h
+  //Instantiation of axi4_master_read_16b_transfer_seq handle
   axi4_master_bk_read_16b_transfer_seq axi4_master_bk_read_16b_transfer_seq_h;
 
   //Variable: axi4_slave_write_16b_transfer_seq_h
   //Instantiation of axi4_slave_write_16b_transfer_seq handle
   axi4_slave_bk_write_16b_transfer_seq axi4_slave_bk_write_16b_transfer_seq_h;
+  //Variable: axi4_slave_read_16b_transfer_seq_h
+  //Instantiation of axi4_slave_read_16b_transfer_seq handle
   axi4_slave_bk_read_16b_transfer_seq axi4_slave_bk_read_16b_transfer_seq_h;
 
   //-------------------------------------------------------
@@ -58,7 +62,7 @@ task axi4_virtual_bk_16b_write_read_seq::body();
     begin : T2_SL_RD
       forever begin
         axi4_slave_bk_read_16b_transfer_seq_h.start(p_sequencer.axi4_slave_read_seqr_h);
-      //  axi4_slave_nbk_read_seq_h.start(p_sequencer.axi4_slave_read_seqr_h);
+        //  axi4_slave_nbk_read_seq_h.start(p_sequencer.axi4_slave_read_seqr_h);
       end
     end
   join_none
@@ -73,7 +77,7 @@ task axi4_virtual_bk_16b_write_read_seq::body();
     begin: T2_READ
       repeat(3) begin
         axi4_master_bk_read_16b_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
-     // axi4_master_nbk_read_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
+        // axi4_master_nbk_read_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
       end
     end
   join

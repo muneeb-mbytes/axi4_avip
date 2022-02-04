@@ -11,11 +11,17 @@ class axi4_virtual_nbk_write_read_rand_seq extends axi4_virtual_base_seq;
   //Variable: axi4_master_write_32b_transfer_seq_h
   //Instantiation of axi4_master_write_32b_transfer_seq handle
   axi4_master_nbk_write_rand_seq axi4_master_nbk_write_rand_seq_h;
+  
+  //Variable: axi4_master_read_32b_transfer_seq_h
+  //Instantiation of axi4_master_read_32b_transfer_seq handle
   axi4_master_nbk_read_rand_seq axi4_master_nbk_read_rand_seq_h;
 
   //Variable: axi4_slave_write_32b_transfer_seq_h
   //Instantiation of axi4_slave_write_32b_transfer_seq handle
   axi4_slave_nbk_write_rand_seq axi4_slave_nbk_write_rand_seq_h;
+  
+  //Variable: axi4_slave_read_32b_transfer_seq_h
+  //Instantiation of axi4_slave_read_32b_transfer_seq handle
   axi4_slave_nbk_read_rand_seq axi4_slave_nbk_read_rand_seq_h;
 
   //-------------------------------------------------------
