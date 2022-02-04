@@ -230,35 +230,20 @@ task axi4_scoreboard::run_phase(uvm_phase phase);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
     axi4_write_response_comparision(axi4_master_tx_h3,axi4_slave_tx_h3);
 
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel used space=%0d",axi4_master_read_address_analysis_fifo.used()),UVM_HIGH)
     axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
     axi4_slave_read_address_analysis_fifo.get(axi4_slave_tx_h4);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address_channel \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
     axi4_read_address_comparision(axi4_master_tx_h4,axi4_slave_tx_h4);
 
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel used space=%0d",axi4_master_read_data_analysis_fifo.used()),UVM_HIGH)
     axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
     axi4_slave_read_data_analysis_fifo.get(axi4_slave_tx_h5);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data_channel \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
     axi4_read_data_comparision(axi4_master_tx_h5,axi4_slave_tx_h5);
 
-    //-------------------------------------------------------
-    // Printing data from all fifo's
-    //-------------------------------------------------------
-
-    // `uvm_info(get_type_name(),$sformatf("checking fifo used is %d",axi4_master_write_address_analysis_fifo.used()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("printing all fifo's data in scoreboard"),UVM_HIGH);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data \n%s",axi4_master_tx_h2.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
-    // Printing Slave data
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address \n%s",axi4_slave_tx_h1.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("after printing all fifo's data in scoreboard"),UVM_HIGH);
   end
 endtask : run_phase
 
@@ -574,6 +559,16 @@ task axi4_scoreboard::axi4_read_data_comparision(input axi4_master_tx axi4_maste
     `uvm_info("SB_rresp_NOT_MATCHED", $sformatf("Master rresp = %0p and Slave rresp = %0p",axi4_master_tx_h5.rresp,axi4_slave_tx_h5.rresp), UVM_HIGH);             
   end
 
+  if(axi4_master_tx_h5.ruser == axi4_slave_tx_h5.ruser)begin
+    `uvm_info(get_type_name(),$sformatf("axi4_ruser from master and slave is equal"),UVM_HIGH);
+    `uvm_info("SB_ruser_MATCHED", $sformatf("Master ruser = %0p and Slave ruser = %0p",axi4_master_tx_h5.ruser,axi4_slave_tx_h5.ruser), UVM_HIGH);             
+    byte_data_cmp_verified_ruser_count++;
+  end
+  else begin
+    `uvm_info(get_type_name(),$sformatf("axi4_ruser from master and slave is  not equal"),UVM_HIGH);
+    `uvm_info("SB_ruser_NOT_MATCHED", $sformatf("Master ruser = %0p and Slave ruser = %0p",axi4_master_tx_h5.ruser,axi4_slave_tx_h5.ruser), UVM_HIGH);             
+  end
+
 endtask : axi4_read_data_comparision
 
 //--------------------------------------------------------------------------------------------
@@ -829,6 +824,7 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
     `uvm_error (get_type_name(), $sformatf ("ruser count comparisions are failed"));
   end
 
+	`uvm_info (get_type_name(), $sformatf ("time=%0d",$time),UVM_HIGH);
   // if ((byte_data_cmp_verified_rvalid_count != 0) && (byte_data_cmp_failed_rvalid_count == 0)) begin
 	//  `uvm_info (get_type_name(), $sformatf ("rvalid count comparisions are succesful"),UVM_HIGH);
   //end
