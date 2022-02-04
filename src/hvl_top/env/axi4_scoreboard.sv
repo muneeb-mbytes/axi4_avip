@@ -551,6 +551,25 @@ task axi4_scoreboard::axi4_read_address_comparision(input axi4_master_tx axi4_ma
     `uvm_info("SB_arprot_NOT_MATCHED", $sformatf("Master arprot = 'h%0x and Slave arprot = 'h%0x",axi4_master_tx_h4.arprot,axi4_slave_tx_h4.arprot), UVM_HIGH);             
   end
 
+  if(axi4_master_tx_h4.arregion == axi4_slave_tx_h4.arregion)begin
+    `uvm_info(get_type_name(),$sformatf("axi4_arregion from master and slave is equal"),UVM_HIGH);
+    `uvm_info("SB_arregion_MATCHED", $sformatf("Master arregion = 'h%0x and Slave arregion = 'h%0x",axi4_master_tx_h4.arregion,axi4_slave_tx_h4.arregion), UVM_HIGH);             
+    byte_data_cmp_verified_arregion_count++;
+  end
+  else begin
+    `uvm_info(get_type_name(),$sformatf("axi4_arregion from master and slave is  not equal"),UVM_HIGH);
+    `uvm_info("SB_arregion_NOT_MATCHED", $sformatf("Master arregion = 'h%0x and Slave arregion = 'h%0x",axi4_master_tx_h4.arregion,axi4_slave_tx_h4.arregion), UVM_HIGH);             
+  end
+
+  if(axi4_master_tx_h4.arqos == axi4_slave_tx_h4.arqos)begin
+    `uvm_info(get_type_name(),$sformatf("axi4_arqos from master and slave is equal"),UVM_HIGH);
+    `uvm_info("SB_arqos_MATCHED", $sformatf("Master arqos = 'h%0x and Slave arqos = 'h%0x",axi4_master_tx_h4.arqos,axi4_slave_tx_h4.arqos), UVM_HIGH);             
+    byte_data_cmp_verified_arqos_count++;
+  end
+  else begin
+    `uvm_info(get_type_name(),$sformatf("axi4_arqos from master and slave is  not equal"),UVM_HIGH);
+    `uvm_info("SB_arqos_NOT_MATCHED", $sformatf("Master arqos = 'h%0x and Slave arqos = 'h%0x",axi4_master_tx_h4.arqos,axi4_slave_tx_h4.arqos), UVM_HIGH);             
+  end
 endtask : axi4_read_address_comparision
 
 //-------------------------------------------------------
@@ -897,8 +916,9 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
 	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arregion_count : %0d", 
                                             byte_data_cmp_failed_arregion_count),UVM_HIGH);
     `uvm_error (get_type_name(), $sformatf ("arregion count comparisions are failed"));
-  
-    if ((byte_data_cmp_verified_arqos_count != 0) && (byte_data_cmp_failed_arqos_count == 0)) begin
+  end
+
+  if ((byte_data_cmp_verified_arqos_count != 0) && (byte_data_cmp_failed_arqos_count == 0)) begin
 	  `uvm_info (get_type_name(), $sformatf ("arqos count comparisions are succesful"),UVM_HIGH);
   end
   else begin
@@ -907,7 +927,7 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
 	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arqos_count : %0d", 
                                             byte_data_cmp_failed_arqos_count),UVM_HIGH);
     `uvm_error (get_type_name(), $sformatf ("arqos count comparisions are failed"));
- 
+  end 
 
   //-------------------------------------------------------
   // Read_Data_Channel comparision
@@ -968,28 +988,6 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
     `uvm_error (get_type_name(), $sformatf ("ruser count comparisions are failed"));
   end
 
-	`uvm_info (get_type_name(), $sformatf ("time=%0d",$time),UVM_HIGH);
-  // if ((byte_data_cmp_verified_rvalid_count != 0) && (byte_data_cmp_failed_rvalid_count == 0)) begin
-	//  `uvm_info (get_type_name(), $sformatf ("rvalid count comparisions are succesful"),UVM_HIGH);
-  //end
-  //else begin
-  //  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rvalid_count :%0d",
-  //                                          byte_data_cmp_verified_rvalid_count),UVM_HIGH);
-	//  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rdata_rvalid : %0d", 
-  //                                          byte_data_cmp_failed_rvalid_count),UVM_HIGH);
-  //  `uvm_error (get_type_name(), $sformatf ("rvalid count comparisions are failed"));
-  //end
-
-  // if ((byte_data_cmp_verified_rready_count != 0) && (byte_data_cmp_failed_rready_count == 0)) begin
-	//  `uvm_info (get_type_name(), $sformatf ("rready count comparisions are succesful"),UVM_HIGH);
-  //end
-  //else begin
-  //  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rready_count :%0d",
-  //                                          byte_data_cmp_verified_rready_count),UVM_HIGH);
-	//  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rready_count : %0d", 
-  //                                          byte_data_cmp_failed_rready_count),UVM_HIGH);
-  //  `uvm_error (get_type_name(), $sformatf ("rready count comparisions are failed"));
-  //end
 
   //--------------------------------------------------------------------------------------------
   // 2.Check if master packets received are same as slave packets received

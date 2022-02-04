@@ -157,13 +157,13 @@ class axi4_slave_tx extends uvm_sequence_item;
   //used for different access
   rand arprot_e arprot;
 
-  //Variable : arready
-  //Used to accept the valid address
-  //bit arready;
+  //Variable : arregion
+  //Used to accept the address region
+  bit arregion;
   
-  //Variable : arvalid
-  //Used to accept the valid address
-  //bit arvalid;
+  //Variable : arqos
+  //Used to accept the address qos
+  //bit arqos;
 
   //Variable : arqos
   //Used to send the read address quality of service
@@ -305,7 +305,7 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   arlen   = axi_slave_tx_copy_obj.arlen;
   arsize  = axi_slave_tx_copy_obj.arsize;
   arburst = axi_slave_tx_copy_obj.arburst;
-  //arready = axi_slave_tx_copy_obj.arready;
+  arregion = axi_slave_tx_copy_obj.arregion;
   //arvalid = axi_slave_tx_copy_obj.arvalid;
   arlock  = axi_slave_tx_copy_obj.arlock;
   arcache = axi_slave_tx_copy_obj.arcache;
@@ -377,6 +377,7 @@ function bit axi4_slave_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   arlock  == axi_slave_tx_compare_obj.arlock &&
   arcache == axi_slave_tx_compare_obj.arcache &&
   arqos   == axi_slave_tx_compare_obj.arqos  &&
+  arregion== axi_slave_tx_compare_obj.arregion  &&
   arprot  == axi_slave_tx_compare_obj.arprot &&
 
   //READ DATA CHANNEL
