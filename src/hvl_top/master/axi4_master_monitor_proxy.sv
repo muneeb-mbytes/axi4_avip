@@ -57,7 +57,6 @@ class axi4_master_monitor_proxy extends uvm_component;
   extern virtual task axi4_read_address();
   extern virtual task axi4_read_data();
 
-
 endclass : axi4_master_monitor_proxy
 
 //--------------------------------------------------------------------------------------------
@@ -84,7 +83,7 @@ endfunction : new
 // Function: build_phase
 //
 // Parameters:
-//  phase - uvm phase
+// phase - uvm phase
 //--------------------------------------------------------------------------------------------
 function void axi4_master_monitor_proxy::build_phase(uvm_phase phase);
   super.build_phase(phase);

@@ -176,7 +176,7 @@ task axi4_master_driver_proxy::axi4_write_task();
     end
 
     `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Checking transfer type outside if = %s",req_wr.transfer_type),UVM_HIGH); 
-    
+    // Checking if the tranfer type is blocking write 
     if(req_wr.transfer_type == BLOCKING_WRITE) begin
       
       axi4_master_tx local_master_write_tx; 
@@ -194,6 +194,7 @@ task axi4_master_driver_proxy::axi4_write_task();
 
     end
 
+    // Checking if the tranfer type is non blocking write 
     else if(req_wr.transfer_type == NON_BLOCKING_WRITE) begin
 
       process waddr_process;

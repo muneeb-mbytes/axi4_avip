@@ -82,7 +82,6 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
   // Task: wait_for_aresetn
   // Waiting for the system reset to be active low
   //-------------------------------------------------------
-
   task wait_for_aresetn();
     @(negedge aresetn);
     `uvm_info("FROM MASTER MON BFM",$sformatf("SYSTEM RESET DETECTED"),UVM_HIGH) 
@@ -94,7 +93,6 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
   // Task: axi4_write_address_sampling
   // Used for sample the write address channel signals
   //-------------------------------------------------------
-
   task axi4_write_address_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
     @(posedge aclk);
@@ -114,36 +112,34 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
     req.awprot  = awprot;
     `uvm_info("FROM MASTER MON BFM",$sformatf("datapacket =%p",req),UVM_HIGH)
   endtask
+  
   //-------------------------------------------------------
   // Task: axi4_write_data_sampling
   // Used for sample the write data channel signals
   //-------------------------------------------------------
-
   task axi4_write_data_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
     static int i = 0;
 
     forever begin
-
-    // Wait for valid and ready to be high
-    do begin
-      @(posedge aclk);
-    end while((wvalid!==1 || wready!==1));
-    `uvm_info("FROM MASTER MON BFM",$sformatf("After while loop write data......"),UVM_HIGH)
-
-    req.wdata[i] = wdata;
-    req.wstrb[i] = wstrb;
-    req.wuser[i] = wuser;
-    req.wlast    = wlast;
-
-  `uvm_info("FROM MASTER MON BFM write data",$sformatf("write datapacket wdata[%0d] = 'h%0x",i,req.wdata[i]),UVM_HIGH)
-  `uvm_info("FROM MASTER MON BFM write data",$sformatf("write datapacket wstrb[%0d] = 'h%0x",i,req.wstrb[i]),UVM_HIGH)
-    if(req.wlast == 1) begin
-      `uvm_info("FROM MASTER MON BFM write data",$sformatf("Inside wlast write datapacket  =%p",req),UVM_HIGH)
-      i = 0;
-      break;
-     end
-
+      // Wait for valid and ready to be high
+      do begin
+        @(posedge aclk);
+      end while((wvalid!==1 || wready!==1));
+      `uvm_info("FROM MASTER MON BFM",$sformatf("After while loop write data......"),UVM_HIGH)
+  
+      req.wdata[i] = wdata;
+      req.wstrb[i] = wstrb;
+      req.wuser[i] = wuser;
+      req.wlast    = wlast;
+  
+      `uvm_info("FROM MASTER MON BFM write data",$sformatf("write datapacket wdata[%0d] = 'h%0x",i,req.wdata[i]),UVM_HIGH)
+      `uvm_info("FROM MASTER MON BFM write data",$sformatf("write datapacket wstrb[%0d] = 'h%0x",i,req.wstrb[i]),UVM_HIGH)
+      if(req.wlast == 1) begin
+        `uvm_info("FROM MASTER MON BFM write data",$sformatf("Inside wlast write datapacket  =%p",req),UVM_HIGH)
+        i = 0;
+        break;
+      end
      i++;
     end
   endtask 
@@ -152,18 +148,14 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
   // Task: axi4_write_response_sampling
   // Used for sample the write response channel signals
   //-------------------------------------------------------
-
   task axi4_write_response_sampling(output axi4_write_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
     `uvm_info("FROM MASTER MON BFM",$sformatf("AFTER WHILE LOOP OF WRITE RESPONSE"),UVM_HIGH)
    
     do begin
       @(posedge aclk);
     end while((bvalid!==1 || bready!==1));
-
     req.bid      = bid;
     req.bresp    = bresp;
-      
-      //`uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("DEBUG:RDATA[%0d]=%0h",i,req.rdata[i]),UVM_HIGH)
     `uvm_info("FROM MASTER MON BFM::WRITE RESPONSE",$sformatf("WRITE RESPONSE PACKET: \n %p",req),UVM_HIGH)
   endtask
   
@@ -171,7 +163,6 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
   // Task: axi4_read_address_sampling
   // Used for sample the read address channel signals
   //-------------------------------------------------------
-
   task axi4_read_address_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
 
     do begin
@@ -191,11 +182,11 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
     req.aruser     = aruser;
     `uvm_info("FROM MASTER MON BFM",$sformatf("datapacket =%p",req),UVM_HIGH)
   endtask
+  
   //-------------------------------------------------------
   // Task: axi4_read_data_sampling
   // Used for sample the read data channel signals
   //-------------------------------------------------------
-
   task axi4_read_data_sampling(output axi4_read_transfer_char_s req ,input axi4_transfer_cfg_s cfg);
     static reg[7:0] i = 0;
     forever begin
@@ -217,8 +208,8 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
         break;
       end 
       `uvm_info("FROM MASTER MON BFM READ DATA",$sformatf("Read data packet: %p",req),UVM_HIGH)
-   end
+    end
   endtask
-
 endinterface : axi4_master_monitor_bfm
+
 `endif

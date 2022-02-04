@@ -53,7 +53,6 @@ class axi4_slave_monitor_proxy extends uvm_monitor;
   extern virtual task axi4_slave_read_address();
   extern virtual task axi4_slave_read_data();
 
-
 endclass : axi4_slave_monitor_proxy
 
 //--------------------------------------------------------------------------------------------
@@ -258,6 +257,5 @@ forever begin
     axi4_slave_read_data_analysis_port.write(req_rd_clone_packet);
   end
 endtask
-
 
 `endif
