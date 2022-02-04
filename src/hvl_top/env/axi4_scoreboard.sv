@@ -112,6 +112,12 @@ class axi4_scoreboard extends uvm_scoreboard;
   //int byte_data_cmp_failed_rvalid_count;
   //int byte_data_cmp_failed_rready_count;
 
+  semaphore write_address_key;
+  semaphore write_data_key;
+  semaphore write_response_key;
+  semaphore read_address_key;
+  semaphore read_data_key;
+
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -122,13 +128,18 @@ class axi4_scoreboard extends uvm_scoreboard;
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual function void start_of_simulation_phase(uvm_phase phase);
   extern virtual task run_phase(uvm_phase phase);
-  extern virtual function void check_phase (uvm_phase phase);
-  extern virtual function void report_phase(uvm_phase phase);
+  extern virtual task axi4_write_address();
+  extern virtual task axi4_write_data();
+  extern virtual task axi4_write_response();
+  extern virtual task axi4_read_address();
+  extern virtual task axi4_read_data();
   extern virtual task axi4_write_address_comparision(input axi4_master_tx axi4_master_tx_h1,input axi4_slave_tx axi4_slave_tx_h1);
   extern virtual task axi4_write_data_comparision(input axi4_master_tx axi4_master_tx_h2,input axi4_slave_tx axi4_slave_tx_h2);
   extern virtual task axi4_write_response_comparision(input axi4_master_tx axi4_master_tx_h3,input axi4_slave_tx axi4_slave_tx_h3);
   extern virtual task axi4_read_address_comparision(input axi4_master_tx axi4_master_tx_h4,input axi4_slave_tx axi4_slave_tx_h4);
   extern virtual task axi4_read_data_comparision(input axi4_master_tx axi4_master_tx_h5,input axi4_slave_tx axi4_slave_tx_h5);
+  extern virtual function void check_phase (uvm_phase phase);
+  extern virtual function void report_phase(uvm_phase phase);
 
 endclass : axi4_scoreboard
 
@@ -153,6 +164,13 @@ function axi4_scoreboard::new(string name = "axi4_scoreboard",
   axi4_slave_write_response_analysis_fifo= new("axi4_slave_write_response_analysis_fifo",this);
   axi4_slave_read_address_analysis_fifo = new("axi4_slave_read_address_analysis_fifo",this);
   axi4_slave_read_data_analysis_fifo = new("axi4_slave_read_data_analysis_fifo",this);
+
+  write_address_key = new(1);
+  write_data_key = new(1);
+  write_response_key = new(1);
+  read_address_key = new(1);
+  read_data_key = new(1);
+
 endfunction : new
 
 //--------------------------------------------------------------------------------------------
@@ -207,65 +225,180 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_scoreboard::run_phase(uvm_phase phase);
 
-  //super.run_phase(phase);
+  super.run_phase(phase);
+
+  fork
+    axi4_write_address();
+    axi4_write_data();
+    axi4_write_response();
+    axi4_read_address();
+    axi4_read_data();
+  join
+
+  //forever begin
+  //  `uvm_info(get_type_name(),$sformatf("calling analysis fifo in scoreboard"),UVM_HIGH);
+  // 
+  //  fork 
+  //    begin : WRITE_ADDRESS_CHANNEL
+  //      write_address_key.get(1);
+  //      axi4_master_write_address_analysis_fifo.get(axi4_master_tx_h1);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel \n%s",axi4_master_tx_h1.sprint()),UVM_HIGH)
+  //      axi4_slave_write_address_analysis_fifo.get(axi4_slave_tx_h1);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address_channel \n%s",axi4_slave_tx_h1.sprint()),UVM_HIGH)
+  //      axi4_write_address_comparision(axi4_master_tx_h1,axi4_slave_tx_h1);
+  //      write_address_key.put(1);
+  //   end
+
+  //    begin : WRITE_DATA_CHANNEL
+  //      write_data_key.get(1);
+  //      axi4_master_write_data_analysis_fifo.get(axi4_master_tx_h2);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data_channel \n%s",axi4_master_tx_h2.sprint()),UVM_HIGH)
+  //      axi4_slave_write_data_analysis_fifo.get(axi4_slave_tx_h2);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data_channel \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
+  //      axi4_write_data_comparision(axi4_master_tx_h2,axi4_slave_tx_h2);
+  //      write_data_key.put(1);
+  //    end
+
+  //    begin : WRITE_RESPONSE_CHANNEL
+  //      write_response_key.get(1);
+  //      axi4_master_write_response_analysis_fifo.get(axi4_master_tx_h3);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
+  //      axi4_slave_write_response_analysis_fifo.get(axi4_slave_tx_h3);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
+  //      axi4_write_response_comparision(axi4_master_tx_h3,axi4_slave_tx_h3);
+  //      write_response_key.put(1);
+  //    end
+
+  //    begin : READ_ADDRESS_CHANNEL
+  //      read_address_key.get(1);
+  //      //`uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel used space=%0d",axi4_master_read_address_analysis_fifo.used()),UVM_HIGH)
+  //      axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
+  //      axi4_slave_read_address_analysis_fifo.get(axi4_slave_tx_h4);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address_channel \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
+  //      axi4_read_address_comparision(axi4_master_tx_h4,axi4_slave_tx_h4);
+  //      read_address_key.put(1);
+  //    end
+
+  //    begin : READ_DATA_CHANNEL
+  //      read_data_key.get(1);
+  //      //`uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel used space=%0d",axi4_master_read_data_analysis_fifo.used()),UVM_HIGH)
+  //      axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
+  //      axi4_slave_read_data_analysis_fifo.get(axi4_slave_tx_h5);
+  //      `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data_channel \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
+  //      axi4_read_data_comparision(axi4_master_tx_h5,axi4_slave_tx_h5);
+  //      read_data_key.put(1);
+  //    end
+  //  join_any
+  //end
+endtask : run_phase
+
+//--------------------------------------------------------------------------------------------
+// Task: axi4_write_address
+// Gets the master and slave write address and send it to the write address comparision task
+//--------------------------------------------------------------------------------------------
+task axi4_scoreboard::axi4_write_address();
 
   forever begin
-    `uvm_info(get_type_name(),$sformatf("calling analysis fifo in scoreboard"),UVM_HIGH);
-    
+    write_address_key.get(1);
     axi4_master_write_address_analysis_fifo.get(axi4_master_tx_h1);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel \n%s",axi4_master_tx_h1.sprint()),UVM_HIGH)
     axi4_slave_write_address_analysis_fifo.get(axi4_slave_tx_h1);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address_channel \n%s",axi4_slave_tx_h1.sprint()),UVM_HIGH)
     axi4_write_address_comparision(axi4_master_tx_h1,axi4_slave_tx_h1);
-
-    axi4_master_write_data_analysis_fifo.get(axi4_master_tx_h2);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data_channel \n%s",axi4_master_tx_h2.sprint()),UVM_HIGH)
-    axi4_slave_write_data_analysis_fifo.get(axi4_slave_tx_h2);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data_channel \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
-    axi4_write_data_comparision(axi4_master_tx_h2,axi4_slave_tx_h2);
-
-    axi4_master_write_response_analysis_fifo.get(axi4_master_tx_h3);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
-    axi4_slave_write_response_analysis_fifo.get(axi4_slave_tx_h3);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
-    axi4_write_response_comparision(axi4_master_tx_h3,axi4_slave_tx_h3);
-
-    axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
-    axi4_slave_read_address_analysis_fifo.get(axi4_slave_tx_h4);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address_channel \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
-    axi4_read_address_comparision(axi4_master_tx_h4,axi4_slave_tx_h4);
-
-    axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
-    axi4_slave_read_data_analysis_fifo.get(axi4_slave_tx_h5);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data_channel \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
-    axi4_read_data_comparision(axi4_master_tx_h5,axi4_slave_tx_h5);
-
-    //-------------------------------------------------------
-    // Printing data from all fifo's
-    //-------------------------------------------------------
-
-    // `uvm_info(get_type_name(),$sformatf("checking fifo used is %d",axi4_master_write_address_analysis_fifo.used()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("printing all fifo's data in scoreboard"),UVM_HIGH);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data \n%s",axi4_master_tx_h2.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
-    // Printing Slave data
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address \n%s",axi4_slave_tx_h1.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
-    `uvm_info(get_type_name(),$sformatf("after printing all fifo's data in scoreboard"),UVM_HIGH);
+    write_address_key.put(1);
   end
-endtask : run_phase
 
-//-------------------------------------------------------
+endtask : axi4_write_address
+
+//--------------------------------------------------------------------------------------------
+// Task: axi4_write_data
+// Gets the master and slave write data and send it to the write data comparision task
+//--------------------------------------------------------------------------------------------
+task axi4_scoreboard::axi4_write_data();
+
+  forever begin
+        write_data_key.get(1);
+        axi4_master_write_data_analysis_fifo.get(axi4_master_tx_h2);
+        `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data_channel \n%s",axi4_master_tx_h2.sprint()),UVM_HIGH)
+        axi4_slave_write_data_analysis_fifo.get(axi4_slave_tx_h2);
+        `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data_channel \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
+        axi4_write_data_comparision(axi4_master_tx_h2,axi4_slave_tx_h2);
+        write_data_key.put(1);
+
+  end
+
+endtask : axi4_write_data
+
+//--------------------------------------------------------------------------------------------
+// Task: axi4_write_response
+// Gets the master and slave write response and send it to the write response comparision task
+//--------------------------------------------------------------------------------------------
+task axi4_scoreboard::axi4_write_response();
+
+  forever begin
+        write_response_key.get(1);
+        axi4_master_write_response_analysis_fifo.get(axi4_master_tx_h3);
+        `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
+        axi4_slave_write_response_analysis_fifo.get(axi4_slave_tx_h3);
+        `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
+        axi4_write_response_comparision(axi4_master_tx_h3,axi4_slave_tx_h3);
+        write_response_key.put(1);
+
+  end
+
+endtask : axi4_write_response
+
+//--------------------------------------------------------------------------------------------
+// Task: axi4_read_address
+// Gets the master and slave read address and send it to the read address comparision task
+//--------------------------------------------------------------------------------------------
+task axi4_scoreboard::axi4_read_address();
+
+  forever begin
+        read_address_key.get(1);
+        //`uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel used space=%0d",axi4_master_read_address_analysis_fifo.used()),UVM_HIGH)
+        axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
+        `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
+        axi4_slave_read_address_analysis_fifo.get(axi4_slave_tx_h4);
+        `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address_channel \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
+        axi4_read_address_comparision(axi4_master_tx_h4,axi4_slave_tx_h4);
+        read_address_key.put(1);
+
+  end
+
+endtask : axi4_read_address
+
+//--------------------------------------------------------------------------------------------
+// Task: axi4_read_data
+// Gets the master and slave read data and send it to the read data comparision task
+//--------------------------------------------------------------------------------------------
+task axi4_scoreboard::axi4_read_data();
+
+  forever begin
+
+        read_data_key.get(1);
+        //`uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel used space=%0d",axi4_master_read_data_analysis_fifo.used()),UVM_HIGH)
+        axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
+        `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
+        axi4_slave_read_data_analysis_fifo.get(axi4_slave_tx_h5);
+        `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data_channel \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
+        axi4_read_data_comparision(axi4_master_tx_h5,axi4_slave_tx_h5);
+        read_data_key.put(1);
+  end
+
+endtask : axi4_read_data
+
+//--------------------------------------------------------------------------------------------
 // Task : axi4_write_address_comparision
-//-------------------------------------------------------
+// Used to compare the received master and slave write address
+// Parameter :
+//  axi4_master_tx_h1 - axi4_master_tx
+//  axi4_slave_tx_h1  - axi4_slave_tx
+//--------------------------------------------------------------------------------------------
 task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_master_tx_h1,input axi4_slave_tx axi4_slave_tx_h1);
+
   //$display("---------------------------------------------------------------------------------");
   //$display("SCOREBOARD WRITE ADDRESS CHANNEL COMPARISIONS";
   //$display("---------------------------------------------------------------------------------");
@@ -359,9 +492,13 @@ task axi4_scoreboard::axi4_write_address_comparision(input axi4_master_tx axi4_m
 
 endtask : axi4_write_address_comparision
 
-//-------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 // Task : axi4_write_data_comparision
-//-------------------------------------------------------
+// Used to compare the received master and slave write data
+// Parameter :
+//  axi4_master_tx_h2 - axi4_master_tx
+//  axi4_slave_tx_h2  - axi4_slave_tx
+//--------------------------------------------------------------------------------------------
 task axi4_scoreboard::axi4_write_data_comparision(input axi4_master_tx axi4_master_tx_h2,input axi4_slave_tx axi4_slave_tx_h2);
 
   //$display("---------------------------------------------------------------------------------");
@@ -400,9 +537,14 @@ task axi4_scoreboard::axi4_write_data_comparision(input axi4_master_tx axi4_mast
   end
 
 endtask : axi4_write_data_comparision
-//-------------------------------------------------------
-// Task : axi4_write_response_comparision 
-//-------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------
+// Task : axi4_write_response_comparision
+// Used to compare the received master and slave write response
+// Parameter :
+//  axi4_master_tx_h3 - axi4_master_tx
+//  axi4_slave_tx_h3  - axi4_slave_tx
+//--------------------------------------------------------------------------------------------
 task axi4_scoreboard::axi4_write_response_comparision(input axi4_master_tx axi4_master_tx_h3,input axi4_slave_tx axi4_slave_tx_h3);
 
   //$display("---------------------------------------------------------------------------------");
@@ -443,9 +585,13 @@ task axi4_scoreboard::axi4_write_response_comparision(input axi4_master_tx axi4_
   end
 endtask : axi4_write_response_comparision
 
-//-------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 // Task : axi4_read_address_comparision
-//-------------------------------------------------------
+// Used to compare the received master and slave read address
+// Parameter :
+//  axi4_master_tx_h4 - axi4_master_tx
+//  axi4_slave_tx_h4  - axi4_slave_tx
+//--------------------------------------------------------------------------------------------
 task axi4_scoreboard::axi4_read_address_comparision(input axi4_master_tx axi4_master_tx_h4,input axi4_slave_tx axi4_slave_tx_h4);
 
   
@@ -532,17 +678,40 @@ task axi4_scoreboard::axi4_read_address_comparision(input axi4_master_tx axi4_ma
     `uvm_info("SB_arprot_NOT_MATCHED", $sformatf("Master arprot = 'h%0x and Slave arprot = 'h%0x",axi4_master_tx_h4.arprot,axi4_slave_tx_h4.arprot), UVM_HIGH);             
   end
 
+  if(axi4_master_tx_h4.arregion == axi4_slave_tx_h4.arregion)begin
+    `uvm_info(get_type_name(),$sformatf("axi4_arregion from master and slave is equal"),UVM_HIGH);
+    `uvm_info("SB_arregion_MATCHED", $sformatf("Master arregion = 'h%0x and Slave arregion = 'h%0x",axi4_master_tx_h4.arregion,axi4_slave_tx_h4.arregion), UVM_HIGH);             
+    byte_data_cmp_verified_arregion_count++;
+  end
+  else begin
+    `uvm_info(get_type_name(),$sformatf("axi4_arregion from master and slave is  not equal"),UVM_HIGH);
+    `uvm_info("SB_arregion_NOT_MATCHED", $sformatf("Master arregion = 'h%0x and Slave arregion = 'h%0x",axi4_master_tx_h4.arregion,axi4_slave_tx_h4.arregion), UVM_HIGH);             
+  end
+
+  if(axi4_master_tx_h4.arqos == axi4_slave_tx_h4.arqos)begin
+    `uvm_info(get_type_name(),$sformatf("axi4_arqos from master and slave is equal"),UVM_HIGH);
+    `uvm_info("SB_arqos_MATCHED", $sformatf("Master arqos = 'h%0x and Slave arqos = 'h%0x",axi4_master_tx_h4.arqos,axi4_slave_tx_h4.arqos), UVM_HIGH);             
+    byte_data_cmp_verified_arqos_count++;
+  end
+  else begin
+    `uvm_info(get_type_name(),$sformatf("axi4_arqos from master and slave is  not equal"),UVM_HIGH);
+    `uvm_info("SB_arqos_NOT_MATCHED", $sformatf("Master arqos = 'h%0x and Slave arqos = 'h%0x",axi4_master_tx_h4.arqos,axi4_slave_tx_h4.arqos), UVM_HIGH);             
+  end
 endtask : axi4_read_address_comparision
 
-//-------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 // Task : axi4_read_data_comparision
-//-------------------------------------------------------
+// Used to compare the received master and slave read data
+// Parameter :
+//  axi4_master_tx_h5 - axi4_master_tx
+//  axi4_slave_tx_h5  - axi4_slave_tx
+//--------------------------------------------------------------------------------------------
 task axi4_scoreboard::axi4_read_data_comparision(input axi4_master_tx axi4_master_tx_h5,input axi4_slave_tx axi4_slave_tx_h5);
 
   //$display("---------------------------------------------------------------------------------");
   //$display("SCOREBOARD read DATA CHANNEL COMPARISIONS");
   //$display("---------------------------------------------------------------------------------");
-  axi4_read_address_comparision(axi4_master_tx_h5,axi4_slave_tx_h5);
+  //axi4_read_address_comparision(axi4_master_tx_h5,axi4_slave_tx_h5);
   
   if(axi4_master_tx_h5.rid == axi4_slave_tx_h5.rid)begin
     `uvm_info(get_type_name(),$sformatf("axi4_rid from master and slave is equal"),UVM_HIGH);
@@ -572,6 +741,16 @@ task axi4_scoreboard::axi4_read_data_comparision(input axi4_master_tx axi4_maste
   else begin
     `uvm_info(get_type_name(),$sformatf("axi4_rresp from master and slave is  not equal"),UVM_HIGH);
     `uvm_info("SB_rresp_NOT_MATCHED", $sformatf("Master rresp = %0p and Slave rresp = %0p",axi4_master_tx_h5.rresp,axi4_slave_tx_h5.rresp), UVM_HIGH);             
+  end
+
+  if(axi4_master_tx_h5.ruser == axi4_slave_tx_h5.ruser)begin
+    `uvm_info(get_type_name(),$sformatf("axi4_ruser from master and slave is equal"),UVM_HIGH);
+    `uvm_info("SB_ruser_MATCHED", $sformatf("Master ruser = %0p and Slave ruser = %0p",axi4_master_tx_h5.ruser,axi4_slave_tx_h5.ruser), UVM_HIGH);             
+    byte_data_cmp_verified_ruser_count++;
+  end
+  else begin
+    `uvm_info(get_type_name(),$sformatf("axi4_ruser from master and slave is  not equal"),UVM_HIGH);
+    `uvm_info("SB_ruser_NOT_MATCHED", $sformatf("Master ruser = %0p and Slave ruser = %0p",axi4_master_tx_h5.ruser,axi4_slave_tx_h5.ruser), UVM_HIGH);             
   end
 
 endtask : axi4_read_data_comparision
@@ -770,6 +949,117 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
   //-------------------------------------------------------
   // Read_Address_Channel comparision
   //-------------------------------------------------------
+
+  if ((byte_data_cmp_verified_arid_count != 0) && (byte_data_cmp_failed_arid_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arid count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arid_count :%0d",
+                                            byte_data_cmp_verified_arid_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arid_count : %0d", 
+                                            byte_data_cmp_failed_arid_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arid count comparisions are failed"));
+  end
+
+  if ((byte_data_cmp_verified_araddr_count != 0) && (byte_data_cmp_failed_araddr_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("araddr count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_araddr_count :%0d",
+                                            byte_data_cmp_verified_araddr_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_araddr_count : %0d", 
+                                            byte_data_cmp_failed_araddr_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("araddr count comparisions are failed"));
+  end
+
+  if ((byte_data_cmp_verified_arsize_count != 0) && (byte_data_cmp_failed_arsize_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arsize count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arsize_count :%0d",
+                                            byte_data_cmp_verified_arsize_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arsize_count : %0d", 
+                                            byte_data_cmp_failed_arsize_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arsize count comparisions are failed"));
+  end
+
+  if ((byte_data_cmp_verified_arlen_count != 0) && (byte_data_cmp_failed_arlen_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arlen count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arlen_count :%0d",
+                                            byte_data_cmp_verified_arlen_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arlen_count : %0d", 
+                                            byte_data_cmp_failed_arlen_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arlen count comparisions are failed"));
+  end
+  
+  if ((byte_data_cmp_verified_arburst_count != 0) && (byte_data_cmp_failed_arburst_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arburst count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arburst_count :%0d",
+                                            byte_data_cmp_verified_arburst_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arburst_count : %0d", 
+                                            byte_data_cmp_failed_arburst_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arburst count comparisions are failed"));
+  end
+  
+  if ((byte_data_cmp_verified_arcache_count != 0) && (byte_data_cmp_failed_arcache_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arcache count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arcache_count :%0d",
+                                            byte_data_cmp_verified_arcache_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arcache_count : %0d", 
+                                            byte_data_cmp_failed_arcache_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arcache count comparisions are failed"));
+  end
+  
+  if ((byte_data_cmp_verified_arlock_count != 0) && (byte_data_cmp_failed_arlock_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arlock count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arlock_count :%0d",
+                                            byte_data_cmp_verified_arlock_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arlock_count : %0d", 
+                                            byte_data_cmp_failed_arlock_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arlock count comparisions are failed"));
+  end
+  
+  if ((byte_data_cmp_verified_arprot_count != 0) && (byte_data_cmp_failed_arprot_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arprot count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arprot_count :%0d",
+                                            byte_data_cmp_verified_arprot_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arprot_count : %0d", 
+                                            byte_data_cmp_failed_arprot_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arprot count comparisions are failed"));
+  end
+ 
+  if ((byte_data_cmp_verified_arregion_count != 0) && (byte_data_cmp_failed_arregion_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arregion count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arregion_count :%0d",
+                                            byte_data_cmp_verified_arregion_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arregion_count : %0d", 
+                                            byte_data_cmp_failed_arregion_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arregion count comparisions are failed"));
+  end
+
+  if ((byte_data_cmp_verified_arqos_count != 0) && (byte_data_cmp_failed_arqos_count == 0)) begin
+	  `uvm_info (get_type_name(), $sformatf ("arqos count comparisions are succesful"),UVM_HIGH);
+  end
+  else begin
+    `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_arqos_count :%0d",
+                                            byte_data_cmp_verified_arqos_count),UVM_HIGH);
+	  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_arqos_count : %0d", 
+                                            byte_data_cmp_failed_arqos_count),UVM_HIGH);
+    `uvm_error (get_type_name(), $sformatf ("arqos count comparisions are failed"));
+  end 
+
   //-------------------------------------------------------
   // Read_Data_Channel comparision
   //-------------------------------------------------------
@@ -829,27 +1119,6 @@ function void axi4_scoreboard::check_phase(uvm_phase phase);
     `uvm_error (get_type_name(), $sformatf ("ruser count comparisions are failed"));
   end
 
-  // if ((byte_data_cmp_verified_rvalid_count != 0) && (byte_data_cmp_failed_rvalid_count == 0)) begin
-	//  `uvm_info (get_type_name(), $sformatf ("rvalid count comparisions are succesful"),UVM_HIGH);
-  //end
-  //else begin
-  //  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rvalid_count :%0d",
-  //                                          byte_data_cmp_verified_rvalid_count),UVM_HIGH);
-	//  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rdata_rvalid : %0d", 
-  //                                          byte_data_cmp_failed_rvalid_count),UVM_HIGH);
-  //  `uvm_error (get_type_name(), $sformatf ("rvalid count comparisions are failed"));
-  //end
-
-  // if ((byte_data_cmp_verified_rready_count != 0) && (byte_data_cmp_failed_rready_count == 0)) begin
-	//  `uvm_info (get_type_name(), $sformatf ("rready count comparisions are succesful"),UVM_HIGH);
-  //end
-  //else begin
-  //  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_verified_rready_count :%0d",
-  //                                          byte_data_cmp_verified_rready_count),UVM_HIGH);
-	//  `uvm_info (get_type_name(), $sformatf ("byte_data_cmp_failed_rready_count : %0d", 
-  //                                          byte_data_cmp_failed_rready_count),UVM_HIGH);
-  //  `uvm_error (get_type_name(), $sformatf ("rready count comparisions are failed"));
-  //end
 
   //--------------------------------------------------------------------------------------------
   // 2.Check if master packets received are same as slave packets received
