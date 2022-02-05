@@ -60,22 +60,6 @@ package axi4_globals_pkg;
   // Enums used in axi4_avip are given below
   //-------------------------------------------------------
   
-  //Enum: awlen_e
-  //Used to declare the enum type for write address length
-  //typedef enum bit [7:0] {
-  //  WRITE_LEN_FIXED,
-  //  WRITE_LEN_WRAP,
-  //  WRITE_LEN_INCR
-  //} awlen_e;
-
-  //Enum: arlen_e
-  //Used to declare the enum type for read address length
-  //typedef enum bit [7:0] {
-  //  READ_LEN_FIXED,
-  //  READ_LEN_WRAP,
-  //  READ_LEN_INCR
-  //} arlen_e;
-
   //Enum: awburst_e
   //Used to declare the enum type of write burst type
   typedef enum bit [1:0] {
@@ -162,112 +146,28 @@ package axi4_globals_pkg;
   //Enum: awprot_e 
   //Used to declare enum type of write protection of the transaction
   typedef enum bit [2:0] {
-    WRITE_NORMAL_SECURE_DATA              = 3'b000,
-    WRITE_NORMAL_SECURE_INSTRUCTION       = 3'b001,
-    WRITE_NORMAL_NONSECURE_DATA           = 3'b010,
-    WRITE_NORMAL_NONSECURE_INSTRUCTION    = 3'b011,
-    WRITE_PRIVILEGED_SECURE_DATA          = 3'b100,
-    WRITE_PRIVILEGED_SECURE_INSTRUCTION   = 3'b101,
-    WRITE_PRIVILEGED_NONSECURE_DATA       = 3'b110,
+    WRITE_NORMAL_SECURE_DATA               = 3'b000,
+    WRITE_NORMAL_SECURE_INSTRUCTION        = 3'b001,
+    WRITE_NORMAL_NONSECURE_DATA            = 3'b010,
+    WRITE_NORMAL_NONSECURE_INSTRUCTION     = 3'b011,
+    WRITE_PRIVILEGED_SECURE_DATA           = 3'b100,
+    WRITE_PRIVILEGED_SECURE_INSTRUCTION    = 3'b101,
+    WRITE_PRIVILEGED_NONSECURE_DATA        = 3'b110,
     WRITE_PRIVILEGED_NONSECURE_INSTRUCTION = 3'b111
   } awprot_e;
 
   //Enum: arprot_e 
   //Used to declare enum type of read protection of the transaction
   typedef enum bit [2:0] {
-    READ_NORMAL_SECURE_DATA              = 3'b000,
-    READ_NORMAL_SECURE_INSTRUCTION       = 3'b001,
-    READ_NORMAL_NONSECURE_DATA           = 3'b010,
-    READ_NORMAL_NONSECURE_INSTRUCTION    = 3'b011,
-    READ_PRIVILEGED_SECURE_DATA          = 3'b100,
-    READ_PRIVILEGED_SECURE_INSTRUCTION   = 3'b101,
-    READ_PRIVILEGED_NONSECURE_DATA       = 3'b110,
+    READ_NORMAL_SECURE_DATA               = 3'b000,
+    READ_NORMAL_SECURE_INSTRUCTION        = 3'b001,
+    READ_NORMAL_NONSECURE_DATA            = 3'b010,
+    READ_NORMAL_NONSECURE_INSTRUCTION     = 3'b011,
+    READ_PRIVILEGED_SECURE_DATA           = 3'b100,
+    READ_PRIVILEGED_SECURE_INSTRUCTION    = 3'b101,
+    READ_PRIVILEGED_NONSECURE_DATA        = 3'b110,
     READ_PRIVILEGED_NONSECURE_INSTRUCTION = 3'b111
   } arprot_e;
-
-  //Enum: awid_e
-  //Used to declare the enum type of write address id
-  typedef enum bit [15:0] {
-    AWID_0  = 16'd0,
-    AWID_1  = 16'd1,
-    AWID_2  = 16'd2,
-    AWID_3  = 16'd3,
-    AWID_4  = 16'd4,
-    AWID_5  = 16'd5,
-    AWID_6  = 16'd6,
-    AWID_7  = 16'd7,
-    AWID_8  = 16'd8,
-    AWID_9  = 16'd9,
-    AWID_10 = 16'd10,
-    AWID_11 = 16'd11,
-    AWID_12 = 16'd12,
-    AWID_13 = 16'd13,
-    AWID_14 = 16'd14,
-    AWID_15 = 16'd15
-  } awid_e;
-
-  //Enum: bid_e
-  //Used to declare the enum type of write response id
-  typedef enum bit [15:0] {
-    BID_0  = 16'd0,
-    BID_1  = 16'd1,
-    BID_2  = 16'd2,
-    BID_3  = 16'd3,
-    BID_4  = 16'd4,
-    BID_5  = 16'd5,
-    BID_6  = 16'd6,
-    BID_7  = 16'd7,
-    BID_8  = 16'd8,
-    BID_9  = 16'd9,
-    BID_10 = 16'd10,
-    BID_11 = 16'd11,
-    BID_12 = 16'd12,
-    BID_13 = 16'd13,
-    BID_14 = 16'd14,
-    BID_15 = 16'd15
-  } bid_e;
-
-  //Enum: arid_e
-  //Used to declare the enum type of read address id
-  typedef enum bit [15:0] {
-    ARID_0  = 16'd0,
-    ARID_1  = 16'd1,
-    ARID_2  = 16'd2,
-    ARID_3  = 16'd3,
-    ARID_4  = 16'd4,
-    ARID_5  = 16'd5,
-    ARID_6  = 16'd6,
-    ARID_7  = 16'd7,
-    ARID_8  = 16'd8,
-    ARID_9  = 16'd9,
-    ARID_10 = 16'd10,
-    ARID_11 = 16'd11,
-    ARID_12 = 16'd12,
-    ARID_13 = 16'd13,
-    ARID_14 = 16'd14,
-    ARID_15 = 16'd15
-  } arid_e;
-
-  //Enum: rid_e
-  //Used to declare the enum type of read data/response id
-  typedef enum bit [15:0] {
-    RID_0  = 16'd0,
-    RID_1  = 16'd1,
-    RID_2  = 16'd2,
-    RID_3  = 16'd3,
-    RID_4  = 16'd4,
-    RID_5  = 16'd5,
-    RID_6  = 16'd6,
-    RID_7  = 16'd7,
-    RID_8  = 16'd8,
-    RID_9  = 16'd9,
-    RID_10 = 16'd10,
-    RID_11 = 16'd11,
-    RID_12 = 16'd12,
-    RID_13 = 16'd13,
-    RID_14 = 16'd14,
-    RID_15 = 16'd15
-  } rid_e;
 
   //Enum: bresp_e
   //Used to declare the enum type of write response
@@ -301,7 +201,7 @@ package axi4_globals_pkg;
     BLOCKING_READ       = 2'b01, 
     NON_BLOCKING_WRITE  = 2'b10, 
     NON_BLOCKING_READ   = 2'b11 
-  }transfer_type_e;
+  } transfer_type_e;
 
   //-------------------------------------------------------
   // Structs used in axi_avip are given below
@@ -325,17 +225,16 @@ package axi4_globals_pkg;
     bit                     awvalid;
     bit	                    awready;
     //Write_data_channel
-    bit [2**LENGTH:0][DATA_WIDTH-1:0]wdata;
-    bit [2**LENGTH:0][(DATA_WIDTH/8)-1:0]wstrb;
-    bit wlast;
-    //bit [2**LENGTH:0] wlast;
-    bit [2**LENGTH:0] wuser;
+    bit [2**LENGTH:0][DATA_WIDTH-1:0]     wdata;
+    bit [2**LENGTH:0][(DATA_WIDTH/8)-1:0] wstrb;
+    bit                     [2**LENGTH:0] wuser;
+    bit                                   wlast;
 
     //Write Response Channel
     bit [3:0] bid;
-    bit bvalid;
-    bit [1:0]  bresp;
-    bit buser;
+    bit [1:0] bresp;
+    bit       bvalid;
+    bit       buser;
 
     int wait_count_write_address_channel;
     int wait_count_write_data_channel;
@@ -350,25 +249,24 @@ package axi4_globals_pkg;
   //This struct datatype consists of all read signals which are used for seq item conversion
   typedef struct {
     //Read Address Channel
-    bit [3:0] arid;
+    bit               [3:0] arid;
     bit [ADDRESS_WIDTH-1:0] araddr;
-    bit [7:0]  arlen;
-    bit [2:0]  arsize;
-    bit [1:0]  arburst;
-    bit [3:0]  arcache;
-    bit [2:0]  arprot;
-    bit [3:0]  arqos;
-    bit [3:0]  arregion;
-    bit [3:0]  aruser;
-    bit        arlock;
+    bit               [7:0] arlen;
+    bit               [2:0] arsize;
+    bit               [1:0] arburst;
+    bit               [3:0] arcache;
+    bit               [2:0] arprot;
+    bit               [3:0] arqos;
+    bit               [3:0] arregion;
+    bit               [3:0] aruser;
+    bit                     arlock;
     //Read Data Channel
-    bit [3:0] rid;
-    bit [2**LENGTH:0][DATA_WIDTH-1:0]rdata;
-    bit [2**LENGTH:0][1:0] rresp; 
-    bit [2**LENGTH:0][3:0] ruser;
-    bit rvalid;
-    bit rlast;
-    //bit [(DATA_WIDTH/8)-1: 0] rstrb;
+    bit                         [3:0] rid;
+    bit [2**LENGTH:0][DATA_WIDTH-1:0] rdata;
+    bit            [2**LENGTH:0][1:0] rresp; 
+    bit            [2**LENGTH:0][3:0] ruser;
+    bit                               rvalid;
+    bit                               rlast;
     
     int wait_count_read_address_channel;
     int wait_count_read_data_channel;
@@ -383,6 +281,7 @@ package axi4_globals_pkg;
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] min_address;
     bit [ADDRESS_WIDTH-1:0] max_address;
+    
     int wait_count_read_address_channel;
     int wait_count_read_data_channel;
     int wait_count_write_address_channel;
@@ -390,10 +289,7 @@ package axi4_globals_pkg;
     int wait_count_write_response_channel;
     
     int outstanding_write_tx;
-    
     int outstanding_read_tx;
-    //bit [ADDRESS_WIDTH-1:0] awaddr;
-    //bit [ADDRESS_WIDTH-1:0] araddr;
   } axi4_transfer_cfg_s;
 
 endpackage : axi4_globals_pkg

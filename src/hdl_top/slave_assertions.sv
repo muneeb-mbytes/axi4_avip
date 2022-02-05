@@ -10,8 +10,8 @@ import axi4_globals_pkg::*;
 // Interface : slave_assertions
 // Used to write the assertion checks required for the slave checks
 //--------------------------------------------------------------------------------------------
-interface slave_assertions (input aclk,
-                            input aresetn,
+interface slave_assertions (input                     aclk,
+                            input                     aresetn,
                             //Write Address Channel Signals
                             input               [3:0] awid,
                             input [ADDRESS_WIDTH-1:0] awaddr,
@@ -69,7 +69,8 @@ interface slave_assertions (input aclk,
   initial begin
     `uvm_info("SLAVE_ASSERTIONS","SLAVE_ASSERTIONS",UVM_LOW);
   end
-  
+ 
+
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in write address channel
   //--------------------------------------------------------------------------------------------

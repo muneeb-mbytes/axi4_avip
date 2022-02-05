@@ -70,6 +70,7 @@ interface master_assertions (input                     aclk,
     `uvm_info("MASTER_ASSERTIONS","MASTER_ASSERTIONS",UVM_LOW);
   end
   
+
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in write address channel
   //--------------------------------------------------------------------------------------------
