@@ -25,31 +25,50 @@ class axi4_master_coverage extends uvm_subscriber #(axi4_master_tx);
     //-------------------------------------------------------
    
     AWLEN_CP : coverpoint packet.awlen {
-      option.comment = "awlen";
-      bins AW_LEN[1]={[0:$]}; 
+      option.comment = "Write Address Length values";
+      bins AWLEN_1   = {0};
+      bins AWLEN_2   = {1};
+      bins AWLEN_4   = {3};
+      bins AWLEN_8   = {7};
+      bins AWLEN_16  = {15};
+      bins AWLEN_32  = {31};
+      bins AWLEN_64  = {63};
+      bins AWLEN_128 = {127};
+      bins AWLEN_256 = {255};
+      // TODO(mshariff): Put all other values into one default bin
+      //default = {[0:$]}; 
     }
 
     AWBURST_CP : coverpoint packet.awburst {
       option.comment = "awburst";
-      bins READ_FIXED={0};
-      bins WRITE_INCR ={1}; 
-      bins READ_WRAP={2};     
+      bins READ_FIXED = {0};
+      bins WRITE_INCR = {1}; 
+      bins READ_WRAP  = {2};     
+      // TODO(mshariff): 
+      // illegal bins for value 3
     }
 
     AWSIZE_CP : coverpoint packet.awsize {
       option.comment = "awsize";
-      bins AWSIZE[]={[0:$]};
+      bins AWSIZE_1BYTE    = {0};
+      bins AWSIZE_2BYTES   = {1};
+      bins AWSIZE_4BYTES   = {2};
+      bins AWSIZE_8BYTES   = {3};
+      bins AWSIZE_16BYTES  = {4};
+      bins AWSIZE_32BYTES  = {5};
+      bins AWSIZE_64BYTES  = {6};
+      bins AWSIZE_128BYTES = {7};
     }
 
     AWLOCK_CP :coverpoint packet.awlock {
       option.comment= "awlock";
-      bins AWLOCK_0={0};
-      bins AWLOCK_1={1};
+      bins AWLOCK[]= {0,1};
     }
 
     AWCACHE_CP : coverpoint packet.awcache {
       option.comment = "awcache";
-      bins AWSIZE[]={[0:$]};
+      // TODO(mshariff): Write the specific values 
+      bins AWCACHE[]={[0:$]};
     }
 
     AWPROT_CP : coverpoint packet.awprot {

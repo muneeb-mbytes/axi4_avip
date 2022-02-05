@@ -115,13 +115,21 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     rlast   <= 0;
     bvalid  <= 0;
     arready <= 0;
-    bid     <= 'bx;
-    bresp   <= 'bx;
-    buser   <= 'bx;
-    rid     <= 'bx;
-    rdata   <= 'bx;
-    rresp   <= 'bx;
-    ruser   <= 'bx;
+    bid     <= '0;
+    bresp   <= '0;
+    buser   <= '0;
+    rid     <= '0;
+    rdata   <= '0;
+    rresp   <= '0;
+    ruser   <= '0;
+
+    // MSHA:bid     <= 'bx;
+    // MSHA:bresp   <= 'bx;
+    // MSHA:buser   <= 'bx;
+    // MSHA:rid     <= 'bx;
+    // MSHA:rdata   <= 'bx;
+    // MSHA:rresp   <= 'bx;
+    // MSHA:ruser   <= 'bx;
     @(posedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DE-ACTIVATED"),UVM_NONE)
   endtask 
