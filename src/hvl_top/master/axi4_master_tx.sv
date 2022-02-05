@@ -267,14 +267,54 @@ class axi4_master_tx extends uvm_sequence_item;
   //Adding constraint to restrict the write strobe based on awlength
   constraint wstrb_c2 { wstrb.size() == awlen + 1;}
   constraint wstrb_c3 { foreach(wstrb[i]) wstrb[i]!=0; }
+  //constraint wstrb_c0 { soft awaddr inside {awaddr >1 && awaddr % awsize == 0}; }
 
-constraint wstrb_c {
-		foreach (wstrb[i]) {
-			(awsize == 0) -> wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000};
-			(awsize == 1) -> wstrb[i] inside {4'b0011, 8'b1100};
-			(awsize == 2) -> wstrb[i] inside {4'b1111};
-		}
-	}
+  constraint wstrb_c { 
+  if(awaddr % awsize == 0) {
+  		if(awsize == 0) foreach(wstrb[i]) { wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000}};
+  		//(awsize == 1) -> wstrb[i] inside {4'b0011, 4'b1100, 4'b1010, 4'b0101, 4'b1001};
+      if (awsize == 1) foreach(wstrb[i]) { $countones(wstrb[i])  == 2};
+  		if (awsize == 2)  foreach(wstrb[i]) { wstrb[i] inside {4'b1111}};
+  	}
+  
+    else 
+      foreach (wstrb[i]) { 
+  		(awsize == 0) -> wstrb[0] inside {{4'b0000},
+                       $countones(wstrb[i]) == 1}; 
+  		(awsize == 1) -> wstrb[0] inside {{4'b1000},
+                       $countones(wstrb[i]) == 2}; 
+      //(awsize == 1) -> $countones(wstrb[i])  == 2;
+  		(awsize == 2) -> wstrb[0] inside {{4'b1000},
+                       $countones(wstrb[i]) == 4}; 
+  	}
+  }
+ 
+ 
+// constraint wstrb_c { 
+//  if(awaddr % awsize == 0) {
+//			if(awsize == 0) foreach(wstrb[i]) { wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000}};
+//			//(awsize == 1) -> wstrb[i] inside {4'b0011, 4'b1100, 4'b1010, 4'b0101, 4'b1001};
+//      if (awsize == 1) foreach(wstrb[i]) { $countones(wstrb[i])  == 2};
+//			if (awsize == 2)  foreach(wstrb[i]) { wstrb[i] inside {4'b1111}};
+//		}
+//  
+//    else {
+//			if (awsize == 0) foreach(wstrb[i]) { wstrb[i] inside {wstrb[0] == 4'b0000,
+//                                           $countones(wstrb[i]) == 1}};
+//      if (awsize == 1) foreach(wstrb[i]) { wstrb[i] inside {wstrb[0] == 4'b1000,
+//                                           $countones(wstrb[i]) == 2}};
+//      if (awsize == 2) foreach(wstrb[i]) { wstrb[i] inside {wstrb[0] == 4'b1000,
+//                                           $countones(wstrb[i]) == 4}};
+//
+//	//		if (awsize == 1) wstrb[0] inside {4'b1000};
+//  //                     foreach(wstrb[i]) { $countones(wstrb[i])  == 2};
+//  //    //(awsize == 1) -> $countones(wstrb[i])  == 2;
+//	//		if (awsize == 2) wstrb[0] inside {4'b1000};
+//  //                     foreach(wstrb[i]) { wstrb[i] inside {4'b1111}};
+//
+//		}
+//  }
+
 
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
@@ -322,7 +362,7 @@ constraint wstrb_c {
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new (string name = "axi4_master_tx");
- // extern function void post_randomize();
+  //extern function void post_randomize();
   extern function void do_copy(uvm_object rhs);
   extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
   extern function void do_print(uvm_printer printer);
@@ -345,86 +385,111 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 //function void axi4_master_tx::post_randomize();
 //
-//  foreach(wdata[i])begin
-//    `uvm_info("DEBUG_NAD", $sformatf("wdata[%0d]=%0h",i,wdata[i]),UVM_HIGH);
-//      if(!std::randomize(wstrb) with { 
-//                                      wstrb.size() == awlen + 1;
-//                                      if(awsize == WRITE_1_BYTE)  
-//                                        //$countones(wstrb[i]) == 1;
-//                                        $countones(this.wstrb[i]) == 2;
-//                                        //wstrb[i]  == 4'b1010;
-//                                        //wstrb[i] == 'd1 || wstrb[i] == 'd2 || wstrb[i] == 'd4 || wstrb[i] == 'd8;
-//                                      if(awsize == WRITE_2_BYTES)  
-//                                        $countones(this.wstrb[i]) == 4;
-//                                        //wstrb[i]  == 4'b1111;
-//                                     // if(awsize == WRITE_4_BYTES)  
-//                                     //   $countones(wstrb[i]) == 16;
-//                                
-//                                      })
-//      begin
-//        `uvm_fatal("FATAL_STD_RANDOMIZATION_WSTRB", $sformatf("Not able to randomize wstrb"));
+//  if(this.awaddr % this.awsize !== 0) begin
+//    foreach(wstrb[i]) begin
+//
+//      if(this.awsize == 2) begin
+//        this.wstrb[0] = 4'b1000;
 //      end
-//      else begin
-//        `uvm_info("DEBUG_NAD", $sformatf("awsize=%0d",awsize),UVM_HIGH);
-//        `uvm_info("DEBUG_NAD", $sformatf("wstrb[%0d]=%0d",i,wstrb[i]),UVM_HIGH);
+//      
+//      if(this.awsize == 1) begin
+//        this.wstrb[0] = 4'b1000;
 //      end
+//
+//      if(this.awsize == 0) begin
+//        //since the start address is unaligned 1st transfer will not written
+//        this.wstrb[0] = 4'b0000;           
+//      end
+//    end
 //  end
-// 
-//  // TODO(mshariff): Write comments for this logic
-// foreach(this.wstrb[i]) begin
-//   this.wstrb[i] = wstrb[i];
-//   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: this.wstrb[%0d] =  %0d",i,this.wstrb[i]), UVM_NONE); 
-// end
 //
 //
-//  ////Variable : index
-//  ////Used to store the address_range index value
-//  //int index;
 //
-//  ////Derive the slave number using the index
-//  //for(int i=0; i<NO_OF_SLAVES; i++) begin
-//  //  if(pselx[i]) begin
-//  //    index = i;
-//  //  end
-//  //end
-// 
-//  ////Randmoly chosing paddr value between a given range
-//  //if (!std::randomize(awaddr) with { awaddr inside {[axi4_master_agent_cfg_h.master_min_addr_range_array[index]:axi4_master_agent_cfg_h.master_max_addr_range_array[index]]};
-//  //  //awaddr %4 == 0;
-//  //  //wdata.size() == (awlen+1) * (2**awsize)
-//  //}) begin
-//  //  `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize awaddr"));
-//  //end
 //
-//  //Used to restrict the address inside the 4kb boundary
-////  if(!std::randomize(awaddr) with {awaddr % 4096 == 0; 
-////                                   awaddr inside {[0:4095]};
-////                                  }) begin
-////    `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize AWADDR"));
-////  end
 //
-//  //Used to restrict the wdata so that it should not exceed 4kb address boundary
-//  //if(!std::randomize(wdata) with {(wdata.size()*DATA_WIDTH)/8 == axi4_master_agent_cfg_h[0].master_max_addr_range_array[0] - awaddr;}) begin
-//  //  `uvm_fatal("FATAL_STD_RANDOMIZATION_WDATA", $sformatf("Not able to randomize WDATA"));
-//  //end
 //
-//  //Used to restrict the wdata so that it should not exceed 4kb boundary
-////  if(!std::randomize(wstrb) with {wstrb.size() == wdata.size();}) begin
-////    `uvm_fatal("FATAL_STD_RANDOMIZATION_WSTRB", $sformatf("Not able to randomize WSTRB"));
-////  end
+//
 ////
-////  //Used to make wdata byte non-zero when strobe is high for that byte lane
-////  for(int i=0; i<DATA_WIDTH/8; i++) begin
-////    if(wstrb[i]) begin
-////      //`uvm_info(get_type_name(),$sformatf("MASTER-TX-strb[%0d]=%0d",i,strb[i]),UVM_HIGH);
-////      if(!std::randomize(wdata) with {wdata[i][8*i+7 -: 8] != 0;}) begin
-////        `uvm_fatal("FATAL_STD_RANDOMIZATION_WDATA", $sformatf("Not able to randomize wdata"));
+////  foreach(wdata[i])begin
+////    `uvm_info("DEBUG_NAD", $sformatf("wdata[%0d]=%0h",i,wdata[i]),UVM_HIGH);
+////      if(!std::randomize(wstrb) with { 
+////                                      wstrb.size() == awlen + 1;
+////                                      if(awsize == WRITE_1_BYTE)  
+////                                        //$countones(wstrb[i]) == 1;
+////                                        $countones(this.wstrb[i]) == 2;
+////                                        //wstrb[i]  == 4'b1010;
+////                                        //wstrb[i] == 'd1 || wstrb[i] == 'd2 || wstrb[i] == 'd4 || wstrb[i] == 'd8;
+////                                      if(awsize == WRITE_2_BYTES)  
+////                                        $countones(this.wstrb[i]) == 4;
+////                                        //wstrb[i]  == 4'b1111;
+////                                     // if(awsize == WRITE_4_BYTES)  
+////                                     //   $countones(wstrb[i]) == 16;
+////                                
+////                                      })
+////      begin
+////        `uvm_fatal("FATAL_STD_RANDOMIZATION_WSTRB", $sformatf("Not able to randomize wstrb"));
 ////      end
 ////      else begin
-////        `uvm_info(get_type_name(),$sformatf("MASTER-TX-wdata[%0d]=%0h",8*i+7,wdata[i][8*i+7 +: 8]),UVM_HIGH);
-////      end 
-////    end
+////        `uvm_info("DEBUG_NAD", $sformatf("awsize=%0d",awsize),UVM_HIGH);
+////        `uvm_info("DEBUG_NAD", $sformatf("wstrb[%0d]=%0d",i,wstrb[i]),UVM_HIGH);
+////      end
 ////  end
+//// 
+////  // TODO(mshariff): Write comments for this logic
+//// foreach(this.wstrb[i]) begin
+////   this.wstrb[i] = wstrb[i];
+////   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: this.wstrb[%0d] =  %0d",i,this.wstrb[i]), UVM_NONE); 
+//// end
+////
+////
+////  ////Variable : index
+////  ////Used to store the address_range index value
+////  //int index;
+////
+////  ////Derive the slave number using the index
+////  //for(int i=0; i<NO_OF_SLAVES; i++) begin
+////  //  if(pselx[i]) begin
+////  //    index = i;
+////  //  end
+////  //end
+//// 
+////  ////Randmoly chosing paddr value between a given range
+////  //if (!std::randomize(awaddr) with { awaddr inside {[axi4_master_agent_cfg_h.master_min_addr_range_array[index]:axi4_master_agent_cfg_h.master_max_addr_range_array[index]]};
+////  //  //awaddr %4 == 0;
+////  //  //wdata.size() == (awlen+1) * (2**awsize)
+////  //}) begin
+////  //  `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize awaddr"));
+////  //end
+////
+////  //Used to restrict the address inside the 4kb boundary
+//////  if(!std::randomize(awaddr) with {awaddr % 4096 == 0; 
+//////                                   awaddr inside {[0:4095]};
+//////                                  }) begin
+//////    `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize AWADDR"));
+//////  end
+////
+////  //Used to restrict the wdata so that it should not exceed 4kb address boundary
+////  //if(!std::randomize(wdata) with {(wdata.size()*DATA_WIDTH)/8 == axi4_master_agent_cfg_h[0].master_max_addr_range_array[0] - awaddr;}) begin
+////  //  `uvm_fatal("FATAL_STD_RANDOMIZATION_WDATA", $sformatf("Not able to randomize WDATA"));
+////  //end
+////
+////  //Used to restrict the wdata so that it should not exceed 4kb boundary
+//////  if(!std::randomize(wstrb) with {wstrb.size() == wdata.size();}) begin
+//////    `uvm_fatal("FATAL_STD_RANDOMIZATION_WSTRB", $sformatf("Not able to randomize WSTRB"));
+//////  end
+//////
+//////  //Used to make wdata byte non-zero when strobe is high for that byte lane
+//////  for(int i=0; i<DATA_WIDTH/8; i++) begin
+//////    if(wstrb[i]) begin
+//////      //`uvm_info(get_type_name(),$sformatf("MASTER-TX-strb[%0d]=%0d",i,strb[i]),UVM_HIGH);
+//////      if(!std::randomize(wdata) with {wdata[i][8*i+7 -: 8] != 0;}) begin
+//////        `uvm_fatal("FATAL_STD_RANDOMIZATION_WDATA", $sformatf("Not able to randomize wdata"));
+//////      end
+//////      else begin
+//////        `uvm_info(get_type_name(),$sformatf("MASTER-TX-wdata[%0d]=%0h",8*i+7,wdata[i][8*i+7 +: 8]),UVM_HIGH);
+//////      end 
+//////    end
+//////  end
 //endfunction : post_randomize
 
 //--------------------------------------------------------------------------------------------
