@@ -25,46 +25,68 @@ class axi4_master_coverage extends uvm_subscriber #(axi4_master_tx);
     //-------------------------------------------------------
    
     AWLEN_CP : coverpoint packet.awlen {
-      option.comment = "awlen";
-      bins AW_LEN[1]={[0:$]}; 
+      option.comment = "Write Address Length values";
+      bins AWLEN_1      = {0};
+      bins AWLEN_2      = {1};
+      bins AWLEN_4      = {3};
+      bins AWLEN_8      = {7};
+      bins AWLEN_16     = {15};
+      bins AWLEN_32     = {31};
+      bins AWLEN_64     = {63};
+      bins AWLEN_128    = {127};
+      bins AWLEN_256    = {255};
+      bins AWLEN_DEFAULT = default ;
     }
 
     AWBURST_CP : coverpoint packet.awburst {
-      option.comment = "awburst";
-      bins READ_FIXED={0};
-      bins WRITE_INCR ={1}; 
-      bins READ_WRAP={2};     
+      option.comment = "Write Address Burst values";
+      bins READ_FIXED = {0};
+      bins WRITE_INCR = {1}; 
+      bins READ_WRAP  = {2};     
+      illegal_bins ILLEGAL_BIN_OF_AWBURST = {3};     
     }
 
     AWSIZE_CP : coverpoint packet.awsize {
-      option.comment = "awsize";
-      bins AWSIZE[]={[0:$]};
+      option.comment = "Write Address size values";
+      bins AWSIZE_1BYTE    = {0};
+      bins AWSIZE_2BYTES   = {1};
+      bins AWSIZE_4BYTES   = {2};
+      bins AWSIZE_8BYTES   = {3};
+      bins AWSIZE_16BYTES  = {4};
+      bins AWSIZE_32BYTES  = {5};
+      bins AWSIZE_64BYTES  = {6};
+      bins AWSIZE_128BYTES = {7};
     }
 
     AWLOCK_CP :coverpoint packet.awlock {
-      option.comment= "awlock";
-      bins AWLOCK_0={0};
-      bins AWLOCK_1={1};
+      option.comment= "Write Address Lock values";
+      bins AWLOCK[] = {0,1};
     }
 
     AWCACHE_CP : coverpoint packet.awcache {
-      option.comment = "awcache";
-      bins AWSIZE[]={[0:$]};
+      option.comment = "Write Address Cache values";
+      bins WRITE_BUFFERABLE     = {0};
+      bins WRITE_MODIFIABLE     = {1};
+      bins WRITE_OTHER_ALLOCATE = {2}; 
+      bins WRITE_ALLOCATE       = {3};
     }
 
     AWPROT_CP : coverpoint packet.awprot {
-      option.comment = "awprot";
-      bins AWPROT[]={[0:$]};
+      option.comment = "Write Address Protection values";
+      bins AWPROT[] = {[0:$]};
     }
 
     AWID_CP : coverpoint packet.awid {
-      option.comment = "awid";
-      bins AWID[]={[0:$]};
+      option.comment = "Write Address ID values";
+      bins AWID[] = {[0:$]};
     }
 
     BRESP_CP : coverpoint packet.bresp {
-      option.comment = "bresp";
-      bins BRESP[]={[0:$]};
+      option.comment    = "Write Response values";
+      bins WRITE_OKAY   = {0};
+      bins WRITE_EXOKAY = {1};
+      bins WRITE_SLVERR = {2};
+      bins WRITE_DECERR = {3};
     }
 
     //-------------------------------------------------------
@@ -72,63 +94,88 @@ class axi4_master_coverage extends uvm_subscriber #(axi4_master_tx);
     //-------------------------------------------------------
     
     ARLEN_CP : coverpoint packet.arlen {
-      option.comment = "arlen";
-      bins AR_LEN[1]={[0:$]}; 
+      option.comment = "Read Address Length values";
+      bins ARLEN_1   = {0};
+      bins ARLEN_2   = {1};
+      bins ARLEN_4   = {3};
+      bins ARLEN_8   = {7};
+      bins ARLEN_16  = {15};
+      bins ARLEN_32  = {31};
+      bins ARLEN_64  = {63};
+      bins ARLEN_128 = {127};
+      bins ARLEN_256 = {255};
+      bins ARLEN_DEFAULT= default ;
     }
 
     ARBURST_CP : coverpoint packet.arburst {
-      option.comment = "arburst";
-      bins READ_FIXED={0};
+      option.comment = "Read Address Burst values";
+      bins READ_FIXED ={0};
       bins WRITE_INCR ={1}; 
-      bins READ_WRAP={2};     
+      bins READ_WRAP  ={2};   
+      illegal_bins ILLEGAL_BIN_OF_ARBURST = {3};   
     }
 
     ARSIZE_CP : coverpoint packet.arsize {
-      option.comment = "arsize";
-      bins ARSIZE[]={[0:$]};
+      option.comment = "Read Address Size values";
+      bins ARSIZE_1BYTE    = {0};
+      bins ARSIZE_2BYTES   = {1};
+      bins ARSIZE_4BYTES   = {2};
+      bins ARSIZE_8BYTES   = {3};
+      bins ARSIZE_16BYTES  = {4};
+      bins ARSIZE_32BYTES  = {5};
+      bins ARSIZE_64BYTES  = {6};
+      bins ARSIZE_128BYTES = {7};
     }
 
     ARLOCK_CP :coverpoint packet.arlock {
-      option.comment= "arlock";
-      bins ARLOCK_0={0};
-      bins ARLOCK_1={1};
+      option.comment= "Read Address Lock values";
+      bins ARLOCK[] = {0,1};
     }
 
     ARCACHE_CP : coverpoint packet.arcache {
-      option.comment = "arcache";
-      bins ARSIZE[]={[0:$]};
+      option.comment = "Read Address Cache values";
+      bins READ_BUFFERABLE = {0};
+      bins READ_MODIFIABLE = {1};
+      bins READ_OTHER_ALLOCATE = {2}; 
+      bins READ_ALLOCATE = {3};
     }
 
     ARPROT_CP : coverpoint packet.arprot {
-      option.comment = "arprot";
-      bins ARPROT[]={[0:$]};
+      option.comment = "Read Address Protection values";
+      bins ARPROT[] = {[0:$]};
     }
 
     BID_CP : coverpoint packet.bid {
-      option.comment = "bid";
-      bins BID[]={[0:$]};
+      option.comment = "Write Response values";
+      bins BID[] = {[0:$]};
     }
 
     ARID_CP : coverpoint packet.rid {
-      option.comment = "arid";
-      bins ARID[]={[0:$]};
+      option.comment = "Read Address ID values";
+      bins ARID[] = {[0:$]};
     }
 
     RID_CP : coverpoint packet.rid {
-      option.comment = "rid";
-      bins RID[]={[0:$]};
+      option.comment = "Read ID values";
+      bins RID[] = {[0:$]};
     }
     
     RRESP_CP : coverpoint packet.rresp {
-      option.comment = "rresp";
-      bins RRESP[]={[0:$]};
+      option.comment    = "Read Response values";
+      bins READ_OKAY    = {0};
+      bins READ_EXOKAY  = {1};
+      bins READ_SLVERR  = {2};
+      bins READ_DECERR  = {3};
     }
     
-    // -------------------------------------------------------------------------------------
-    
+    // ------------------------------------------------------
+
     TRANSFER_TYPE_CP : coverpoint packet.transfer_type {
-      option.comment = "rresp";
-      bins TRANSFER_TYPE[]={[0:$]};
+      option.comment = "transfer type";
+      bins BLOCKING_WRITE     = {0};
+      bins BLOCKING_READ      = {1};
+      bins NON_BLOCKING_WRITE = {2};
+      bins NON_BLOCKING_READ  = {3};
     }
 
     //-------------------------------------------------------
