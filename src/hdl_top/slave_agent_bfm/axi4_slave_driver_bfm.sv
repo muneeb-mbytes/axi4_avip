@@ -116,12 +116,12 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     bvalid  <= 0;
     arready <= 0;
     bid     <= 'bx;
-    bresp   <= 'bx;
-    buser   <= 'bx;
+    bresp   <= 'b0;
+    buser   <= 'b0;
     rid     <= 'bx;
-    rdata   <= 'bx;
-    rresp   <= 'bx;
-    ruser   <= 'bx;
+    rdata   <= 'b0;
+    rresp   <= 'b0;
+    ruser   <= 'b0;
     @(posedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DE-ACTIVATED"),UVM_NONE)
   endtask 
@@ -144,7 +144,12 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       @(posedge aclk);
     end while(awvalid===0);
 
-    `uvm_info("SLAVE_DRIVER_WADDR_PHASE", $sformatf("outside of awvalid"), UVM_MEDIUM); 
+    `uvm_info("SLAVE_DRIVER_WADDR_PHASE", $sformatf("outside of awvalid"), UVM_MEDIUM);
+    
+    if(axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
+      `uvm_error("UVM_TLM_FIFO","FIFO is now FULL!")
+    end 
+
       
    // Sample the values
    
@@ -160,12 +165,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
    data_write_packet.awsize  = mem_wsize  [i] ;
    data_write_packet.awburst = mem_wburst [i] ;
    
-   if(axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
-      `uvm_info("UVM_TLM_FIFO","FIFO is now FULL!",UVM_MEDIUM)
-      @(posedge aclk);
-      awready<=0;
-    end 
-
    i = i+1                   ;
     
    `uvm_info("mem_awid",$sformatf("mem_awid[%0d]=%0d",i,mem_awid[i]),UVM_HIGH)
@@ -182,7 +181,10 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       awready<=0;
     end
     awready <= 1;
-        
+   
+    //@(posedge aclk);
+    //awready <= 0;
+   
   endtask: axi4_write_address_phase 
 
   //-------------------------------------------------------
@@ -220,7 +222,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
        data_write_packet.wstrb[s]=wstrb;
        `uvm_info("slave_wstrb",$sformatf("sampled_slave_wstrb[%0d] = %0d",s,data_write_packet.wstrb[s]),UVM_HIGH);
         if(s == mem_wlen[a]) begin
-          mem_wlast[a] <= wlast;
+          mem_wlast[a] = wlast;
+          `uvm_info("slave_wlast",$sformatf("slave1_wlast = %0b",wlast),UVM_HIGH);
           data_write_packet.wlast = wlast;
           if(!data_write_packet.wlast)begin
             @(posedge aclk);
@@ -270,7 +273,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info("DEBUG_BRESP",$sformatf("MEM_BID[%0d] = %0d",j,mem_awid[j]),UVM_HIGH)
     `uvm_info("DEBUG_BRESP_WLAST",$sformatf("wlast = %0d",mem_wlast[j]),UVM_HIGH)
 
-    if(mem_wlast[j]==1 && mem_wsize[j]<= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH && !axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
+    if(mem_wlast[j]==1 && mem_wsize[j] <= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH && !axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
       bresp <= WRITE_OKAY;
       data_write_packet.bresp <= WRITE_OKAY;
     end
