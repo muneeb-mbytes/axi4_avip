@@ -385,7 +385,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
         `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize_l1= %0d",l1),UVM_HIGH);
         rdata[8*k1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
         `uvm_info("RDATA_DEBUG",$sformatf("RDATA[%0d]=%0h",i1,data_read_packet.rdata[l1*8+i1]),UVM_HIGH)
-        `uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*l1+7 -: 8]),UVM_HIGH)
+        `uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*k1+7 -: 8]),UVM_HIGH)
         k1++;
       end
      // rdata<=data_read_packet.rdata[i1];

@@ -242,55 +242,32 @@ class axi4_master_tx extends uvm_sequence_item;
   //Constraint : wstrb_c3
   constraint wstrb_c3 { foreach(wstrb[i]) wstrb[i]!=0; }
 
-  //constraint wstrb_c0 { soft awaddr inside {awaddr >1 && awaddr % awsize == 0}; }
+ // constraint wstrb_c0 { soft awaddr inside {awaddr !=0 && awaddr % awsize != 0}; }
 
   constraint wstrb_c { 
   if(awaddr % awsize == 0) {
-  		if(awsize == 0) foreach(wstrb[i]) { wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000}};
+  		if(awsize == 0) foreach(wstrb[i])  wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000};
   		//(awsize == 1) -> wstrb[i] inside {4'b0011, 4'b1100, 4'b1010, 4'b0101, 4'b1001};
       if (awsize == 1) foreach(wstrb[i]) { $countones(wstrb[i])  == 2};
-  		if (awsize == 2)  foreach(wstrb[i]) { wstrb[i] inside {4'b1111}};
+  	  if (awsize == 2)  foreach(wstrb[i])  wstrb[i] inside {4'b1111};
   	}
   
     else 
-      foreach (wstrb[i]) { 
-  		(awsize == 0) -> wstrb[0] inside {{4'b0000},
-                       $countones(wstrb[i]) == 1}; 
-  		(awsize == 1) -> wstrb[0] inside {{4'b1000},
-                       $countones(wstrb[i]) == 2}; 
+      foreach (wdata[i]) { 
+  		(awsize == 0) -> //wstrb[0] inside {{4'b0000},
+                       wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000};
+                       //$countones(wstrb[i]) == 1}; 
+  		(awsize == 1) -> //wstrb[0] inside {{4'b1000},
+                       wstrb[i] inside {4'b0011, 4'b1100, 4'b1010, 4'b0101, 4'b1001};
+                      // $countones(wstrb[i]) == 2}; 
       //(awsize == 1) -> $countones(wstrb[i])  == 2;
-  		(awsize == 2) -> wstrb[0] inside {{4'b1000},
-                       $countones(wstrb[i]) == 4}; 
+  		(awsize == 2) -> //wstrb[0] inside {{4'b1000},
+                      wstrb[i] inside {4'b1111};
+                       //$countones(wstrb[i]) == 4};
   	}
   }
  
  
-// constraint wstrb_c { 
-//  if(awaddr % awsize == 0) {
-//			if(awsize == 0) foreach(wstrb[i]) { wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000}};
-//			//(awsize == 1) -> wstrb[i] inside {4'b0011, 4'b1100, 4'b1010, 4'b0101, 4'b1001};
-//      if (awsize == 1) foreach(wstrb[i]) { $countones(wstrb[i])  == 2};
-//			if (awsize == 2)  foreach(wstrb[i]) { wstrb[i] inside {4'b1111}};
-//		}
-//  
-//    else {
-//			if (awsize == 0) foreach(wstrb[i]) { wstrb[i] inside {wstrb[0] == 4'b0000,
-//                                           $countones(wstrb[i]) == 1}};
-//      if (awsize == 1) foreach(wstrb[i]) { wstrb[i] inside {wstrb[0] == 4'b1000,
-//                                           $countones(wstrb[i]) == 2}};
-//      if (awsize == 2) foreach(wstrb[i]) { wstrb[i] inside {wstrb[0] == 4'b1000,
-//                                           $countones(wstrb[i]) == 4}};
-//
-//	//		if (awsize == 1) wstrb[0] inside {4'b1000};
-//  //                     foreach(wstrb[i]) { $countones(wstrb[i])  == 2};
-//  //    //(awsize == 1) -> $countones(wstrb[i])  == 2;
-//	//		if (awsize == 2) wstrb[0] inside {4'b1000};
-//  //                     foreach(wstrb[i]) { wstrb[i] inside {4'b1111}};
-//
-//		}
-//  }
-
-
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
   constraint no_of_wait_states_c3 { no_of_wait_states inside  {[0:3]};}
