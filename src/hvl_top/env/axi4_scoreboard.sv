@@ -1308,7 +1308,14 @@ function void axi4_scoreboard::report_phase(uvm_phase phase);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise bresp comparisions:%0d",byte_data_cmp_verified_bresp_count+byte_data_cmp_failed_bresp_count ),UVM_HIGH);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise bresp failed comparisions:%0d",byte_data_cmp_failed_bresp_count ),UVM_HIGH);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise bresp verified comparisions:%0d",byte_data_cmp_verified_bresp_count ),UVM_HIGH);
+
+  //-------------------------------------------------------
+  // Total write Channels Packets
+  //-------------------------------------------------------
+  $display("Total Write Channels Comparision");
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise write channels packets verified:%0d",byte_data_cmp_verified_awid_count+byte_data_cmp_verified_awaddr_count+byte_data_cmp_verified_awlen_count+byte_data_cmp_verified_awsize_count+byte_data_cmp_verified_awburst_count+byte_data_cmp_verified_awprot_count+byte_data_cmp_verified_awcache_count+byte_data_cmp_verified_wdata_count+byte_data_cmp_verified_wstrb_count+byte_data_cmp_verified_wuser_count+byte_data_cmp_verified_bid_count+byte_data_cmp_verified_bresp_count),UVM_NONE);
  
+  
   $display("READ_ADDRESS_PHASE");
   
   //Number of arid comparisoins done
@@ -1394,6 +1401,13 @@ function void axi4_scoreboard::report_phase(uvm_phase phase);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise ruser comparisions:%0d",byte_data_cmp_verified_ruser_count+byte_data_cmp_failed_ruser_count ),UVM_HIGH);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise ruser failed comparisions:%0d",byte_data_cmp_failed_ruser_count ),UVM_HIGH);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise ruser verified comparisions:%0d",byte_data_cmp_verified_ruser_count ),UVM_HIGH);
+  
+  //-------------------------------------------------------
+  // Total Read Channels Packets
+  //-------------------------------------------------------
+  $display("Total Read Channels Comparision");
+  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise read channels packets verified:%0d",byte_data_cmp_verified_arid_count+byte_data_cmp_verified_araddr_count+byte_data_cmp_verified_arlen_count+byte_data_cmp_verified_arsize_count+byte_data_cmp_verified_arburst_count+byte_data_cmp_verified_arprot_count+byte_data_cmp_verified_arcache_count+byte_data_cmp_verified_arlock_count+byte_data_cmp_verified_arqos_count+byte_data_cmp_verified_rid_count+byte_data_cmp_verified_rdata_count+byte_data_cmp_verified_rresp_count+byte_data_cmp_verified_ruser_count),UVM_NONE);
+ 
 
 endfunction : report_phase
 
