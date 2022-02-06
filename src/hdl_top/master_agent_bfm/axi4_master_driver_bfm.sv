@@ -145,6 +145,8 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
     end
     while(awready !== 1);
 
+    //data_write_packet.wait_count_write_address_channel = data_write_packet.wait_count_write_data_channel - 1'd1;
+
     `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d, awvalid = %0d",awready,awvalid),UVM_HIGH)
     awvalid <= 1'b0;
 
@@ -264,6 +266,8 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
       data_read_packet.wait_count_read_address_channel++;
     end
     while(arready !== 1);
+
+    //data_read_packet.wait_count_read_address_channel  = data_read_packet.wait_count_read_address_channel - 1'd1;
 
     `uvm_info(name,$sformatf("After_loop_of_Detecting_awready = %0d, awvalid = %0d",awready,awvalid),UVM_HIGH)
     arvalid <= 1'b0;

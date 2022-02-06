@@ -330,7 +330,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 	  mem_rlen 	[j]	  = arlen	  ;	
 	  mem_rsize	[j] 	= arsize	;	
 	  mem_rburst[j] 	= arburst ;	
-    arready        <= 1       ;
+    arready         = 1       ;
 
     data_read_packet.arid    = mem_arid[j]     ;
     data_read_packet.araddr  = mem_raddr[j]    ;
@@ -360,18 +360,33 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info("RDATA_DEBUG",$sformatf("data_packet_rid= %0d",mem_arid[j1]),UVM_HIGH);
     `uvm_info(name,$sformatf("INSIDE READ DATA CHANNEL"),UVM_LOW);
     
-    for(int i1=0; i1<mem_rlen[j1] + 1; i1++) begin
+    for(int i1=0, k1=0; i1<mem_rlen[j1] + 1; i1++) begin
       `uvm_info("RDATA_DEBUG",$sformatf("rid= %0d",rid),UVM_HIGH);
       `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",mem_rlen[j1]),UVM_HIGH);
       `uvm_info("RDATA_DEBUG",$sformatf("i1_arlen= %0d",i1),UVM_HIGH);
+
+      if(mem_rsize[j1] == DATA_WIDTH/OUTSTANDING_FIFO_DEPTH) begin
+        k1 = 0;
+      end
+       if(mem_rsize[j1] == 0 || mem_rsize[j1] == DATA_WIDTH/DATA_WIDTH) begin
+        if(k1 == DATA_WIDTH/LENGTH) begin
+          k1 = 0;
+        end
+      end
+     // else if(mem_rsize[j1] == DATA_WIDTH/DATA_WIDTH) begin
+     //   if(k1 == 4) begin
+     //     k1 = 0;
+     //   end
+     // end
       
       rid  <= mem_arid[j1];
       for(int l1=0; l1<(2**mem_rsize[j1]); l1++) begin
         `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize= %0d",mem_rsize[j1]),UVM_HIGH);
         `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize_l1= %0d",l1),UVM_HIGH);
-        rdata[8*l1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
+        rdata[8*k1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
         `uvm_info("RDATA_DEBUG",$sformatf("RDATA[%0d]=%0h",i1,data_read_packet.rdata[l1*8+i1]),UVM_HIGH)
         `uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*l1+7 -: 8]),UVM_HIGH)
+        k1++;
       end
      // rdata<=data_read_packet.rdata[i1];
      // `uvm_info("SLAVE_RDATA_DEBUG",$sformatf("rdata= %0d",rdata),UVM_HIGH);
