@@ -350,6 +350,12 @@ class axi4_master_tx extends uvm_sequence_item;
   //Adding a soft constraint to detrmine the burst type
   constraint arburst_c5 { soft arburst == READ_INCR; 
                         }
+
+  //Constraint : arsize_c6
+  //Adding a soft constraint to detrmine the arsize
+  constraint arsize_c6 { soft arsize inside {[0:2]}; 
+                        }
+
   //-------------------------------------------------------
   // Memory Constraints
   //-------------------------------------------------------
