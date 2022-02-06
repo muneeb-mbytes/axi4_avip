@@ -138,6 +138,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
     axi_write_seq_item_port.get_next_item(req_wr);
 
+    // writting the req into write data and response fifo's
     axi4_slave_write_data_in_fifo_h.put(req_wr);
     axi4_slave_write_response_fifo_h.put(req_wr);
     
@@ -148,6 +149,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_write_transfer_char_s struct_write_packet;
       axi4_transfer_cfg_s        struct_cfg;
     
+      //returns status of address thread
       addr_tx=process::self();
       
       //Converting transactions into struct data type
@@ -166,6 +168,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
      
      `uvm_info("DEBUG_SLAVE_WRITE_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_addr_tx.sprint()), UVM_NONE);
      
+     // putting write address data into address fifo
      if(axi4_slave_write_addr_fifo_h.is_full) begin
        `uvm_error(get_type_name(),$sformatf("WRITE_ADDR_THREAD::Cannot put into FIFO as WRITE_FIFO is FULL"));
      end
@@ -181,8 +184,13 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_write_transfer_char_s struct_write_packet;
       axi4_transfer_cfg_s        struct_cfg;
       
+      //returns status of write data thread
       data_tx=process::self();
+
+      // Trying to get the write key 
       semaphore_write_key.get(1);
+
+      //getting the data from write data fifo
       axi4_slave_write_data_in_fifo_h.get(local_slave_data_tx);
       
       //Converting transactions into struct data type
@@ -203,8 +211,10 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
      `uvm_info("DEBUG_SLAVE_WDATA_PROXY_TO_CLASS", $sformatf("AFTER TO CLASS :: Received req packet \n %s", local_slave_data_tx.sprint()), UVM_NONE);
 
+     //putting the write data into write dat out fifo 
       axi4_slave_write_data_out_fifo_h.put(local_slave_data_tx);
 
+      //putting back the semaphore key
       semaphore_write_key.put(1);
     
     end
@@ -218,8 +228,13 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_write_transfer_char_s struct_write_packet;
       axi4_transfer_cfg_s        struct_cfg;
       
+      //returns status of response thread
       response_tx=process::self();
+
+      //getting the key from semaphore 
       semaphore_write_key.get(1);
+
+      //getting the data from response fifo
       axi4_slave_write_response_fifo_h.get(local_slave_response_tx);
       
       //Converting transactions into struct data type
@@ -239,6 +254,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
      `uvm_info("DEBUG_SLAVE_WDATA_PROXY_TO_CLASS", $sformatf("AFTER TO CLASS :: Received req packet \n %s", local_slave_response_tx.sprint()), UVM_NONE);
      
+     //check for fifo empty if not get the data 
      if(axi4_slave_write_addr_fifo_h.is_empty) begin
        `uvm_error(get_type_name(),$sformatf("WRITE_RESP_THREAD::Cannot get write addr data from FIFO as WRITE_ADDR_FIFO is EMPTY"));
      end
@@ -250,16 +266,20 @@ task axi4_slave_driver_proxy::axi4_write_task();
 
       axi4_slave_write_data_out_fifo_h.get(local_slave_data_tx);
 
+     //Calling combined data packet from converter class
      axi4_slave_seq_item_converter::tx_write_packet(local_slave_addr_tx,local_slave_data_tx,local_slave_response_tx,packet);
      `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: COMBINED WRITE CHANNEL PACKET \n %s",packet.sprint()), UVM_HIGH);
 
+     //calling task memory write to store the data into slave memory
      task_memory_write(packet);
 
-      semaphore_write_key.put(1);
-    end
+     //putting back the key
+     semaphore_write_key.put(1);
+   end
   
   join_any
 
+  //checking the status of write address thread
   addr_tx.await();
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_ADDRESS_CHANNEL_STATUS = \n %s",addr_tx.status()),UVM_MEDIUM)
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_WDATA_CHANNEL_STATUS = \n %s",data_tx.status()),UVM_MEDIUM)
@@ -283,6 +303,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
 
     axi_read_seq_item_port.get_next_item(req_rd);
 
+    //putting the data into read data fifo
     axi4_slave_read_data_in_fifo_h.put(req_rd);
 
     fork
@@ -292,6 +313,7 @@ task axi4_slave_driver_proxy::axi4_read_task();
       axi4_read_transfer_char_s struct_read_packet;
       axi4_transfer_cfg_s       struct_cfg;
       
+      //returns status of address thread
       rd_addr = process::self();
       
       //Converting transactions into struct data type
@@ -308,7 +330,8 @@ task axi4_slave_driver_proxy::axi4_read_task();
       //Converting struct into transaction data type
       axi4_slave_seq_item_converter::to_read_class(struct_read_packet,local_slave_tx);
       `uvm_info("DEBUG_SLAVE_READ_ADDR_PROXY", $sformatf(" to_class_raddr_phase_slave_proxy  \n %p",struct_read_packet), UVM_NONE);
-      
+     
+      //Putting back the sampled read address data into fifo
       axi4_slave_read_addr_fifo_h.put(local_slave_tx);
       `uvm_info("DEBUG_SLAVE_READ_ADDR_PROXY", $sformatf("AFTER :: Received req packet \n %s",local_slave_tx.sprint()), UVM_NONE);
     
@@ -322,11 +345,16 @@ task axi4_slave_driver_proxy::axi4_read_task();
      axi4_read_transfer_char_s struct_read_packet;
      axi4_transfer_cfg_s       struct_cfg;
 
+     //returns status of data thread
      rd_data = process::self();
 
+     //Getting the key from semaphore
      semaphore_read_key.get(1);
+
+     //Waiting for the read address thread to complete
      rd_addr.await();
 
+     //Getting the data from read data fio
      axi4_slave_read_data_in_fifo_h.get(local_slave_rdata_tx);
 
      //Converting transactions into struct data type
@@ -341,21 +369,27 @@ task axi4_slave_driver_proxy::axi4_read_task();
      axi4_slave_drv_bfm_h.axi4_read_data_phase(struct_read_packet,struct_cfg);
      `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %p",struct_read_packet), UVM_HIGH);
 
+     //Calling converter class for reads to convert struct to req
      axi4_slave_seq_item_converter::to_read_class(struct_read_packet,local_slave_rdata_tx);
      `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: READ CHANNEL PACKET \n %s",local_slave_rdata_tx.sprint()), UVM_HIGH);
 
+     //Getting teh sampled read address from read address fifo
      axi4_slave_read_addr_fifo_h.get(local_slave_raddr_tx);
     
+     //Calling the Combined coverter class to combine read address and read data packet
      axi4_slave_seq_item_converter::tx_read_packet(local_slave_raddr_tx,local_slave_rdata_tx,packet);
      `uvm_info("DEBUG_SLAVE_RDATA_PROXY", $sformatf("AFTER :: COMBINED READ CHANNEL PACKET \n %s",packet.sprint()), UVM_HIGH);
      
+     //Putting back the key
      semaphore_read_key.put(1);
    end
   join_any
  
+  //Check the status of read address thread
   rd_addr.await();
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_READ_CHANNEL_STATUS = \n %s",rd_addr.status()),UVM_MEDIUM)
   `uvm_info("SLAVE_STATUS_CHECK",$sformatf("AFTER_FORK_JOIN_ANY:: SLAVE_RDATA_CHANNEL_STATUS = \n %s",rd_data.status()),UVM_MEDIUM)
+
   axi_read_seq_item_port.item_done();
 end
 
