@@ -57,14 +57,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to send the write address user
   rand bit awuser;
 
-  //Variable : awvalid
-  //Used to send the write address valid
-  //bit awvalid;
-  
-  //Variable : awready
-  //Used to send the write address ready
-  //bit awready;
-  
   //-------------------------------------------------------
   // WRITE DATA CHANNEL SIGNALS
   //-------------------------------------------------------
@@ -89,14 +81,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //Variable : wuser
   //Used to send the user bit value
   rand bit [3:0]wuser;
-
-  //Variable : wvalid
-  //Used to send the write valid
-  //bit wvalid;
-  
-  //Variable : wready
-  //Used to send the write ready
-  //bit wready;
 
   //-------------------------------------------------------
   // WRITE RESPONSE CHANNEL SIGNALS
@@ -160,14 +144,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to send the read address region data
   rand bit arregion;
 
-  //Variable : arvalid
-  //Used to send the read address valid
-  //bit arvalid;
-
-  //Variable : arready
-  //Used to send the read address ready
-  //bit arready;
-   
   //-------------------------------------------------------
   // READ DATA CHANNEL SIGNALS 
   //-------------------------------------------------------
@@ -194,10 +170,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to read the read user value
   bit ruser;
   
-  //Variable : rready
-  //Used to send the read ready
-  //bit rready;
-
   //Variable : endian
   //Used to differentiate the type of memory storage
   rand endian_e endian;
@@ -266,7 +238,10 @@ class axi4_master_tx extends uvm_sequence_item;
   //Constraint : wstrb_c2
   //Adding constraint to restrict the write strobe based on awlength
   constraint wstrb_c2 { wstrb.size() == awlen + 1;}
+
+  //Constraint : wstrb_c3
   constraint wstrb_c3 { foreach(wstrb[i]) wstrb[i]!=0; }
+
   //constraint wstrb_c0 { soft awaddr inside {awaddr >1 && awaddr % awsize == 0}; }
 
   constraint wstrb_c { 
@@ -624,6 +599,7 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("awcache",awcache.name());
     printer.print_string("awprot",awprot.name());
     printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
+    printer.print_field("wait_count_write_address_channel",wait_count_write_address_channel,$bits(wait_count_write_address_channel),UVM_HEX);
     //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
 
     foreach(wdata[i])begin
@@ -633,10 +609,12 @@ function void axi4_master_tx::do_print(uvm_printer printer);
       // MSHA: printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
       printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
     end
+    printer.print_field("wait_count_write_data_channel",wait_count_write_data_channel,$bits(wait_count_write_data_channel),UVM_HEX);
     //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
-    printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
     printer.print_string("bid",bid.name());
     printer.print_string("bresp",bresp.name());
+    printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
+    printer.print_field("wait_count_write_response_channel",wait_count_write_response_channel,$bits(wait_count_write_response_channel),UVM_HEX);
   end
   if(tx_type == READ) begin
     //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);
@@ -649,15 +627,17 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("arcache",arcache.name());
     printer.print_string("arprot",arprot.name());
     printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
+    printer.print_field("wait_count_read_address_channel",wait_count_read_address_channel,$bits(wait_count_read_address_channel),UVM_HEX);
+
     //`uvm_info("------------------------------------------READ_DATA_CHANNEL","----------------------------------------",UVM_LOW);
+    printer.print_string("rid",rid.name());
     foreach(rdata[i])begin
       printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
     end
-    //printer.print_field("rdata",rdata,$bits(rdata),UVM_HEX);
-    printer.print_string("rid",rid.name());
     printer.print_string("rresp",rresp.name());
     printer.print_field("ruser",ruser,$bits(ruser),UVM_HEX);
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
+    printer.print_field("wait_count_read_data_channel",wait_count_read_data_channel,$bits(wait_count_read_data_channel),UVM_HEX);
   end
   printer.print_string("transfer_type",transfer_type.name());
 endfunction : do_print

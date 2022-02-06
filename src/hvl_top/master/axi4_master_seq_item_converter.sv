@@ -227,6 +227,9 @@ function void axi4_master_seq_item_converter::to_write_class( input axi4_write_t
   output_conv_h.awqos = input_conv_h.awqos;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting awqos =  %0h",output_conv_h.awqos),UVM_HIGH);
 
+  output_conv_h.wait_count_write_address_channel = input_conv_h.wait_count_write_address_channel;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wait_count_write_address_channel =  %0h",output_conv_h.wait_count_write_address_channel),UVM_HIGH);
+
   foreach(input_conv_h.wdata[i]) begin
     if(input_conv_h.wdata[i] != 0)begin
       output_conv_h.wdata.push_front(input_conv_h.wdata[i]);
@@ -247,11 +250,17 @@ function void axi4_master_seq_item_converter::to_write_class( input axi4_write_t
   output_conv_h.wuser = input_conv_h.wuser;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wuser =  %0h",output_conv_h.wuser),UVM_HIGH);
 
+  output_conv_h.wait_count_write_data_channel = input_conv_h.wait_count_write_data_channel;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wait_count_write_data_channel =  %0h",output_conv_h.wait_count_write_data_channel),UVM_HIGH);
+
   $cast(output_conv_h.bid,input_conv_h.bid);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting bid =  %b",output_conv_h.bid),UVM_HIGH);
 
   $cast(output_conv_h.bresp,input_conv_h.bresp);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting bresp =  %b",output_conv_h.bresp),UVM_HIGH);
+
+  output_conv_h.wait_count_write_response_channel = input_conv_h.wait_count_write_response_channel;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wait_count_write_response_channel = %0h",output_conv_h.wait_count_write_response_channel),UVM_HIGH);
 
 endfunction : to_write_class
 
@@ -272,6 +281,12 @@ function void axi4_master_seq_item_converter::to_read_class( input axi4_read_tra
   $cast(output_conv_h.arlen,input_conv_h.arlen);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting arlen =  %b",output_conv_h.arlen),UVM_HIGH);
 
+  output_conv_h.araddr = input_conv_h.araddr;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting araddr =  %0h",output_conv_h.araddr),UVM_HIGH);
+
+  output_conv_h.arqos = input_conv_h.arqos;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
+
   $cast(output_conv_h.arsize,input_conv_h.arsize);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting arsize =  %b",output_conv_h.arsize),UVM_HIGH);
 
@@ -287,15 +302,12 @@ function void axi4_master_seq_item_converter::to_read_class( input axi4_read_tra
   $cast(output_conv_h.arprot,input_conv_h.arprot);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting arprot =  %b",output_conv_h.arprot),UVM_HIGH);
 
+  output_conv_h.wait_count_read_address_channel = input_conv_h.wait_count_read_address_channel;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wait_count_read_address_channel =  %0h",output_conv_h.wait_count_read_address_channel),UVM_HIGH);
+
   $cast(output_conv_h.rresp,input_conv_h.rresp);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting rresp =  %b",output_conv_h.rresp),UVM_HIGH);
   
-  output_conv_h.araddr = input_conv_h.araddr;
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting araddr =  %0h",output_conv_h.araddr),UVM_HIGH);
-
-  output_conv_h.arqos = input_conv_h.arqos;
-  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting arqos =  %0h",output_conv_h.arqos),UVM_HIGH);
-
   $cast(output_conv_h.rid,input_conv_h.rid);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting rid =  %b",output_conv_h.rid),UVM_HIGH);
 
@@ -305,6 +317,9 @@ function void axi4_master_seq_item_converter::to_read_class( input axi4_read_tra
       `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting rdata =  %0h",output_conv_h.rdata[i]),UVM_HIGH);
     end
   end
+
+  output_conv_h.wait_count_read_data_channel = input_conv_h.wait_count_read_data_channel;
+  `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wait_count_read_data_channel =  %0h",output_conv_h.wait_count_read_data_channel),UVM_HIGH);
 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
 endfunction : to_read_class
