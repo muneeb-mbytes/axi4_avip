@@ -85,12 +85,12 @@ interface master_assertions (input                     aclk,
  
   //Assertion:   AXI_WA_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when AWVALID is HIGH
-  property if_write_address_channel_signals_are_unknown;
-    @(posedge aclk) disable iff (!aresetn)
-    (awvalid==1) |-> (!($isunknown(awid)) && !($isunknown(awaddr)) && !($isunknown(awlen)) && !($isunknown(awsize))
-                     && !($isunknown(awburst)) && !($isunknown(awlock)) && !($isunknown(awcache)) && !($isunknown(awprot)));
-  endproperty : if_write_address_channel_signals_are_unknown
-  AXI_WA_UNKNOWN_SIGNALS_CHECK: assert property (if_write_address_channel_signals_are_unknown);
+  //property if_write_address_channel_signals_are_unknown;
+  //  @(posedge aclk) disable iff (!aresetn)
+  //  (awvalid==1) |-> (!($isunknown(awid)) && !($isunknown(awaddr)) && !($isunknown(awlen)) && !($isunknown(awsize))
+  //                   && !($isunknown(awburst)) && !($isunknown(awlock)) && !($isunknown(awcache)) && !($isunknown(awprot)));
+  //endproperty : if_write_address_channel_signals_are_unknown
+  //AXI_WA_UNKNOWN_SIGNALS_CHECK: assert property (if_write_address_channel_signals_are_unknown);
 
   //Assertion:   AXI_WA_VALID_STABLE_CHECK
   //Description: When AWVALID is asserted, then it must remain asserted until AWREADY is HIGH
@@ -115,11 +115,11 @@ interface master_assertions (input                     aclk,
  
   //Assertion:   AXI_WD_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when WVALID is HIGH
-  property if_write_data_channel_signals_are_unknown;
-    @(posedge aclk) disable iff (!aresetn)
-    (wvalid == 1) |-> (!($isunknown(wdata)) && !($isunknown(wstrb)) && !($isunknown(wlast)) && !($isunknown(wuser)));
-  endproperty : if_write_data_channel_signals_are_unknown
-  AXI_WD_UNKNOWN_SIGNALS_CHECK: assert property (if_write_data_channel_signals_are_unknown);
+  //property if_write_data_channel_signals_are_unknown;
+  //  @(posedge aclk) disable iff (!aresetn)
+  //  (wvalid == 1) |-> (!($isunknown(wdata)) && !($isunknown(wstrb)) && !($isunknown(wlast)) && !($isunknown(wuser)));
+  //endproperty : if_write_data_channel_signals_are_unknown
+  //AXI_WD_UNKNOWN_SIGNALS_CHECK: assert property (if_write_data_channel_signals_are_unknown);
 
   //Assertion:   AXI_WD_VALID_STABLE_CHECK
   //Description: When WVALID is asserted, then it must remain asserted until WREADY is HIGH
@@ -144,11 +144,11 @@ interface master_assertions (input                     aclk,
 
   //Assertion:   AXI_WR_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when BVALID is HIGH
-  property if_write_response_channel_signals_are_unknown;
-    @(posedge aclk) disable iff(!aresetn)
-    bvalid==1 |-> !$isunknown(bid) && !$isunknown(buser) && !$isunknown(bresp);  
-  endproperty : if_write_response_channel_signals_are_unknown
-  AXI_WR_UNKNOWN_SIGNALS_CHECK: assert property (if_write_response_channel_signals_are_unknown);
+  //property if_write_response_channel_signals_are_unknown;
+  //  @(posedge aclk) disable iff(!aresetn)
+  //  bvalid==1 |-> !$isunknown(bid) && !$isunknown(buser) && !$isunknown(bresp);  
+  //endproperty : if_write_response_channel_signals_are_unknown
+  //AXI_WR_UNKNOWN_SIGNALS_CHECK: assert property (if_write_response_channel_signals_are_unknown);
 
   //Assertion:   AXI_WR_VALID_STABLE_CHECK
   //Description: When BVALID is asserted, then it must remain asserted until BREADY is HIGH
@@ -174,12 +174,12 @@ interface master_assertions (input                     aclk,
  
   //Assertion:   AXI_RA_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when ARVALID is HIGH
-  property if_read_address_channel_signals_are_unknown;
-    @(posedge aclk) disable iff (!aresetn)
-    (arvalid==1) |-> (!($isunknown(arid)) && !($isunknown(araddr)) && !($isunknown(arlen)) && !($isunknown(arsize))
-                     && !($isunknown(arburst)) && !($isunknown(arlock)) && !($isunknown(arcache)) && !($isunknown(arprot)));
-  endproperty : if_read_address_channel_signals_are_unknown
-  AXI_RA_UNKNOWN_SIGNALS_CHECK: assert property (if_read_address_channel_signals_are_unknown);
+  //property if_read_address_channel_signals_are_unknown;
+  //  @(posedge aclk) disable iff (!aresetn)
+  //  (arvalid==1) |-> (!($isunknown(arid)) && !($isunknown(araddr)) && !($isunknown(arlen)) && !($isunknown(arsize))
+  //                   && !($isunknown(arburst)) && !($isunknown(arlock)) && !($isunknown(arcache)) && !($isunknown(arprot)));
+  //endproperty : if_read_address_channel_signals_are_unknown
+  //AXI_RA_UNKNOWN_SIGNALS_CHECK: assert property (if_read_address_channel_signals_are_unknown);
 
   //Assertion:   AXI_RA_VALID_STABLE_CHECK
   //Description: When ARVALID is asserted, then it must remain asserted until ARREADY is HIGH
@@ -204,12 +204,12 @@ interface master_assertions (input                     aclk,
  
   //Assertion:   AXI_RD_UNKNOWN_SIGNALS_CHECK
   //Description: A value of X on signals is not permitted when RVALID is HIGH
-  property if_read_data_channel_signals_are_unknown;
-    @(posedge aclk) disable iff (!aresetn)
-    (rvalid==1) |-> (!($isunknown(rid)) && !($isunknown(rdata)) && !($isunknown(rresp))
-                    && !($isunknown(rlast)) && !($isunknown(ruser)));
-  endproperty : if_read_data_channel_signals_are_unknown
-  AXI_RD_UNKNOWN_SIGNALS_CHECK: assert property (if_read_data_channel_signals_are_unknown);
+  //property if_read_data_channel_signals_are_unknown;
+  //  @(posedge aclk) disable iff (!aresetn)
+  //  (rvalid==1) |-> (!($isunknown(rid)) && !($isunknown(rdata)) && !($isunknown(rresp))
+  //                  && !($isunknown(rlast)) && !($isunknown(ruser)));
+  //endproperty : if_read_data_channel_signals_are_unknown
+  //AXI_RD_UNKNOWN_SIGNALS_CHECK: assert property (if_read_data_channel_signals_are_unknown);
 
   //Assertion:   AXI_RD_VALID_STABLE_CHECK
   //Description: When RVALID is asserted, then it must remain asserted until RREADY is HIGH
