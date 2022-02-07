@@ -49,8 +49,7 @@ endclass : axi4_master_agent
 //  name - axi4_master_agent
 //  parent - parent under which this component is created
 //--------------------------------------------------------------------------------------------
-function axi4_master_agent::new(string name = "axi4_master_agent",
-                                 uvm_component parent = null);
+function axi4_master_agent::new(string name = "axi4_master_agent", uvm_component parent = null);
   super.new(name, parent);
 endfunction : new
 
@@ -64,10 +63,6 @@ endfunction : new
 function void axi4_master_agent::build_phase(uvm_phase phase);
   super.build_phase(phase);
   
- // if(!uvm_config_db #(axi4_master_agent_config)::get(this,"","axi4_master_agent_config",axi4_master_agent_cfg_h)) begin
- //   `uvm_fatal("FATAL_MA_CANNOT_GET_MASTER_AGENT_CONFIG","cannot get axi4_master_agent_cfg_h from uvm_config_db");
- // end
-  
   if(axi4_master_agent_cfg_h.is_active == UVM_ACTIVE) begin
     axi4_master_drv_proxy_h=axi4_master_driver_proxy::type_id::create("axi4_master_drv_proxy_h",this);
     axi4_master_write_seqr_h=axi4_master_write_sequencer::type_id::create("axi4_master_write_seqr_h",this);
@@ -79,7 +74,6 @@ function void axi4_master_agent::build_phase(uvm_phase phase);
   if(axi4_master_agent_cfg_h.has_coverage) begin
    axi4_master_cov_h = axi4_master_coverage ::type_id::create("axi4_master_cov_h",this);
   end
-
 
 endfunction : build_phase
 
@@ -105,7 +99,7 @@ function void axi4_master_agent::connect_phase(uvm_phase phase);
 
   if(axi4_master_agent_cfg_h.has_coverage) begin
     axi4_master_cov_h.axi4_master_agent_cfg_h = axi4_master_agent_cfg_h;   
-     // Connecting monitor_proxy port to coverage export
+    //Connecting monitor_proxy port to coverage export
     axi4_master_mon_proxy_h.axi4_master_read_address_analysis_port.connect(axi4_master_cov_h.analysis_export);
     axi4_master_mon_proxy_h.axi4_master_read_data_analysis_port.connect(axi4_master_cov_h.analysis_export);
     axi4_master_mon_proxy_h.axi4_master_write_address_analysis_port.connect(axi4_master_cov_h.analysis_export);

@@ -19,11 +19,11 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : awaddr
   //Used to send the write address
-  rand bit [ADDRESS_WIDTH-1:0]awaddr;
+  rand bit [ADDRESS_WIDTH-1:0] awaddr;
 
   //Variable : awlen
   //Used to send the write address length
-  rand bit [LENGTH-1:0]awlen;
+  rand bit [LENGTH-1:0] awlen;
 
   //Variable : awsize
   //Used to send the write address size
@@ -47,11 +47,11 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : awqos
   //Used to send the write address quality of service
-  rand bit [3:0]awqos;
+  rand bit [3:0] awqos;
 
   //Variable : awregion
   //Used to send the write address region selected
-  rand bit [3:0]awregion;
+  rand bit [3:0] awregion;
 
   //Variable : awuser
   //Used to send the write address user
@@ -70,8 +70,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //Used to randomise write strobe
   //varaible[$] gives a unbounded queue
   //variable[$:value] gives a bounded queue to a value of given value 
-
-  // MSHA: rand bit [(DATA_WIDTH/8)-1:0] wstrb [$:DATA_WIDTH];
   rand bit [(DATA_WIDTH/8)-1:0] wstrb [$:2**LENGTH];
 
   //Variable : wlast
@@ -80,7 +78,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : wuser
   //Used to send the user bit value
-  rand bit [3:0]wuser;
+  rand bit [3:0] wuser;
 
   //-------------------------------------------------------
   // WRITE RESPONSE CHANNEL SIGNALS
@@ -110,7 +108,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Variable : arlen
   //Used to send the read address length
-  rand bit [LENGTH-1:0]arlen;
+  rand bit [LENGTH-1:0] arlen;
 
   //Variable : arsize
   //Used to send the read address size
@@ -147,7 +145,6 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   // READ DATA CHANNEL SIGNALS 
   //-------------------------------------------------------
-
   //Variable : rid
   //Used to send the read address id
   rid_e rid;
@@ -181,77 +178,106 @@ class axi4_master_tx extends uvm_sequence_item;
   //Variable: transfer_type
   //Used to the determine the type of the transfer
   rand transfer_type_e transfer_type;
+  
+  //Variable : no_of_wait_states
+  //Used to count number of wait states
+  rand int no_of_wait_states;
 
+  //Variable: wait_count_write_address_channel
+  //Used to determine wait count for write address channel
   int wait_count_write_address_channel;
+
+  //Variable: wait_count_write_data_channel
+  //Used to determine wait count for write data channel
   int wait_count_write_data_channel;
+  
+  //Variable: wait_count_write_response_channel
+  //Used to determine wait count for write response channel
   int wait_count_write_response_channel;
+
+  //Variable: wait_count_read_address_channel
+  //Used to determine wait count for write response channel
   int wait_count_read_address_channel;
+
+  //Variable: wait_count_read_data_channel
+  //Used to determine wait count for write response channel
   int wait_count_read_data_channel;
   
+  //Variable: outstanding_write_tx
+  //Used to determine the outstanding write tx count
   int outstanding_write_tx;
+  
+  //Variable: outstanding_write_tx
+  //Used to determine the outstanding write tx count
   int outstanding_read_tx;
-  rand int no_of_wait_states;
+  
   //-------------------------------------------------------
   // WRITE ADDRESS Constraints
   //-------------------------------------------------------
   //Constraint : awburst_c1
   //Restricting write burst to select only FIXED, INCR and WRAP types
-  constraint awburst_c1 { awburst != WRITE_RESERVED;
-                        }
+  constraint awburst_c1 {awburst != WRITE_RESERVED;}
 
   //Constraint : awlength_c2
   //Adding constraint for restricting write trasnfers
-  constraint awlength_c2 { if(awburst==WRITE_FIXED || WRITE_WRAP)
+  constraint awlength_c2 {if(awburst==WRITE_FIXED || WRITE_WRAP)
                               awlen inside {[0:15]};
-                           else if(awburst == WRITE_INCR) 
-                              awlen inside {[0:255]};
-                         }
+                          else if(awburst == WRITE_INCR) 
+                              awlen inside {[0:255]};}
 
   //Constraint : awlength_c3
   //Adding constraint for restricting to get multiples of 2 in wrap burst
-  constraint awlength_c3 { if(awburst == WRITE_WRAP)
-                              awlen + 1 inside {2,4,8,16};
-                         }
+  constraint awlength_c3 {if(awburst == WRITE_WRAP)
+                          awlen + 1 inside {2,4,8,16};}
   
   //Constraint : awlock_c4
   //Adding constraint to select the lock transfer type
-  constraint awlock_c4 { soft awlock == WRITE_NORMAL_ACCESS;
-                       }
+  constraint awlock_c4 {soft awlock == WRITE_NORMAL_ACCESS;}
 
   //Constraint : awburst_c5
   //Adding a soft constraint to detrmine the burst type
-  constraint awburst_c5 { soft awburst == WRITE_INCR; 
-                        }
+  constraint awburst_c5 {soft awburst == WRITE_INCR;}
 
   //Constraint : awsize_c6
   //Adding a soft constraint to detrmine the awsize
-  constraint awsize_c6 { soft awsize inside {[0:2]}; 
-                        }
+  constraint awsize_c6 {soft awsize inside {[0:2]};}
 
   //-------------------------------------------------------
   // WRITE DATA Constraints
   //-------------------------------------------------------
   //Constraint : wdata_c1
   //Adding constraint to restrict the write data based on awlength
-  constraint wdata_c1 { wdata.size() == awlen + 1;} 
+  constraint wdata_c1 {wdata.size() == awlen + 1;} 
 
   //Constraint : wstrb_c2
   //Adding constraint to restrict the write strobe based on awlength
-  constraint wstrb_c2 { wstrb.size() == awlen + 1;}
+  constraint wstrb_c2 {wstrb.size() == awlen + 1;}
 
   //Constraint : wstrb_c3
-  constraint wstrb_c3 { foreach(wstrb[i]) wstrb[i]!=0; }
+  constraint wstrb_c3 {foreach(wstrb[i]) wstrb[i]!=0; }
 
- // constraint wstrb_c0 { soft awaddr inside {awaddr !=0 && awaddr % awsize != 0}; }
+ // constraint wstrb_c0 {soft awaddr inside {awaddr !=0 && awaddr % awsize != 0}; }
 
   constraint wstrb_c { 
-  if(awaddr % awsize == 0) {
-  		if(awsize == 0) foreach(wstrb[i])  wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000};
-  		//(awsize == 1) -> wstrb[i] inside {4'b0011, 4'b1100, 4'b1010, 4'b0101, 4'b1001};
-      if (awsize == 1) foreach(wstrb[i]) { $countones(wstrb[i])  == 2};
-  	  if (awsize == 2)  foreach(wstrb[i])  wstrb[i] inside {4'b1111};
+    if(awaddr % awsize == 0) {
+  		if(awsize == 0) foreach(wstrb[i]) wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000};
+  		if(awsize == 1) foreach(wstrb[i]) wstrb[i] inside {4'b0011, 4'b1100, 4'b0101, 4'b1010, 4'b1001, 4'b0110};
+  	  if(awsize == 2) foreach(wstrb[i]) wstrb[i] inside {4'b1111};
+      //if(awsize == 0) foreach(wstrb[i]) { $countones(wstrb[i]) == 1};
+      //if(awsize == 1) foreach(wstrb[i]) { $countones(wstrb[i]) == 2};
+      //if(awsize == 2) foreach(wstrb[i]) { $countones(wstrb[i]) == 4};
   	}
   
+    //else 
+    //  foreach (wdata[i]) { 
+  	//	//if(awsize == 0) wstrb[0] inside {4'b0000};
+  	//	//if(awsize == 1) wstrb[0] inside {4'b1000};
+    //  //if(awsize == 2) wstrb[0] inside {4'b1000};
+  	//	
+    //  if(awsize == 0) foreach(wstrb[i]) wstrb[i] inside {4'b0000};
+  	//	if(awsize == 1) foreach(wstrb[i]) wstrb[i] inside {4'b1000};
+    //  if(awsize == 2) foreach(wstrb[i]) wstrb[i] inside {4'b1000};
+    
     else 
       foreach (wdata[i]) { 
   		(awsize == 0) -> //wstrb[0] inside {{4'b0000},
@@ -266,18 +292,17 @@ class axi4_master_tx extends uvm_sequence_item;
                        //$countones(wstrb[i]) == 4};
   	}
   }
- 
- 
+
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
-  constraint no_of_wait_states_c3 { no_of_wait_states inside  {[0:3]};}
+  constraint no_of_wait_states_c3 {no_of_wait_states inside {[0:3]};}
+  
   //-------------------------------------------------------
   // READ ADDRESS Constraints
   //-------------------------------------------------------
   //Constraint : arburst_c1
   //Restricting read burst to select only FIXED, INCR and WRAP types
-  constraint arburst_c1 { arburst != READ_RESERVED;
-                        }
+  constraint arburst_c1 { arburst != READ_RESERVED;}
 
   //Constraint : arlength_c2
   //Adding constraint for restricting read trasnfers
@@ -295,26 +320,22 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Constraint : arlock_c9
   //Adding constraint to select the lock transfer type
-  constraint arlock_c4 { soft arlock == READ_NORMAL_ACCESS;
-                       }
+  constraint arlock_c4 { soft arlock == READ_NORMAL_ACCESS;}
 
   //Constraint : arburst_c5
   //Adding a soft constraint to detrmine the burst type
-  constraint arburst_c5 { soft arburst == READ_INCR; 
-                        }
+  constraint arburst_c5 { soft arburst == READ_INCR;}
 
   //Constraint : arsize_c6
   //Adding a soft constraint to detrmine the arsize
-  constraint arsize_c6 { soft arsize inside {[0:2]}; 
-                        }
+  constraint arsize_c6 { soft arsize inside {[0:2]};}
 
   //-------------------------------------------------------
   // Memory Constraints
   //-------------------------------------------------------
   //Constraint : endian_c1
   //Adding constraint to select the endianess
-  constraint endian_c1 { soft endian == LITTLE_ENDIAN;
-                       }
+  constraint endian_c1 { soft endian == LITTLE_ENDIAN;}
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -362,11 +383,6 @@ endfunction : new
 //  end
 //
 //
-//
-//
-//
-//
-//
 ////
 ////  foreach(wdata[i])begin
 ////    `uvm_info("DEBUG_NAD", $sformatf("wdata[%0d]=%0h",i,wdata[i]),UVM_HIGH);
@@ -400,17 +416,6 @@ endfunction : new
 //// end
 ////
 ////
-////  ////Variable : index
-////  ////Used to store the address_range index value
-////  //int index;
-////
-////  ////Derive the slave number using the index
-////  //for(int i=0; i<NO_OF_SLAVES; i++) begin
-////  //  if(pselx[i]) begin
-////  //    index = i;
-////  //  end
-////  //end
-//// 
 ////  ////Randmoly chosing paddr value between a given range
 ////  //if (!std::randomize(awaddr) with { awaddr inside {[axi4_master_agent_cfg_h.master_min_addr_range_array[index]:axi4_master_agent_cfg_h.master_max_addr_range_array[index]]};
 ////  //  //awaddr %4 == 0;
@@ -475,37 +480,33 @@ function void axi4_master_tx::do_copy(uvm_object rhs);
   awcache = axi4_master_tx_copy_obj.awcache;
   awprot  = axi4_master_tx_copy_obj.awprot;
   awqos   = axi4_master_tx_copy_obj.awqos;
-  
   //WRITE DATA CHANNEL
   wdata = axi4_master_tx_copy_obj.wdata;
   wstrb = axi4_master_tx_copy_obj.wstrb;
   wuser = axi4_master_tx_copy_obj.wuser;
-  
   //WRITE RESPONSE CHANNEL
   bid   = axi4_master_tx_copy_obj.bid;
   bresp = axi4_master_tx_copy_obj.bresp;
   buser = axi4_master_tx_copy_obj.buser;
-  
   //READ ADDRESS CHANNEL
-  arid    = axi4_master_tx_copy_obj.arid;
-  araddr  = axi4_master_tx_copy_obj.araddr;
-  arlen   = axi4_master_tx_copy_obj.arlen;
-  arsize  = axi4_master_tx_copy_obj.arsize;
-  arburst = axi4_master_tx_copy_obj.arburst;
-  arlock  = axi4_master_tx_copy_obj.arlock;
-  arcache = axi4_master_tx_copy_obj.arcache;
-  arprot  = axi4_master_tx_copy_obj.arprot;
-  arqos   = axi4_master_tx_copy_obj.arqos;
+  arid     = axi4_master_tx_copy_obj.arid;
+  araddr   = axi4_master_tx_copy_obj.araddr;
+  arlen    = axi4_master_tx_copy_obj.arlen;
+  arsize   = axi4_master_tx_copy_obj.arsize;
+  arburst  = axi4_master_tx_copy_obj.arburst;
+  arlock   = axi4_master_tx_copy_obj.arlock;
+  arcache  = axi4_master_tx_copy_obj.arcache;
+  arprot   = axi4_master_tx_copy_obj.arprot;
+  arqos    = axi4_master_tx_copy_obj.arqos;
   arregion = axi4_master_tx_copy_obj.arregion;
-  aruser  = axi4_master_tx_copy_obj.aruser;
-  
+  aruser   = axi4_master_tx_copy_obj.aruser;
   //READ DATA CHANNEL
-  rid    = axi4_master_tx_copy_obj.rid;
+  rid   = axi4_master_tx_copy_obj.rid;
   rdata = axi4_master_tx_copy_obj.rdata;
   rresp = axi4_master_tx_copy_obj.rresp;
   ruser = axi4_master_tx_copy_obj.ruser;
-
-  tx_type = axi4_master_tx_copy_obj.tx_type;
+  //OTHERS
+  tx_type       = axi4_master_tx_copy_obj.tx_type;
   transfer_type = axi4_master_tx_copy_obj.transfer_type;
 endfunction : do_copy
 
@@ -535,15 +536,12 @@ function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   awcache == axi4_master_tx_compare_obj.awcache &&
   awprot  == axi4_master_tx_compare_obj.awprot  &&
   awqos   == axi4_master_tx_compare_obj.awqos   &&
-  
   //WRITE DATA CHANNEL
   wdata == axi4_master_tx_compare_obj.wdata &&
   wstrb == axi4_master_tx_compare_obj.wstrb &&
-  
   //WRITE RESPONSE CHANNEL
   bid   == axi4_master_tx_compare_obj.bid   &&
   bresp == axi4_master_tx_compare_obj.bresp &&
-  
   //READ ADDRESS CHANNEL
   arid    == axi4_master_tx_compare_obj.arid    &&
   araddr  == axi4_master_tx_compare_obj.araddr  &&
@@ -554,7 +552,6 @@ function bit axi4_master_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
   arcache == axi4_master_tx_compare_obj.arcache &&
   arprot  == axi4_master_tx_compare_obj.arprot  &&
   arqos   == axi4_master_tx_compare_obj.arqos   &&
-
   //READ DATA CHANNEL
   rid   == axi4_master_tx_compare_obj.rid   &&
   rdata == axi4_master_tx_compare_obj.rdata &&
@@ -569,10 +566,9 @@ endfunction : do_compare
 // printer  - uvm_printer
 //--------------------------------------------------------------------------------------------
 function void axi4_master_tx::do_print(uvm_printer printer);
-  //super.do_print(printer);
-  //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
   printer.print_string("tx_type",tx_type.name());
   if(tx_type == WRITE) begin
+  //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
     printer.print_string("awid",awid.name());
     printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);
     printer.print_field("awlen",awlen,$bits(awlen),UVM_DEC);
@@ -582,9 +578,9 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("awcache",awcache.name());
     printer.print_string("awprot",awprot.name());
     printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
-    printer.print_field("wait_count_write_address_channel",wait_count_write_address_channel,$bits(wait_count_write_address_channel),UVM_HEX);
-    //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
-
+    printer.print_field("wait_count_write_address_channel",wait_count_write_address_channel,
+                         $bits(wait_count_write_address_channel),UVM_HEX);
+    //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","---------------------------------------",UVM_LOW);
     foreach(wdata[i])begin
       printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
     end
@@ -592,15 +588,18 @@ function void axi4_master_tx::do_print(uvm_printer printer);
       // MSHA: printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
       printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
     end
-    printer.print_field("wait_count_write_data_channel",wait_count_write_data_channel,$bits(wait_count_write_data_channel),UVM_HEX);
-    //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
+    printer.print_field("wait_count_write_data_channel",wait_count_write_data_channel,
+                         $bits(wait_count_write_data_channel),UVM_HEX);
+    //`uvm_info("-----------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
     printer.print_string("bid",bid.name());
     printer.print_string("bresp",bresp.name());
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_DEC);
-    printer.print_field("wait_count_write_response_channel",wait_count_write_response_channel,$bits(wait_count_write_response_channel),UVM_HEX);
+    printer.print_field("wait_count_write_response_channel",wait_count_write_response_channel,
+                         $bits(wait_count_write_response_channel),UVM_HEX);
   end
+  
   if(tx_type == READ) begin
-    //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);
+    //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
     printer.print_string("arid",arid.name());
     printer.print_field("araddr",araddr,$bits(araddr),UVM_HEX);
     printer.print_field("arlen",arlen,$bits(arlen),UVM_DEC);
@@ -610,8 +609,8 @@ function void axi4_master_tx::do_print(uvm_printer printer);
     printer.print_string("arcache",arcache.name());
     printer.print_string("arprot",arprot.name());
     printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
-    printer.print_field("wait_count_read_address_channel",wait_count_read_address_channel,$bits(wait_count_read_address_channel),UVM_HEX);
-
+    printer.print_field("wait_count_read_address_channel",wait_count_read_address_channel,
+                         $bits(wait_count_read_address_channel),UVM_HEX);
     //`uvm_info("------------------------------------------READ_DATA_CHANNEL","----------------------------------------",UVM_LOW);
     printer.print_string("rid",rid.name());
     foreach(rdata[i])begin

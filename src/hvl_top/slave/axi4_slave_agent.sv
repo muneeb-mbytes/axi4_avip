@@ -31,6 +31,7 @@ class axi4_slave_agent extends uvm_agent;
   // Variable: axi4_slave_coverage
   // Decalring a handle for axi4_slave_coverage
   axi4_slave_coverage axi4_slave_cov_h;
+  
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
@@ -48,8 +49,7 @@ endclass : axi4_slave_agent
 //  name - instance name of the  axi4_slave_agent
 //  parent - parent under which this component is created
 //--------------------------------------------------------------------------------------------
-function axi4_slave_agent::new(string name = "axi4_slave_agent",
-                               uvm_component parent);
+function axi4_slave_agent::new(string name = "axi4_slave_agent", uvm_component parent);
   super.new(name, parent);
 endfunction : new
 
@@ -63,14 +63,10 @@ endfunction : new
 function void axi4_slave_agent::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
- // if(!uvm_config_db #(axi4_slave_agent_config)::get(this,"","axi4_slave_agent_config",axi4_slave_agent_cfg_h)) begin
- //  `uvm_fatal("FATAL_SA_AGENT_CONFIG", $sformatf("Couldn't get the axi4_slave_agent_config from config_db"))
- // end
- 
    if(axi4_slave_agent_cfg_h.is_active == UVM_ACTIVE) begin
-     axi4_slave_drv_proxy_h = axi4_slave_driver_proxy::type_id::create("axi4_slave_drv_proxy_h",this);
-     axi4_slave_write_seqr_h=axi4_slave_write_sequencer::type_id::create("axi4_slave_write_seqr_h",this);
-     axi4_slave_read_seqr_h=axi4_slave_read_sequencer::type_id::create("axi4_slave_read_seqr_h",this);
+     axi4_slave_drv_proxy_h  = axi4_slave_driver_proxy::type_id::create("axi4_slave_drv_proxy_h",this);
+     axi4_slave_write_seqr_h = axi4_slave_write_sequencer::type_id::create("axi4_slave_write_seqr_h",this);
+     axi4_slave_read_seqr_h  = axi4_slave_read_sequencer::type_id::create("axi4_slave_read_seqr_h",this);
    end
 
    axi4_slave_mon_proxy_h = axi4_slave_monitor_proxy::type_id::create("axi4_slave_mon_proxy_h",this);
@@ -91,10 +87,10 @@ function void axi4_slave_agent::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
   
   if(axi4_slave_agent_cfg_h.is_active == UVM_ACTIVE) begin
-    axi4_slave_drv_proxy_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
+    axi4_slave_drv_proxy_h.axi4_slave_agent_cfg_h  = axi4_slave_agent_cfg_h;
     axi4_slave_write_seqr_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
-    axi4_slave_read_seqr_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
-    axi4_slave_cov_h.axi4_slave_agent_cfg_h = axi4_slave_agent_cfg_h;
+    axi4_slave_read_seqr_h.axi4_slave_agent_cfg_h  = axi4_slave_agent_cfg_h;
+    axi4_slave_cov_h.axi4_slave_agent_cfg_h        = axi4_slave_agent_cfg_h;
     
     // Connecting the ports
     axi4_slave_drv_proxy_h.axi_write_seq_item_port.connect(axi4_slave_write_seqr_h.seq_item_export);

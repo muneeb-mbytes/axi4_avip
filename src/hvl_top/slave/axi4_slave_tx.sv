@@ -23,7 +23,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : alen
   //Used to represent the no.of beats in a transaction
-  bit [LENGTH-1:0]awlen;
+  bit [LENGTH-1:0] awlen;
 
   //Variable : awsize
   //Used to send the write address size
@@ -32,14 +32,6 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Variable : awburst
   //Used to send the address burst type
   awburst_e awburst;
-
-  //Variable : awready
-  //Used to accept the valid address
-  //bit awready;
-  
-  //Variable : awvalid
-  //Used to accept the valid address
-  //bit awvalid;
 
   //Variable : awlock
   //Used to send the  write address lock
@@ -61,27 +53,16 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to store data in adress location
   endian_e endian;
   
- int wait_count_write_address_channel;
- int wait_count_write_data_channel;
- int wait_count_write_response_channel;
- int wait_count_read_address_channel;
- int wait_count_read_data_channel;
- 
- int outstanding_write_tx;
- int outstanding_read_tx;
- rand int no_of_wait_states;
- transfer_type_e transfer_type;
-
   //-------------------------------------------------------
   // WRITE DATA CHANNEL SIGNALS
   //-------------------------------------------------------
   //Variable : wdata
   //Used to send the write data 
-  bit [DATA_WIDTH-1:0] wdata[$:2**LENGTH];
+  bit [DATA_WIDTH-1:0] wdata [$:2**LENGTH];
 
   //Variable : wstrb
   //Used to hold the valid data byte lanes
-  bit [(DATA_WIDTH/8)-1:0] wstrb[$:2**LENGTH];
+  bit [(DATA_WIDTH/8)-1:0] wstrb [$:2**LENGTH];
 
   //Variable : wlast
   //Used to represent the last byte of the transaction
@@ -89,15 +70,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : wuser
   //Used to represent the user type
-  bit [3:0]wuser;
-
-  //Variable : wready
-  //Used to accept the valid data
-  //bit wready;
-
-  //Variable : wvalid
-  //Used to accept the valid address
-  //bit wvalid;
+  bit [3:0] wuser;
 
   //-------------------------------------------------------
   // WRITE RESPONSE CHANNEL SIGNALS
@@ -112,15 +85,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : buser
   //Used to send the user signal for the transaction
-  rand bit [3:0]buser;
-
-  //Variable : bready
-  //Used to accept write response are  valid data
-  //bit bready;
-
-  //Variable : bvalid
-  //Used to accept the write transaction has valid data
-  //bit bvalid;
+  rand bit [3:0] buser;
 
   //-------------------------------------------------------
   // READ ADDRESS CHANNEL SIGNALS
@@ -135,7 +100,7 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : arlen
   //Used to represent the no.of beats in a transaction
-  rand bit [LENGTH-1:0]arlen;
+  rand bit [LENGTH-1:0] arlen;
 
   //Variable : arsize
   //Used to send the write address size
@@ -162,10 +127,6 @@ class axi4_slave_tx extends uvm_sequence_item;
   bit arregion;
   
   //Variable : arqos
-  //Used to accept the address qos
-  //bit arqos;
-
-  //Variable : arqos
   //Used to send the read address quality of service
   rand bit arqos;
 
@@ -185,10 +146,6 @@ class axi4_slave_tx extends uvm_sequence_item;
   //Used to represent the last byte of the transaction
   bit rlast;
 
-  //Variable : rready
-  //Used to accept the valid data
-  //bit rready;
-
   //Variable : rvalid
   //Used to accept the valid address
   bit rvalid;
@@ -199,41 +156,62 @@ class axi4_slave_tx extends uvm_sequence_item;
 
   //Variable : ruser
   //Used to store the read user
-  rand bit [3:0]ruser;
+  rand bit [3:0] ruser;
 
+  //Variable : no_of_wait_states
+  //Used to count number of wait states
+  rand int no_of_wait_states;
+  
   //Variable : tx_type
   //Used to determine the transaction type
   tx_type_e tx_type;
+  
+  //Variable : transfer_type
+  //Used to determine the tranfer type
+  transfer_type_e transfer_type;
 
-  //Variable : no_of_wait_states
-  //Used to decide the number of wait states
-  //rand bit [2:0]no_of_wait_states;
+  //Variable: wait_count_write_address_channel
+  //Used to determine wait count for write address channel
+  int wait_count_write_address_channel;
+
+  //Variable: wait_count_write_data_channel
+  //Used to determine wait count for write data channel
+  int wait_count_write_data_channel;
+  
+  //Variable: wait_count_write_response_channel
+  //Used to determine wait count for write response channel
+  int wait_count_write_response_channel;
+
+  //Variable: wait_count_read_address_channel
+  //Used to determine wait count for write response channel
+  int wait_count_read_address_channel;
+
+  //Variable: wait_count_read_data_channel
+  //Used to determine wait count for write response channel
+  int wait_count_read_data_channel;
+  
+  //Variable: outstanding_write_tx
+  //Used to determine the outstanding write tx count
+  int outstanding_write_tx;
+  
+  //Variable: outstanding_write_tx
+  //Used to determine the outstanding write tx count
+  int outstanding_read_tx;
 
   //-------------------------------------------------------
   // Constraints
   //-------------------------------------------------------
   
-  //Constraint : wdata_c1
-  //Adding constraint to restrict the write data based on awlength
-  //constraint wdata_c1 { wdata.size() == awlen + 1;
-  //                      wdata.size()!=0;} 
-  
   //Constraint : rdata_c1
   //Adding constraint to restrict the read data based on awlength
-  constraint rdata_c1 { rdata.size() == arlen+1; 
-                        rdata.size() != 0;
-                      }
+  constraint rdata_c1 { rdata.size() == arlen + 1; 
+                        rdata.size() != 0;}
   
-
-  //Constraint : bresp
-  //Adding constraint to select the type of write response
-  //constraint bresp_c1 {soft bresp == WRITE_OKAY;
-  //                    }
-
-  //Constraint : rresp
+  //Constraint : rresp_c1
   //Adding constraint to select the type of read response
-  constraint rresp_c1 {soft rresp == READ_OKAY;
-                      }
+  constraint rresp_c1 {soft rresp == READ_OKAY;}
+
+  //Constraint : wait_states_c1             
   //To randomise the wait states in range of 0 to 3
   constraint wait_states_c1 {soft no_of_wait_states inside {[0:3]};}
                     
@@ -249,7 +227,7 @@ endclass : axi4_slave_tx
 
 //--------------------------------------------------------------------------------------------
 // Construct: new
-// initializes the class object
+// Initializes the class object
 //
 // Parameters:
 // name - axi4_slave_tx
@@ -279,26 +257,17 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   awlen   = axi_slave_tx_copy_obj.awlen;
   awsize  = axi_slave_tx_copy_obj.awsize;
   awburst = axi_slave_tx_copy_obj.awburst;
-  //awready = axi_slave_tx_copy_obj.awready;
-  //awvalid = axi_slave_tx_copy_obj.awvalid;
   awlock  = axi_slave_tx_copy_obj.awlock;
   awcache = axi_slave_tx_copy_obj.awcache;
   awqos   = axi_slave_tx_copy_obj.awqos;
   awprot  = axi_slave_tx_copy_obj.awprot;
-
   //WRITE DATA CHANNEL
   wdata   = axi_slave_tx_copy_obj.wdata;
   wstrb   = axi_slave_tx_copy_obj.wstrb;
-  //wready  = axi_slave_tx_copy.obj.wready;
-  //wvalid  = axi_slave_tx_copy.obj.wvalid;
-  
   //WRITE RESPONSE CHANNEL
   bid     = axi_slave_tx_copy_obj.bid;
   bresp   = axi_slave_tx_copy_obj.bresp;
   buser   = axi_slave_tx_copy_obj.buser;
-  //bvalid  = axi_slave_tx_copy_obj.bvalid;
-  //bready  = axi_slave_tx_copy_obj.bready;
-  
   //READ ADDRESS CHANNEL
   araddr  = axi_slave_tx_copy_obj.araddr;
   arid    = axi_slave_tx_copy_obj.arid;
@@ -306,19 +275,15 @@ function void axi4_slave_tx::do_copy (uvm_object rhs);
   arsize  = axi_slave_tx_copy_obj.arsize;
   arburst = axi_slave_tx_copy_obj.arburst;
   arregion = axi_slave_tx_copy_obj.arregion;
-  //arvalid = axi_slave_tx_copy_obj.arvalid;
   arlock  = axi_slave_tx_copy_obj.arlock;
   arcache = axi_slave_tx_copy_obj.arcache;
   arqos   = axi_slave_tx_copy_obj.arqos;
   arprot  = axi_slave_tx_copy_obj.arprot;
-
   //READ DATA CHANNEL
   rid   = axi_slave_tx_copy_obj.rid;
   rdata = axi_slave_tx_copy_obj.rdata;
   rresp = axi_slave_tx_copy_obj.rresp;
-  //rready  = axi_slave_tx_copy.obj.rready;
-  //rvalid  = axi_slave_tx_copy.obj.rvalid;
-
+  //OTHERS
   tx_type = axi_slave_tx_copy_obj.tx_type;
   transfer_type = axi_slave_tx_copy_obj.transfer_type;
 
@@ -341,52 +306,38 @@ function bit axi4_slave_tx::do_compare (uvm_object rhs, uvm_comparer comparer);
 
   return super.do_compare(axi_slave_tx_compare_obj, comparer) &&
   //WRITE ADDRESS CHANNEL
-  awaddr  == axi_slave_tx_compare_obj.awaddr &&   
-  awid    == axi_slave_tx_compare_obj.awid   &&
-  awlen   == axi_slave_tx_compare_obj.awlen  &&
-  awsize  == axi_slave_tx_compare_obj.awsize &&
+  awaddr  == axi_slave_tx_compare_obj.awaddr  &&   
+  awid    == axi_slave_tx_compare_obj.awid    &&
+  awlen   == axi_slave_tx_compare_obj.awlen   &&
+  awsize  == axi_slave_tx_compare_obj.awsize  &&
   awburst == axi_slave_tx_compare_obj.awburst &&
-  //awready == axi_slave_tx_compare_obj.awready &&
-  //awvalid == axi_slave_tx_compare_obj.awvalid &&
-  awlock  == axi_slave_tx_compare_obj.awlock &&
+  awlock  == axi_slave_tx_compare_obj.awlock  &&
   awcache == axi_slave_tx_compare_obj.awcache &&
-  awqos   == axi_slave_tx_compare_obj.awqos  &&
-  awprot  == axi_slave_tx_compare_obj.awprot &&
-
+  awqos   == axi_slave_tx_compare_obj.awqos   &&
+  awprot  == axi_slave_tx_compare_obj.awprot  &&
   //WRITE DATA CHANNEL
-  wdata == axi_slave_tx_compare_obj.wdata  &&
-  wstrb == axi_slave_tx_compare_obj.wstrb  &&
-  //wready  == axi_slave_tx_compare.obj.wready &&
-  //wvalid  == axi_slave_tx_compare.obj.wvalid &&
-  
+  wdata == axi_slave_tx_compare_obj.wdata &&
+  wstrb == axi_slave_tx_compare_obj.wstrb &&
   //WRITE RESPONSE CHANNEL
-  bid   == axi_slave_tx_compare_obj.bid    &&
-  bresp == axi_slave_tx_compare_obj.bresp  &&
-  buser == axi_slave_tx_compare_obj.buser  &&
-  //bvalid  == axi_slave_tx_compare_obj.bvalid &&
-  //bready  == axi_slave_tx_compare_obj.bready &&
-
+  bid   == axi_slave_tx_compare_obj.bid   &&
+  bresp == axi_slave_tx_compare_obj.bresp &&
+  buser == axi_slave_tx_compare_obj.buser &&
   //READ ADDRESS CHANNEL
-  araddr  == axi_slave_tx_compare_obj.araddr &&
-  arid    == axi_slave_tx_compare_obj.arid   &&
-  arlen   == axi_slave_tx_compare_obj.arlen  &&
-  arsize  == axi_slave_tx_compare_obj.arsize &&
-  arburst == axi_slave_tx_compare_obj.arburst &&
-  //arready == axi_slave_tx_compare_obj.arready &&
-  //arvalid == axi_slave_tx_compare_obj.arvalid &&
-  arlock  == axi_slave_tx_compare_obj.arlock &&
-  arcache == axi_slave_tx_compare_obj.arcache &&
-  arqos   == axi_slave_tx_compare_obj.arqos  &&
-  arregion== axi_slave_tx_compare_obj.arregion  &&
-  arprot  == axi_slave_tx_compare_obj.arprot &&
-
+  araddr  == axi_slave_tx_compare_obj.araddr   &&
+  arid    == axi_slave_tx_compare_obj.arid     &&
+  arlen   == axi_slave_tx_compare_obj.arlen    &&
+  arsize  == axi_slave_tx_compare_obj.arsize   &&
+  arburst == axi_slave_tx_compare_obj.arburst  &&
+  arlock  == axi_slave_tx_compare_obj.arlock   &&
+  arcache == axi_slave_tx_compare_obj.arcache  &&
+  arqos   == axi_slave_tx_compare_obj.arqos    &&
+  arregion== axi_slave_tx_compare_obj.arregion &&
+  arprot  == axi_slave_tx_compare_obj.arprot   &&
   //READ DATA CHANNEL
-  rid   == axi_slave_tx_compare_obj.rid  &&  
+  rid   == axi_slave_tx_compare_obj.rid   &&  
   rdata == axi_slave_tx_compare_obj.rdata && 
   rresp == axi_slave_tx_compare_obj.rresp &&
   ruser == axi_slave_tx_compare_obj.ruser;
-  //rready == axi_slave_tx_compare.obj.rready &&
-  //rvalid == axi_slave_tx_compare.obj.rvalid ;
 endfunction : do_compare
 
 //--------------------------------------------------------------------------------------------
@@ -394,10 +345,9 @@ endfunction : do_compare
 // Print method can be added to display the data members values
 //--------------------------------------------------------------------------------------------
 function void axi4_slave_tx::do_print(uvm_printer printer);
-  //super.do_print(printer);
   printer.print_string("tx_type",tx_type.name());
-  if(tx_type == WRITE)begin
-    //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
+  if(tx_type == WRITE) begin
+    //`uvm_info("------------------------------------------WRITE_ADDRESS_CHANNEL","------------------------------------",UVM_LOW);
     printer.print_string("awid",awid.name());
     printer.print_field("awaddr",awaddr,$bits(awaddr),UVM_HEX);
     printer.print_field("awlen",awlen,$bits(awlen),UVM_DEC);
@@ -407,22 +357,22 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
     printer.print_string("awcache",awcache.name());
     printer.print_string("awprot",awprot.name());
     printer.print_field("awqos",awqos,$bits(awqos),UVM_HEX);
-    //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","----------------------------------------",UVM_LOW);
-    foreach(wdata[i])begin
+    //`uvm_info("------------------------------------------WRITE_DATA_CHANNEL","---------------------------------------",UVM_LOW);
+    foreach(wdata[i]) begin
       printer.print_field($sformatf("wdata[%0d]",i),wdata[i],$bits(wdata[i]),UVM_HEX);
     end
-    foreach(wstrb[i])begin
+    foreach(wstrb[i]) begin
       printer.print_field($sformatf("wstrb[%0d]",i),wstrb[i],$bits(wstrb[i]),UVM_HEX);
     end
     printer.print_field("wlast",wlast,$bits(wlast),UVM_DEC);
     printer.print_field("wuser",wuser,$bits(wuser),UVM_DEC);
-    //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","------------------------------------",UVM_LOW);
+    //`uvm_info("------------------------------------------WRITE_RESPONSE_CHANNEL","-----------------------------------",UVM_LOW);
     printer.print_string("bid",bid.name());
     printer.print_string("bresp",bresp.name());
     printer.print_field("buser",buser,$bits(buser),UVM_DEC);
   end
   else if(tx_type == READ) begin
-    //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","--------------------------------------",UVM_LOW);
+    //`uvm_info("------------------------------------------READ_ADDRESS_CHANNEL","-------------------------------------",UVM_LOW);
     printer.print_string("arid",arid.name());
     printer.print_field("araddr",araddr,$bits(araddr),UVM_HEX);
     printer.print_field("arlen",arlen,$bits(arlen),UVM_DEC);
@@ -432,16 +382,14 @@ function void axi4_slave_tx::do_print(uvm_printer printer);
     printer.print_string("arcache",arcache.name());
     printer.print_string("arprot",arprot.name());
     printer.print_field("arqos",arqos,$bits(arqos),UVM_HEX);
-    //`uvm_info("------------------------------------------READ_DATA_CHANNEL","---------------------------------------",UVM_LOW);
+    //`uvm_info("------------------------------------------READ_DATA_CHANNEL","----------------------------------------",UVM_LOW);
     printer.print_string("rid",rid.name());
     foreach(rdata[i])begin
       printer.print_field($sformatf("rdata[%0d]",i),rdata[i],$bits(rdata[i]),UVM_HEX);
     end
     printer.print_string("rresp",rresp.name());
     printer.print_field("ruser",ruser,$bits(ruser),UVM_HEX);
-
     printer.print_field("no_of_wait_states",no_of_wait_states,$bits(no_of_wait_states),UVM_HEX);
-    //printer.print_string("TRNASFER_TYPE",transfer_type.name());
   end
 endfunction : do_print
 
