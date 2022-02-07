@@ -398,14 +398,14 @@ function void axi4_master_seq_item_converter::to_write_addr_data_resp_class(inpu
 
   foreach(waddr_data_packet.wdata[i]) begin
     if(waddr_data_packet.wdata[i] != 0)begin
-      output_conv_h.wdata.push_front(waddr_data_packet.wdata[i]);
+      output_conv_h.wdata.push_back(waddr_data_packet.wdata[i]);
       `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wdata[%0d] =  %0h",i,output_conv_h.wdata[i]),UVM_HIGH);
     end
   end
 
   foreach(waddr_data_packet.wdata[i]) begin
     if(waddr_data_packet.wdata[i] != 0)begin
-      output_conv_h.wstrb.push_front(waddr_data_packet.wstrb[i]);
+      output_conv_h.wstrb.push_back(waddr_data_packet.wstrb[i]);
       `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting wstrb[%0d] =  %0d",i,output_conv_h.wstrb[i]),UVM_HIGH);
     end
   end
