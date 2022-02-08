@@ -37,6 +37,36 @@ class axi4_scoreboard extends uvm_scoreboard;
   uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_data_analysis_fifo;
   uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_response_analysis_fifo;
 
+  //master tx_count
+  int axi4_master_tx_awaddr_count;
+  //slave tx count
+  int axi4_slave_tx_awaddr_count;
+  
+  //master tx_count
+  int axi4_master_tx_wdata_count;
+  //slave tx count
+  int axi4_slave_tx_wdata_count;
+  
+  //master tx_count
+  int axi4_master_tx_bresp_count;
+  //slave tx count
+  int axi4_slave_tx_bresp_count;
+  
+  //master tx_count
+  int axi4_master_tx_araddr_count;
+  //slave tx count
+  int axi4_slave_tx_araddr_count;
+  
+  //master tx_count
+  int axi4_master_tx_rdata_count;
+  //slave tx count
+  int axi4_slave_tx_rdata_count;
+  
+  //master tx_count
+  int axi4_master_tx_rresp_count;
+  //slave tx count
+  int axi4_slave_tx_rresp_count;
+  
   // Signals used to declare verified count
   int byte_data_cmp_verified_awid_count;
   int byte_data_cmp_verified_awaddr_count;
@@ -307,6 +337,10 @@ task axi4_scoreboard::axi4_write_address();
     axi4_slave_write_address_analysis_fifo.get(axi4_slave_tx_h1);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address_channel \n%s",axi4_slave_tx_h1.sprint()),UVM_HIGH)
     axi4_write_address_comparision(axi4_master_tx_h1,axi4_slave_tx_h1);
+    axi4_master_tx_awaddr_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel count \n %0d",axi4_master_tx_awaddr_count),UVM_HIGH)
+    axi4_slave_tx_awaddr_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_address_channel count \n %0d",axi4_slave_tx_awaddr_count),UVM_HIGH)
     write_address_key.put(1);
   end
 
@@ -325,6 +359,10 @@ task axi4_scoreboard::axi4_write_data();
     axi4_slave_write_data_analysis_fifo.get(axi4_slave_tx_h2);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data_channel \n%s",axi4_slave_tx_h2.sprint()),UVM_HIGH)
     axi4_write_data_comparision(axi4_master_tx_h2,axi4_slave_tx_h2);
+    axi4_master_tx_wdata_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data_channel count \n %0d",axi4_master_tx_wdata_count),UVM_HIGH)
+    axi4_slave_tx_wdata_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_data_channel count \n %0d",axi4_slave_tx_wdata_count),UVM_HIGH)
     write_data_key.put(1);
   end
 
@@ -343,6 +381,10 @@ task axi4_scoreboard::axi4_write_response();
     axi4_slave_write_response_analysis_fifo.get(axi4_slave_tx_h3);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response \n%s",axi4_slave_tx_h3.sprint()),UVM_HIGH)
     axi4_write_response_comparision(axi4_master_tx_h3,axi4_slave_tx_h3);
+    axi4_master_tx_bresp_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response_channel count \n %0d",axi4_master_tx_bresp_count),UVM_HIGH)
+    axi4_slave_tx_bresp_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_write_response_channel count \n %0d",axi4_slave_tx_bresp_count),UVM_HIGH)
     write_response_key.put(1);
   end
 
@@ -362,6 +404,10 @@ task axi4_scoreboard::axi4_read_address();
     axi4_slave_read_address_analysis_fifo.get(axi4_slave_tx_h4);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address_channel \n%s",axi4_slave_tx_h4.sprint()),UVM_HIGH)
     axi4_read_address_comparision(axi4_master_tx_h4,axi4_slave_tx_h4);
+    axi4_master_tx_araddr_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel count \n %0d",axi4_master_tx_araddr_count),UVM_HIGH)
+    axi4_slave_tx_araddr_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_address_channel count \n %0d",axi4_slave_tx_araddr_count),UVM_HIGH)
     read_address_key.put(1);
   end
 
@@ -381,6 +427,14 @@ task axi4_scoreboard::axi4_read_data();
     axi4_slave_read_data_analysis_fifo.get(axi4_slave_tx_h5);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data_channel \n%s",axi4_slave_tx_h5.sprint()),UVM_HIGH)
     axi4_read_data_comparision(axi4_master_tx_h5,axi4_slave_tx_h5);
+    axi4_master_tx_rdata_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel count \n %0d",axi4_master_tx_rdata_count),UVM_HIGH)
+    axi4_slave_tx_rdata_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_data_channel count \n %0d",axi4_slave_tx_rdata_count),UVM_HIGH)
+    axi4_master_tx_rresp_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_response_channel count \n %0d",axi4_master_tx_rresp_count),UVM_HIGH)
+    axi4_slave_tx_rresp_count++;
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_slave_read_response_channel count \n %0d",axi4_slave_tx_rresp_count),UVM_HIGH)
     read_data_key.put(1);
   end
 
@@ -1305,14 +1359,43 @@ function void axi4_scoreboard::report_phase(uvm_phase phase);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise bresp failed comparisions:%0d",byte_data_cmp_failed_bresp_count ),UVM_HIGH);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise bresp verified comparisions:%0d",byte_data_cmp_verified_bresp_count ),UVM_HIGH);
 
-  //-------------------------------------------------------
-  // Total write Channels Packets
-  //-------------------------------------------------------
-  $display("Total Write Channels Comparision");
-  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise write channels packets verified:%0d",byte_data_cmp_verified_awid_count+byte_data_cmp_verified_awaddr_count+byte_data_cmp_verified_awlen_count+byte_data_cmp_verified_awsize_count+byte_data_cmp_verified_awburst_count+byte_data_cmp_verified_awprot_count+byte_data_cmp_verified_awcache_count+byte_data_cmp_verified_wdata_count+byte_data_cmp_verified_wstrb_count+byte_data_cmp_verified_wuser_count+byte_data_cmp_verified_bid_count+byte_data_cmp_verified_bresp_count),UVM_NONE);
+  $display(" ");
+  $display("-------------------------------------------- ");
+  $display("SCOREBOARD WRITE ADDRESS PACKETS");
+  $display("-------------------------------------------- ");
+  $display(" ");
+    `uvm_info(get_type_name(),$sformatf("scoreboard's write address packets count  from master   \n %0d",axi4_master_tx_awaddr_count),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's write address packets count  from slave    \n %0d",axi4_slave_tx_awaddr_count),UVM_HIGH)
+    //`uvm_info (get_type_name(),$sformatf("Total no. of byte wise awaddr verified comparisions:%0d",byte_data_cmp_verified_awaddr_count ),UVM_NONE);
+  //`uvm_info (get_type_name(),$sformatf("Total no. of byte wise awaddr failed comparisions:%0d",byte_data_cmp_failed_awaddr_count ),UVM_NONE);
  
+  $display(" ");
+  $display("-------------------------------------------- ");
+  $display("SCOREBOARD WRITE DATA PACKETS");
+  $display("-------------------------------------------- ");
+  $display(" ");
+    `uvm_info(get_type_name(),$sformatf("scoreboard's  write data packets count from master \n %0d",axi4_master_tx_wdata_count),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's  write data packets count from slave   \n %0d",axi4_slave_tx_wdata_count),UVM_HIGH)
+ // `uvm_info (get_type_name(),$sformatf("Total no. of  byte wdata verified comparisions:%0d",byte_data_cmp_verified_wdata_count ),UVM_NONE);
   
+ // `uvm_info (get_type_name(),$sformatf("Total no. of  byte wdata failed comparisions:%0d",byte_data_cmp_failed_wdata_count ),UVM_NONE);
+  
+  $display(" ");
+  $display("-------------------------------------------- ");
+  $display("SCOREBOARD WRITE RESPONSE PACKETS");
+  $display("-------------------------------------------- ");
+  $display(" ");
+    `uvm_info(get_type_name(),$sformatf("scoreboard's write response packets count from master \n %0d",axi4_master_tx_bresp_count),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's write response packets count from slave  \n %0d",axi4_slave_tx_bresp_count),UVM_HIGH)
+  //`uvm_info (get_type_name(),$sformatf("Total no. of byte wise bresp verified comparisions:%0d",byte_data_cmp_verified_bresp_count ),UVM_NONE);
+  
+  //`uvm_info (get_type_name(),$sformatf("Total no. of byte wise bresp failed comparisions:%0d",byte_data_cmp_failed_bresp_count ),UVM_NONE);
+  
+
+  
+  $display("-------------------------------------------- ");
   $display("READ_ADDRESS_PHASE");
+  $display("-------------------------------------------- ");
   
   //Number of arid comparisoins done
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise arid comparisions:%0d",byte_data_cmp_verified_arid_count+byte_data_cmp_failed_arid_count ),UVM_HIGH);
@@ -1398,11 +1481,37 @@ function void axi4_scoreboard::report_phase(uvm_phase phase);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise ruser failed comparisions:%0d",byte_data_cmp_failed_ruser_count ),UVM_HIGH);
   `uvm_info (get_type_name(),$sformatf("Total no. of byte wise ruser verified comparisions:%0d",byte_data_cmp_verified_ruser_count ),UVM_HIGH);
   
-  //-------------------------------------------------------
-  // Total Read Channels Packets
-  //-------------------------------------------------------
-  $display("Total Read Channels Comparision");
-  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise read channels packets verified:%0d",byte_data_cmp_verified_arid_count+byte_data_cmp_verified_araddr_count+byte_data_cmp_verified_arlen_count+byte_data_cmp_verified_arsize_count+byte_data_cmp_verified_arburst_count+byte_data_cmp_verified_arprot_count+byte_data_cmp_verified_arcache_count+byte_data_cmp_verified_arlock_count+byte_data_cmp_verified_arqos_count+byte_data_cmp_verified_rid_count+byte_data_cmp_verified_rdata_count+byte_data_cmp_verified_rresp_count+byte_data_cmp_verified_ruser_count),UVM_NONE);
+  $display(" ");
+  $display("-------------------------------------------- ");
+  $display("SCOREBOARD READ ADDRESS PACKETS");
+  $display("-------------------------------------------- ");
+  $display(" ");
+    `uvm_info(get_type_name(),$sformatf("scoreboard's read address packets count from master \n %0d",axi4_master_tx_araddr_count),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's read address packets count from slave  \n %0d",axi4_slave_tx_araddr_count),UVM_HIGH)
+  //`uvm_info (get_type_name(),$sformatf("Total no. of byte wise araddr verified comparisions:%0d",byte_data_cmp_verified_araddr_count ),UVM_NONE);
+  
+  //`uvm_info (get_type_name(),$sformatf("Total no. of byte wise araddr failed comparisions:%0d",byte_data_cmp_failed_araddr_count ),UVM_NONE);
+  
+  $display(" ");
+  $display("-------------------------------------------- ");
+  $display("SCOREBOARD READ DATA PACKETS");
+  $display("-------------------------------------------- ");
+  $display(" ");
+    `uvm_info(get_type_name(),$sformatf("scoreboard's  read data packets count from master \n %0d",axi4_master_tx_rdata_count),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's  read data packets count from slave  \n %0d",axi4_slave_tx_rdata_count),UVM_HIGH)
+  //`uvm_info (get_type_name(),$sformatf("Total no. of byte wise rdata verified comparisions:%0d",byte_data_cmp_verified_rdata_count ),UVM_NONE);
+  //`uvm_info (get_type_name(),$sformatf("Total no. of byte wise rdata failed comparisions:%0d",byte_data_cmp_failed_rdata_count ),UVM_NONE);
+  
+  $display(" ");
+  $display("-------------------------------------------- ");
+  $display("SCOREBOARD READ RESPONSE PACKETS");
+  $display("-------------------------------------------- ");
+  $display(" ");
+    `uvm_info(get_type_name(),$sformatf("scoreboard's read response packets count from master \n %0d",axi4_master_tx_rresp_count),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's read response packets count from slave   \n %0d",axi4_slave_tx_rresp_count),UVM_HIGH)
+//  `uvm_info (get_type_name(),$sformatf("Total no. of byte wise rresp verified comparisions:%0d",byte_data_cmp_verified_rresp_count ),UVM_NONE);
+ // `uvm_info (get_type_name(),$sformatf("Total no. of byte wise rresp failed comparisions:%0d",byte_data_cmp_failed_rresp_count ),UVM_NONE);
+ 
  
 
 endfunction : report_phase
