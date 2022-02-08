@@ -158,7 +158,8 @@ interface master_assertions (input                     aclk,
     $rose(bvalid) |-> bvalid s_until_with bready;
   endproperty : axi_write_response_channel_valid_stable_check
   AXI_WR_VALID_STABLE_CHECK : assert property (axi_write_response_channel_valid_stable_check);
-  
+ 
+
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in read address channel
   //--------------------------------------------------------------------------------------------

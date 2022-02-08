@@ -10,7 +10,6 @@ package axi4_globals_pkg;
   //-------------------------------------------------------
   // Parameters used in axi4_avip are given below
   //-------------------------------------------------------
-
   //Parameter: MASTER_AGENT_ACTIVE
   //Used to set the master agent either active or passive
   parameter bit MASTER_AGENT_ACTIVE = 1;
@@ -55,27 +54,14 @@ package axi4_globals_pkg;
   //Indicates the length of the address write and read channels
   parameter int LENGTH = 8;
 
+  //Variable: OUTSTANDING_FIFO_DEPTH
+  //Indicates the fifo depth of outstanding transaction
   parameter int OUTSTANDING_FIFO_DEPTH = 16;
+  
   //-------------------------------------------------------
   // Enums used in axi4_avip are given below
   //-------------------------------------------------------
   
-  //Enum: awlen_e
-  //Used to declare the enum type for write address length
-  //typedef enum bit [7:0] {
-  //  WRITE_LEN_FIXED,
-  //  WRITE_LEN_WRAP,
-  //  WRITE_LEN_INCR
-  //} awlen_e;
-
-  //Enum: arlen_e
-  //Used to declare the enum type for read address length
-  //typedef enum bit [7:0] {
-  //  READ_LEN_FIXED,
-  //  READ_LEN_WRAP,
-  //  READ_LEN_INCR
-  //} arlen_e;
-
   //Enum: awburst_e
   //Used to declare the enum type of write burst type
   typedef enum bit [1:0] {
@@ -96,7 +82,7 @@ package axi4_globals_pkg;
 
   //Enum: transfer_size_e
   //Used to declare enum type for write transfer sizes
-  typedef enum bit[2:0]{
+  typedef enum bit [2:0] {
     WRITE_1_BYTE    = 3'b000,
     WRITE_2_BYTES   = 3'b001,
     WRITE_4_BYTES   = 3'b010,
@@ -109,7 +95,7 @@ package axi4_globals_pkg;
 
   //Enum: transfer_size_e
   //Used to declare enum type for read transfer sizes
-  typedef enum bit[2:0]{
+  typedef enum bit [2:0] {
     READ_1_BYTE    = 3'b000,
     READ_2_BYTES   = 3'b001,
     READ_4_BYTES   = 3'b010,
@@ -162,26 +148,26 @@ package axi4_globals_pkg;
   //Enum: awprot_e 
   //Used to declare enum type of write protection of the transaction
   typedef enum bit [2:0] {
-    WRITE_NORMAL_SECURE_DATA              = 3'b000,
-    WRITE_NORMAL_SECURE_INSTRUCTION       = 3'b001,
-    WRITE_NORMAL_NONSECURE_DATA           = 3'b010,
-    WRITE_NORMAL_NONSECURE_INSTRUCTION    = 3'b011,
-    WRITE_PRIVILEGED_SECURE_DATA          = 3'b100,
-    WRITE_PRIVILEGED_SECURE_INSTRUCTION   = 3'b101,
-    WRITE_PRIVILEGED_NONSECURE_DATA       = 3'b110,
+    WRITE_NORMAL_SECURE_DATA               = 3'b000,
+    WRITE_NORMAL_SECURE_INSTRUCTION        = 3'b001,
+    WRITE_NORMAL_NONSECURE_DATA            = 3'b010,
+    WRITE_NORMAL_NONSECURE_INSTRUCTION     = 3'b011,
+    WRITE_PRIVILEGED_SECURE_DATA           = 3'b100,
+    WRITE_PRIVILEGED_SECURE_INSTRUCTION    = 3'b101,
+    WRITE_PRIVILEGED_NONSECURE_DATA        = 3'b110,
     WRITE_PRIVILEGED_NONSECURE_INSTRUCTION = 3'b111
   } awprot_e;
 
   //Enum: arprot_e 
   //Used to declare enum type of read protection of the transaction
   typedef enum bit [2:0] {
-    READ_NORMAL_SECURE_DATA              = 3'b000,
-    READ_NORMAL_SECURE_INSTRUCTION       = 3'b001,
-    READ_NORMAL_NONSECURE_DATA           = 3'b010,
-    READ_NORMAL_NONSECURE_INSTRUCTION    = 3'b011,
-    READ_PRIVILEGED_SECURE_DATA          = 3'b100,
-    READ_PRIVILEGED_SECURE_INSTRUCTION   = 3'b101,
-    READ_PRIVILEGED_NONSECURE_DATA       = 3'b110,
+    READ_NORMAL_SECURE_DATA               = 3'b000,
+    READ_NORMAL_SECURE_INSTRUCTION        = 3'b001,
+    READ_NORMAL_NONSECURE_DATA            = 3'b010,
+    READ_NORMAL_NONSECURE_INSTRUCTION     = 3'b011,
+    READ_PRIVILEGED_SECURE_DATA           = 3'b100,
+    READ_PRIVILEGED_SECURE_INSTRUCTION    = 3'b101,
+    READ_PRIVILEGED_NONSECURE_DATA        = 3'b110,
     READ_PRIVILEGED_NONSECURE_INSTRUCTION = 3'b111
   } arprot_e;
 
@@ -296,7 +282,7 @@ package axi4_globals_pkg;
 
   //Enum : transfer_type_e
   //Used to the determine the type of the transfer
-  typedef enum bit[1:0]{
+  typedef enum bit[1:0] {
     BLOCKING_WRITE      = 2'b00, 
     BLOCKING_READ       = 2'b01, 
     NON_BLOCKING_WRITE  = 2'b10, 
@@ -310,7 +296,7 @@ package axi4_globals_pkg;
   //Struct: axi4_w_transfer_char_s
   //This struct datatype consists of all write signals which are used for seq item conversion
   typedef struct {
-    //Write_address_channel
+    //Write Address Channel Signals
     bit [3:0]               awid;
     bit [ADDRESS_WIDTH-1:0] awaddr;
     bit [7:0]               awlen;
@@ -324,58 +310,51 @@ package axi4_globals_pkg;
     bit [2:0]               awprot;
     bit                     awvalid;
     bit	                    awready;
-    //Write_data_channel
-    bit [2**LENGTH:0][DATA_WIDTH-1:0]wdata;
-    bit [2**LENGTH:0][(DATA_WIDTH/8)-1:0]wstrb;
-    bit wlast;
-    //bit [2**LENGTH:0] wlast;
-    bit [2**LENGTH:0] wuser;
-
-    //Write Response Channel
+    //Write Data Channel Signals
+    bit     [2**LENGTH:0][DATA_WIDTH-1:0] wdata;
+    bit [2**LENGTH:0][(DATA_WIDTH/8)-1:0] wstrb;
+    bit                     [2**LENGTH:0] wuser;
+    bit                                   wlast;
+    //Write Response Channel Signals
     bit [3:0] bid;
-    bit bvalid;
-    bit [1:0]  bresp;
-    bit buser;
-
-    int wait_count_write_address_channel;
-    int wait_count_write_data_channel;
-    int wait_count_write_response_channel;
-    
-    int outstanding_write_tx;
-    int no_of_wait_states;
-    bit tx_type; 
+    bit [1:0] bresp;
+    bit       buser;
+    bit       bvalid;
+    bit       tx_type; 
+    int       wait_count_write_address_channel;
+    int       wait_count_write_data_channel;
+    int       wait_count_write_response_channel;
+    int       outstanding_write_tx;
+    int       no_of_wait_states;
   } axi4_write_transfer_char_s; 
 
   //Struct: axi4_r_transfer_char_s
   //This struct datatype consists of all read signals which are used for seq item conversion
   typedef struct {
-    //Read Address Channel
-    bit [3:0] arid;
+    //Read Address Channel Signals
+    bit               [3:0] arid;
     bit [ADDRESS_WIDTH-1:0] araddr;
-    bit [7:0]  arlen;
-    bit [2:0]  arsize;
-    bit [1:0]  arburst;
-    bit [3:0]  arcache;
-    bit [2:0]  arprot;
-    bit [3:0]  arqos;
-    bit [3:0]  arregion;
-    bit [3:0]  aruser;
-    bit        arlock;
-    //Read Data Channel
-    bit [3:0] rid;
-    bit [2**LENGTH:0][DATA_WIDTH-1:0]rdata;
-    bit [2**LENGTH:0][1:0] rresp; 
-    bit [2**LENGTH:0][3:0] ruser;
-    bit rvalid;
-    bit rlast;
-    //bit [(DATA_WIDTH/8)-1: 0] rstrb;
-    
-    int wait_count_read_address_channel;
-    int wait_count_read_data_channel;
-    
-    int outstanding_read_tx;
-    int no_of_wait_states;
-    bit tx_type; 
+    bit               [7:0] arlen;
+    bit               [2:0] arsize;
+    bit               [1:0] arburst;
+    bit               [3:0] arcache;
+    bit               [2:0] arprot;
+    bit               [3:0] arqos;
+    bit               [3:0] arregion;
+    bit               [3:0] aruser;
+    bit                     arlock;
+    //Read Data Channel Signals
+    bit                         [3:0] rid;
+    bit [2**LENGTH:0][DATA_WIDTH-1:0] rdata;
+    bit            [2**LENGTH:0][1:0] rresp; 
+    bit            [2**LENGTH:0][3:0] ruser;
+    bit                               rlast;
+    bit                               rvalid;
+    bit                               tx_type; 
+    int                               wait_count_read_address_channel;
+    int                               wait_count_read_data_channel;
+    int                               outstanding_read_tx;
+    int                               no_of_wait_states;
   } axi4_read_transfer_char_s;
 
   //Struct: axi4_cfg_char_s
@@ -383,17 +362,13 @@ package axi4_globals_pkg;
   typedef struct {
     bit [ADDRESS_WIDTH-1:0] min_address;
     bit [ADDRESS_WIDTH-1:0] max_address;
-    int wait_count_read_address_channel;
-    int wait_count_read_data_channel;
-    int wait_count_write_address_channel;
-    int wait_count_write_data_channel;
-    int wait_count_write_response_channel;
-    
-    int outstanding_write_tx;
-    
-    int outstanding_read_tx;
-    //bit [ADDRESS_WIDTH-1:0] awaddr;
-    //bit [ADDRESS_WIDTH-1:0] araddr;
+    int                     wait_count_write_address_channel;
+    int                     wait_count_write_data_channel;
+    int                     wait_count_write_response_channel;
+    int                     wait_count_read_address_channel;
+    int                     wait_count_read_data_channel;
+    int                     outstanding_write_tx;
+    int                     outstanding_read_tx;
   } axi4_transfer_cfg_s;
 
 endpackage : axi4_globals_pkg

@@ -58,13 +58,13 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
                                                                             
                                               .rid      (intf.rid)      ,     
                                               .rdata    (intf.rdata)    ,   
-                                            //  .rstrb    (intf.rstrb)    ,   
                                               .rresp    (intf.rresp)    ,   
                                               .rlast    (intf.rlast)    ,   
                                               .ruser    (intf.ruser)    ,   
                                               .rvalid   (intf.rvalid)   ,  
                                               .rready   (intf.rready)   
                                               );
+  
   //-------------------------------------------------------
   // AXI4 Slave monitor  bfm instantiation
   //-------------------------------------------------------
@@ -110,7 +110,6 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
                                                                              
                                                .rid      (intf.rid)      ,     
                                                .rdata    (intf.rdata)    ,   
-                                              // .rstrb    (intf.rstrb)    ,   
                                                .rresp    (intf.rresp)    ,   
                                                .rlast    (intf.rlast)    ,   
                                                .ruser    (intf.ruser)    ,   
@@ -163,7 +162,6 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
                                                    .rready(rready)
                                                   );
 
-
   //-------------------------------------------------------
   // Setting the virtual handle of BMFs into config_db
   //-------------------------------------------------------
@@ -172,7 +170,6 @@ module axi4_slave_agent_bfm #(parameter int SLAVE_ID = 0)(axi4_if intf);
     uvm_config_db#(virtual axi4_slave_monitor_bfm)::set(null,"*", "axi4_slave_monitor_bfm", axi4_slave_mon_bfm_h);
   end
 
-  //Printing axi4 slave agent bfm
   initial begin
     `uvm_info("axi4 slave agent bfm",$sformatf("AXI4 SLAVE AGENT BFM"),UVM_LOW);
   end
