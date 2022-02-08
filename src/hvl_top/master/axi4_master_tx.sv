@@ -258,7 +258,9 @@ class axi4_master_tx extends uvm_sequence_item;
 
  // constraint wstrb_c0 {soft awaddr inside {awaddr !=0 && awaddr % awsize != 0}; }
 
+  // foreach(wstrb[i]) { $countones(wstrb[i]) == 2**awsize};
   constraint wstrb_c { 
+    // Aligned addresses
     if(awaddr % awsize == 0) {
   		if(awsize == 0) foreach(wstrb[i]) wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000};
   		if(awsize == 1) foreach(wstrb[i]) wstrb[i] inside {4'b0011, 4'b1100, 4'b0101, 4'b1010, 4'b1001, 4'b0110};
@@ -266,6 +268,7 @@ class axi4_master_tx extends uvm_sequence_item;
       //if(awsize == 0) foreach(wstrb[i]) { $countones(wstrb[i]) == 1};
       //if(awsize == 1) foreach(wstrb[i]) { $countones(wstrb[i]) == 2};
       //if(awsize == 2) foreach(wstrb[i]) { $countones(wstrb[i]) == 4};
+    // TODO(mshariff): Need to add logic for unaligned addresses
   	}
   
     //else 
