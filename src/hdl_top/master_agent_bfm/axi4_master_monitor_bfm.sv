@@ -65,13 +65,11 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
   //-------------------------------------------------------
   import uvm_pkg::*;
   `include "uvm_macros.svh" 
+  
   //-------------------------------------------------------
   // Importing axi4 Global Package master package
   //-------------------------------------------------------
   import axi4_master_pkg::axi4_master_monitor_proxy;
-  //--------------------------------------------------------------------------------------------
-  // Creating handle for virtual Interface
-  //--------------------------------------------------------------------------------------------
  
   //Variable : axi4_master_monitor_proxy_h
   //Creating the handle for proxy monitor

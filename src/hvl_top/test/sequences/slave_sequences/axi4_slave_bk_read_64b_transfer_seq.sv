@@ -32,7 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_slave_bk_read_64b_transfer_seq::body();
   super.body();
-  req.transfer_type=BLOCKING_READ;
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_8_BYTES;

@@ -88,13 +88,13 @@ function void axi4_slave_monitor_proxy::build_phase(uvm_phase phase);
   end 
 endfunction : build_phase
 
-//-------------------------------------------------------
+//-------------------------------------------------------------------------------------------
 // Function: end_of_elaboration_phase
 //Description: connects monitor_proxy and monitor_bfm
 //
 // Parameters:
 //  phase - stores the current phase
-//-------------------------------------------------------
+//------------------------------------------------------------------------------------------
 function void axi4_slave_monitor_proxy::end_of_elaboration_phase(uvm_phase phase);
   super.end_of_elaboration_phase(phase);
   axi4_slave_mon_bfm_h.axi4_slave_mon_proxy_h = this;
@@ -117,10 +117,11 @@ task axi4_slave_monitor_proxy::run_phase(uvm_phase phase);
   join
 
 endtask : run_phase 
-//-------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------
 // Task : axi4_slave_write_address
 // Description: converting,sampling and again converting 
-//-------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 task axi4_slave_monitor_proxy::axi4_slave_write_address();
   forever begin
     axi4_write_transfer_char_s struct_write_packet;
@@ -236,7 +237,7 @@ endtask
 //--------------------------------------------------------------------------------------------
 
 task axi4_slave_monitor_proxy::axi4_slave_read_data();
-forever begin
+  forever begin
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
     axi4_slave_tx             req_rd_clone_packet; 

@@ -34,10 +34,6 @@ task axi4_slave_bk_write_cross_seq::body();
   super.body();
 begin 
   req.transfer_type = BLOCKING_WRITE;
-  //req = axi4_slave_tx::type_id::create("req");
-  // MSHA: req.type = this.type;
-  //req.axi4_slave_agent_cfg_h = p_sequencer.axi4_slave_agent_cfg_h;
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_slave_bk_write_cross_seq"), UVM_NONE); 
 
   start_item(req);
   if(!req.randomize())begin
@@ -46,7 +42,6 @@ begin
   `uvm_info("SLAVE_WRITE_bk_SEQ", $sformatf("slave_seq = \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
 
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_slave_bk_write_cross_seq"), UVM_NONE); 
 end
 endtask : body
 

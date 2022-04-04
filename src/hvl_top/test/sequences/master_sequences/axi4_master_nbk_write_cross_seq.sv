@@ -32,10 +32,7 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_write_cross_seq::body();
   super.body();
-begin
-  //req.transfer_type=NON_BLOCKING_WRITE;
-  // MSHA: req.type = this.type;
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_nbk_write_cross_seq"), UVM_NONE); 
+  begin
 
   start_item(req);
   if(!req.randomize() with {  req.awsize == WRITE_2_BYTES;
@@ -46,7 +43,7 @@ begin
     `uvm_fatal("axi4","Rand failed");
   end
   
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
 
 
@@ -59,7 +56,7 @@ begin
     `uvm_fatal("axi4","Rand failed");
   end
   
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
 
   start_item(req);
@@ -71,11 +68,11 @@ begin
     `uvm_fatal("axi4","Rand failed");
   end
   
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
 end
 
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_nbk_write_cross_seq"), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("AFTER axi4_master_nbk_write_cross_seq"), UVM_NONE); 
 
 endtask : body
 

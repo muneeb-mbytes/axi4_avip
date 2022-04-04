@@ -10,10 +10,6 @@ import axi4_globals_pkg::*;
 //--------------------------------------------------------------------------------------------
 interface axi4_if(input aclk, input aresetn);
 
-  // Variable: aclk
-  // axi4 clock signal
-  // bit aclk;
-
   //Write_address_channel
   logic     [3: 0] awid     ;
   logic     [ADDRESS_WIDTH-1: 0] awaddr ;
@@ -23,9 +19,9 @@ interface axi4_if(input aclk, input aresetn);
   logic     [1: 0] awlock    ;
   logic     [3: 0] awcache   ;
   logic     [2: 0] awprot    ;
-  logic     [3:0] awqos     ;
-  logic     [3:0] awregion  ;
-  logic           awuser    ;
+  logic     [3:0] awqos      ;
+  logic     [3:0] awregion   ;
+  logic           awuser     ;
   logic            awvalid   ;
   logic		         awready   ;
   //Write_data_channel
@@ -58,7 +54,6 @@ interface axi4_if(input aclk, input aresetn);
   //Read Data Channel
   logic     [3: 0] rid      ;
   logic     [DATA_WIDTH-1: 0] rdata     ;
-  //logic     [(DATA_WIDTH/8)-1:0] rstrb  ;
   logic     [1:0] rresp      ;
   logic           rlast      ;
   logic     [3:0] ruser      ;

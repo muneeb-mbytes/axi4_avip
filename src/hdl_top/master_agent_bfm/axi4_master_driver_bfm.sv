@@ -165,9 +165,7 @@ task axi4_write_address_channel_task (inout axi4_write_transfer_char_s data_writ
       `uvm_info(name,$sformatf("DETECT_WRITE_DATA_WAIT_STATE"),UVM_HIGH)
         
       if(data_write_packet.awlen == i)begin  
-        //`uvm_info(name,$sformatf("DEBUG_NA:WLAST=%0d",wlast),UVM_HIGH)
         wlast  <= 1'b1;
-        //`uvm_info(name,$sformatf("DEBUG_NA:After driving WLAST=%0d",wlast),UVM_HIGH)
       end
 
       do begin

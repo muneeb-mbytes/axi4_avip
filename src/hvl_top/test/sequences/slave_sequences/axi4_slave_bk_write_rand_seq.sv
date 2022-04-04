@@ -32,8 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_slave_bk_write_rand_seq::body();
   super.body();
-  //req = axi4_slave_bk_tx::type_id::create("req");
-  //req.axi4_slave_bk_agent_cfg_h = p_sequencer.axi4_slave_bk_agent_cfg_h;
   
   req.transfer_type = BLOCKING_WRITE;
 

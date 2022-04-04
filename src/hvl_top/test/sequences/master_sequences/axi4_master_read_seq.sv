@@ -31,7 +31,6 @@ endfunction : new
 // Creates the req of type master transaction and randomises the req
 //--------------------------------------------------------------------------------------------
 task axi4_master_read_seq::body();
-  //super.body();
   req = axi4_master_tx::type_id::create("req");
   
   start_item(req);

@@ -32,9 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_write_64b_transfer_seq::body();
   super.body();
-  req.transfer_type=NON_BLOCKING_WRITE;
-  // MSHA: req.type = this.type;
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_nbk_write_64b_transfer_seq"), UVM_NONE); 
 
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_8_BYTES;
@@ -46,7 +43,6 @@ task axi4_master_nbk_write_64b_transfer_seq::body();
   
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_nbk_write_64b_transfer_seq"), UVM_NONE); 
 
 endtask : body
 

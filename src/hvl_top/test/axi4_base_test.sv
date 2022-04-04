@@ -66,7 +66,6 @@ endfunction : build_phase
 //--------------------------------------------------------------------------------------------
 function void axi4_base_test:: setup_axi4_env_cfg();
   axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
-  // axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
  
   axi4_env_cfg_h.has_scoreboard = 1;
   axi4_env_cfg_h.has_virtual_seqr = 1;
@@ -76,12 +75,9 @@ function void axi4_base_test:: setup_axi4_env_cfg();
   // Setup the axi4_master agent cfg 
   setup_axi4_master_agent_cfg();
   
-  //Setting the master agent configuration into config_db
-  //uvm_config_db#(axi4_master_agent_config)::set(this,"*master_agent*","axi4_master_agent_config",axi4_env_cfg_h.axi4_master_agent_cfg_h);
-  //Displaying the master agent configuration
-  //`uvm_info(get_type_name(),$sformatf("\nAXI4_MASTER_AGENT_CONFIG\n%s",axi4_env_cfg_h.axi4_master_agent_cfg_h.sprint()),UVM_LOW);
-
+  // Setup the axi4_slave agent cfg 
   setup_axi4_slave_agent_cfg();
+
   // set method for axi4_env_cfg
   uvm_config_db #(axi4_env_config)::set(this,"*","axi4_env_config",axi4_env_cfg_h);
   `uvm_info(get_type_name(),$sformatf("\nAXI4_ENV_CONFIG\n%s",axi4_env_cfg_h.sprint()),UVM_LOW);
@@ -101,7 +97,6 @@ function void axi4_base_test::setup_axi4_master_agent_cfg();
     axi4_master_agent_config::type_id::create($sformatf("axi4_master_agent_cfg_h[%0d]",i));
     axi4_env_cfg_h.axi4_master_agent_cfg_h[i].is_active   = uvm_active_passive_enum'(UVM_ACTIVE);
     axi4_env_cfg_h.axi4_master_agent_cfg_h[i].has_coverage = 1; 
-    //uvm_config_db#(axi4_master_agent_config)::set(this,"*axi4_master_agent*","axi4_master_agent_config", axi4_env_cfg_h.axi4_master_agent_cfg_h[i]);
     uvm_config_db#(axi4_master_agent_config)::set(this,"*env*",$sformatf("axi4_master_agent_config[%0d]",i),axi4_env_cfg_h.axi4_master_agent_cfg_h[i]);
   end
 
@@ -134,7 +129,6 @@ function void axi4_base_test::setup_axi4_slave_agent_cfg();
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i] =
     axi4_slave_agent_config::type_id::create($sformatf("axi4_slave_agent_cfg_h[%0d]",i));
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].slave_id = i;
-    //axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].slave_selected = 0;
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].min_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].
                                                            master_min_addr_range_array[i];
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i].max_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].

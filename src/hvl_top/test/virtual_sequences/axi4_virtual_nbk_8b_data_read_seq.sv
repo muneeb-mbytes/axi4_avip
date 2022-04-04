@@ -1,5 +1,5 @@
 `ifndef AXI4_VIRTUAL_NBK_8B_DATA_READ_SEQ_INCLUDED_
-`define AXI4_VIRTUAL_NBK_8b_data_READ_SEQ_INCLUDED_
+`define AXI4_VIRTUAL_NBK_8B_DATA_READ_SEQ_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_virtual_nbk_8b_data_read_seq
@@ -8,12 +8,12 @@
 class axi4_virtual_nbk_8b_data_read_seq extends axi4_virtual_base_seq;
   `uvm_object_utils(axi4_virtual_nbk_8b_data_read_seq)
 
-  //Variable: axi4_master_read_seq_h
-  //Instantiation of axi4_master_read_seq handle
+  //Variable: axi4_master_nbk_read_8b_transfer_seq_h
+  //Instantiation of axi4_master_nbk_read_8b_transfer_seq handle
   axi4_master_nbk_read_8b_transfer_seq axi4_master_nbk_read_8b_transfer_seq_h;
 
-  //Variable: axi4_slave_write_seq_h
-  //Instantiation of axi4_slave_write_seq handle
+  //Variable: axi4_slave_nbk_read_8b_transfer_seq_h
+  //Instantiation of axi4_slave_nbk_read_8b_transfer_seq handle
   axi4_slave_nbk_read_8b_transfer_seq axi4_slave_nbk_read_8b_transfer_seq_h;
 
   //-------------------------------------------------------
@@ -50,7 +50,6 @@ task axi4_virtual_nbk_8b_data_read_seq::body();
     begin : T2_SL_RD
       forever begin
         axi4_slave_nbk_read_8b_transfer_seq_h.start(p_sequencer.axi4_slave_read_seqr_h);
-        //  axi4_slave_n8b_transfer_read_seq_h.start(p_sequencer.axi4_slave_read_seqr_h);
       end
     end
   join_none
@@ -60,7 +59,6 @@ task axi4_virtual_nbk_8b_data_read_seq::body();
     begin: T2_READ
       repeat(3) begin
       axi4_master_nbk_read_8b_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
-      // axi4_master_nread_8b_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
       end
     end
   join

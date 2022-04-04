@@ -76,54 +76,6 @@ module tb_slave_assertions;
   //-------------------------------------------------------
   initial begin
     `uvm_info(name,$sformatf("TEST_BENCH_FOR_SLAVE_ASSERTIONS"),UVM_LOW);
-    
-    //-------------------------------------------------------
-    // Include these tasks to verify POSITIVE SCENARIOS 
-    // for the assertions in testbench
-    //-------------------------------------------------------
-    //if_wa_channel_signals_are_stable_positive_case();
-    //if_wa_channel_signals_are_unknown_positive_case();
-    //if_wa_channel_valid_stable_positive_case();
-    
-    //if_wd_channel_signals_are_stable_positive_case();
-    //if_wd_channel_signals_are_unknown_positive_case();
-    //if_wd_channel_valid_stable_positive_case();
-
-    //if_wr_channel_signals_are_stable_positive_case();
-    //if_wr_channel_signals_are_unknown_positive_case();
-    //if_wr_channel_valid_stable_positive_case();
-
-    //if_ra_channel_signals_are_stable_positive_case();
-    //if_ra_channel_signals_are_unknown_positive_case();
-    //if_ra_channel_valid_stable_positive_case();
-
-    //if_rd_channel_signals_are_stable_positive_case();
-    //if_rd_channel_signals_are_unknown_positive_case();
-    //if_rd_channel_valid_stable_positive_case();
-    
-    //-------------------------------------------------------
-    // Include these tasks to verify NEGATIVE SCENARIOS 
-    // for the assertions in testbench
-    //-------------------------------------------------------
-    //if_wa_channel_signals_are_stable_negative_case();
-    //if_wa_channel_signals_are_unknown_negative_case();
-    //if_wa_channel_valid_stable_negative_case();
-
-    //if_wd_channel_signals_are_stable_negative_case();
-    //if_wd_channel_signals_are_unknown_negative_case();
-    //if_wd_channel_valid_stable_negative_case();
-    
-    //if_wr_channel_signals_are_stable_negative_case();
-    //if_wr_channel_signals_are_unknown_negative_case();
-    //if_wr_channel_valid_stable_negative_case();
-    
-    //if_ra_channel_signals_are_stable_negative_case();
-    //if_ra_channel_signals_are_unknown_negative_case();
-    //if_ra_channel_valid_stable_negative_case();
-    
-    //if_rd_channel_signals_are_stable_negative_case();
-    //if_rd_channel_signals_are_unknown_negative_case();
-    //if_rd_channel_valid_stable_negative_case();
   end
 
   //-------------------------------------------------------
@@ -807,11 +759,8 @@ module tb_slave_assertions;
       bvalid         <= 1'b1;
       bready         <= 1'b1;
 
-      //@(posedge aclk);
-      //bvalid         <= 1'b0;
-      //bready         <= 1'b0;
-
       `uvm_info(name,$sformatf("if_wr_channel_valid_stable_positive_case-- INSIDE REPEAT"),UVM_HIGH);
+
     end
 
   endtask : if_wr_channel_valid_stable_positive_case
@@ -1318,54 +1267,7 @@ module tb_slave_assertions;
       `uvm_info(name,$sformatf("if_rd_channel_valid_stable_negative_case-- INSIDE REPEAT"),UVM_HIGH);
     end
   endtask : if_rd_channel_valid_stable_negative_case
-
  
- //Instantiation of assertions
- // slave_assertions S_A (.aclk(aclk),
- //                        .aresetn(aresetn),
- //                        .awid(awid),
- //                        .awaddr(awaddr),
- //                        .awlen(awlen),
- //                        .awsize(awsize),
- //                        .awburst(awburst),
- //                        .awlock(awlock),
- //                        .awcache(awcache),
- //                        .awprot(awprot),
- //                        .awvalid(awvalid),
- //                        .awready(awready),
- //                        .wdata(wdata),
- //                        .wstrb(wstrb),
- //                        .wlast(wlast),
- //                        .wuser(wuser),
- //                        .wvalid(wvalid),
- //                        .wready(wready),
- //                        .bid(bid),
- //                        .buser(buser),
- //                        .bvalid(bvalid),
- //                        .bready(bready),
- //                        .bresp(bresp),
- //                        .arid(arid),
- //                        .araddr(araddr),  
- //                        .arlen(arlen),   
- //                        .arsize(arsize), 
- //                        .arburst(arburst), 
- //                        .arlock(arlock),  
- //                        .arcache(arcache), 
- //                        .arprot(arprot),
- //                        .arqos(arqos),   
- //                        .arregion(arregion), 
- //                        .aruser(aruser),  
- //                        .arvalid(arvalid), 
- //                        .arready(arready),
- //                        .rid(rid),
- //                        .rdata(rdata),
- //                        .rresp(rresp),
- //                        .rlast(rlast),
- //                        .ruser(ruser),
- //                        .rvalid(rvalid),
- //                        .rready(rready)
- //                      );
-
 endmodule : tb_slave_assertions
 
 `endif

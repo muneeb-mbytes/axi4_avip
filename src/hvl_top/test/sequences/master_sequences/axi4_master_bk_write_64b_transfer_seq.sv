@@ -32,7 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_64b_transfer_seq::body();
   super.body();
-    // MSHA: req.type = this.type;
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_bk_write_64b_transfer_seq"), UVM_NONE); 
 
   start_item(req);

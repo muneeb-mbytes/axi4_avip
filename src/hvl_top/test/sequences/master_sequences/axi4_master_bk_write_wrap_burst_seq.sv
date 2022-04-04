@@ -33,8 +33,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_wrap_burst_seq::body();
   super.body();
-  // MSHA: req.type = this.type;
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_bk_write_wrap_burst_seq"), UVM_NONE);
   
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
@@ -46,7 +44,6 @@ task axi4_master_bk_write_wrap_burst_seq::body();
  
  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_bk_write_wrap_burst_seq"), UVM_NONE); 
 
 endtask : body
 

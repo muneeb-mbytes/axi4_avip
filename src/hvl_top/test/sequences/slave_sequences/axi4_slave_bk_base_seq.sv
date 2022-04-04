@@ -8,8 +8,6 @@
 class axi4_slave_bk_base_seq extends uvm_sequence #(axi4_slave_tx);
   //factory registration
   `uvm_object_utils(axi4_slave_bk_base_seq)
-  //`uvm_declare_p_sequencer(axi4_slave_write_sequencer)
-  // `uvm_declare_p_sequencer(axi4_slave_read_sequencer)
   
   //-------------------------------------------------------
   // Externally defined Function

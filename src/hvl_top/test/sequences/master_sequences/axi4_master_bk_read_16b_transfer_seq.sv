@@ -42,7 +42,7 @@ task axi4_master_bk_read_16b_transfer_seq::body();
 
     `uvm_fatal("axi4","Rand failed");
   end
-  req.print();
+  `uvm_info(get_type_name(), $sformatf("master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
 
 endtask : body

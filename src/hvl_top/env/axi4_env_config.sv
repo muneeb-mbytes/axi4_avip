@@ -63,7 +63,6 @@ function void axi4_env_config::do_print(uvm_printer printer);
   printer.print_field ("no_of_masters",no_of_masters,$bits(no_of_masters), UVM_HEX);
   printer.print_field ("no_of_slaves",no_of_slaves,$bits(no_of_slaves), UVM_HEX);
 
-
 endfunction : do_print
 
 `endif

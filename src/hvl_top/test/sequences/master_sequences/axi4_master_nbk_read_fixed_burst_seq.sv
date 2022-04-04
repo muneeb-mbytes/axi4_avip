@@ -32,8 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_read_fixed_burst_seq::body();
   super.body();
-  req.transfer_type=NON_BLOCKING_READ;
-  
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;

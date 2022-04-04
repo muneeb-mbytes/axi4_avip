@@ -19,11 +19,7 @@ package axi4_env_pkg;
   //Include all other files
   `include "axi4_env_config.sv"
   `include "axi4_virtual_sequencer.sv"
-
-  //SCOREBOARD
   `include "axi4_scoreboard.sv"
- 
-  //ENV
   `include "axi4_env.sv"
 
 endpackage : axi4_env_pkg

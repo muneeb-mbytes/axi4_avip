@@ -168,7 +168,6 @@ class axi4_master_coverage extends uvm_subscriber #(axi4_master_tx);
       bins READ_DECERR  = {3};
     }
     
-    // ------------------------------------------------------
 
     TRANSFER_TYPE_CP : coverpoint packet.transfer_type {
       option.comment = "transfer type";

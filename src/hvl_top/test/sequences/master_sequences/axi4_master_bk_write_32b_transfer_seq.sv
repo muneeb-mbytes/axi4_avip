@@ -32,7 +32,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_32b_transfer_seq::body();
   super.body();
-    // MSHA: req.type = this.type;
     `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_bk_write_32b_transfer_seq"), UVM_NONE); 
 
   start_item(req);
@@ -44,7 +43,7 @@ task axi4_master_bk_write_32b_transfer_seq::body();
     `uvm_fatal("axi4","Rand failed");
   end
   
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("master_seq \n%s",req.sprint()), UVM_NONE); 
   
   finish_item(req);
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_bk_write_32b_transfer_seq"), UVM_NONE); 

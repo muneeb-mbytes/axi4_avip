@@ -34,7 +34,7 @@ endfunction : new
 
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
-// Creates the axi4_virtual_32b_write_read_seq sequence and starts the write and read virtual sequences
+// Creates the axi4_virtual_32b_write_read_rand_seq sequence and starts the write and read virtual sequences
 //
 // Parameters:
 //  phase - uvm phase

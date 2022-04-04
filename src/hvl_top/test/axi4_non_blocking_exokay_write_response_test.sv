@@ -8,8 +8,8 @@
 class axi4_non_blocking_exokay_response_write_test extends axi4_base_test;
   `uvm_component_utils(axi4_non_blocking_exokay_response_write_test)
 
-  //Variable : axi4_virtual_write_seq_h
-  //Instatiation of axi4_virtual_write_seq
+  //Variable : axi4_virtual_nbk_exokay_response_write_seq_h
+  //Instatiation of axi4_virtual_nbk_exokay_response_write_seq
   axi4_virtual_nbk_exokay_response_write_seq axi4_virtual_nbk_exokay_response_write_seq_h;
   
   //-------------------------------------------------------

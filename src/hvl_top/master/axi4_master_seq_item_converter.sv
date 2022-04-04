@@ -74,8 +74,6 @@ function void axi4_master_seq_item_converter::from_write_class( input axi4_maste
  
   output_conv_h.buser = input_conv_h.buser;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting buser =  %b",output_conv_h.buser),UVM_HIGH);
-  //$cast(output_conv_h.tx_type,input_conv_h.tx_type); 
-  //`uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting tx_type =  %b",output_conv_h.tx_type),UVM_HIGH);
 
   output_conv_h.awaddr = input_conv_h.awaddr;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting awaddr =  %0h",output_conv_h.awaddr),UVM_HIGH);
@@ -147,9 +145,6 @@ function void axi4_master_seq_item_converter::from_read_class( input axi4_master
   $cast(output_conv_h.rresp,input_conv_h.rresp);
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting rresp =  %b",output_conv_h.rresp),UVM_HIGH);
   
-  //$cast(output_conv_h.tx_type,input_conv_h.tx_type); 
-  //`uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting tx_type =  %b",output_conv_h.tx_type),UVM_HIGH);
-
   output_conv_h.araddr = input_conv_h.araddr;
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting araddr =  %0h",output_conv_h.araddr),UVM_HIGH);
 
@@ -444,17 +439,12 @@ function void axi4_master_seq_item_converter::to_read_addr_data_class(input axi4
         output_conv_h.rdata[i] = input_conv_h.rdata[i];
     `uvm_info("axi4_master_seq_item_conv_class",$sformatf("combined read data packet after reading rdata= %0p",output_conv_h.rdata[i]),UVM_FULL);
     end
-//foreach(input_conv_h.rdata[i]) begin
-//    if(input_conv_h.rdata[i] != 'h0)begin
-//      output_conv_h.rdata.push_front(input_conv_h.rdata[i]);
-//      //`uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting read_addr_data_packet =  %0h",output_conv_h.rdata[i]),UVM_HIGH);
-//    end
-//  end
+  
   $cast(output_conv_h.rresp,input_conv_h.rresp);
   
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("After converting read_addr_data_packet =  %s",output_conv_h.sprint()),UVM_HIGH);
-
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
+
 endfunction : to_read_addr_data_class
 
 
@@ -475,16 +465,12 @@ function void axi4_master_seq_item_converter::do_print(uvm_printer printer);
   printer.print_field("awcache",axi4_w_st.awcache,$bits(axi4_w_st.awcache),UVM_BIN);
   printer.print_field("awprot",axi4_w_st.awprot,$bits(axi4_w_st.awprot),UVM_DEC);
   printer.print_field("bid",axi4_w_st.bid,$bits(axi4_w_st.bid),UVM_DEC);
-  //printer.print_field("awaddr",axi4_w_st.awaddr,$bits(axi4_w_st.awaddr),UVM_DEC);
-  //printer.print_field("awqos",axi4_w_st.awqos,$bits(axi4_w_st.awqos),UVM_DEC);
   foreach(axi4_w_st.wdata[i]) begin
     printer.print_field($sformatf("wdata[%0d]",i),axi4_w_st.wdata[i],$bits(axi4_w_st.wdata[i]),UVM_HEX);
   end
   foreach(axi4_w_st.wstrb[i]) begin
     printer.print_field($sformatf("wstrb[%0d]",i),axi4_w_st.wstrb[i],$bits(axi4_w_st.wstrb[i]),UVM_HEX);
   end
-  //printer.print_field("wdata",axi4_w_st.wdata,$bits(axi4_w_st.wdata),UVM_DEC);
-  //printer.print_field("wstrb",axi4_w_st.wstrb,$bits(axi4_w_st.wstrb),UVM_DEC);
  
  printer.print_field("arid",axi4_r_st.arid,$bits(axi4_r_st.arid),UVM_DEC);
  printer.print_field("arlen",axi4_r_st.arlen,$bits(axi4_r_st.arlen),UVM_DEC);
@@ -494,12 +480,9 @@ function void axi4_master_seq_item_converter::do_print(uvm_printer printer);
  printer.print_field("arcache",axi4_r_st.arcache,$bits(axi4_r_st.arcache),UVM_BIN);
  printer.print_field("arprot",axi4_r_st.arprot,$bits(axi4_r_st.arprot),UVM_DEC);
  printer.print_field("rresp",axi4_r_st.rresp,$bits(axi4_r_st.rresp),UVM_DEC);
- //printer.print_field("araddr",axi4_r_st.araddr,$bits(axi4_r_st.araddr),UVM_DEC);
- //printer.print_field("arqos",axi4_r_st.arqos,$bits(axi4_r_st.arqos),UVM_DEC);
- //printer.print_field("rdata",axi4_r_st.rdata,$bits(axi4_r_st.rdata),UVM_DEC);
-  foreach(axi4_r_st.rdata[i]) begin
-    printer.print_field($sformatf("rdata[%0d]",i),axi4_r_st.rdata[i],$bits(axi4_r_st.rdata[i]),UVM_HEX);
-  end
+ foreach(axi4_r_st.rdata[i]) begin
+   printer.print_field($sformatf("rdata[%0d]",i),axi4_r_st.rdata[i],$bits(axi4_r_st.rdata[i]),UVM_HEX);
+ end
 endfunction : do_print
 
 `endif

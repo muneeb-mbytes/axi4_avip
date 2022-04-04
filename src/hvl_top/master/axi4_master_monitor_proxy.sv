@@ -175,7 +175,6 @@ task axi4_master_monitor_proxy::axi4_write_data();
     
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_write_data_sampling(struct_write_packet,struct_cfg);
-    //axi4_master_seq_item_converter::to_write_class(struct_write_packet,req_wr);
    
     //Getting the write address packet
     axi4_master_write_address_fifo_h.get(local_write_addr_packet);
@@ -260,11 +259,11 @@ task axi4_master_monitor_proxy::axi4_read_data();
 
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h, struct_cfg);
     axi4_master_mon_bfm_h.axi4_read_data_sampling(struct_read_packet,struct_cfg);
-    //axi4_master_seq_item_converter::to_read_class(struct_read_packet,req_rd);
 
     axi4_master_read_fifo_h.get(local_read_addr_packet);
     
     axi4_master_seq_item_converter::to_read_addr_data_class(local_read_addr_packet,struct_read_packet,req_rd);
+
     //clone and publish the clone to the analysis port 
     $cast(req_rd_clone_packet,req_rd.clone());
     `uvm_info(get_type_name(),$sformatf("Packet received from axi4_read_data clone packet is \n %s",req_rd_clone_packet.sprint()),UVM_HIGH)

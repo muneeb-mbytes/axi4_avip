@@ -54,7 +54,6 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
                                 //Read Data Channel
                                 input  [3:0]rid    ,
                                 input  [DATA_WIDTH-1: 0]rdata  ,
-                                //input  [(DATA_WIDTH/8)-1: 0]rstrb  ,
                                 input  [1:0]rresp  ,
                                 input  rlast  ,
                                 input  [3:0]ruser  ,
@@ -74,10 +73,6 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
 
   reg[3:0] i = 0;
 
-  //--------------------------------------------------------------------------------------------
-  // Creating handle for virtual Interface
-  //--------------------------------------------------------------------------------------------
- 
   //Variable : axi4_slave_monitor_proxy_h
   //Creating the handle for proxy monitor
   axi4_slave_monitor_proxy axi4_slave_mon_proxy_h;

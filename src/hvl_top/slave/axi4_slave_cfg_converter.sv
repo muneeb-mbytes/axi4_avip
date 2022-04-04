@@ -14,7 +14,9 @@ class axi4_slave_cfg_converter extends uvm_object;
 //-------------------------------------------------------                                         
   extern function new(string name = "axi4_slave_cfg_converter");                                   
   extern static function void from_class(input axi4_slave_agent_config input_conv,output axi4_transfer_cfg_s output_conv);
-  extern function void do_print(uvm_printer printer);                                                                              endclass : axi4_slave_cfg_converter                                                                
+  extern function void do_print(uvm_printer printer);  
+
+endclass : axi4_slave_cfg_converter                                                                
                                                                                                      
 //--------------------------------------------------------------------------------------------      
 // Construct: new                                                                                   
@@ -32,8 +34,6 @@ endfunction : new
 function void axi4_slave_cfg_converter::from_class(input axi4_slave_agent_config input_conv,output axi4_transfer_cfg_s output_conv);
   output_conv.min_address=input_conv.min_address;
   output_conv.max_address=input_conv.max_address;
-  //output_conv.wait_count_read_address_channel=input_conv.wait_count_read_address_channel;
-  //output_conv.wait_count_read_data_channel=input_conv.wait_count_read_data_channel;
 endfunction: from_class   
  
  //--------------------------------------------------------------------------------------------      
@@ -44,9 +44,6 @@ endfunction: from_class
   axi4_transfer_cfg_s axi4_cfg;                                                                       
   printer.print_field("min_address",axi4_cfg.min_address,$bits(axi4_cfg.min_address),UVM_HEX);
   printer.print_field("max_address",axi4_cfg.max_address,$bits(axi4_cfg.max_address),UVM_HEX);
-  //printer.print_field("wait_count_read_address_channel",axi4_cfg.wait_count_read_address_channel,$bits(axi4_cfg.wait_count_read_address_channel),UVM_HEX);
-  //printer.print_field("wait_count_read_data_channel",axi4_cfg.wait_count_read_data_channel,$bits(axi4_cfg.wait_count_read_data_channel),UVM_HEX);
-  // printer.print_field("",$bits(),UVM_DEC);                                                        
  endfunction : do_print                                                                              
                                                                                                 
 `endif

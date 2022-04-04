@@ -33,8 +33,6 @@ endfunction : new
 task axi4_master_bk_write_cross_seq::body();
   super.body();
 begin
-  //req.transfer_type=NON_BLOCKING_WRITE;
-  // MSHA: req.type = this.type;
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_bk_write_cross_seq"), UVM_NONE); 
 
   start_item(req);

@@ -165,9 +165,6 @@ task axi4_master_driver_proxy::axi4_write_task();
     //Converting configurations into struct config type
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
 
-    // MSHA: put the req_wr into a FIFO/queue (depth must be equal to outstanding transfers variable value)
-    // MSHA: Throw the error when we reach the limit
-
     //Keeping the req packet into the write fifo 
     //This fifo is used if the transfer_type is NON_BLOCKING_WRITE
     //Throws the error if the write fifo reaches the limit
@@ -341,11 +338,9 @@ task axi4_master_driver_proxy::axi4_write_task();
           //Getting the key from the write_response_channel so that 
           //the other transaction should start after completion of the previous transaction
           write_response_channel_key.put(1);
-          //decrement the out-standing transfers counter
         end
 
       join_any
-      //join_none
 
       //fine-grain control
       //status returns whether the process is FINISHED or WAITING or RUNNING.
@@ -383,9 +378,6 @@ task axi4_master_driver_proxy::axi4_read_task();
     //Converting configurations into struct config type
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
 
-    // MSHA: // put the req_rd into a FIFO/queue (depth must be equal to outstanding
-    // MSHA: // transfers variable value )
-    
     //Return the fifo size that it is capable to hold
     //A return value of 0 indicates the FIFO capacity has no limit
     `uvm_info(get_type_name(),$sformatf("READ_TASK::Checking fifo size = %0d",axi4_master_write_fifo_h.size()),UVM_FULL); 

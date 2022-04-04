@@ -169,8 +169,6 @@ class axi4_slave_coverage extends uvm_subscriber#(axi4_slave_tx);
       bins READ_DECERR = {3};
     }
     
-    // ------------------------------------------------------
-    
     TRANSFER_TYPE_CP : coverpoint packet.transfer_type {
       option.comment = "transfer type";
       bins BLOCKING_WRITE     = {0};
@@ -189,7 +187,6 @@ class axi4_slave_coverage extends uvm_subscriber#(axi4_slave_tx);
     RID_CP_X_RRESP_CP                 :cross BID_CP,BRESP_CP;
     AWBURST_CP_X_AWLEN_CP_X_AWSIZE_CP :cross AWBURST_CP,AWLEN_CP,AWSIZE_CP;
     ARBURST_CP_X_ARLEN_CP_X_ARSIZE_CP :cross ARBURST_CP,ARLEN_CP,ARSIZE_CP;
-    // TRANSFER_TYPE_CP_X_BURST_TYPE_CP  :cross TRANSFER_TYPE_CP,BURST_TYPE_CP;
 
   endgroup: axi4_slave_covergroup
 
@@ -211,7 +208,6 @@ endclass : axi4_slave_coverage
 function axi4_slave_coverage::new(string name = "axi4_slave_coverage",uvm_component parent = null);
   super.new(name, parent);
   axi4_slave_covergroup =new();
-  
 endfunction : new
 
 //--------------------------------------------------------------------------------------------

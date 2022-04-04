@@ -57,11 +57,6 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 function void axi4_virtual_sequencer::build_phase(uvm_phase phase);
   super.build_phase(phase);
-  //axi4_master_write_seqr_h = axi4_master_write_sequencer::type_id::create("axi4_master_write_seqr_h",this);
-  //axi4_master_read_seqr_h = axi4_master_read_sequencer::type_id::create("axi4_master_read_seqr_h",this);
-
-  //axi4_slave_write_seqr_h = axi4_slave_write_sequencer::type_id::create("axi4_slave_write_seqr_h",this);
-  //axi4_slave_read_seqr_h = axi4_slave_read_sequencer::type_id::create("axi4_slave_read_seqr_h",this);
 endfunction : build_phase
 
 //--------------------------------------------------------------------------------------------
@@ -106,14 +101,8 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task axi4_virtual_sequencer::run_phase(uvm_phase phase);
 
- // phase.raise_objection(this, "axi4_virtual_sequencer");
-
- // super.run_phase(phase);
-
- // // Work here
- // // ...
-
- // phase.drop_objection(this);
+  // Work here
+  // ...
 
 endtask : run_phase
 

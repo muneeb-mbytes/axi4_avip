@@ -149,10 +149,8 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     if(axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
       `uvm_error("UVM_TLM_FIFO","FIFO is now FULL!")
     end 
-
       
    // Sample the values
-   
    mem_awid 	[i]	  = awid  	;	
 	 mem_waddr	[i] 	= awaddr	;
 	 mem_wlen 	[i]	  = awlen	  ;	
@@ -181,9 +179,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       awready<=0;
     end
     awready <= 1;
-   
-    //@(posedge aclk);
-    //awready <= 0;
    
   endtask: axi4_write_address_phase 
 
@@ -221,6 +216,9 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
        `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0h",s,data_write_packet.wdata[s]),UVM_HIGH);
        data_write_packet.wstrb[s]=wstrb;
        `uvm_info("slave_wstrb",$sformatf("sampled_slave_wstrb[%0d] = %0d",s,data_write_packet.wstrb[s]),UVM_HIGH);
+       
+       // Used to sample the wlast at the end of transfer
+       // and come out of the loop if wlast == 1
         if(s == mem_wlen[a]) begin
           mem_wlast[a] = wlast;
           `uvm_info("slave_wlast",$sformatf("slave1_wlast = %0b",wlast),UVM_HIGH);
@@ -240,20 +238,6 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       @(posedge aclk);
       wready <= 0;
 
-
-   
-      //   for(int n = 0;n<(2**mem_wsize[a]);n++)begin
-      //     `uvm_info("SLAVE_DEBUG",$sformatf("length = %0d",s),UVM_HIGH)
-      //     `uvm_info("SLAVE_DEBUG",$sformatf("mem_size = %0d",mem_wsize[a]),UVM_HIGH)
-      //     `uvm_info("SLAVE_DEBUG",$sformatf("mem_strb[%0d] = %0d",n,wstrb[n]),UVM_HIGH)
-      //     if(wstrb[n])begin
-      //       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata = %0d",wdata),UVM_HIGH);
-      //       data_write_packet.wdata[s][n*8+:8]=wdata[8*n+7 -: 8];
-      //       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0d",n,data_write_packet.wdata[s][n*8+:8]),UVM_HIGH);
-      //       `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata = %0d",wdata[8*n+7 -: 8]),UVM_HIGH);
-      //     end
-      //   end
-  
   endtask : axi4_write_data_phase
 
   //-------------------------------------------------------
@@ -273,6 +257,10 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info("DEBUG_BRESP",$sformatf("MEM_BID[%0d] = %0d",j,mem_awid[j]),UVM_HIGH)
     `uvm_info("DEBUG_BRESP_WLAST",$sformatf("wlast = %0d",mem_wlast[j]),UVM_HIGH)
 
+    //Checks all the conditions satisfied are not to send OKAY RESP
+    //1. Resp has to send only wlast is high.
+    //2. Size shouldn't more than DBW.
+    //3. fifo shouldn't get full.
     if(mem_wlast[j]==1 && mem_wsize[j] <= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH && !axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
       bresp <= WRITE_OKAY;
       data_write_packet.bresp <= WRITE_OKAY;
@@ -373,23 +361,20 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
           k1 = 0;
         end
       end
-     // else if(mem_rsize[j1] == DATA_WIDTH/DATA_WIDTH) begin
-     //   if(k1 == 4) begin
-     //     k1 = 0;
-     //   end
-     // end
       
       rid  <= mem_arid[j1];
       for(int l1=0; l1<(2**mem_rsize[j1]); l1++) begin
         `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize= %0d",mem_rsize[j1]),UVM_HIGH);
         `uvm_info("RSIZE_DEBUG",$sformatf("mem_rsize_l1= %0d",l1),UVM_HIGH);
+        
+        //Sending the rdata based on each byte lane
+        //RHS: Is used to send Byte by Byte
+        //LHS: Is used to shift the location for each Byte
         rdata[8*k1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
         `uvm_info("RDATA_DEBUG",$sformatf("RDATA[%0d]=%0h",i1,data_read_packet.rdata[l1*8+i1]),UVM_HIGH)
         `uvm_info("RDATA_DEBUG",$sformatf("RDATA=%0h",rdata[8*k1+7 -: 8]),UVM_HIGH)
         k1++;
       end
-     // rdata<=data_read_packet.rdata[i1];
-     // `uvm_info("SLAVE_RDATA_DEBUG",$sformatf("rdata= %0d",rdata),UVM_HIGH);
      
      if(mem_rsize[j1]<=DATA_WIDTH/OUTSTANDING_FIFO_DEPTH) begin
        rresp<=data_read_packet.rresp;

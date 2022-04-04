@@ -51,7 +51,7 @@ task assertion_base_test::run_phase(uvm_phase phase);
   phase.raise_objection(this);
 
   `uvm_info(get_type_name(), $sformatf("Inside BASE_TEST"), UVM_NONE);
-  //super.run_phase(phase);
+
   #1000;
 
   `uvm_info(get_type_name(), $sformatf("Done BASE_TEST"), UVM_NONE);

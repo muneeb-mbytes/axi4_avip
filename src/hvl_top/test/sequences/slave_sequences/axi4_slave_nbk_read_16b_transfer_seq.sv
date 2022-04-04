@@ -35,7 +35,7 @@ task axi4_slave_nbk_read_16b_transfer_seq::body();
   req.transfer_type=NON_BLOCKING_READ;
   
   start_item(req);
-  if(!req.randomize() with {req.arsize == READ_1_BYTE;})begin
+  if(!req.randomize()) begin 
     `uvm_fatal("axi4","Rand failed");
   end
   req.print();

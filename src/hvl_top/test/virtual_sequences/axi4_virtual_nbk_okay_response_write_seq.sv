@@ -1,5 +1,5 @@
-`ifndef AXI4_VIRTUAL_NBK_okay_response_WRITE_SEQ_INCLUDED_
-`define AXI4_VIRTUAL_NBK_okay_response_WRITE_SEQ_INCLUDED_
+`ifndef AXI4_VIRTUAL_NBK_OKAY_RESPONSE_WRITE_SEQ_INCLUDED_
+`define AXI4_VIRTUAL_NBK_OKAY_RESPONSE_WRITE_SEQ_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
 // Class: axi4_virtual_nbk_okay_response_write_seq

@@ -54,9 +54,6 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   extern virtual task axi4_write_task();
   extern virtual task axi4_read_task();
   extern virtual task task_memory_write(inout axi4_slave_tx struct_write_packet);
- // extern virtual task check_for_slave_resp(inout axi4_write_transfer_char_s struct_write_packet
- // axi4_read_transfer_char_s struct_read_packet);
- // extern virtual task task_memory_read(inout axi4_read_transfer_char_s struct_read_packet);
 endclass : axi4_slave_driver_proxy
 
 //--------------------------------------------------------------------------------------------
@@ -404,50 +401,21 @@ endtask : axi4_read_task
 
 task axi4_slave_driver_proxy::task_memory_write(inout axi4_slave_tx struct_write_packet);
   `uvm_info("DEBUG_MEMORY_WRITE", $sformatf("task_memory_write"), UVM_HIGH); 
+  
   for(int j=0;j<struct_write_packet.awlen;j++)begin
     `uvm_info("DEBUG_MEMORY_WRITE",$sformatf("memory_task_awlen=%d",struct_write_packet.awlen),UVM_HIGH)
     if(struct_write_packet.awburst == 2'b00) begin
-    for(int i=0; i<(2**(struct_write_packet.awsize)); i++)begin
-      `uvm_info("DEBUG_MEMORY_WRITE", $sformatf("task_memory_write inside for loop :: %0d", i), UVM_HIGH);
+      for(int i=0; i<(2**(struct_write_packet.awsize)); i++)begin
+        `uvm_info("DEBUG_MEMORY_WRITE", $sformatf("task_memory_write inside for loop :: %0d", i), UVM_HIGH);
         `uvm_info("DEBUG_MEMORY_WRITE", $sformatf("task_memory_write inside for loop wstrb = %0h",struct_write_packet.wstrb[i]), UVM_HIGH);
         if(struct_write_packet.wstrb[j][i] == 1)begin
           axi4_slave_agent_cfg_h.slave_memory_task(struct_write_packet.awaddr+i,struct_write_packet.wdata[j][8*i+7 -: 8]);
           `uvm_info("DEBUG_MEMORY_WRITE", $sformatf("task_memory_write inside for loop data = %0h",axi4_slave_agent_cfg_h.slave_memory[struct_write_packet.awaddr+i]), UVM_HIGH);
-          //`uvm_info("DEBUG_MEMORY_WRITE", $sformatf("task_memory_write inside for loop addr = %0h",axi4_slave_agent_cfg_h.slave_memory[struct_write_packet.awaddr[i]]), UVM_HIGH);
         end
       end
     end
-  //    else if(struct_write_packet.awburst == 2'b01) begin
-  //      if(struct_write_packet.wstrb[i] == 1)begin
-  //        axi4_slave_agent_cfg_h.slave_memory_task(struct_write_packet.awaddr+(j*(2**struct_write_packet.awsize))+i,struct_write_packet.wdata[j][8*i+7 -: 8]);
-  //        `uvm_info("DEBUG_NA", $sformatf("task_memory_write inside for loop data = %0h", 
-  //        axi4_slave_agent_cfg_h.slave_memory[struct_write_packet.awaddr+(j*(2**struct_write_packet.awsize))+i]), UVM_HIGH);
-  //      end
-  //    end
   end
+
 endtask : task_memory_write
-
-//--------------------------------------------------------------------------------------------
-// Task: task_memory_read
-// This task is used to read the data from the slave memory
-// Parameters:
-//  struct_packet   - axi4_read_transfer_char_s
-//--------------------------------------------------------------------------------------------
-
-//task task_memory_read(inout axi4_read_transfer_char_s struct_read_packet);
-// `uvm_info("DEBUG_MEMORY_READ", $sformatf("task_memory_read"), UVM_HIGH);
-//  for(int i=0; i<(DATA_WIDTH/8); i++)begin
-//    if(axi4_slave_agent_cfg_h.slave_memory.exists(struct_read_packet.arddr))begin
-//      struct_raed_packet.rdata[8*i+7 -: 8] =
-//      axi4_slave_agent_cfg_h.slave_memory[struct_read_packet.arddr + i];
-//    end
-//    else begin
-//      `uvm_error(get_type_name(), $sformatf("Selected address has no data"));
-//      struct_read_packet.rresp = READ_DECERR;
-//      struct_read_packet.rdata  = 'h0;
-//    end
-//  end 
-//endtask : task_memory_read
-  
 
 `endif
