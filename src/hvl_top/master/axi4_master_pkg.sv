@@ -19,8 +19,8 @@ package axi4_master_pkg;
   //-------------------------------------------------------
   // Include all other files
   //-------------------------------------------------------
-  `include "axi4_master_tx.sv"
   `include "axi4_master_agent_config.sv"
+  `include "axi4_master_tx.sv"
   `include "axi4_master_seq_item_converter.sv"
   `include "axi4_master_cfg_converter.sv"
   `include "axi4_master_write_sequencer.sv"

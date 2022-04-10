@@ -9,6 +9,8 @@
 class axi4_master_tx extends uvm_sequence_item;
   
   `uvm_object_utils(axi4_master_tx)
+
+  axi4_master_agent_config axi4_master_agent_cfg_h; 
   
   //-------------------------------------------------------
   // WRITE ADDRESS CHANNEL SIGNALS
@@ -216,7 +218,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   //Constraint : awaddr
   //Used to generate the alligned address with respect to size
-  constraint awaddr_c0 {soft awaddr == awaddr%(2**awsize) == 0;}
+  constraint awaddr_c0 {soft awaddr == (awaddr%(2**awsize)) == 0;}
 
   //Constraint : awburst_c1
   //Restricting write burst to select only FIXED, INCR and WRAP types
@@ -258,14 +260,12 @@ class axi4_master_tx extends uvm_sequence_item;
   constraint wstrb_c2 {wstrb.size() == awlen + 1;}
 
   //Constraint : wstrb_c3
+  //wstrb shouldn't be zero
   constraint wstrb_c3 {foreach(wstrb[i]) wstrb[i]!=0; }
 
-  constraint wstrb_c { 
-    // Aligned addresses
-  		if(awsize == 0) foreach(wstrb[i]) wstrb[i] inside {4'b0001, 4'b0010, 4'b0100, 4'b1000};
-  		if(awsize == 1) foreach(wstrb[i]) wstrb[i] inside {4'b0011, 4'b1100, 4'b0101, 4'b1010, 4'b1001, 4'b0110};
-  	  if(awsize == 2) foreach(wstrb[i]) wstrb[i] inside {4'b1111};
-  	}
+  //Constraint: wstrb_c4
+  //based on size setting the strobe values
+  //constraint wstrb_c4 {foreach(wstrb[i]) $countones(wstrb[i]) == 2**awsize;}
 
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
@@ -274,6 +274,11 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   // READ ADDRESS Constraints
   //-------------------------------------------------------
+  
+  //Constraint : araddr
+  //Used to generate the alligned address with respect to size
+  constraint araddr_c0 {soft araddr == (araddr%(2**arsize)) == 0;}
+  
   //Constraint : arburst_c1
   //Restricting read burst to select only FIXED, INCR and WRAP types
   constraint arburst_c1 { arburst != READ_RESERVED;}
@@ -316,6 +321,7 @@ class axi4_master_tx extends uvm_sequence_item;
   //-------------------------------------------------------
   extern function new (string name = "axi4_master_tx");
   extern function void do_copy(uvm_object rhs);
+  extern function void post_randomize();
   extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
   extern function void do_print(uvm_printer printer);
 endclass : axi4_master_tx
@@ -330,6 +336,268 @@ endclass : axi4_master_tx
 function axi4_master_tx::new(string name = "axi4_master_tx");
   super.new(name);
 endfunction : new
+
+//--------------------------------------------------------------------------------------------
+// Function : post_randomize 
+// Implements the narrow transfers and unalligned transfers
+//--------------------------------------------------------------------------------------------
+function void axi4_master_tx::post_randomize();
+  bit[3:0] wstrb_local;
+  bit[3:0] wstrb_size_0_local;
+  bit[3:0] awsize_0;
+  bit[3:0] awsize_1;
+
+  bit[3:0] unallignd_wstrb0;
+  bit[3:0] unallignd_wstrb1;
+  bit[3:0] unallignd_wstrb2;
+  bit[1:0] unallignd_wstrb0_cnt;
+  bit[3:0] alligned_wstrb0_cnt;
+  int index;
+  int quotient_check;
+  int quotient_check_1;
+  int remainder_check;
+
+  //-------------------------------------------------------
+  // Narrow Transfers for alligned address
+  //-------------------------------------------------------
+  if(awaddr % 2**awsize == 0) begin
+    awsize_0 = 4'b0001;
+    awsize_1 = 4'b1111;
+    remainder_check = awaddr % 4;
+    `uvm_info("rem_check",$sformatf("remainder_check = %0d",remainder_check),UVM_HIGH)
+    
+    // Assigning the initial strobe values based on the size and address issued
+    if(awsize == 0) begin
+      if(remainder_check == 0) wstrb_local = 4'b0001; 
+      if(remainder_check == 1) wstrb_local = 4'b0010; 
+      if(remainder_check == 2) wstrb_local = 4'b0100; 
+      if(remainder_check == 3) wstrb_local = 4'b1000; 
+    end
+   
+    if(awsize == 1) begin 
+      quotient_check_1 = awaddr / 2**awsize;
+      if(quotient_check_1 % 2 == 0) begin
+      wstrb_local = 4'b0011;
+    end
+    else begin
+      wstrb_local = 4'b1100;
+    end
+  end
+  
+  if(awsize == 2) wstrb_local = 4'b1111;
+  `uvm_info(get_type_name(), $sformatf("DEBUG_LOCAL :: wstrb_local =  %0b",wstrb_local), UVM_HIGH); 
+  `uvm_info(get_type_name(), $sformatf("DEBUG_LOCL :: awsize =  %0d",awsize), UVM_HIGH); 
+  
+  wstrb_size_0_local = wstrb_local;
+
+  //for loop to generate the strobe values based on strobe size
+  for(int i=0;i<wstrb.size();i++) begin
+    `uvm_info(get_type_name(),$sformatf("inside for loop of post randomize"),UVM_HIGH)
+    
+    if(awsize == 0) begin
+      if(remainder_check == 0)begin
+        if(i==0) begin
+          wstrb[0] = wstrb_local;
+          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+        end 
+        else begin
+          if(i%4 == 0) begin
+            this.wstrb[i] = awsize_0;
+            wstrb_size_0_local = awsize_0;
+          end
+          else begin
+            wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
+            this.wstrb[i] = wstrb_size_0_local;
+          end
+          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[%0d] =  %0b",i,this.wstrb[i]), UVM_HIGH); 
+          `uvm_info(get_type_name(),$sformatf("outside for loop of post randomize"),UVM_HIGH)
+        end
+      end
+      
+      else if (remainder_check == 1) begin
+        if(i==0) begin
+          wstrb[0] = wstrb_local;
+          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+        end 
+        else if(i == 1) begin
+          wstrb[1] = wstrb[0] << i;
+        end
+        else if(i == 2) begin
+          wstrb[2] = wstrb[0] << i;
+          wstrb_size_0_local = awsize_0;
+        end
+        else begin 
+          this.wstrb[i] = wstrb_size_0_local;
+          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
+          alligned_wstrb0_cnt++;
+          if(alligned_wstrb0_cnt == 4) begin
+            wstrb_size_0_local = awsize_0;
+            alligned_wstrb0_cnt = 0;
+          end
+        end
+      end  
+      
+      else if (remainder_check == 2) begin
+        if(i==0) begin
+          wstrb[0] = wstrb_local;
+          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+        end 
+        else if(i == 1) begin
+          wstrb[1] = wstrb[0] << i;
+          wstrb_size_0_local = awsize_0;
+        end
+        
+        else begin 
+          this.wstrb[i] = wstrb_size_0_local;
+          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
+          alligned_wstrb0_cnt++;
+          if(alligned_wstrb0_cnt == 4) begin
+            wstrb_size_0_local = awsize_0;
+            alligned_wstrb0_cnt = 0;
+          end
+        end
+      end
+      
+      else if (remainder_check == 3) begin
+        if(i==0) begin
+          wstrb[0] = wstrb_local;
+          wstrb_size_0_local = awsize_0;
+          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+        end 
+        
+        else begin 
+          this.wstrb[i] = wstrb_size_0_local;
+          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
+          alligned_wstrb0_cnt++;
+          if(alligned_wstrb0_cnt == 4) begin
+            wstrb_size_0_local = awsize_0;
+            alligned_wstrb0_cnt = 0;
+          end
+        end
+      end
+    end
+    
+    else if(awsize == 1) begin
+      if(quotient_check_1 % 2**awsize == 0) begin 
+        if(i==0) begin
+          wstrb[0] = wstrb_local;
+          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+        end 
+        else begin
+          if(i%2 == 0) begin
+            this.wstrb[i] = {(wstrb_local << 2**awsize)^awsize_1};
+          end
+          else begin
+            this.wstrb[i] = (wstrb_local << 2**awsize);
+          end
+        end
+      end
+      
+      else begin
+        if(i==0) begin
+          wstrb[0] = wstrb_local;
+          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+        end 
+        else begin
+          if(i%2 == 0) begin
+            this.wstrb[i] = wstrb_local;
+          end
+          else begin
+            this.wstrb[i] = (wstrb_local >> 2**awsize);
+          end
+        end
+      end
+    end
+    
+    else if(awsize == 2) begin
+      wstrb[i] = wstrb_local;
+    end
+  end
+end
+
+
+//-------------------------------------------------------
+// Strobes for Unalligned transfers
+//-------------------------------------------------------
+if(awaddr % 2**awsize != 0) begin
+  
+  unallignd_wstrb0 = 4'b0001;
+  unallignd_wstrb1 = 4'b0011;
+  unallignd_wstrb2 = 4'b1111;
+  
+  quotient_check = awaddr / 2**awsize;
+  
+  if(awsize == 0) begin
+    wstrb_local = 4'b0001;
+  end
+  if(awsize == 1) begin
+    if(quotient_check%2 == 0) begin
+      wstrb_local = 4'b0010;
+    end
+    else begin
+      wstrb_local = 4'b1000;
+    end
+  end
+  if(awsize == 2) begin
+    if(awaddr % 2**awsize == 1) wstrb_local = 4'b1110; 
+    if(awaddr % 2**awsize == 2) wstrb_local = 4'b1100; 
+    if(awaddr % 2**awsize == 3) wstrb_local = 4'b1000;
+  end
+  
+  for(int i=0;i<wstrb.size();i++) begin
+    if(awsize == 0) begin
+      if(i == 0) begin
+        wstrb[0] = wstrb_local;
+      end
+      else begin
+        wstrb[i] = wstrb_local << 1;
+        unallignd_wstrb0_cnt++;
+        if(unallignd_wstrb0_cnt == 'd3) begin
+          wstrb[i] = wstrb_local;
+          unallignd_wstrb0_cnt = 0;
+        end
+      end
+    end
+    
+    if(awsize == 1) begin
+      if(i == 0) begin
+        wstrb[0] = wstrb_local;
+      end
+      else if(i == 1) begin
+        wstrb[i] = unallignd_wstrb1;
+      end
+      else begin
+        if(i%2 == 0) begin
+        wstrb[i] = unallignd_wstrb1 << 2;
+      end
+      else if(i%2 != 0) begin
+        wstrb[i] = unallignd_wstrb1;
+      end
+    end
+  end
+  
+  if(awsize == 2) begin
+    if(i==0) begin
+      wstrb[0] = wstrb_local;
+    end
+    else begin
+      wstrb[i] = unallignd_wstrb2;
+    end
+   end
+  end
+end
+
+//  for(int j=0; j<NO_OF_SLAVES;j++) begin
+//    index = j;
+//  end
+//
+// if (!std::randomize(awaddr) with { awaddr inside {[axi4_master_agent_cfg_h.master_min_addr_range_array[index]:axi4_master_agent_cfg_h.master_max_addr_range_array[index]]};
+//    awaddr %4 == 0;
+//  }) begin
+//    `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize awaddr"));
+//  end
+
+endfunction : post_randomize
 
 //--------------------------------------------------------------------------------------------
 // Function : do_copy

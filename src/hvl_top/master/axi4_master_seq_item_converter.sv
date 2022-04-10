@@ -187,7 +187,8 @@ endfunction : from_read_class
 // Parameters:
 // name - axi4_master_tx, axi4_write_transfer_char_s
 //--------------------------------------------------------------------------------------------
-function void axi4_master_seq_item_converter::to_write_class( input axi4_write_transfer_char_s input_conv_h, output axi4_master_tx output_conv_h);
+function void axi4_master_seq_item_converter::to_write_class( input axi4_write_transfer_char_s
+  input_conv_h, output axi4_master_tx output_conv_h);
   output_conv_h = new();
 
   `uvm_info("axi4_master_seq_item_conv_class",$sformatf("----------------------------------------------------------------------"),UVM_HIGH);
@@ -266,7 +267,8 @@ endfunction : to_write_class
 // Parameters:
 // name - axi4_master_tx, axi4_read_transfer_char_s
 //--------------------------------------------------------------------------------------------
-function void axi4_master_seq_item_converter::to_read_class( input axi4_read_transfer_char_s input_conv_h, output axi4_master_tx output_conv_h);
+function void axi4_master_seq_item_converter::to_read_class( input axi4_read_transfer_char_s
+  input_conv_h, output axi4_master_tx output_conv_h);
 
   output_conv_h = new();
 

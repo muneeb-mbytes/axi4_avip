@@ -32,16 +32,17 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_nbk_write_unaligned_addr_seq::body();
   super.body();
-
+ 
   start_item(req);
   if(!req.randomize() with {
                               req.awsize == WRITE_2_BYTES;
-                              req.awaddr == 32'h0000_0003;//(req.awaddr % 2**req.awsize != 0);
-                              req.awlen == 3;
-                              foreach(req.wstrb[i])req.wstrb[0] == 4'b1100;
-                                                   req.wstrb[1] == 4'b0011;
-                                                   req.wstrb[2] == 4'b0011;
-                                                   req.wstrb[3] == 4'b0011;
+                              req.awaddr == 32'h3210_1124;
+                             // req.awaddr==(req.awaddr % 2**req.awsize != 0);
+                              req.awlen == 11;
+                            //  foreach(req.wstrb[i])req.wstrb[0] == 4'b1100;
+                            //                       req.wstrb[1] == 4'b0011;
+                            //                       req.wstrb[2] == 4'b0011;
+                            //                       req.wstrb[3] == 4'b0011;
                               req.tx_type == WRITE;
                               req.awburst == WRITE_FIXED;
                               req.transfer_type == NON_BLOCKING_WRITE;}) begin
