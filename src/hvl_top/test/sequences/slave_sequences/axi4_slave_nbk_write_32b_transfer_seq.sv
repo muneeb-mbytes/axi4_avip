@@ -33,6 +33,7 @@ endfunction : new
 task axi4_slave_nbk_write_32b_transfer_seq::body();
   super.body();
   req.transfer_type = NON_BLOCKING_WRITE;
+  req.tx_type = WRITE;
 
   start_item(req);
   if(!req.randomize())begin

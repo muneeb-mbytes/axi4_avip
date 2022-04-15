@@ -265,7 +265,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Constraint: wstrb_c4
   //based on size setting the strobe values
-  //constraint wstrb_c4 {foreach(wstrb[i]) $countones(wstrb[i]) == 2**awsize;}
+  constraint wstrb_c4 {foreach(wstrb[i]) $countones(wstrb[i]) == 2**awsize;}
 
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
@@ -358,6 +358,22 @@ function void axi4_master_tx::post_randomize();
   int remainder_check;
 
   //-------------------------------------------------------
+  // Step-1: for awsize == 0
+  // Calculate the remainder by dividing awaddr and 2**awsize
+  // that gives the nearest alligned address based on the 
+  // remainder assert that particular strobe bit.
+  //
+  // Step-2: for awsize == 1
+  // Calculate the quotient by dividing awaddr and 2**awsize
+  // if quotient is alligned assert first 2 bits of strobes
+  // else assert next 2 bits of strobes
+  //
+  //Step-3: for awsize == 2
+  //Here you can assert all 4bits of strobes since it is a 
+  //alligned address and all 4bits needs to pass
+  //(addr ex: 0,4,8..)
+  //-------------------------------------------------------
+  //-------------------------------------------------------
   // Narrow Transfers for alligned address
   //-------------------------------------------------------
   if(awaddr % 2**awsize == 0) begin
@@ -401,6 +417,8 @@ function void axi4_master_tx::post_randomize();
           `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
         end 
         else begin
+          // since remainder is 0 it will be in 1st(0) lane
+          // so after every 4 transfers u need to assign wstrb(0)
           if(i%4 == 0) begin
             this.wstrb[i] = awsize_0;
             wstrb_size_0_local = awsize_0;
@@ -414,6 +432,7 @@ function void axi4_master_tx::post_randomize();
         end
       end
       
+      // since remainder is 1 it will be in 2nd(1) lane
       else if (remainder_check == 1) begin
         if(i==0) begin
           wstrb[0] = wstrb_local;
@@ -431,6 +450,7 @@ function void axi4_master_tx::post_randomize();
           wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
           alligned_wstrb0_cnt++;
           if(alligned_wstrb0_cnt == 4) begin
+            // so after every 4 transfers u need to assign awsize_0
             wstrb_size_0_local = awsize_0;
             alligned_wstrb0_cnt = 0;
           end
@@ -538,6 +558,10 @@ if(awaddr % 2**awsize != 0) begin
       wstrb_local = 4'b1000;
     end
   end
+  //in the 1st case why 3 bits made 1 becoz 
+  //since addr is 1 if you pass only that address as high 
+  //then in nxt lane it will start from addr 2 which is unalligned for size
+  //so if u pass all 3 bits nxt transfer will strat from 4 which is alligned.
   if(awsize == 2) begin
     if(awaddr % 2**awsize == 1) wstrb_local = 4'b1110; 
     if(awaddr % 2**awsize == 2) wstrb_local = 4'b1100; 
@@ -586,16 +610,6 @@ if(awaddr % 2**awsize != 0) begin
    end
   end
 end
-
-//  for(int j=0; j<NO_OF_SLAVES;j++) begin
-//    index = j;
-//  end
-//
-// if (!std::randomize(awaddr) with { awaddr inside {[axi4_master_agent_cfg_h.master_min_addr_range_array[index]:axi4_master_agent_cfg_h.master_max_addr_range_array[index]]};
-//    awaddr %4 == 0;
-//  }) begin
-//    `uvm_fatal("FATAL_STD_RANDOMIZATION_AWADDR", $sformatf("Not able to randomize awaddr"));
-//  end
 
 endfunction : post_randomize
 

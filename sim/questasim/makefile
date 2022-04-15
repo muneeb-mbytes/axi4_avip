@@ -120,7 +120,6 @@ simulate:
 	vsim -vopt \
 	work.hvl_top \
 	work.hdl_top \
-	work.tb_master_assertions \
 	-voptargs=+acc=npr \
 	-assertdebug \
 	+UVM_TESTNAME=$(test) \
