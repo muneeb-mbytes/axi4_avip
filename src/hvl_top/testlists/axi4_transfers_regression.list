@@ -6,7 +6,7 @@ axi4_blocking_16b_write_read_test
 axi4_blocking_32b_write_read_test 
 axi4_blocking_incr_burst_write_read_test 
 #axi4_blocking_wrap_burst_write_read_test 
-axi4_blocking_slave_error_write_read_test 
+#axi4_blocking_slave_error_write_read_test 
 axi4_blocking_unaligned_addr_write_read_test 
 axi4_blocking_fixed_burst_write_read_test 
 
@@ -25,7 +25,7 @@ axi4_non_blocking_incr_burst_write_read_test
 axi4_non_blocking_okay_response_write_read_test 
 axi4_non_blocking_fixed_burst_write_read_test 
 axi4_non_blocking_outstanding_transfer_write_read_test 
-axi4_non_blocking_slave_error_write_read_test 
+#axi4_non_blocking_slave_error_write_read_test 
 axi4_non_blocking_unaligned_addr_write_read_test 
 
 # Non Blocking Rand testcase
