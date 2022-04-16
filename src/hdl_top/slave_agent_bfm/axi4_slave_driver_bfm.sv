@@ -245,35 +245,47 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   // This task will drive the write response signals
   //-------------------------------------------------------
   
-  task axi4_write_response_phase(inout axi4_write_transfer_char_s data_write_packet, axi4_transfer_cfg_s struct_cfg);
+  task axi4_write_response_phase(inout axi4_write_transfer_char_s data_write_packet,
+    axi4_transfer_cfg_s struct_cfg,bit[3:0] bid_local);
     
     int j;
     @(posedge aclk);
-    data_write_packet.bid <= mem_awid[j]; 
-    `uvm_info("DEBUG_BRESP",$sformatf("BID = %0d",data_write_packet.bid),UVM_HIGH)
-    `uvm_info(name,"INSIDE WRITE_RESPONSE_PHASE",UVM_LOW)
 
-    bid  <= mem_awid[j];
-    `uvm_info("DEBUG_BRESP",$sformatf("MEM_BID[%0d] = %0d",j,mem_awid[j]),UVM_HIGH)
-    `uvm_info("DEBUG_BRESP_WLAST",$sformatf("wlast = %0d",mem_wlast[j]),UVM_HIGH)
+    if(struct_cfg.out_of_oreder) begin 
+      bid <= bid_local; 
+      data_write_packet.bid <= bid_local; 
+      bresp <= data_write_packet.bresp;
+      buser <= data_write_packet.buser;
+      bvalid <= 1;
+    end
 
-    //Checks all the conditions satisfied are not to send OKAY RESP
-    //1. Resp has to send only wlast is high.
-    //2. Size shouldn't more than DBW.
-    //3. fifo shouldn't get full.
-    if(mem_wlast[j]==1 && mem_wsize[j] <= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH && !axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
-      bresp <= WRITE_OKAY;
-      data_write_packet.bresp <= WRITE_OKAY;
-    end
-    else begin
-      bresp <= WRITE_SLVERR;
-      data_write_packet.bresp <= WRITE_SLVERR;
-    end
-      
-    buser<=data_write_packet.buser;
-    bvalid <= 1;
-    j++;
-    `uvm_info("DEBUG_BRESP",$sformatf("BID = %0d",bid),UVM_HIGH)
+    else begin 
+     data_write_packet.bid <= mem_awid[j]; 
+     `uvm_info("DEBUG_BRESP",$sformatf("BID = %0d",data_write_packet.bid),UVM_HIGH)
+     `uvm_info(name,"INSIDE WRITE_RESPONSE_PHASE",UVM_LOW)
+
+     bid  <= mem_awid[j];
+     `uvm_info("DEBUG_BRESP",$sformatf("MEM_BID[%0d] = %0d",j,mem_awid[j]),UVM_HIGH)
+     `uvm_info("DEBUG_BRESP_WLAST",$sformatf("wlast = %0d",mem_wlast[j]),UVM_HIGH)
+
+     //Checks all the conditions satisfied are not to send OKAY RESP
+     //1. Resp has to send only wlast is high.
+     //2. Size shouldn't more than DBW.
+     //3. fifo shouldn't get full.
+     if(mem_wlast[j]==1 && mem_wsize[j] <= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH && !axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
+       bresp <= WRITE_OKAY;
+       data_write_packet.bresp <= WRITE_OKAY;
+     end
+     else begin
+       bresp <= WRITE_SLVERR;
+       data_write_packet.bresp <= WRITE_SLVERR;
+     end
+       
+     buser<=data_write_packet.buser;
+     bvalid <= 1;
+     j++;
+     `uvm_info("DEBUG_BRESP",$sformatf("BID = %0d",bid),UVM_HIGH)
+   end
     
     while(bready === 0) begin
       @(posedge aclk);

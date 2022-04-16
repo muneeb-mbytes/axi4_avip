@@ -40,11 +40,28 @@ class axi4_slave_agent_config extends uvm_object;
   //Used to determine the number of wait states inserted for read data channel
   int wait_count_read_data_channel;
 
+  //Variable: out_of_oreder
+  //Used to enable the out_of_oreder txns
+  bit out_of_oreder;
+
+  //Variable: minimum_transactions
+  //Used to set the minimum txns for out_of_oreder
+  protected bit[1:0] minimum_transactions = 2;
+
+  //Variable: maximum_transactions
+  //Used to set the maximumm txns for out_of_oreder
+  bit[3:0] maximum_transactions;
+
+  //constraint: maximum_txns
+  //Make sure to have minimum txns to perform out_of_oreder
+  constraint maximum_txns{maximum_transactions >= 2;}
+
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new(string name = "axi4_slave_agent_config");
   extern function void do_print(uvm_printer printer);
+  extern function int get_minimum_transactions();
   extern virtual task slave_memory_task(bit [ADDRESS_WIDTH-1:0]slave_address, bit [DATA_WIDTH-1:0]data);
 endclass : axi4_slave_agent_config
 
@@ -68,6 +85,10 @@ endfunction : new
 task axi4_slave_agent_config::slave_memory_task(bit [ADDRESS_WIDTH-1 :0]slave_address, bit [DATA_WIDTH-1:0]data);
   slave_memory[slave_address] = data;
 endtask : slave_memory_task
+
+function int axi4_slave_agent_config::get_minimum_transactions();
+  return (this.minimum_transactions);
+endfunction
 
 //--------------------------------------------------------------------------------------------
 // Function: do_print method
