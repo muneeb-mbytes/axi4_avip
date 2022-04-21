@@ -1,0 +1,1 @@
+[axi4_avip_tb_architecture_doc](https://docs.google.com/document/d/e/2PACX-1vQVqz9kiTwUN4iPiNQkNv9I24kzNKwncPgjPe6vBiq2fQkUTW9v1vrTaYqEs1t4GgjPnbifN8OFCCDq/pub)
