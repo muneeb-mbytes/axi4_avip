@@ -16,3 +16,7 @@ Step 2: Change file extension to .md
 [axi4_specifications](http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf)
 
 [axi4_specifications](https://developer.arm.com/documentation/ihi0022/e/AMBA-AXI3-and-AXI4-Protocol-Specification)
+
+# Good information for AXI4 and AXI4-stream protocol
+https://caslab.csl.yale.edu/courses/EENG428/19-20a/slides/eeng428_lecture_007_axi_protocol.pdf
+
