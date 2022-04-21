@@ -19,4 +19,3 @@ Step 2: Change file extension to .md
 
 # Good information for AXI4 and AXI4-stream protocol
 https://caslab.csl.yale.edu/courses/EENG428/19-20a/slides/eeng428_lecture_007_axi_protocol.pdf
-
