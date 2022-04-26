@@ -44,7 +44,7 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   semaphore semaphore_write_key;
   semaphore semaphore_read_key;
 
-  bit[1:0] response_id_queue[$];
+  bit[3:0] response_id_queue[$];
   
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -163,7 +163,8 @@ task axi4_slave_driver_proxy::axi4_write_task();
      axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
 
      response_id_queue.push_back(struct_write_packet.awid);
-     
+     `uvm_info("VDB",$sformatf("awid = %0d",struct_write_packet.awid),UVM_HIGH)
+
      //Converting struct into transaction data type
      axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
      
@@ -234,7 +235,8 @@ task axi4_slave_driver_proxy::axi4_write_task();
       response_tx=process::self();
 
       //getting the key from semaphore 
-      semaphore_write_key.get(1);
+      //semaphore_write_key.get(1);
+      data_tx.await();
 
       //getting the data from response fifo
       axi4_slave_write_response_fifo_h.get(local_slave_response_tx);
@@ -247,10 +249,13 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
       `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
 
+      `uvm_info("VDB_min_tx",$sformatf("min_tx=%0d",axi4_slave_agent_cfg_h.get_minimum_transactions),UVM_HIGH)
       if(axi4_slave_agent_cfg_h.out_of_oreder) begin
-        if(axi4_slave_write_data_out_fifo_h.size >= axi4_slave_agent_cfg_h.get_minimum_transactions) begin
+        if(axi4_slave_write_data_out_fifo_h.size > axi4_slave_agent_cfg_h.get_minimum_transactions) begin
+          `uvm_info("VDB_fifo",$sformatf("fifo_size = %0d",axi4_slave_write_data_out_fifo_h.used()),UVM_HIGH)
           response_id_queue.shuffle();
           bid_local = response_id_queue.pop_front(); 
+          `uvm_info("VDB",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
           // write response_task
           axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg,bid_local);
           `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: Reciving struct pkt from bfm \n %p",struct_write_packet), UVM_HIGH);
@@ -287,7 +292,7 @@ task axi4_slave_driver_proxy::axi4_write_task();
      task_memory_write(packet);
 
      //putting back the key
-     semaphore_write_key.put(1);
+     //semaphore_write_key.put(1);
    end
   
   join_any

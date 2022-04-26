@@ -54,7 +54,7 @@ class axi4_slave_agent_config extends uvm_object;
 
   //constraint: maximum_txns
   //Make sure to have minimum txns to perform out_of_oreder
-  constraint maximum_txns{maximum_transactions >= 2;}
+  constraint maximum_txns{maximum_transactions >= minimum_transactions;}
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions

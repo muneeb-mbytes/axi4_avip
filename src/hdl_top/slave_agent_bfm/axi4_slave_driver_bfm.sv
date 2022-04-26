@@ -272,7 +272,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
      //1. Resp has to send only wlast is high.
      //2. Size shouldn't more than DBW.
      //3. fifo shouldn't get full.
-     if(mem_wlast[j]==1 && mem_wsize[j] <= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH && !axi4_slave_drv_proxy_h.axi4_slave_write_addr_fifo_h.is_full()) begin
+     if(mem_wlast[j]==1 && mem_wsize[j] <= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH) begin
        bresp <= WRITE_OKAY;
        data_write_packet.bresp <= WRITE_OKAY;
      end
