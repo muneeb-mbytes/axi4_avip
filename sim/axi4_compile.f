@@ -19,6 +19,8 @@
 ../../src/hvl_top/test/virtual_sequences/axi4_virtual_seq_pkg.sv
 ../../src/hvl_top/test/axi4_test_pkg.sv
 ../../src/hdl_top/axi4_interface/axi4_if.sv
+../../src/hdl_top/axi_slave_intf.sv
+../../src/hdl_top/slave_memory.sv
 ../../src/hdl_top/master_agent_bfm/axi4_master_driver_bfm.sv
 ../../src/hdl_top/master_agent_bfm/axi4_master_monitor_bfm.sv
 ../../src/hdl_top/master_agent_bfm/axi4_master_agent_bfm.sv
