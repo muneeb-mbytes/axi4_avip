@@ -21,6 +21,10 @@
 ../../src/hdl_top/axi4_interface/axi4_if.sv
 ../../src/hdl_top/axi_slave_intf.sv
 ../../src/hdl_top/slave_memory.sv
+../../src/hdl_top/wr_addr_phase.sv
+../../src/hdl_top/wr_data_pahse.sv
+../../src/hdl_top/wr_resp_phase.sv
+../../src/hdl_top/axi4_slave_top.sv
 ../../src/hdl_top/master_agent_bfm/axi4_master_driver_bfm.sv
 ../../src/hdl_top/master_agent_bfm/axi4_master_monitor_bfm.sv
 ../../src/hdl_top/master_agent_bfm/axi4_master_agent_bfm.sv

@@ -36,7 +36,7 @@ module hdl_top;
 
   initial begin
     a1_clk = 1'b1;
-    forever #1 a1_clk = ~a1_clk;
+    forever #4 a1_clk = ~a1_clk;
   end
 
   //-------------------------------------------------------
