@@ -254,7 +254,9 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     if(struct_cfg.out_of_oreder) begin 
       bid <= bid_local; 
       data_write_packet.bid <= bid_local; 
-      bresp <= data_write_packet.bresp;
+      //bresp <= data_write_packet.bresp;
+      bresp <= WRITE_OKAY;
+      data_write_packet.bresp <= WRITE_OKAY;
       buser <= data_write_packet.buser;
       bvalid <= 1;
     end
