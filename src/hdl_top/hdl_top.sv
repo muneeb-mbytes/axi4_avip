@@ -58,23 +58,6 @@ module hdl_top;
   axi4_if intf(.aclk(aclk),
                .aresetn(aresetn));
 
-   axi_slave_intf pif1(a1_clk);
-
-   //-------------------------------------------------------
-   // connecting DUT with interface
-   //-------------------------------------------------------
-   mem_slave dut1 (
-    .sys_clk(pif1.a1_clk),
-		.sys_addr(pif1.sys_addr_o),
-		.sys_wdata(pif1.sys_wdata_o),
-		.sys_sel(pif1.sys_sel_o),
-		.sys_wen(pif1.sys_wen_o),              
-    .sys_ren(pif1.sys_ren_o),
-		.sys_rdata(pif1.sys_rdata_i),
-		.sys_err(pif1.sys_err_i),
-		.sys_ack(pif1.sys_ack_i)
-	);
-
   //-------------------------------------------------------
   // AXI4  No of Master and Slaves Agent Instantiation
   //-------------------------------------------------------

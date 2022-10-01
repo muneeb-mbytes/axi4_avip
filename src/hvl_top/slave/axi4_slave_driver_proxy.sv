@@ -45,6 +45,8 @@ class axi4_slave_driver_proxy extends uvm_driver#(axi4_slave_tx);
   semaphore semaphore_read_key;
 
   bit[3:0] response_id_queue[$];
+  bit[3:0] response_id_cont_queue[$];
+  bit      drive_id_cont;
   
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
@@ -147,10 +149,11 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_tx              local_slave_addr_tx;
       axi4_write_transfer_char_s struct_write_packet;
       axi4_transfer_cfg_s        struct_cfg;
+      bit[3:0]                   local_awid;
     
       //returns status of address thread
       addr_tx=process::self();
-      
+
       //Converting transactions into struct data type
       axi4_slave_seq_item_converter::from_write_class(req_wr,struct_write_packet);
       `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_write_packet = \n %0p",struct_write_packet), UVM_HIGH); 
@@ -162,8 +165,26 @@ task axi4_slave_driver_proxy::axi4_write_task();
      //write address_task
      axi4_slave_drv_bfm_h.axi4_write_address_phase(struct_write_packet);
 
-     response_id_queue.push_back(struct_write_packet.awid);
-     `uvm_info("VDB",$sformatf("awid = %0d",struct_write_packet.awid),UVM_HIGH)
+     if(response_id_queue.size() == 0) begin
+       response_id_queue.push_back(struct_write_packet.awid);
+     end
+     else begin
+       if(struct_write_packet.awid == response_id_queue[$]) begin
+         drive_id_cont = 1'b1;
+         if(response_id_queue.size() == 1) 
+           local_awid = response_id_queue.pop_front();
+         else 
+           local_awid = response_id_queue.pop_back();
+         response_id_cont_queue.push_back(local_awid);
+         response_id_cont_queue.push_back(struct_write_packet.awid);
+         `uvm_info("VDB_1",$sformatf("resp_id_cont_q = %0p",response_id_cont_queue),UVM_HIGH);
+       end
+       else begin
+         response_id_queue.push_back(struct_write_packet.awid);
+         drive_id_cont = 1'b0;
+         `uvm_info("VDB",$sformatf("awid = %0d",struct_write_packet.awid),UVM_HIGH)
+       end
+     end
 
      //Converting struct into transaction data type
      axi4_slave_seq_item_converter::to_write_class(struct_write_packet,local_slave_addr_tx);
@@ -253,9 +274,16 @@ task axi4_slave_driver_proxy::axi4_write_task();
       if(axi4_slave_agent_cfg_h.out_of_oreder) begin
         if(axi4_slave_write_data_out_fifo_h.size > axi4_slave_agent_cfg_h.get_minimum_transactions) begin
           `uvm_info("VDB_fifo",$sformatf("fifo_size = %0d",axi4_slave_write_data_out_fifo_h.used()),UVM_HIGH)
-          response_id_queue.shuffle();
-          bid_local = response_id_queue.pop_front(); 
-          `uvm_info("VDB",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
+          if(drive_id_cont == 1) begin
+            bid_local = response_id_cont_queue.pop_front(); 
+            `uvm_info("VDB_1",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
+            `uvm_info("VDB_1",$sformatf("drive_id_cont = %0d",drive_id_cont),UVM_HIGH)
+          end
+          else begin
+            response_id_queue.shuffle();
+            bid_local = response_id_queue.pop_front(); 
+            `uvm_info("VDB",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
+          end
           // write response_task
           axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg,bid_local);
           `uvm_info("DEBUG_SLAVE_WDATA_PROXY", $sformatf("AFTER :: Reciving struct pkt from bfm \n %p",struct_write_packet), UVM_HIGH);
