@@ -44,7 +44,7 @@ task axi4_master_nbk_write_32b_transfer_seq::body();
   
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
-/*
+
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_4_BYTES;
                               req.awid == 2;
@@ -68,7 +68,7 @@ task axi4_master_nbk_write_32b_transfer_seq::body();
   
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
-  */
+  
 endtask : body
 
 `endif
