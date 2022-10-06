@@ -367,12 +367,25 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       `uvm_info("RDATA_DEBUG",$sformatf("arlen= %0d",mem_rlen[j1]),UVM_HIGH);
       `uvm_info("RDATA_DEBUG",$sformatf("i1_arlen= %0d",i1),UVM_HIGH);
 
-      if(mem_rsize[j1] == DATA_WIDTH/OUTSTANDING_FIFO_DEPTH) begin
-        k1 = 0;
-      end
-       if(mem_rsize[j1] == 0 || mem_rsize[j1] == DATA_WIDTH/DATA_WIDTH) begin
-        if(k1 == DATA_WIDTH/LENGTH) begin
+      if(mem_rsize[j1] == 3) begin
+        if(mem_rsize[j1] == 3) begin
           k1 = 0;
+        end
+        if(mem_rsize[j1] == 0 || mem_rsize[j1] == DATA_WIDTH/DATA_WIDTH || mem_rsize[j1] ==
+          DATA_WIDTH/ADDRESS_WIDTH) begin
+          if(k1 == 8) begin
+            k1 = 0;
+          end
+        end
+      end
+      else begin
+        if(mem_rsize[j1] == DATA_WIDTH/OUTSTANDING_FIFO_DEPTH) begin
+          k1 = 0;
+        end
+        if(mem_rsize[j1] == 0 || mem_rsize[j1] == DATA_WIDTH/DATA_WIDTH) begin
+          if(k1 == DATA_WIDTH/LENGTH) begin
+            k1 = 0;
+          end
         end
       end
       

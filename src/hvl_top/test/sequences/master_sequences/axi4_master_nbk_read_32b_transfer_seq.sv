@@ -34,7 +34,7 @@ task axi4_master_nbk_read_32b_transfer_seq::body();
   super.body();
   
   start_item(req);
-  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+  if(!req.randomize() with {req.arsize == READ_8_BYTES;
                             req.tx_type == READ;
                             req.arburst == READ_INCR;
                             req.transfer_type == NON_BLOCKING_READ;}) begin
