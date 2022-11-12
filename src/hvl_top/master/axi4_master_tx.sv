@@ -611,6 +611,88 @@ if(awaddr % 2**awsize != 0) begin
   end
 end
 
+
+//-------------------------------------------------------
+// Strobes for Unalligned transfers
+//-------------------------------------------------------
+if(awaddr % 2**awsize != 0) begin
+
+  int  quotient_check_size_0;
+  bit [STROBE_WIDTH-1:0] wstrb_local;
+  bit [STROBE_WIDTH-1:0] unallignd_wstrb0 = 4'b0001;
+  bit [STROBE_WIDTH-1:0] unallignd_wstrb1 = 4'b0011;
+  bit [STROBE_WIDTH-1:0 ]unallignd_wstrb2 = 4'b1111;
+  
+   quotient_check = awaddr / 2**awsize;
+   quotient_check_size_0 = awaddr / 2;
+  
+  if(awsize == 0) begin
+    if(awaddr == 'b0 || awaddr/4!=0) wstrb_local = 4'b0001;
+    else if(quotient_check_size_0 % 2 == 1) wstrb_local = 4'b0100;
+    else if((awaddr-1)/4!=0 || awaddr == 32'b1) wstrb_local = 4'b0010;
+    else wstrb_local = 4'b1000;
+  end
+  if(awsize == 1) begin
+    if(quotient_check%2 == 0) begin
+      wstrb_local = 4'b0010;
+    end
+    else begin
+      wstrb_local = 4'b1000;
+    end
+  end
+  //in the 1st case why 3 bits made 1 becoz 
+  //since addr is 1 if you pass only that address as high 
+  //then in nxt lane it will start from addr 2 which is unalligned for size
+  //so if u pass all 3 bits nxt transfer will strat from 4 which is alligned.
+  if(awsize == 2) begin
+    if(awaddr % 2**awsize == 1) wstrb_local = 4'b1110; 
+    if(awaddr % 2**awsize == 2) wstrb_local = 4'b1100; 
+    if(awaddr % 2**awsize == 3) wstrb_local = 4'b1000;
+  end
+  
+  for(int i=0;i<wstrb.size();i++) begin 
+    if(awsize == 0) begin
+      if(i == 0) begin
+        wstrb[0] = wstrb_local;
+      end
+      else begin
+        wstrb[i] = wstrb_local << 1;
+        unallignd_wstrb0_cnt++;
+        if(unallignd_wstrb0_cnt == 'd3) begin
+          wstrb[i] = wstrb_local;
+          unallignd_wstrb0_cnt = 0;
+        end
+      end
+    end
+    
+    if(awsize == 1) begin
+      if(i == 0) begin
+        wstrb[0] = wstrb_local;
+      end
+      else if(i == 1) begin
+        wstrb[i] = unallignd_wstrb1;
+      end
+      else begin
+        if(i%2 == 0) begin
+        wstrb[i] = unallignd_wstrb1 << 2;
+      end
+      else if(i%2 != 0) begin
+        wstrb[i] = unallignd_wstrb1;
+      end
+    end
+  end
+  
+  if(awsize == 2) begin
+    if(i==0) begin
+      wstrb[0] = wstrb_local;
+    end
+    else begin
+      wstrb[i] = unallignd_wstrb2;
+    end
+   end
+  end
+end
+
 endfunction : post_randomize
 
 //--------------------------------------------------------------------------------------------

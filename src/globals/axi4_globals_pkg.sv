@@ -46,6 +46,10 @@ package axi4_globals_pkg;
   //Sets the width it can store in each location
   parameter int MEMORY_WIDTH = 8;
 
+  //Parameter: STROBE_WIDTH
+  //Used to define the width of the strobes
+  parameter int STROBE_WIDTH = (DATA_WIDTH/8);
+
   //Variable: MEM_ID
   //Indicates Slave Memory Depth 
   parameter int MEM_ID = 2**ADDRESS_WIDTH;
