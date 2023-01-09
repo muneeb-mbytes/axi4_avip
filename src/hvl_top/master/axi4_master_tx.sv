@@ -265,7 +265,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Constraint: wstrb_c4
   //based on size setting the strobe values
-  constraint wstrb_c4 {foreach(wstrb[i]) $countones(wstrb[i]) == 2**awsize;}
+  //constraint wstrb_c4 {foreach(wstrb[i]) $countones(wstrb[i]) == 2**awsize;}
 
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
@@ -342,20 +342,663 @@ endfunction : new
 // Implements the narrow transfers and unalligned transfers
 //--------------------------------------------------------------------------------------------
 function void axi4_master_tx::post_randomize();
-  bit[3:0] wstrb_local;
-  bit[3:0] wstrb_size_0_local;
-  bit[3:0] awsize_0;
-  bit[3:0] awsize_1;
 
-  bit[3:0] unallignd_wstrb0;
-  bit[3:0] unallignd_wstrb1;
-  bit[3:0] unallignd_wstrb2;
-  bit[1:0] unallignd_wstrb0_cnt;
-  bit[3:0] alligned_wstrb0_cnt;
-  int index;
-  int quotient_check;
-  int quotient_check_1;
-  int remainder_check;
+//-------------------------------------------------------
+// Strobes for alligned with narrow transfers and
+// Unalligned transfers
+//-------------------------------------------------------
+begin //{
+  bit[STROBE_WIDTH-1:0]  remainder_check;
+  // strobe_data provides you the strobe for starting addr
+  bit [STROBE_WIDTH-1:0] strobe_data[int][1];
+
+  // for awsize =0 which means 1B need to transfer 
+  // for this case always addrs will be alligned
+  // because remainder always be 0... in this case
+
+  bit [STROBE_WIDTH-1:0] local_addr;
+  bit [STROBE_WIDTH-1:0] min;
+  bit [STROBE_WIDTH-1:0] shift_loc;
+
+  remainder_check = (awaddr%(STROBE_WIDTH));
+  min = (awsize == 1) ? {2{1'b1}} : ((awsize == 2) ? {4{1'b1}} : ((awsize == 3) ? {8{1'b1}} :
+  (awsize == 4) ? {16{1'b1}} :  {32{1'b1}}));
+
+  for(int l=0;l<STROBE_WIDTH;l++) begin
+    if((remainder_check+l)%2**awsize == 0) begin
+      shift_loc = remainder_check+l;
+      break;
+    end
+  end
+  if(awsize == 0) begin
+    strobe_data[STROBE_WIDTH][0][remainder_check] = 1'b1;
+  end
+  else begin
+    if(awaddr % 2**awsize != 0) begin
+      if(STROBE_WIDTH == 4) begin
+        unique case(awsize)
+        1: if(remainder_check == 1) begin 
+             strobe_data[STROBE_WIDTH][0] = 4'b0010;
+           end
+           else begin
+             strobe_data[STROBE_WIDTH][0] = 4'b1000;
+           end
+        2: if(remainder_check == 1) begin
+             strobe_data[STROBE_WIDTH][0] = 4'b1110;
+           end
+           else if(remainder_check == 2) begin
+              strobe_data[STROBE_WIDTH][0] = 4'b1100;
+           end
+           else begin
+             strobe_data[STROBE_WIDTH][0] = 4'b1000;
+           end
+         endcase
+      end
+      if(STROBE_WIDTH == 8) begin
+        unique case(awsize)
+        1: if(remainder_check == 1) begin 
+             strobe_data[STROBE_WIDTH][0] = 8'b0000_0010;
+           end
+           else if(remainder_check == 3) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b0000_1000;
+           end
+           else if(remainder_check == 5) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b0010_0000;
+           end
+           else begin             
+             strobe_data[STROBE_WIDTH][0] = 8'b1000_0000;
+           end
+        2: if(remainder_check == 1) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b0000_1110;
+           end
+           else if(remainder_check == 2) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b0000_1100;
+           end
+           else if(remainder_check == 3) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b0000_1000;
+           end
+           else if(remainder_check == 5) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1110_0000;
+           end
+           else if(remainder_check == 6) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1100_0000;
+           end
+           else begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1000_0000;
+           end
+        3: if(remainder_check == 1) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1111_1110;
+           end
+           else if(remainder_check == 2) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1111_1100;
+           end
+           else if(remainder_check == 3) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1111_1000;
+           end
+           else if(remainder_check == 4) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1111_0000;
+           end
+           else if(remainder_check == 5) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1110_0000;
+           end
+           else if(remainder_check == 6) begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1100_0000;
+           end
+           else begin
+             strobe_data[STROBE_WIDTH][0] = 8'b1000_0000;
+           end
+         endcase
+      end
+      if(STROBE_WIDTH == 32) begin
+        unique case(awsize)
+        1: if(remainder_check == 1) begin 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_0010;
+           end
+           else if(remainder_check == 3) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1000;
+           end
+           else if(remainder_check == 5) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0010_0000;
+           end
+           else if(remainder_check == 7) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1000_0000;
+           end
+           else if(remainder_check == 9) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0010_0000_0000;
+           end
+           else if(remainder_check == 11) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1000_0000_0000;
+           end
+           else if(remainder_check == 13) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0010_0000_0000_0000;
+           end
+           else if(remainder_check == 15) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1000_0000_0000_0000;
+           end
+           else if(remainder_check == 17) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0010_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 19) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 21) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0010_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 23) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 25) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0010_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 27) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_1000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 29) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0010_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else begin             
+             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
+           end
+        2: if(remainder_check == 1) begin 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1110;
+           end
+           else if(remainder_check == 2) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1100;
+           end
+           else if(remainder_check == 3) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1000;
+           end
+           else if(remainder_check == 5) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1110_0000;
+           end
+           else if(remainder_check == 6) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1100_0000;
+           end
+           else if(remainder_check == 7) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1000_0000;
+           end
+           else if(remainder_check == 9) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1110_0000_0000;
+           end
+           else if(remainder_check == 10) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1100_0000_0000;
+           end
+           else if(remainder_check == 11) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1000_0000_0000;
+           end
+           else if(remainder_check == 13) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1110_0000_0000_0000;
+           end
+           else if(remainder_check == 14) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1100_0000_0000_0000;
+           end
+           else if(remainder_check == 15) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1000_0000_0000_0000;
+           end
+           else if(remainder_check == 17) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1110_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 18) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1100_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 19) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 21) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1110_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 22) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1100_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 23) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 25) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_1110_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 26) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_1100_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 27) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_1000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 29) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1110_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 30) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else begin             
+             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
+           end
+        3: if(remainder_check == 1) begin 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_1110;
+           end
+           else if(remainder_check == 2) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_1100;
+           end
+           else if(remainder_check == 3) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_1000;
+           end
+           else if(remainder_check == 4) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_0000;
+           end
+           else if(remainder_check == 5) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1110_0000;
+           end
+           else if(remainder_check == 6) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1100_0000;
+           end
+           else if(remainder_check == 7) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1000_0000;
+           end
+           else if(remainder_check == 9) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1110_0000_0000;
+           end
+           else if(remainder_check == 10) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1100_0000_0000;
+           end
+           else if(remainder_check == 11) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1000_0000_0000;
+           end
+           else if(remainder_check == 12) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_0000_0000_0000;
+           end
+           else if(remainder_check == 13) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1110_0000_0000_0000;
+           end
+           else if(remainder_check == 14) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1100_0000_0000_0000;
+           end
+           else if(remainder_check == 15) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1000_0000_0000_0000;
+           end
+           else if(remainder_check == 17) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_1110_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 18) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_1100_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 19) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_1000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 20) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 21) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1110_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 22) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1100_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 23) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 25) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1110_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 26) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1100_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 27) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 28) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 29) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1110_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 30) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else begin             
+             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
+           end
+        4: if(remainder_check == 1) begin 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_1110;
+           end
+           else if(remainder_check == 2) begin   
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_1100;
+           end
+           else if(remainder_check == 3) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_1000;
+           end
+           else if(remainder_check == 4) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_0000;
+           end
+           else if(remainder_check == 5) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1110_0000;
+           end
+           else if(remainder_check == 6) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1100_0000;
+           end
+           else if(remainder_check == 7) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1000_0000;
+           end
+           else if(remainder_check == 8) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_0000_0000;
+           end
+           else if(remainder_check == 9) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1110_0000_0000;
+           end
+           else if(remainder_check == 10) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1100_0000_0000;
+           end
+           else if(remainder_check == 11) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1000_0000_0000;
+           end
+           else if(remainder_check == 12) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_0000_0000_0000;
+           end
+           else if(remainder_check == 13) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1110_0000_0000_0000;
+           end
+           else if(remainder_check == 14) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1100_0000_0000_0000;
+           end
+           else if(remainder_check == 15) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1000_0000_0000_0000;
+           end
+           else if(remainder_check == 17) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1110_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 18) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1100_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 19) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 20) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 21) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1110_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 22) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1100_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 23) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 24) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 25) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1110_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 26) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1100_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 27) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 28) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 29) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1110_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 30) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else begin             
+             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
+           end
+        5: if(remainder_check == 1) begin 
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_1110;
+           end
+           else if(remainder_check == 2) begin   
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_1100;
+           end
+           else if(remainder_check == 3) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_1000;
+           end
+           else if(remainder_check == 4) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_0000;
+           end
+           else if(remainder_check == 5) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1110_0000;
+           end
+           else if(remainder_check == 6) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1100_0000;
+           end
+           else if(remainder_check == 7) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1000_0000;
+           end
+           else if(remainder_check == 8) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_0000_0000;
+           end
+           else if(remainder_check == 9) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1110_0000_0000;
+           end
+           else if(remainder_check == 10) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1100_0000_0000;
+           end
+           else if(remainder_check == 11) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1000_0000_0000;
+           end
+           else if(remainder_check == 12) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_0000_0000_0000;
+           end
+           else if(remainder_check == 13) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1110_0000_0000_0000;
+           end
+           else if(remainder_check == 14) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1100_0000_0000_0000;
+           end
+           else if(remainder_check == 15) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1000_0000_0000_0000;
+           end
+           else if(remainder_check == 16) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 17) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1110_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 18) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1100_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 19) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 20) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 21) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1110_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 22) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1100_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 23) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 24) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 25) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1110_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 26) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1100_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 27) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 28) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 29) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1110_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else if(remainder_check == 30) begin
+             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
+           end
+           else begin             
+             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
+           end
+         endcase
+      end
+    end
+    else begin  //{ alligned address
+      if(STROBE_WIDTH == 4) begin 
+        unique case(awsize)
+        1: if(remainder_check == 0) strobe_data[STROBE_WIDTH][0] = 4'b0011; 
+           else strobe_data[STROBE_WIDTH][0] = 4'b1100;
+        2: strobe_data[STROBE_WIDTH][0] = 4'b1111; 
+        endcase
+      end
+      if(STROBE_WIDTH == 8) begin 
+        unique case(awsize)
+        1: if(remainder_check == 0) strobe_data[STROBE_WIDTH][0] = 8'b0000_0011; 
+           else if(remainder_check == 2) strobe_data[STROBE_WIDTH][0] = 8'b0000_1100;
+           else if(remainder_check == 4) strobe_data[STROBE_WIDTH][0] = 8'b0011_0000;
+           else strobe_data[STROBE_WIDTH][0] = 8'b1100_0000;
+        2: if(remainder_check == 0) strobe_data[STROBE_WIDTH][0] = 8'b0000_1111;
+           else strobe_data[STROBE_WIDTH][0] = 8'b1111_0000;
+        3: strobe_data[STROBE_WIDTH][0] = 8'b1111_1111;
+        endcase
+      end
+      if(STROBE_WIDTH == 32) begin 
+        unique case(awsize)
+        1: if(remainder_check == 0)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_0011; 
+           else if(remainder_check == 2) 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1100;
+           else if(remainder_check == 4) 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0011_0000;
+           else if(remainder_check == 6)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1100_0000;
+           else if(remainder_check == 8)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0011_0000_0000;
+           else if(remainder_check == 10)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1100_0000_0000;
+           else if(remainder_check == 12)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0011_0000_0000_0000;
+           else if(remainder_check == 14)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1100_0000_0000_0000; 
+           else if(remainder_check == 16) 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0011_0000_0000_0000_0000;
+           else if(remainder_check == 18) 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1100_0000_0000_0000_0000;
+           else if(remainder_check == 20)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0011_0000_0000_0000_0000_0000;
+           else if(remainder_check == 22)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1100_0000_0000_0000_0000_0000;
+           else if(remainder_check == 24)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0011_0000_0000_0000_0000_0000_0000;
+           else if(remainder_check == 26)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_1100_0000_0000_0000_0000_0000_0000;
+           else if(remainder_check == 28)
+             strobe_data[STROBE_WIDTH][0] = 32'b0011_0000_0000_0000_0000_0000_0000_0000;
+           else 
+             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
+        2: if(remainder_check == 0)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1111; 
+           else if(remainder_check == 4) 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_0000;
+           else if(remainder_check == 8)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1111_0000_0000;
+           else if(remainder_check == 12)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_0000_0000_0000;
+           else if(remainder_check == 16) 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1111_0000_0000_0000_0000;
+           else if(remainder_check == 20)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_0000_0000_0000_0000_0000;
+           else if(remainder_check == 24)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_1111_0000_0000_0000_0000_0000_0000;
+           else 
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_0000_0000_0000_0000_0000_0000_0000;
+        3: if(remainder_check == 0)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_1111; 
+           else if(remainder_check == 8)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_0000_0000;
+           else if(remainder_check == 16) 
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_1111_0000_0000_0000_0000;
+           else 
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_0000_0000_0000_0000_0000_0000;
+        4: if(remainder_check == 0)
+             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_1111; 
+           else 
+             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_0000_0000_0000_0000;
+        5: strobe_data[STROBE_WIDTH][0]   = 32'b1111_1111_1111_1111_1111_1111_1111_1111; 
+        endcase
+      end
+    end //}
+  end
+  if(awaddr%2**awsize != 0) begin
+    for(int i=0;i<wstrb.size();i++) begin
+      if(awsize == 0) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(wstrb[i-1][STROBE_WIDTH-1]) wstrb[i] = local_addr|1'b1;
+        else wstrb[i] = wstrb[i-1] << 1; 
+      end
+      if(awsize == 1) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(i==1) wstrb[i] =  (wstrb[i-1][STROBE_WIDTH-1]) ? (local_addr|2'b11) : min << remainder_check+1 ;
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>1) wstrb[i] = local_addr|2'b11;
+        else wstrb[i] = wstrb[i-1] << 2; 
+      end
+      if(awsize == 2) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(i==1) wstrb[i] =  (wstrb[i-1][STROBE_WIDTH-1]) ? (local_addr|4'b1111) : (min << shift_loc);
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>0) wstrb[i] = local_addr|4'b1111; 
+        else wstrb[i] = wstrb[i-1] << 4; 
+      end
+      if(awsize == 3) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(i==1) wstrb[i] =  (wstrb[i-1][STROBE_WIDTH-1]) ? (local_addr|8'b1111_1111) : (min << shift_loc);
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>1) wstrb[i] = local_addr|8'b1111_1111;
+        else wstrb[i] = wstrb[i-1] << 8; 
+      end
+      if(awsize == 4) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(i==1) wstrb[i] =  (wstrb[i-1][STROBE_WIDTH-1]) ? (local_addr|16'b1111_1111_1111_1111) : (min << shift_loc);
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>1) wstrb[i] = local_addr|16'b1111_1111_1111_1111;
+        else wstrb[i] = wstrb[i-1] << 16; 
+      end
+      if(awsize == 5) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else wstrb[i] = local_addr|32'b1111_1111_1111_1111_1111_1111_1111_1111;
+      end
+    end
+  end
+  else begin 
+    for(int i=0;i<wstrb.size();i++) begin
+      if(awsize == 0) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(wstrb[i-1][STROBE_WIDTH-1]) wstrb[i] = local_addr|1'b1;
+        else wstrb[i] = wstrb[i-1] << 1; 
+      end
+      if(awsize == 1) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>0) wstrb[i] = local_addr|2'b11;
+        else wstrb[i] = wstrb[i-1] << 2; 
+      end
+      if(awsize == 2) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>0) wstrb[i] = local_addr|4'b1111;
+        else wstrb[i] = wstrb[i-1] << 4; 
+      end
+      if(awsize == 3) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>0) wstrb[i] = local_addr|8'b1111_1111;
+        else wstrb[i] = wstrb[i-1] << 8; 
+      end
+      if(awsize == 4) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>0) wstrb[i] = local_addr|16'b1111_1111_1111_1111;
+        else wstrb[i] = wstrb[i-1] << 16; 
+      end
+      if(awsize == 5) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else wstrb[i] = local_addr|32'b1111_1111_1111_1111_1111_1111_1111_1111;
+      end
+    end
+  end
+end //}
+
 
   //-------------------------------------------------------
   // Step-1: for awsize == 0
@@ -376,322 +1019,245 @@ function void axi4_master_tx::post_randomize();
   //-------------------------------------------------------
   // Narrow Transfers for alligned address
   //-------------------------------------------------------
-  if(awaddr % 2**awsize == 0) begin
-    awsize_0 = 4'b0001;
-    awsize_1 = 4'b1111;
-    remainder_check = awaddr % 4;
-    `uvm_info("rem_check",$sformatf("remainder_check = %0d",remainder_check),UVM_HIGH)
-    
-    // Assigning the initial strobe values based on the size and address issued
-    if(awsize == 0) begin
-      if(remainder_check == 0) wstrb_local = 4'b0001; 
-      if(remainder_check == 1) wstrb_local = 4'b0010; 
-      if(remainder_check == 2) wstrb_local = 4'b0100; 
-      if(remainder_check == 3) wstrb_local = 4'b1000; 
-    end
-   
-    if(awsize == 1) begin 
-      quotient_check_1 = awaddr / 2**awsize;
-      if(quotient_check_1 % 2 == 0) begin
-      wstrb_local = 4'b0011;
-    end
-    else begin
-      wstrb_local = 4'b1100;
-    end
-  end
-  
-  if(awsize == 2) wstrb_local = 4'b1111;
-  `uvm_info(get_type_name(), $sformatf("DEBUG_LOCAL :: wstrb_local =  %0b",wstrb_local), UVM_HIGH); 
-  `uvm_info(get_type_name(), $sformatf("DEBUG_LOCL :: awsize =  %0d",awsize), UVM_HIGH); 
-  
-  wstrb_size_0_local = wstrb_local;
-
-  //for loop to generate the strobe values based on strobe size
-  for(int i=0;i<wstrb.size();i++) begin
-    `uvm_info(get_type_name(),$sformatf("inside for loop of post randomize"),UVM_HIGH)
-    
-    if(awsize == 0) begin
-      if(remainder_check == 0)begin
-        if(i==0) begin
-          wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
-        end 
-        else begin
-          // since remainder is 0 it will be in 1st(0) lane
-          // so after every 4 transfers u need to assign wstrb(0)
-          if(i%4 == 0) begin
-            this.wstrb[i] = awsize_0;
-            wstrb_size_0_local = awsize_0;
-          end
-          else begin
-            wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
-            this.wstrb[i] = wstrb_size_0_local;
-          end
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[%0d] =  %0b",i,this.wstrb[i]), UVM_HIGH); 
-          `uvm_info(get_type_name(),$sformatf("outside for loop of post randomize"),UVM_HIGH)
-        end
-      end
-      
-      // since remainder is 1 it will be in 2nd(1) lane
-      else if (remainder_check == 1) begin
-        if(i==0) begin
-          wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
-        end 
-        else if(i == 1) begin
-          wstrb[1] = wstrb[0] << i;
-        end
-        else if(i == 2) begin
-          wstrb[2] = wstrb[0] << i;
-          wstrb_size_0_local = awsize_0;
-        end
-        else begin 
-          this.wstrb[i] = wstrb_size_0_local;
-          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
-          alligned_wstrb0_cnt++;
-          if(alligned_wstrb0_cnt == 4) begin
-            // so after every 4 transfers u need to assign awsize_0
-            wstrb_size_0_local = awsize_0;
-            alligned_wstrb0_cnt = 0;
-          end
-        end
-      end  
-      
-      else if (remainder_check == 2) begin
-        if(i==0) begin
-          wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
-        end 
-        else if(i == 1) begin
-          wstrb[1] = wstrb[0] << i;
-          wstrb_size_0_local = awsize_0;
-        end
-        
-        else begin 
-          this.wstrb[i] = wstrb_size_0_local;
-          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
-          alligned_wstrb0_cnt++;
-          if(alligned_wstrb0_cnt == 4) begin
-            wstrb_size_0_local = awsize_0;
-            alligned_wstrb0_cnt = 0;
-          end
-        end
-      end
-      
-      else if (remainder_check == 3) begin
-        if(i==0) begin
-          wstrb[0] = wstrb_local;
-          wstrb_size_0_local = awsize_0;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
-        end 
-        
-        else begin 
-          this.wstrb[i] = wstrb_size_0_local;
-          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
-          alligned_wstrb0_cnt++;
-          if(alligned_wstrb0_cnt == 4) begin
-            wstrb_size_0_local = awsize_0;
-            alligned_wstrb0_cnt = 0;
-          end
-        end
-      end
-    end
-    
-    else if(awsize == 1) begin
-      if(quotient_check_1 % 2**awsize == 0) begin 
-        if(i==0) begin
-          wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
-        end 
-        else begin
-          if(i%2 == 0) begin
-            this.wstrb[i] = {(wstrb_local << 2**awsize)^awsize_1};
-          end
-          else begin
-            this.wstrb[i] = (wstrb_local << 2**awsize);
-          end
-        end
-      end
-      
-      else begin
-        if(i==0) begin
-          wstrb[0] = wstrb_local;
-          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
-        end 
-        else begin
-          if(i%2 == 0) begin
-            this.wstrb[i] = wstrb_local;
-          end
-          else begin
-            this.wstrb[i] = (wstrb_local >> 2**awsize);
-          end
-        end
-      end
-    end
-    
-    else if(awsize == 2) begin
-      wstrb[i] = wstrb_local;
-    end
-  end
-end
-
-
-//-------------------------------------------------------
-// Strobes for Unalligned transfers
-//-------------------------------------------------------
-if(awaddr % 2**awsize != 0) begin
-  
-  unallignd_wstrb0 = 4'b0001;
-  unallignd_wstrb1 = 4'b0011;
-  unallignd_wstrb2 = 4'b1111;
-  
-  quotient_check = awaddr / 2**awsize;
-  
-  if(awsize == 0) begin
-    wstrb_local = 4'b0001;
-  end
-  if(awsize == 1) begin
-    if(quotient_check%2 == 0) begin
-      wstrb_local = 4'b0010;
-    end
-    else begin
-      wstrb_local = 4'b1000;
-    end
-  end
-  //in the 1st case why 3 bits made 1 becoz 
-  //since addr is 1 if you pass only that address as high 
-  //then in nxt lane it will start from addr 2 which is unalligned for size
-  //so if u pass all 3 bits nxt transfer will strat from 4 which is alligned.
-  if(awsize == 2) begin
-    if(awaddr % 2**awsize == 1) wstrb_local = 4'b1110; 
-    if(awaddr % 2**awsize == 2) wstrb_local = 4'b1100; 
-    if(awaddr % 2**awsize == 3) wstrb_local = 4'b1000;
-  end
-  
-  for(int i=0;i<wstrb.size();i++) begin
-    if(awsize == 0) begin
-      if(i == 0) begin
-        wstrb[0] = wstrb_local;
-      end
-      else begin
-        wstrb[i] = wstrb_local << 1;
-        unallignd_wstrb0_cnt++;
-        if(unallignd_wstrb0_cnt == 'd3) begin
-          wstrb[i] = wstrb_local;
-          unallignd_wstrb0_cnt = 0;
-        end
-      end
-    end
-    
-    if(awsize == 1) begin
-      if(i == 0) begin
-        wstrb[0] = wstrb_local;
-      end
-      else if(i == 1) begin
-        wstrb[i] = unallignd_wstrb1;
-      end
-      else begin
-        if(i%2 == 0) begin
-        wstrb[i] = unallignd_wstrb1 << 2;
-      end
-      else if(i%2 != 0) begin
-        wstrb[i] = unallignd_wstrb1;
-      end
-    end
-  end
-  
-  if(awsize == 2) begin
-    if(i==0) begin
-      wstrb[0] = wstrb_local;
-    end
-    else begin
-      wstrb[i] = unallignd_wstrb2;
-    end
-   end
-  end
-end
-
+//  if(awaddr % 2**awsize == 0) begin
+//    awsize_0 = 4'b0001;
+//    awsize_1 = 4'b1111;
+//    remainder_check = awaddr % 4;
+//    `uvm_info("rem_check",$sformatf("remainder_check = %0d",remainder_check),UVM_HIGH)
+//    
+//    // Assigning the initial strobe values based on the size and address issued
+//    if(awsize == 0) begin
+//      if(remainder_check == 0) wstrb_local = 4'b0001; 
+//      if(remainder_check == 1) wstrb_local = 4'b0010; 
+//      if(remainder_check == 2) wstrb_local = 4'b0100; 
+//      if(remainder_check == 3) wstrb_local = 4'b1000; 
+//    end
+//   
+//    if(awsize == 1) begin 
+//      quotient_check_1 = awaddr / 2**awsize;
+//      if(quotient_check_1 % 2 == 0) begin
+//      wstrb_local = 4'b0011;
+//    end
+//    else begin
+//      wstrb_local = 4'b1100;
+//    end
+//  end
+//  
+//  if(awsize == 2) wstrb_local = 4'b1111;
+//  `uvm_info(get_type_name(), $sformatf("DEBUG_LOCAL :: wstrb_local =  %0b",wstrb_local), UVM_HIGH); 
+//  `uvm_info(get_type_name(), $sformatf("DEBUG_LOCL :: awsize =  %0d",awsize), UVM_HIGH); 
+//  
+//  wstrb_size_0_local = wstrb_local;
+//
+//  //for loop to generate the strobe values based on strobe size
+//  for(int i=0;i<wstrb.size();i++) begin
+//    `uvm_info(get_type_name(),$sformatf("inside for loop of post randomize"),UVM_HIGH)
+//    
+//    if(awsize == 0) begin
+//      if(remainder_check == 0)begin
+//        if(i==0) begin
+//          wstrb[0] = wstrb_local;
+//          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+//        end 
+//        else begin
+//          // since remainder is 0 it will be in 1st(0) lane
+//          // so after every 4 transfers u need to assign wstrb(0)
+//          if(i%4 == 0) begin
+//            this.wstrb[i] = awsize_0;
+//            wstrb_size_0_local = awsize_0;
+//          end
+//          else begin
+//            wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
+//            this.wstrb[i] = wstrb_size_0_local;
+//          end
+//          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[%0d] =  %0b",i,this.wstrb[i]), UVM_HIGH); 
+//          `uvm_info(get_type_name(),$sformatf("outside for loop of post randomize"),UVM_HIGH)
+//        end
+//      end
+//      
+//      // since remainder is 1 it will be in 2nd(1) lane
+//      else if (remainder_check == 1) begin
+//        if(i==0) begin
+//          wstrb[0] = wstrb_local;
+//          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+//        end 
+//        else if(i == 1) begin
+//          wstrb[1] = wstrb[0] << i;
+//        end
+//        else if(i == 2) begin
+//          wstrb[2] = wstrb[0] << i;
+//          wstrb_size_0_local = awsize_0;
+//        end
+//        else begin 
+//          this.wstrb[i] = wstrb_size_0_local;
+//          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
+//          alligned_wstrb0_cnt++;
+//          if(alligned_wstrb0_cnt == 4) begin
+//            // so after every 4 transfers u need to assign awsize_0
+//            wstrb_size_0_local = awsize_0;
+//            alligned_wstrb0_cnt = 0;
+//          end
+//        end
+//      end  
+//      
+//      else if (remainder_check == 2) begin
+//        if(i==0) begin
+//          wstrb[0] = wstrb_local;
+//          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+//        end 
+//        else if(i == 1) begin
+//          wstrb[1] = wstrb[0] << i;
+//          wstrb_size_0_local = awsize_0;
+//        end
+//        
+//        else begin 
+//          this.wstrb[i] = wstrb_size_0_local;
+//          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
+//          alligned_wstrb0_cnt++;
+//          if(alligned_wstrb0_cnt == 4) begin
+//            wstrb_size_0_local = awsize_0;
+//            alligned_wstrb0_cnt = 0;
+//          end
+//        end
+//      end
+//      
+//      else if (remainder_check == 3) begin
+//        if(i==0) begin
+//          wstrb[0] = wstrb_local;
+//          wstrb_size_0_local = awsize_0;
+//          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+//        end 
+//        
+//        else begin 
+//          this.wstrb[i] = wstrb_size_0_local;
+//          wstrb_size_0_local = (wstrb_size_0_local << 2**awsize);
+//          alligned_wstrb0_cnt++;
+//          if(alligned_wstrb0_cnt == 4) begin
+//            wstrb_size_0_local = awsize_0;
+//            alligned_wstrb0_cnt = 0;
+//          end
+//        end
+//      end
+//    end
+//    
+//    else if(awsize == 1) begin
+//      if(quotient_check_1 % 2**awsize == 0) begin 
+//        if(i==0) begin
+//          wstrb[0] = wstrb_local;
+//          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+//        end 
+//        else begin
+//          if(i%2 == 0) begin
+//            this.wstrb[i] = {(wstrb_local << 2**awsize)^awsize_1};
+//          end
+//          else begin
+//            this.wstrb[i] = (wstrb_local << 2**awsize);
+//          end
+//        end
+//      end
+//      
+//      else begin
+//        if(i==0) begin
+//          wstrb[0] = wstrb_local;
+//          `uvm_info(get_type_name(), $sformatf("DEBUG_IN_LOOP :: wstrb[0] =  %0b",wstrb[0]), UVM_HIGH); 
+//        end 
+//        else begin
+//          if(i%2 == 0) begin
+//            this.wstrb[i] = wstrb_local;
+//          end
+//          else begin
+//            this.wstrb[i] = (wstrb_local >> 2**awsize);
+//          end
+//        end
+//      end
+//    end
+//    
+//    else if(awsize == 2) begin
+//      wstrb[i] = wstrb_local;
+//    end
+//  end
+//end
 
 //-------------------------------------------------------
 // Strobes for Unalligned transfers
 //-------------------------------------------------------
-if(awaddr % 2**awsize != 0) begin
-
-  int  quotient_check_size_0;
-  bit [STROBE_WIDTH-1:0] wstrb_local;
-  bit [STROBE_WIDTH-1:0] unallignd_wstrb0 = 4'b0001;
-  bit [STROBE_WIDTH-1:0] unallignd_wstrb1 = 4'b0011;
-  bit [STROBE_WIDTH-1:0 ]unallignd_wstrb2 = 4'b1111;
-  
-   quotient_check = awaddr / 2**awsize;
-   quotient_check_size_0 = awaddr / 2;
-  
-  if(awsize == 0) begin
-    if(awaddr == 'b0 || awaddr/4!=0) wstrb_local = 4'b0001;
-    else if(quotient_check_size_0 % 2 == 1) wstrb_local = 4'b0100;
-    else if((awaddr-1)/4!=0 || awaddr == 32'b1) wstrb_local = 4'b0010;
-    else wstrb_local = 4'b1000;
-  end
-  if(awsize == 1) begin
-    if(quotient_check%2 == 0) begin
-      wstrb_local = 4'b0010;
-    end
-    else begin
-      wstrb_local = 4'b1000;
-    end
-  end
-  //in the 1st case why 3 bits made 1 becoz 
-  //since addr is 1 if you pass only that address as high 
-  //then in nxt lane it will start from addr 2 which is unalligned for size
-  //so if u pass all 3 bits nxt transfer will strat from 4 which is alligned.
-  if(awsize == 2) begin
-    if(awaddr % 2**awsize == 1) wstrb_local = 4'b1110; 
-    if(awaddr % 2**awsize == 2) wstrb_local = 4'b1100; 
-    if(awaddr % 2**awsize == 3) wstrb_local = 4'b1000;
-  end
-  
-  for(int i=0;i<wstrb.size();i++) begin 
-    if(awsize == 0) begin
-      if(i == 0) begin
-        wstrb[0] = wstrb_local;
-      end
-      else begin
-        wstrb[i] = wstrb_local << 1;
-        unallignd_wstrb0_cnt++;
-        if(unallignd_wstrb0_cnt == 'd3) begin
-          wstrb[i] = wstrb_local;
-          unallignd_wstrb0_cnt = 0;
-        end
-      end
-    end
-    
-    if(awsize == 1) begin
-      if(i == 0) begin
-        wstrb[0] = wstrb_local;
-      end
-      else if(i == 1) begin
-        wstrb[i] = unallignd_wstrb1;
-      end
-      else begin
-        if(i%2 == 0) begin
-        wstrb[i] = unallignd_wstrb1 << 2;
-      end
-      else if(i%2 != 0) begin
-        wstrb[i] = unallignd_wstrb1;
-      end
-    end
-  end
-  
-  if(awsize == 2) begin
-    if(i==0) begin
-      wstrb[0] = wstrb_local;
-    end
-    else begin
-      wstrb[i] = unallignd_wstrb2;
-    end
-   end
-  end
-end
+//if(awaddr % 2**awsize != 0) begin
+//
+//  int  quotient_check_size_0;
+//  bit [STROBE_WIDTH-1:0] wstrb_local;
+//  bit [STROBE_WIDTH-1:0] unallignd_wstrb0 = 4'b0001;
+//  bit [STROBE_WIDTH-1:0] unallignd_wstrb1 = 4'b0011;
+//  bit [STROBE_WIDTH-1:0 ]unallignd_wstrb2 = 4'b1111;
+//  
+//   quotient_check = awaddr / 2**awsize;
+//   quotient_check_size_0 = awaddr / 2;
+//  
+//  if(awsize == 0) begin
+//    if(awaddr == 'b0 || awaddr/4!=0) wstrb_local = 4'b0001;
+//    else if(quotient_check_size_0 % 2 == 1) wstrb_local = 4'b0100;
+//    else if((awaddr-1)/4!=0 || awaddr == 32'b1) wstrb_local = 4'b0010;
+//    else wstrb_local = 4'b1000;
+//  end
+//  if(awsize == 1) begin
+//    if(quotient_check%2 == 0) begin
+//      wstrb_local = 4'b0010;
+//    end
+//    else begin
+//      wstrb_local = 4'b1000;
+//    end
+//  end
+//  //in the 1st case why 3 bits made 1 becoz 
+//  //since addr is 1 if you pass only that address as high 
+//  //then in nxt lane it will start from addr 2 which is unalligned for size
+//  //so if u pass all 3 bits nxt transfer will strat from 4 which is alligned.
+//  if(awsize == 2) begin
+//    if(awaddr % 2**awsize == 1) wstrb_local = 4'b1110; 
+//    if(awaddr % 2**awsize == 2) wstrb_local = 4'b1100; 
+//    if(awaddr % 2**awsize == 3) wstrb_local = 4'b1000;
+//  end
+//  
+//  for(int i=0;i<wstrb.size();i++) begin 
+//    if(awsize == 0) begin
+//      if(i == 0) begin
+//        wstrb[0] = wstrb_local;
+//      end
+//      else begin
+//        wstrb[i] = wstrb_local << 1;
+//        unallignd_wstrb0_cnt++;
+//        if(unallignd_wstrb0_cnt == 'd3) begin
+//          wstrb[i] = wstrb_local;
+//          unallignd_wstrb0_cnt = 0;
+//        end
+//      end
+//    end
+//    
+//    if(awsize == 1) begin
+//      if(i == 0) begin
+//        wstrb[0] = wstrb_local;
+//      end
+//      else if(i == 1) begin
+//        wstrb[i] = unallignd_wstrb1;
+//      end
+//      else begin
+//        if(i%2 == 0) begin
+//        wstrb[i] = unallignd_wstrb1 << 2;
+//      end
+//      else if(i%2 != 0) begin
+//        wstrb[i] = unallignd_wstrb1;
+//      end
+//    end
+//  end
+//  
+//  if(awsize == 2) begin
+//    if(i==0) begin
+//      wstrb[0] = wstrb_local;
+//    end
+//    else begin
+//      wstrb[i] = unallignd_wstrb2;
+//    end
+//   end
+//  end
+//end
 
 endfunction : post_randomize
 

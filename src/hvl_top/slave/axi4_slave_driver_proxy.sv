@@ -170,20 +170,15 @@ task axi4_slave_driver_proxy::axi4_write_task();
          response_id_queue.push_back(struct_write_packet.awid);
        end
        else begin
+         // condition to check if the same id's are coming back to back
          if(struct_write_packet.awid == response_id_queue[$]) begin
            drive_id_cont = 1'b1;
-          // if(response_id_queue.size() == 1) 
-          //   local_awid = response_id_queue.pop_front();
-          // else 
-             local_awid = response_id_queue.pop_back();
+           local_awid = response_id_queue.pop_back();
            response_id_cont_queue.push_back(local_awid);
            response_id_cont_queue.push_back(struct_write_packet.awid);
-           `uvm_info("VDB_1",$sformatf("resp_id_cont_q = %0p",response_id_cont_queue),UVM_HIGH);
          end
          else begin
            response_id_queue.push_back(struct_write_packet.awid);
-           `uvm_info("VDB_1",$sformatf("resp_id_q = %0p",response_id_queue),UVM_HIGH);
-           `uvm_info("VDB",$sformatf("awid = %0d",struct_write_packet.awid),UVM_HIGH)
          end
        end
      end
@@ -272,22 +267,20 @@ task axi4_slave_driver_proxy::axi4_write_task();
       axi4_slave_cfg_converter::from_class(axi4_slave_agent_cfg_h,struct_cfg);
       `uvm_info(get_type_name(), $sformatf("from_write_class:: struct_cfg =  \n %0p",struct_cfg),UVM_HIGH);
 
-      `uvm_info("VDB_min_tx",$sformatf("min_tx=%0d",axi4_slave_agent_cfg_h.get_minimum_transactions),UVM_HIGH)
+      `uvm_info("slave_driver_proxy",$sformatf("min_tx=%0d",axi4_slave_agent_cfg_h.get_minimum_transactions),UVM_HIGH)
       if(axi4_slave_agent_cfg_h.out_of_oreder) begin
-        wait(axi4_slave_write_data_out_fifo_h.size >
-        axi4_slave_agent_cfg_h.get_minimum_transactions); //begin
-          `uvm_info("VDB_fifo",$sformatf("fifo_size = %0d",axi4_slave_write_data_out_fifo_h.used()),UVM_HIGH)
+        wait(axi4_slave_write_data_out_fifo_h.size > axi4_slave_agent_cfg_h.get_minimum_transactions); //begin
+          `uvm_info("slave_driver_proxy",$sformatf("fifo_size = %0d",axi4_slave_write_data_out_fifo_h.used()),UVM_HIGH)
           if(drive_id_cont == 1) begin
             bid_local = response_id_cont_queue.pop_front(); 
-            `uvm_info("VDB_1",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
-            `uvm_info("VDB_1",$sformatf("drive_id_cont = %0d",drive_id_cont),UVM_HIGH)
+            `uvm_info("slave_driver_proxy",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
+            `uvm_info("slave_driver_proxy",$sformatf("drive_id_cont = %0d",drive_id_cont),UVM_HIGH)
             if(response_id_cont_queue.size()==0) drive_id_cont = 1'b0;
           end
           else begin
             response_id_queue.shuffle();
             bid_local = response_id_queue.pop_front(); 
-           // drive_id_cont = 0;
-            `uvm_info("VDB",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
+            `uvm_info("slave_driver_proxy",$sformatf("bid_local = %0d",bid_local),UVM_HIGH)
           end
           // write response_task
           axi4_slave_drv_bfm_h.axi4_write_response_phase(struct_write_packet,struct_cfg,bid_local);
