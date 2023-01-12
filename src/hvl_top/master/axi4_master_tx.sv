@@ -375,556 +375,26 @@ begin //{
   end
   else begin
     if(awaddr % 2**awsize != 0) begin
-      if(STROBE_WIDTH == 4) begin
         unique case(awsize)
-        1: if(remainder_check == 1) begin 
-             strobe_data[STROBE_WIDTH][0] = 4'b0010;
-           end
-           else begin
-             strobe_data[STROBE_WIDTH][0] = 4'b1000;
-           end
-        2: if(remainder_check == 1) begin
-             strobe_data[STROBE_WIDTH][0] = 4'b1110;
-           end
-           else if(remainder_check == 2) begin
-              strobe_data[STROBE_WIDTH][0] = 4'b1100;
-           end
-           else begin
-             strobe_data[STROBE_WIDTH][0] = 4'b1000;
-           end
-         endcase
-      end
-      if(STROBE_WIDTH == 8) begin
-        unique case(awsize)
-        1: if(remainder_check == 1) begin 
-             strobe_data[STROBE_WIDTH][0] = 8'b0000_0010;
-           end
-           else if(remainder_check == 3) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b0000_1000;
-           end
-           else if(remainder_check == 5) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b0010_0000;
-           end
-           else begin             
-             strobe_data[STROBE_WIDTH][0] = 8'b1000_0000;
-           end
-        2: if(remainder_check == 1) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b0000_1110;
-           end
-           else if(remainder_check == 2) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b0000_1100;
-           end
-           else if(remainder_check == 3) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b0000_1000;
-           end
-           else if(remainder_check == 5) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1110_0000;
-           end
-           else if(remainder_check == 6) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1100_0000;
-           end
-           else begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1000_0000;
-           end
-        3: if(remainder_check == 1) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1111_1110;
-           end
-           else if(remainder_check == 2) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1111_1100;
-           end
-           else if(remainder_check == 3) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1111_1000;
-           end
-           else if(remainder_check == 4) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1111_0000;
-           end
-           else if(remainder_check == 5) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1110_0000;
-           end
-           else if(remainder_check == 6) begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1100_0000;
-           end
-           else begin
-             strobe_data[STROBE_WIDTH][0] = 8'b1000_0000;
-           end
-         endcase
-      end
-      if(STROBE_WIDTH == 32) begin
-        unique case(awsize)
-        1: if(remainder_check == 1) begin 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_0010;
-           end
-           else if(remainder_check == 3) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1000;
-           end
-           else if(remainder_check == 5) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0010_0000;
-           end
-           else if(remainder_check == 7) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1000_0000;
-           end
-           else if(remainder_check == 9) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0010_0000_0000;
-           end
-           else if(remainder_check == 11) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1000_0000_0000;
-           end
-           else if(remainder_check == 13) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0010_0000_0000_0000;
-           end
-           else if(remainder_check == 15) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1000_0000_0000_0000;
-           end
-           else if(remainder_check == 17) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0010_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 19) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 21) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0010_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 23) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 25) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0010_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 27) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_1000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 29) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0010_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else begin             
-             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
-           end
-        2: if(remainder_check == 1) begin 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1110;
-           end
-           else if(remainder_check == 2) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1100;
-           end
-           else if(remainder_check == 3) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1000;
-           end
-           else if(remainder_check == 5) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1110_0000;
-           end
-           else if(remainder_check == 6) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1100_0000;
-           end
-           else if(remainder_check == 7) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1000_0000;
-           end
-           else if(remainder_check == 9) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1110_0000_0000;
-           end
-           else if(remainder_check == 10) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1100_0000_0000;
-           end
-           else if(remainder_check == 11) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1000_0000_0000;
-           end
-           else if(remainder_check == 13) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1110_0000_0000_0000;
-           end
-           else if(remainder_check == 14) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1100_0000_0000_0000;
-           end
-           else if(remainder_check == 15) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1000_0000_0000_0000;
-           end
-           else if(remainder_check == 17) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1110_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 18) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1100_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 19) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 21) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1110_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 22) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1100_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 23) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 25) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_1110_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 26) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_1100_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 27) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_1000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 29) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1110_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 30) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else begin             
-             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
-           end
-        3: if(remainder_check == 1) begin 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_1110;
-           end
-           else if(remainder_check == 2) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_1100;
-           end
-           else if(remainder_check == 3) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_1000;
-           end
-           else if(remainder_check == 4) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_0000;
-           end
-           else if(remainder_check == 5) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1110_0000;
-           end
-           else if(remainder_check == 6) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1100_0000;
-           end
-           else if(remainder_check == 7) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1000_0000;
-           end
-           else if(remainder_check == 9) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1110_0000_0000;
-           end
-           else if(remainder_check == 10) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1100_0000_0000;
-           end
-           else if(remainder_check == 11) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1000_0000_0000;
-           end
-           else if(remainder_check == 12) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_0000_0000_0000;
-           end
-           else if(remainder_check == 13) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1110_0000_0000_0000;
-           end
-           else if(remainder_check == 14) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1100_0000_0000_0000;
-           end
-           else if(remainder_check == 15) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1000_0000_0000_0000;
-           end
-           else if(remainder_check == 17) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_1110_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 18) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_1100_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 19) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_1000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 20) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 21) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1110_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 22) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1100_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 23) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 25) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1110_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 26) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1100_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 27) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 28) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 29) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1110_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 30) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else begin             
-             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
-           end
-        4: if(remainder_check == 1) begin 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_1110;
-           end
-           else if(remainder_check == 2) begin   
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_1100;
-           end
-           else if(remainder_check == 3) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_1000;
-           end
-           else if(remainder_check == 4) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_0000;
-           end
-           else if(remainder_check == 5) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1110_0000;
-           end
-           else if(remainder_check == 6) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1100_0000;
-           end
-           else if(remainder_check == 7) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1000_0000;
-           end
-           else if(remainder_check == 8) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_0000_0000;
-           end
-           else if(remainder_check == 9) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1110_0000_0000;
-           end
-           else if(remainder_check == 10) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1100_0000_0000;
-           end
-           else if(remainder_check == 11) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1000_0000_0000;
-           end
-           else if(remainder_check == 12) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_0000_0000_0000;
-           end
-           else if(remainder_check == 13) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1110_0000_0000_0000;
-           end
-           else if(remainder_check == 14) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1100_0000_0000_0000;
-           end
-           else if(remainder_check == 15) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1000_0000_0000_0000;
-           end
-           else if(remainder_check == 17) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1110_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 18) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1100_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 19) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 20) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 21) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1110_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 22) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1100_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 23) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 24) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 25) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1110_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 26) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1100_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 27) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 28) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 29) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1110_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 30) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else begin             
-             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
-           end
-        5: if(remainder_check == 1) begin 
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_1110;
-           end
-           else if(remainder_check == 2) begin   
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_1100;
-           end
-           else if(remainder_check == 3) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_1000;
-           end
-           else if(remainder_check == 4) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_0000;
-           end
-           else if(remainder_check == 5) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1110_0000;
-           end
-           else if(remainder_check == 6) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1100_0000;
-           end
-           else if(remainder_check == 7) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1000_0000;
-           end
-           else if(remainder_check == 8) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_0000_0000;
-           end
-           else if(remainder_check == 9) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1110_0000_0000;
-           end
-           else if(remainder_check == 10) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1100_0000_0000;
-           end
-           else if(remainder_check == 11) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1000_0000_0000;
-           end
-           else if(remainder_check == 12) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_0000_0000_0000;
-           end
-           else if(remainder_check == 13) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1110_0000_0000_0000;
-           end
-           else if(remainder_check == 14) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1100_0000_0000_0000;
-           end
-           else if(remainder_check == 15) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1000_0000_0000_0000;
-           end
-           else if(remainder_check == 16) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 17) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1110_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 18) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1100_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 19) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 20) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 21) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1110_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 22) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1100_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 23) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 24) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 25) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1110_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 26) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1100_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 27) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 28) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 29) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1110_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else if(remainder_check == 30) begin
-             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
-           end
-           else begin             
-             strobe_data[STROBE_WIDTH][0] = 32'b1000_0000_0000_0000_0000_0000_0000_0000;
-           end
-         endcase
-      end
+          1: strobe_data[STROBE_WIDTH][0] = 1'b1 << remainder_check;
+          2: strobe_data[STROBE_WIDTH][0] = ({STROBE_WIDTH{1'b1}} << remainder_check) & ~({STROBE_WIDTH{1'b1}} << (4*(awaddr/2**awsize)+4));
+          3: strobe_data[STROBE_WIDTH][0] = ({STROBE_WIDTH{1'b1}} << remainder_check) & ~({STROBE_WIDTH{1'b1}} << (8*(awaddr/2**awsize)+8));
+          4: strobe_data[STROBE_WIDTH][0] = ({STROBE_WIDTH{1'b1}} << remainder_check) & ~({STROBE_WIDTH{1'b1}} << (16*(awaddr/2**awsize)+16));
+          5: strobe_data[STROBE_WIDTH][0] = ({STROBE_WIDTH{1'b1}} << remainder_check) & ~({STROBE_WIDTH{1'b1}} << (32*(awaddr/2**awsize)+32));
+          6: strobe_data[STROBE_WIDTH][0] = ({STROBE_WIDTH{1'b1}} << remainder_check) & ~({STROBE_WIDTH{1'b1}} << (64*(awaddr/2**awsize)+64));
+          7: strobe_data[STROBE_WIDTH][0] = ({STROBE_WIDTH{1'b1}} << remainder_check) & ~({STROBE_WIDTH{1'b1}} << (128*(awaddr/2**awsize)+128));
+        endcase
     end
     else begin  //{ alligned address
-      if(STROBE_WIDTH == 4) begin 
         unique case(awsize)
-        1: if(remainder_check == 0) strobe_data[STROBE_WIDTH][0] = 4'b0011; 
-           else strobe_data[STROBE_WIDTH][0] = 4'b1100;
-        2: strobe_data[STROBE_WIDTH][0] = 4'b1111; 
+          1: strobe_data[STROBE_WIDTH][0] = 2'b11 << remainder_check;
+          2: strobe_data[STROBE_WIDTH][0] = 4'b1111 << remainder_check; 
+          3: strobe_data[STROBE_WIDTH][0] = 8'b1111_1111 << remainder_check; 
+          4: strobe_data[STROBE_WIDTH][0] = 16'b1111_1111_1111_1111 << remainder_check; 
+          5: strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_1111_1111_1111_1111 << remainder_check; 
+          6: strobe_data[STROBE_WIDTH][0] = 64'b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111 << remainder_check; 
+          7: strobe_data[STROBE_WIDTH][0] = 128'b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111 << remainder_check; 
         endcase
-      end
-      if(STROBE_WIDTH == 8) begin 
-        unique case(awsize)
-        1: if(remainder_check == 0) strobe_data[STROBE_WIDTH][0] = 8'b0000_0011; 
-           else if(remainder_check == 2) strobe_data[STROBE_WIDTH][0] = 8'b0000_1100;
-           else if(remainder_check == 4) strobe_data[STROBE_WIDTH][0] = 8'b0011_0000;
-           else strobe_data[STROBE_WIDTH][0] = 8'b1100_0000;
-        2: if(remainder_check == 0) strobe_data[STROBE_WIDTH][0] = 8'b0000_1111;
-           else strobe_data[STROBE_WIDTH][0] = 8'b1111_0000;
-        3: strobe_data[STROBE_WIDTH][0] = 8'b1111_1111;
-        endcase
-      end
-      if(STROBE_WIDTH == 32) begin 
-        unique case(awsize)
-        1: if(remainder_check == 0)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_0011; 
-           else if(remainder_check == 2) 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1100;
-           else if(remainder_check == 4) 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0011_0000;
-           else if(remainder_check == 6)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1100_0000;
-           else if(remainder_check == 8)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0011_0000_0000;
-           else if(remainder_check == 10)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1100_0000_0000;
-           else if(remainder_check == 12)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0011_0000_0000_0000;
-           else if(remainder_check == 14)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1100_0000_0000_0000; 
-           else if(remainder_check == 16) 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0011_0000_0000_0000_0000;
-           else if(remainder_check == 18) 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1100_0000_0000_0000_0000;
-           else if(remainder_check == 20)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0011_0000_0000_0000_0000_0000;
-           else if(remainder_check == 22)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1100_0000_0000_0000_0000_0000;
-           else if(remainder_check == 24)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0011_0000_0000_0000_0000_0000_0000;
-           else if(remainder_check == 26)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_1100_0000_0000_0000_0000_0000_0000;
-           else if(remainder_check == 28)
-             strobe_data[STROBE_WIDTH][0] = 32'b0011_0000_0000_0000_0000_0000_0000_0000;
-           else 
-             strobe_data[STROBE_WIDTH][0] = 32'b1100_0000_0000_0000_0000_0000_0000_0000;
-        2: if(remainder_check == 0)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_0000_1111; 
-           else if(remainder_check == 4) 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_0000;
-           else if(remainder_check == 8)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_1111_0000_0000;
-           else if(remainder_check == 12)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_0000_0000_0000;
-           else if(remainder_check == 16) 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_1111_0000_0000_0000_0000;
-           else if(remainder_check == 20)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_0000_0000_0000_0000_0000;
-           else if(remainder_check == 24)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_1111_0000_0000_0000_0000_0000_0000;
-           else 
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_0000_0000_0000_0000_0000_0000_0000;
-        3: if(remainder_check == 0)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_0000_0000_1111_1111; 
-           else if(remainder_check == 8)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_0000_0000;
-           else if(remainder_check == 16) 
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_1111_1111_0000_0000_0000_0000;
-           else 
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_0000_0000_0000_0000_0000_0000;
-        4: if(remainder_check == 0)
-             strobe_data[STROBE_WIDTH][0] = 32'b0000_0000_0000_0000_1111_1111_1111_1111; 
-           else 
-             strobe_data[STROBE_WIDTH][0] = 32'b1111_1111_1111_1111_0000_0000_0000_0000;
-        5: strobe_data[STROBE_WIDTH][0]   = 32'b1111_1111_1111_1111_1111_1111_1111_1111; 
-        endcase
-      end
     end //}
   end
   if(awaddr%2**awsize != 0) begin
@@ -960,7 +430,19 @@ begin //{
       end
       if(awsize == 5) begin
         if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
-        else wstrb[i] = local_addr|32'b1111_1111_1111_1111_1111_1111_1111_1111;
+        else if(i==1) wstrb[i] =  (wstrb[i-1][STROBE_WIDTH-1]) ? (local_addr|32'b1111_1111_1111_1111_1111_1111_1111_1111) : (min << shift_loc);
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>1) wstrb[i] = local_addr|32'b1111_1111_1111_1111_1111_1111_1111_1111;
+        else wstrb[i] = wstrb[i-1] << 32; 
+      end
+      if(awsize == 6) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(i==1) wstrb[i] =  (wstrb[i-1][STROBE_WIDTH-1]) ? (local_addr|64'b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111) : (min << shift_loc);
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>1) wstrb[i] = local_addr|64'b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111;
+        else wstrb[i] = wstrb[i-1] << 64; 
+      end
+      if(awsize == 7) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else  wstrb[i] = local_addr|128'b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111;
       end
     end
   end
@@ -993,7 +475,17 @@ begin //{
       end
       if(awsize == 5) begin
         if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
-        else wstrb[i] = local_addr|32'b1111_1111_1111_1111_1111_1111_1111_1111;
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>0) wstrb[i] = local_addr|32'b1111_1111_1111_1111_1111_1111_1111_1111;
+        else wstrb[i] = wstrb[i-1] << 32; 
+      end
+      if(awsize == 6) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else if(wstrb[i-1][STROBE_WIDTH-1] && i>0) wstrb[i] = local_addr|64'b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111;
+        else wstrb[i] = wstrb[i-1] << 64; 
+      end
+      if(awsize == 7) begin
+        if(i==0)  wstrb[0] = strobe_data[STROBE_WIDTH][0];
+        else wstrb[i] = local_addr|128'b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111;
       end
     end
   end
