@@ -265,7 +265,7 @@ class axi4_master_tx extends uvm_sequence_item;
 
   //Constraint: wstrb_c4
   //based on size setting the strobe values
-  //constraint wstrb_c4 {foreach(wstrb[i]) $countones(wstrb[i]) == 2**awsize;}
+  constraint wstrb_c4 {foreach(wstrb[i]) $countones(wstrb[i]) == 2**awsize;}
 
   //Constraint : no_of_wait_states_c3
   //Adding constraint to restrict the number of wait states for response
@@ -362,7 +362,7 @@ begin //{
 
   remainder_check = (awaddr%(STROBE_WIDTH));
   min = (awsize == 1) ? {2{1'b1}} : ((awsize == 2) ? {4{1'b1}} : ((awsize == 3) ? {8{1'b1}} :
-  (awsize == 4) ? {16{1'b1}} :  {32{1'b1}}));
+  ((awsize == 4) ? {16{1'b1}} : ((awsize == 5) ? {32{1'b1}} : ((awsize == 6) ? {64{1'b1}} : {128{1'b1}})))));
 
   for(int l=0;l<STROBE_WIDTH;l++) begin
     if((remainder_check+l)%2**awsize == 0) begin
