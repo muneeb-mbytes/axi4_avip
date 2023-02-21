@@ -354,7 +354,6 @@ endtask : axi4_read_address
 // Gets the master and slave read data and send it to the read data comparision task
 //--------------------------------------------------------------------------------------------
 task axi4_scoreboard::axi4_read_data();
-
   forever begin
     read_data_key.get(1);
     axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);

@@ -357,6 +357,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   task axi4_read_data_phase (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
     int j1;
     @(posedge aclk);
+    `ifndef AXI_SLAVE_MEM
     data_read_packet.rid <= mem_arid[j1];
     
     for(int i1=0, k1=0; i1<mem_rlen[j1] + 1; i1++) begin
@@ -393,7 +394,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       end while(rready===0);
     end
     j1++;
-    
+    `endif
        
   endtask : axi4_read_data_phase
 

@@ -80,6 +80,7 @@ compile:
 	+acc \
 	+cover \
 	+fcover \
+	+define+AXI_SLAVE_MEM  \
 	-l axi4_compile.log \
 	-f ../axi4_compile.f 
 

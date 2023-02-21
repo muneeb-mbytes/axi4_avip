@@ -6,6 +6,8 @@
 // Description : Has a interface master and slave agent bfm.
 //--------------------------------------------------------------------------------------------
 
+`timescale 1ns/1ps
+
 module hdl_top;
 
   import uvm_pkg::*;
@@ -18,6 +20,7 @@ module hdl_top;
   bit aclk;
   bit a1_clk;
   bit aresetn;
+  real delay;
 
   //-------------------------------------------------------
   // Display statement for HDL_TOP
@@ -35,8 +38,11 @@ module hdl_top;
   end
 
   initial begin
+    @(posedge aclk);
     a1_clk = 1'b1;
-    forever #4 a1_clk = ~a1_clk;
+    delay = ((20/STROBE_WIDTH));
+    delay = delay/2;
+    forever #delay a1_clk = ~a1_clk;
   end
 
   //-------------------------------------------------------
@@ -57,6 +63,8 @@ module hdl_top;
   // axi4 Interface Instantiation
   axi4_if intf(.aclk(aclk),
                .aresetn(aresetn));
+        
+  axi_slave_intf pif1(a1_clk,aresetn);
 
   //-------------------------------------------------------
   // AXI4  No of Master and Slaves Agent Instantiation
@@ -72,6 +80,21 @@ module hdl_top;
       defparam axi4_slave_agent_bfm[i].axi4_slave_agent_bfm_h.SLAVE_ID = i;
     end
   endgenerate
+
+mem_top#(32,32) dut(intf,pif1,aclk,a1_clk,aresetn);
+
+
+axi4_slave_memory slave_memory (
+		.sys_clk(pif1.a1_clk),
+    .rst(pif1.rst),
+		.sys_addr(pif1.sys_addr_o),
+		.sys_wdata(pif1.sys_wdata_o),
+		.sys_sel(pif1.sys_sel_o),
+		.sys_wen(pif1.sys_wen_o),               // here intf1 to memory
+		.sys_ren(pif1.sys_ren_o),
+		.sys_rdata(pif1.sys_rdata_i)
+	);
+  
   
 endmodule : hdl_top
 
