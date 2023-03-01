@@ -44,6 +44,7 @@ always@(posedge axi_clk_i) begin
             pos++;
             if(pos==AXI_SW) pos = 0;
           end
+          @(posedge axi_clk_i);
           axi_rdata_o = mem_rdata[len];
           axi_rvalid_o = 1'b1;
           wait(axi_rready_i==1);
@@ -76,6 +77,7 @@ always@(posedge axi_clk_i) begin
             pos++;
             if(pos==AXI_SW) pos = 0;
           end
+          @(posedge axi_clk_i);
           axi_rdata_o = mem_rdata[len];
           axi_rvalid_o = 1'b1;
           wait(axi_rready_i==1);
@@ -121,6 +123,7 @@ always@(posedge axi_clk_i) begin
             pos++;
             if(pos==AXI_SW) pos = 0;
           end
+          @(posedge axi_clk_i);
           axi_rdata_o = mem_rdata[len];
           $display("ven:%0h,%0h %0d",axi_rdata_o,mem_rdata[len],len);
           axi_rvalid_o = 1'b1;
