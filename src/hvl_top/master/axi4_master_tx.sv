@@ -277,8 +277,8 @@ class axi4_master_tx extends uvm_sequence_item;
   
   //Constraint : araddr
   //Used to generate the alligned address with respect to size
-  constraint araddr_c0 {soft araddr == (araddr%(2**arsize)) == 0;}
-  
+  constraint araddr_c0 {soft (araddr == (araddr%(2**arsize)) == 0 && araddr inside {[100:300]});}
+
   //Constraint : arburst_c1
   //Restricting read burst to select only FIXED, INCR and WRAP types
   constraint arburst_c1 { arburst != READ_RESERVED;}
@@ -342,7 +342,6 @@ endfunction : new
 // Implements the narrow transfers and unalligned transfers
 //--------------------------------------------------------------------------------------------
 function void axi4_master_tx::post_randomize();
-
 //-------------------------------------------------------
 // Strobes for alligned with narrow transfers and
 // Unalligned transfers

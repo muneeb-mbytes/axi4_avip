@@ -357,35 +357,29 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   task axi4_read_data_phase (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
     int j1;
     @(posedge aclk);
-    data_read_packet.rid <= mem_arid[j1];
+    data_read_packet.rid = mem_arid[j1];
     
     for(int i1=0, k1=0; i1<mem_rlen[j1] + 1; i1++) begin
       if(k1 == DATA_WIDTH/8) k1 = 0;
-      rid  <= mem_arid[j1];
+      rid  = mem_arid[j1];
       //Sending the rdata based on each byte lane
       //RHS: Is used to send Byte by Byte
       //LHS: Is used to shift the location for each Byte
       for(int l1=0; l1<(2**mem_rsize[j1]); l1++) begin
-        rdata[8*k1+7 -: 8]<=data_read_packet.rdata[l1*8+i1];
+        rdata[8*k1+7 -: 8]=data_read_packet.rdata[i1][8*l1+7 -: 8];
+        $display("RD_DATA=%0h,LHS_intf:%0h,l1:%0d,i1=%0d,k1=%0d",data_read_packet.rdata[i1][8*l1+7 -: 8],rdata[8*k1+7-: 8],l1,i1,k1);
         k1++;
       end
+      rresp=data_read_packet.rresp;
      
-     if(mem_rsize[j1]<=DATA_WIDTH/OUTSTANDING_FIFO_DEPTH) begin
-       rresp<=data_read_packet.rresp;
-     end
-     else begin
-       rresp <= READ_SLVERR;
-       data_read_packet.rresp <= READ_SLVERR;
-     end
-
-      ruser<=data_read_packet.ruser;
-      rvalid<=1'b1;
+      ruser=data_read_packet.ruser;
+      rvalid=1'b1;
       
       if((mem_rlen[j1]) == i1)begin
-        rlast  <= 1'b1;
+        rlast  = 1'b1;
         @(posedge aclk);
-        rlast <= 1'b0;
-        rvalid <= 1'b0;
+        rlast = 1'b0;
+        rvalid = 1'b0;
       end
       
       do begin

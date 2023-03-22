@@ -293,6 +293,13 @@ package axi4_globals_pkg;
     NON_BLOCKING_READ   = 2'b11 
   }transfer_type_e;
 
+  typedef enum bit[1:0] {
+    RANDOM_DATA_MODE = 2'b00,
+    SLAVE_MEM_MODE   = 2'b01,
+    USER_DATA_MODE   = 2'b10
+  } read_data_type_mode_e;
+  
+
   //-------------------------------------------------------
   // Structs used in axi_avip are given below
   //-------------------------------------------------------
