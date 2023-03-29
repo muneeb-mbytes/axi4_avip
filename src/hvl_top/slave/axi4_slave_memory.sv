@@ -10,11 +10,12 @@ class axi4_slave_memory extends uvm_object;
 
   //Variable : slave_memory
   //Declaration of slave_memory to store the data from master
-  bit [7:0] slave_memory [longint];
+  protected bit [7:0] slave_memory [longint];
 
   extern function new(string name = "axi4_slave_memory");  
   extern virtual function void mem_write(input bit [ADDRESS_WIDTH-1:0]slave_address, bit [DATA_WIDTH-1:0]data);
   extern virtual function void mem_read (input bit [ADDRESS_WIDTH-1:0]slave_address, output bit [DATA_WIDTH-1:0]data);
+  extern virtual function bit is_slave_addr_exists(input bit [ADDRESS_WIDTH-1 :0]slave_address);
 
 endclass : axi4_slave_memory
 
@@ -45,5 +46,10 @@ function void axi4_slave_memory::mem_read(input bit [ADDRESS_WIDTH-1 :0]slave_ad
    data = slave_memory[slave_address];
    $display("RD_MEM addr:%0h, data:%0h",slave_address,data);
 endfunction : mem_read
+
+function bit axi4_slave_memory::is_slave_addr_exists(input bit [ADDRESS_WIDTH-1 :0]slave_address);
+  is_slave_addr_exists = slave_memory.exists(slave_address);
+endfunction: is_slave_addr_exists
+
 
 `endif

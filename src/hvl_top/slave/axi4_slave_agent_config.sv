@@ -52,9 +52,14 @@ class axi4_slave_agent_config extends uvm_object;
   //Used to set type of data to read
   read_data_type_mode_e read_data_mode;
 
+  //Variable: user_rdata
+  //Used to set default read data
+  bit[DATA_WIDTH-1:0] user_rdata;
+
   //constraint: maximum_txns
   //Make sure to have minimum txns to perform out_of_oreder
-  constraint maximum_txns{maximum_transactions >= minimum_transactions;}
+  constraint maximum_txns_c{maximum_transactions >= minimum_transactions;}
+
 
   //-------------------------------------------------------
   // Externally defined Tasks and Functions

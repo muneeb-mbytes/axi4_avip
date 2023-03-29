@@ -191,7 +191,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     `uvm_info(name,$sformatf("cfg_packet=\n%p",cfg_packet),UVM_HIGH)
     `uvm_info(name,$sformatf("INSIDE WRITE DATA CHANNEL"),UVM_HIGH)
     
-    wready <= 0;
+    wready = 0;
     
     do begin
       @(posedge aclk);
@@ -204,14 +204,14 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     repeat(data_write_packet.no_of_wait_states)begin
       `uvm_info(name,$sformatf("DRIVING_WRITE_DATA_WAIT_STATES :: %0d",data_write_packet.no_of_wait_states),UVM_HIGH);
       @(posedge aclk);
-      wready<=0;
+      wready=0;
     end
 
-    wready <= 1 ;
+    wready = 1 ;
     
     for(int s = 0;s<(mem_wlen[a]+1);s = s+1)begin
       @(posedge aclk);
-      `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",mem_wlen[a]),UVM_HIGH)
+      `uvm_info("SLAVE_DEBUG",$sformatf("mem_length = %0d",mem_wlen[a]),UVM_NONE)
        data_write_packet.wdata[s]=wdata;
        `uvm_info("slave_wdata",$sformatf("sampled_slave_wdata[%0d] = %0h",s,data_write_packet.wdata[s]),UVM_HIGH);
        data_write_packet.wstrb[s]=wstrb;
@@ -225,10 +225,10 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
           data_write_packet.wlast = wlast;
           if(!data_write_packet.wlast)begin
             @(posedge aclk);
-            wready<=0;
+            wready=0;
             break;
           end
-          `uvm_info("slave_wlast",$sformatf("slave_wlast = %0b",wlast),UVM_HIGH);
+          `uvm_info("slave_wlast",$sformatf("slave_wlast = %0b",wlast),UVM_NONE);
           `uvm_info("slave_wlast",$sformatf("sampled_slave_wlast = %0b",data_write_packet.wlast),UVM_HIGH);
         end
       end
@@ -236,7 +236,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
       a++;
 
       @(posedge aclk);
-      wready <= 0;
+      wready = 0;
 
   endtask : axi4_write_data_phase
 
@@ -254,13 +254,10 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
     if(struct_cfg.out_of_oreder) begin 
       bid <= bid_local; 
       data_write_packet.bid <= bid_local; 
-      //bresp <= data_write_packet.bresp;
-      bresp <= WRITE_OKAY;
-      data_write_packet.bresp <= WRITE_OKAY;
+      bresp <= data_write_packet.bresp;
       buser <= data_write_packet.buser;
       bvalid <= 1;
     end
-
     else begin 
      data_write_packet.bid <= mem_awid[j]; 
      `uvm_info("DEBUG_BRESP",$sformatf("BID = %0d",data_write_packet.bid),UVM_HIGH)
@@ -268,21 +265,11 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
      bid  <= mem_awid[j];
      `uvm_info("DEBUG_BRESP",$sformatf("MEM_BID[%0d] = %0d",j,mem_awid[j]),UVM_HIGH)
-     `uvm_info("DEBUG_BRESP_WLAST",$sformatf("wlast = %0d",mem_wlast[j]),UVM_HIGH)
-
-     //Checks all the conditions satisfied are not to send OKAY RESP
-     //1. Resp has to send only wlast is high.
-     //2. Size shouldn't more than DBW.
-     //3. fifo shouldn't get full.
-     if(mem_wlast[j]==1 && mem_wsize[j] <= DATA_WIDTH/OUTSTANDING_FIFO_DEPTH) begin
-       bresp <= WRITE_OKAY;
-       data_write_packet.bresp <= WRITE_OKAY;
+     `uvm_info("DEBUG_BRESP_WLAST",$sformatf("wlast = %0d",mem_wlast[j]),UVM_NONE)
+     while(mem_wlast[j]!=1) begin
+       @(posedge aclk);
      end
-     else begin
-       bresp <= WRITE_SLVERR;
-       data_write_packet.bresp <= WRITE_SLVERR;
-     end
-       
+     bresp <= data_write_packet.bresp;
      buser<=data_write_packet.buser;
      bvalid <= 1;
      j++;
@@ -357,29 +344,29 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   task axi4_read_data_phase (inout axi4_read_transfer_char_s data_read_packet, input axi4_transfer_cfg_s cfg_packet);
     int j1;
     @(posedge aclk);
-    data_read_packet.rid = mem_arid[j1];
+    data_read_packet.rid <= mem_arid[j1];
     
     for(int i1=0, k1=0; i1<mem_rlen[j1] + 1; i1++) begin
       if(k1 == DATA_WIDTH/8) k1 = 0;
-      rid  = mem_arid[j1];
+      rid  <= mem_arid[j1];
       //Sending the rdata based on each byte lane
       //RHS: Is used to send Byte by Byte
       //LHS: Is used to shift the location for each Byte
       for(int l1=0; l1<(2**mem_rsize[j1]); l1++) begin
-        rdata[8*k1+7 -: 8]=data_read_packet.rdata[i1][8*l1+7 -: 8];
+        rdata[8*k1+7 -: 8]<=data_read_packet.rdata[i1][8*l1+7 -: 8];
         $display("RD_DATA=%0h,LHS_intf:%0h,l1:%0d,i1=%0d,k1=%0d",data_read_packet.rdata[i1][8*l1+7 -: 8],rdata[8*k1+7-: 8],l1,i1,k1);
         k1++;
       end
-      rresp=data_read_packet.rresp;
+      rresp<=data_read_packet.rresp[i1];
      
-      ruser=data_read_packet.ruser;
-      rvalid=1'b1;
+      ruser<=data_read_packet.ruser;
+      rvalid<=1'b1;
       
       if((mem_rlen[j1]) == i1)begin
-        rlast  = 1'b1;
+        rlast <= 1'b1;
         @(posedge aclk);
-        rlast = 1'b0;
-        rvalid = 1'b0;
+        rlast <= 1'b0;
+        rvalid <= 1'b0;
       end
       
       do begin
